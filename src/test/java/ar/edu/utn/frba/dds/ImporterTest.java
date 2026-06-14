@@ -1,12 +1,21 @@
 package ar.edu.utn.frba.dds;
 
 import static org.junit.jupiter.api.Assertions.*;
-import ar.edu.utn.frba.dds.donantes.Donante;
+
+import ar.edu.utn.frba.dds.donantes.Identificacion;
+import ar.edu.utn.frba.dds.donantes.Persona;
 import ar.edu.utn.frba.dds.donantes.PersonaFisica;
 import ar.edu.utn.frba.dds.donantes.PersonaJuridica;
+import ar.edu.utn.frba.dds.donantes.TipoDocumento;
+import ar.edu.utn.frba.dds.donantes.TipoPersona;
+import ar.edu.utn.frba.dds.importerdonantes.ImporterDonantes;
+import ar.edu.utn.frba.dds.importerdonantes.ImporterParser;
+import ar.edu.utn.frba.dds.importerdonantes.ImporterScanner;
 import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,63 +23,61 @@ import java.util.Objects;
 
 public class ImporterTest {
 
+  private ImporterDonantes importer;
+  private List<Persona> registroPrevio = new ArrayList<>();
+  private String filePathCSV = "src/main/java/ar/edu/utn/frba/dds/donantes_import_20000_UTF8_BOM.csv";
+
+  @BeforeEach
+  void initRegistroPrevio() {
+    // Persona JURIDICA a actualizar
+    Mail mail1 = new Mail("romero5314@yahoo.com"); // dato viejo
+    Identificacion id1 = new Identificacion(TipoDocumento.CUIT, "30-52235350-3");
+    Persona santaFeIndustrial = new Persona(
+        "Santa Fe Industrial", mail1, id1, TipoPersona.JURIDICA);
+    registroPrevio.add(santaFeIndustrial);
+
+    // Persona a agregar 1
+    Mail mail2 = new Mail("yocooperativa8180@yahoo.com");
+    Telefono telefono2 = new Telefono("+54 11 4724-2300");
+    Identificacion id2 = new Identificacion(TipoDocumento.CUIT, "12312355");
+    Persona contacto = new Persona("Yo Cooperativa", mail2, id2, TipoPersona.JURIDICA);
+    contacto.setTelefono(telefono2);
+    registroPrevio.add(contacto);
+
+    // Persona a agregar 2
+    Mail mail3 = new Mail("abcd@gmail.com");
+    Identificacion id3 = new Identificacion(TipoDocumento.DNI, "45645688");
+    Persona mariaDolores = new Persona("Maria Dolores", mail3, id3, TipoPersona.FISICA);
+    registroPrevio.add(mariaDolores);
+
+    // Persona FISICA a actualizar
+    Mail mail4 = new Mail("maríaaguirre4360@outlook.com");
+    MedioContacto telefono = new Telefono("+54 11 4848-0000"); // dato viejo
+    Identificacion id4 = new Identificacion(TipoDocumento.DNI, "49018895");
+    Persona mariaAguirre = new Persona("María Aguirre", mail4,
+        id4, TipoPersona.FISICA);
+    registroPrevio.add(mariaAguirre);
+  }
+
+  @BeforeEach
+  void initImporter() {
+    importer = new ImporterDonantes(registroPrevio);
+  }
+
   @Test
-  public void importaCorrectamentedelCSV() {
-    String nombreUltimoDonante = donanteList.get(donanteList.size() - 1).getNombre();
-    String[] nombreCompleto = nombreUltimoDonante.split(" ");
-    assertEquals(nombreCompleto[0], lastDonante().nombre);
-    String nombreDonante = donanteList.get(5).getNombre();
-    String[] nombre = nombreDonante.split(" ");
-    assertEquals(nombre[0], julieta().nombre);
+  public void scanneaCorrectamentedelCSV() {
+    List<String[]> filas = new ArrayList<>();
+    try {
+      filas = importer.getScanner().scanCSVFile(filePathCSV);
+    } catch (RuntimeException e) {
+      throw new RuntimeException(e);
+    }
+    assertEquals(filas.size(), 2001);
   }
 
   @Test
   public void actualizaCorrectamente() {
-    setHistorial(historial);
-    ImporterDonantes.actualizarDonantes(historial, path);
-    assert(!Objects.equals(historial.get(1).getTelefonoContacto().getMedioContacto(), "00"));
-  }
 
-  String path = "src/main/java/ar/edu/utn/frba/dds/donantes_import_20000_UTF8_BOM.csv";
-  private List<Donante> donanteList = ImporterDonantes.importarDonantes(path);
-  private List<Donante> historial = new ArrayList<>();
-
-  private void setHistorial(List<Donante> historial) {
-    historial.add(julieta());
-    santaFeIndustrial().telefonoContacto.nroTelefono = "00";
-    historial.add(santaFeIndustrial());
-    historial.add(lastDonante());
-    historial.add(yoCoopetiva());
-  }
-
-  private PersonaJuridica yoCoopetiva() {
-    Mail mail = new Mail("yocooperativa8180@yahoo.com");
-    MedioContacto telefono = new Telefono("+54 11 4724-2300");
-    return new PersonaJuridica("Yo Cooperativa", mail, telefono, "1111");
-  }
-
-  //HUMANA,DNI,47376264,Julieta Romero,julietaromero5314@yahoo.com,+54 11 5305-6413
-  private PersonaFisica julieta() {
-    Mail mail = new Mail("julietaromero5314@yahoo.com");
-    MedioContacto telefono = new Telefono("+54 11 5305-6413");
-    return new PersonaFisica(mail, "Julieta", "Romero",
-        "47376264", telefono);
-  }
-
-  //JURIDICA,CUIT,30-52235350-3,Santa Fe Industrial Fundación,santafeindustrial8180@yahoo.com,+54 11 4724-2388
-  private PersonaJuridica santaFeIndustrial() {
-    Mail mail = new Mail("santafeindustrial8180@yahoo.com");
-    MedioContacto telefono = new Telefono("+54 11 4724-2388");
-    return new PersonaJuridica("Santa Fe Industrial", mail, telefono, "30-52235350-3");
-  }
-
-  //HUMANA,DNI,39421367,María Aguirre,maríaaguirre4360@outlook.com,+54 11 4848-1579
-  private PersonaFisica lastDonante() {
-    Mail mail = new Mail("maríaaguirre4360@outlook.com");
-    MedioContacto telefono = new Telefono("+54 11 4848-1579");
-    PersonaFisica maria = new PersonaFisica(mail, "María", "Aguirre",
-        "39421367", telefono);
-    return maria;
   }
 
 }

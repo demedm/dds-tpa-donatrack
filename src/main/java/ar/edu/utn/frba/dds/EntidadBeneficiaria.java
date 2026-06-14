@@ -2,24 +2,29 @@ package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
+import ar.edu.utn.frba.dds.medioscontacto.Telefono;
 import ar.edu.utn.frba.dds.necesidad.GestorNecesidades;
 import ar.edu.utn.frba.dds.necesidad.Necesidad;
 
 import java.util.List;
 
-public class EntidadBeneficiaria extends Entidad {
-  String direccion;
-  String tipo;
+public class EntidadBeneficiaria {
+  private String razonSocial;
+  private String direccion;
+  private String tipo;
+  private List<Mail> mailsContacto;
+  private Telefono telefono;
 
   public EntidadBeneficiaria(String razon, String tipoEntidad,
-                             MedioContacto telefonoOrganizacion,
+                             Telefono telefonoOrganizacion,
                              List<Mail> contactoRepresentantes, String direccionEntidad) {
-    for (Mail mail : contactoRepresentantes) {
-      mailRepresentantes.add(mail);
-    }
-    setMedioContacto(telefonoOrganizacion);
-    direccion = direccionEntidad;
-    tipo = tipoEntidad; //escuelas rurales, comedores, espacios de tutoría de niños, entre otros
+    contactoRepresentantes.forEach( mail -> {
+      this.mailsContacto.add(mail);
+    });
+    this.razonSocial = razon;
+    this.telefono = telefonoOrganizacion;
+    this.direccion = direccionEntidad;
+    this.tipo = tipoEntidad; //escuelas rurales, comedores, espacios de tutoría de niños, entre otros
   }
 
   public String getTipoEntidad() {
@@ -29,7 +34,7 @@ public class EntidadBeneficiaria extends Entidad {
   public String getDireccion() {
     return direccion;
   }
-
+/*
   public Necesidad crearNecesidad(GestorNecesidades gestor) {
     Necesidad necesidad = new Necesidad(this);
     gestor.agregarNecesidad(necesidad);
@@ -40,5 +45,5 @@ public class EntidadBeneficiaria extends Entidad {
     gestor.agregarNecesidad(necesidad);
     return necesidad;
   }
-
+*/
 }

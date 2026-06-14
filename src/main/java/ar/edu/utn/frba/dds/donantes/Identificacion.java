@@ -4,9 +4,9 @@ public class Identificacion {
   TipoDocumento tipo;
   String nroDocumento;
 
-  public Identificacion(TipoDocumento t, String nro) {
-    tipo = t;
-    nroDocumento = nro;
+  public Identificacion(TipoDocumento tipo, String nro) {
+    this.tipo = tipo;
+    this.nroDocumento = nro;
   }
 
   public String getNroDocumento() {

@@ -1,9 +1,5 @@
 package ar.edu.utn.frba.dds;
 
-import static ar.edu.utn.frba.dds.ImporterDonantes.registroDonantes;
-
-import ar.edu.utn.frba.dds.donantes.Donante;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -1,12 +1,13 @@
 package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.donantes.PersonaFisica;
+import ar.edu.utn.frba.dds.importerdonantes.ImporterDonantes;
 import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static ar.edu.utn.frba.dds.ImporterDonantes.registroDonantes;
+import static ar.edu.utn.frba.dds.importerdonantes.ImporterDonantes.registroDonantes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

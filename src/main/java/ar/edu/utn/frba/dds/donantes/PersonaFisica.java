@@ -11,88 +11,34 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-public class PersonaFisica implements Donante {
-  public Mail mail;
-  public String nombre;
-  public String apellido;
+public class PersonaFisica extends Persona {
+  private String apellido;
   private int edad;
   private Genero genero;
-  public Telefono telefonoContacto;
-  public String direccionActual;
-  public Identificacion documentoIdentidad = null;  // algo mejor que esta forma
+  private String direccionActual;
+  private MedioContacto contactoPreferencia;
 
-  public PersonaFisica(Mail email, String nombrePersona, String apellidoPersona,
-                       String documento, MedioContacto telefono) {
-    mail = email;
-    nombre = nombrePersona;
-    apellido = apellidoPersona;
-    documentoIdentidad = new Identificacion(TipoDocumento.DNI, documento);
-    telefonoContacto = new Telefono(telefono.getMedioContacto());
+  public PersonaFisica(Mail mail, String nombreCompleto, Identificacion identificacion,
+                       MedioContacto telefono, int edad, Genero genero,
+                       String direccion) {
+    super(nombreCompleto, mail, identificacion);
+    var nombre = nombreCompleto.split(" ");
+    this.apellido = nombre[1];
+    this.edad = edad;
+    this.genero = genero;
+    this.direccionActual = direccion;
   }
 
-  public void setEdad(LocalDate fechaNacimiento) {
-    LocalDate fechaActual = LocalDate.now();
-    edad = fechaActual.getYear() - fechaNacimiento.getYear();
+  public String getDireccionActual() {
+    return direccionActual;
   }
 
-  public void setGenero(String gen) {
-    var gender = gen.toUpperCase();
-    if (gen.contains("HOMBRE")) {
-      genero = Genero.HOMBRE;
-      return;
-    }
-    if (gen.contains("MUJER")) {
-      genero = Genero.MUJER;
-    }
-    genero = Genero.OTRO;
+  public MedioContacto getContactoPreferencia() {
+    return contactoPreferencia;
   }
 
-  public void setDireccion(String direccion) {
-    direccionActual = direccion.toUpperCase();
-  }
-
-  @Override
-  public String getNombre() {
-    return nombre + " " + apellido;
-  }
-
-  @Override
-  public Mail getMailContacto() {
-    return mail;
-  }
-
-  @Override
-  public boolean actualizarInfo(String name, String documento, MedioContacto telefono) {
-    boolean actualizado = false;
-    if (!(Objects.equals(nombre, name))) {
-      nombre = name;
-      actualizado = true;
-    }
-    if (!(Objects.equals(documentoIdentidad.nroDocumento, documento))) {
-      documentoIdentidad.nroDocumento = documento;
-      actualizado = true;
-    }
-    if (!(Objects.equals(telefonoContacto.nroTelefono, telefono.getMedioContacto()))) {
-      telefonoContacto.nroTelefono = telefonoContacto.getMedioContacto();
-      actualizado = true;
-    }
-    return actualizado;
-  }
-
-  @Override
-  public Identificacion getDocumento() {
-    return documentoIdentidad;
-  }
-
-  @Override
-  public Telefono getTelefonoContacto() {
-    return telefonoContacto;
-  }
-
-  @Override
-  public void donar(String descripcion, List<Bien> bienes, GestorDonaciones gestor) {
-    Donacion nuevaDonacion = new Donacion(descripcion, this, bienes);
-    gestor.agregarDonacion(nuevaDonacion);
+  public void setContactoPreferencia(MedioContacto contactoPreferencia) {
+    this.contactoPreferencia = contactoPreferencia;
   }
 
 }

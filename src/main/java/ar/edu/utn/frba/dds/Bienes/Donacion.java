@@ -1,9 +1,5 @@
 package ar.edu.utn.frba.dds.Bienes;
 
-import ar.edu.utn.frba.dds.donantes.Donante;
-import ar.edu.utn.frba.dds.Estado.EstadoDonacion;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
