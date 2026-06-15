@@ -11,7 +11,7 @@ public class Mensaje implements MedioContacto {
   }
 
   @Override
-  public boolean contactar(Notificacion notificacion) {
+  public void contactar(Notificacion notificacion) {
     String numDest = notificacion.getDestinatario();
     String mensaje = notificacion.getMensaje();
 

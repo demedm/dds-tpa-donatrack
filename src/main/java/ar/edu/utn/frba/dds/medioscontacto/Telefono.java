@@ -15,8 +15,7 @@ public class Telefono implements MedioContacto {
   }
 
   @Override
-  public boolean contactar(Notificacion notificacion) {
-    return true;
+  public void contactar(Notificacion notificacion) {
   }
-
 }
+//creeria que con la clase mensaje ya estaria

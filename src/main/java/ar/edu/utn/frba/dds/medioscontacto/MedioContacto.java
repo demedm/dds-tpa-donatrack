@@ -6,6 +6,6 @@ public interface MedioContacto {
 
   public String getMedioContacto();
 
-  boolean contactar(Notificacion notificacion);
+  void contactar(Notificacion notificacion);
 
 }

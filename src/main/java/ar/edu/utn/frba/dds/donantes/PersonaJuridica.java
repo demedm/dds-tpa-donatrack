@@ -23,6 +23,15 @@ public class PersonaJuridica extends Persona {
     mediosContacto.add(contacto);
   }
 
+  public void setMedioPreferido(MedioContacto medio) {
+    this.medioPreferido = medio;
+  }
+
+  @Override
+  public MedioContacto getMedioPreferido() {
+    return this.medioPreferido;
+  }
+
   //Gubernamental, ONG, Empresa, Institución
   private TipoEntidadJuridica getTipoEntidad(String nombreEntidad) {
     if (nombreEntidad.contains("Fundación") || nombreEntidad.contains("Asociación Civil")) {

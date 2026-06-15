@@ -17,7 +17,7 @@ public class Mail implements MedioContacto {
   }
 
   @Override
-  public boolean contactar(Notificacion notificacion) {
+  public void contactar(Notificacion notificacion) {
     System.out.println(" === [SIMULADOR SERVICIO EXTERNO: SMTP EMAIL] ===");
     System.out.println("Enviando correo a: " + notificacion.getDestinatario());
     System.out.println("Asunto: ¡Bienvenido a Donatrack!");
@@ -25,7 +25,6 @@ public class Mail implements MedioContacto {
     System.out.println("=================================================");
 
     notificacion.marcarComoCompletada();
-    return true;
   }
 
 }
