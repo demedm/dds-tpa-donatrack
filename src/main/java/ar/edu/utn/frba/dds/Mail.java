@@ -2,6 +2,12 @@ package ar.edu.utn.frba.dds;
 
 public class Mail implements MedioContacto {
 
+  private String info;
+
+  public Mail(String correoElectronico) {
+    this.info = correoElectronico;
+  }
+
   @Override
   public void contactar(Notificacion notificacion) {
     System.out.println(" === [SIMULADOR SERVICIO EXTERNO: SMTP EMAIL] ===");

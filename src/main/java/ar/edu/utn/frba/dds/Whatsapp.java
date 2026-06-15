@@ -1,6 +1,11 @@
 package ar.edu.utn.frba.dds;
 
 public class Whatsapp implements MedioContacto {
+  private String info;
+
+  public Whatsapp(String numeroTelefono) {
+    this.info = numeroTelefono;
+  }
 
   @Override
   public void contactar(Notificacion notificacion) {
