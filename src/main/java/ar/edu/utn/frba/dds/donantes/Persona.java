@@ -12,12 +12,22 @@ public class Persona {
   private Telefono telefono;
   private Identificacion identificacion;
   private TipoPersona tipoPersona;
+  MedioContacto medioPreferido;
 
   public Persona(String nombre, Mail mail, Identificacion identificacion, TipoPersona tipo) {
     this.nombreIdentificador = nombre;
     this.mail = mail;
     this.identificacion = identificacion;
     this.tipoPersona = tipo;
+    this.medioPreferido = mail; //por defecto
+  }
+
+  public void setMedioPreferido(MedioContacto medioPreferido) {
+    this.medioPreferido = medioPreferido;
+  }
+
+  public MedioContacto getMedioPreferido() {
+    return this.medioPreferido;
   }
 
   public void setTelefono(Telefono telefono) {

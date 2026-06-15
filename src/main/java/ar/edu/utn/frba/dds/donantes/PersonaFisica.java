@@ -16,12 +16,11 @@ public class PersonaFisica extends Persona {
   private int edad;
   private Genero genero;
   private String direccionActual;
-  private MedioContacto contactoPreferencia;
 
   public PersonaFisica(Mail mail, String nombreCompleto, Identificacion identificacion,
                        MedioContacto telefono, int edad, Genero genero,
                        String direccion) {
-    super(nombreCompleto, mail, identificacion);
+    super(nombreCompleto, mail, identificacion, TipoPersona.FISICA);
     var nombre = nombreCompleto.split(" ");
     this.apellido = nombre[1];
     this.edad = edad;
@@ -34,11 +33,11 @@ public class PersonaFisica extends Persona {
   }
 
   public MedioContacto getContactoPreferencia() {
-    return contactoPreferencia;
+    return super.getMedioPreferido();
   }
 
   public void setContactoPreferencia(MedioContacto contactoPreferencia) {
-    this.contactoPreferencia = contactoPreferencia;
+    super.setMedioPreferido(contactoPreferencia);
   }
 
 }

@@ -10,6 +10,10 @@ public class Notificacion {
   private final LocalDateTime fechaHora;
   private EstadoNotificacion estado;
 
+  public void setDestinatario(String destinatario) {
+    this.destinatario = destinatario;
+  }
+
   public String getDestinatario() {
     return destinatario;
   }

@@ -4,32 +4,28 @@ import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class PersonaJuridica extends Persona {
   private String rubro;
   private TipoEntidadJuridica tipo;
-  private List<MedioContacto> mediosContacto;
+  private List<MedioContacto> mediosContacto = new ArrayList<>();
 
   public PersonaJuridica(String razon, Mail mail, TipoEntidadJuridica tipo,
                          Identificacion cuitEntidad, String rubro) {
-    super(razon, mail, cuitEntidad);
+    super(razon, mail, cuitEntidad, TipoPersona.JURIDICA);
     this.tipo = tipo;
     this.rubro = rubro;
   }
 
   public void setMedioContacto(MedioContacto contacto) {
-    mediosContacto.add(contacto);
+    this.mediosContacto.add(contacto);
   }
 
   public void setMedioPreferido(MedioContacto medio) {
-    this.medioPreferido = medio;
-  }
-
-  @Override
-  public MedioContacto getMedioPreferido() {
-    return this.medioPreferido;
+    super.setMedioPreferido(medio);
   }
 
   //Gubernamental, ONG, Empresa, Institución
