@@ -34,16 +34,4 @@ public class EntidadBeneficiaria {
   public String getDireccion() {
     return direccion;
   }
-/*
-  public Necesidad crearNecesidad(GestorNecesidades gestor) {
-    Necesidad necesidad = new Necesidad(this);
-    gestor.agregarNecesidad(necesidad);
-    return necesidad;
-  }
-  public Necesidad crearNecesidad(GestorNecesidades gestor){
-    Necesidad necesidad = new Necesidad(this);
-    gestor.agregarNecesidad(necesidad);
-    return necesidad;
-  }
-*/
 }

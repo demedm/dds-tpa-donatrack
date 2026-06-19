@@ -3,19 +3,28 @@ package ar.edu.utn.frba.dds.necesidad;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.edu.utn.frba.dds.EntidadBeneficiaria;
+
 public class GestorNecesidades {
   public List<Necesidad> necesidades = new ArrayList<>();
+
+  public Necesidad crearNecesidad(EntidadBeneficiaria entidad) {
+    Necesidad necesidad = new Necesidad(entidad);
+    this.agregarNecesidad(necesidad);
+    return necesidad;
+  }
 
   public void agregarNecesidad(Necesidad necesidad) {
     necesidades.add(necesidad);
   }
 
+
   public void evaluarPeticionesRecurrentes(GestorDonaciones gestor) {
     //Ordena a las que son recurrentes por cuantos dias le queden apra vencer
     necesidades.stream()
         .filter(n -> n instanceof NecesidadRecurrente)
-        .map(n -> (NecesidadRecurrente) n)
-        .sorted((a, b) -> a.getDiasAvencer() - b.getDiasAvencer())
+        .map(n -> (NecesidadRecurrente) n) //Especifico que lo que hay son necesidades recurrentes 
+        .sorted((a, b) -> Long.compare(a.getDiasAvencer(), b.getDiasAvencer()))
         .forEach(n -> n.cumplirNecesidades(gestor));
   }
 
