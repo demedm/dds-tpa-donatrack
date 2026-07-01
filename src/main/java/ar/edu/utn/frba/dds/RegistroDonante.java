@@ -10,7 +10,7 @@ public class RegistroDonante {
   private List<Persona> registroDonantes = new ArrayList<>();
   private final Notificador notificador;
 
-  public RegistroDonante() {
+  public RegistroDonante(Notificador notificador) {
     this.notificador = notificador;
   }
 

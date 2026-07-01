@@ -1,37 +1,36 @@
 package ar.edu.utn.frba.dds.Estado;
 
-import ar.edu.utn.frba.dds.Bienes.Donacion;
-import ar.edu.utn.frba.dds.EstadoDonacion;
+import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 
 public class Vencida implements EstadoDonacion {
 
   @Override
-  public void asignar(Donacion donacion) {
+  public void asignar(DonacionSegmentada donacion) {
     throw new IllegalStateException("No se puede asignar una donación vencida.");
   }
 
   @Override
-  public void planificarRuta(Donacion donacion) {
+  public void planificarRuta(DonacionSegmentada donacion) {
     throw new IllegalStateException("No se puede planificar ruta para una donación vencida.");
   }
 
   @Override
-  public void iniciarTraslado(Donacion donacion) {
+  public void iniciarTraslado(DonacionSegmentada donacion) {
     throw new IllegalStateException("No se puede trasladar una donación vencida.");
   }
 
   @Override
-  public void confirmarEntrega(Donacion donacion) {
+  public void confirmarEntrega(DonacionSegmentada donacion) {
     throw new IllegalStateException("No se puede entregar una donación que está vencida.");
   }
 
   @Override
-  public void fallarEntrega(Donacion donacion, String justificacion) {
+  public void fallarEntrega(DonacionSegmentada donacion, String justificacion) {
     throw new IllegalStateException("Una donación vencida no puede registrar una entrega fallida.");
   }
 
   @Override
-  public void vencer(Donacion donacion) {
+  public void vencer(DonacionSegmentada donacion) {
     throw new IllegalStateException("La donación ya se encuentra vencida.");
   }
 

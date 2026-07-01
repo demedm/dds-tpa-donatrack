@@ -35,21 +35,4 @@ public class ImporterDonantes {
     nuevosDonantes.forEach(registroDonantes::registrarDonante);
   }
 
-  // info basica de contacto: documento, nombre, email, telefono
-  /*public void actualizarDonantes(List<Persona> registroImportados) {
-    boolean actualizado = false;
-    registroImportados.forEach(persona -> {
-      registroDonantes.stream().filter(p ->
-          esMismaPersona(p, persona))
-          .forEach(pActualizar -> actualizarPersona(pActualizar, persona));
-      });
-  }
-
-  private boolean esMismaPersona(Persona persona, Persona persona2) {
-    return persona.getNroIdentificacion() == persona2.getNroIdentificacion();
-  }*/
-
-  private void actualizarPersona(Persona persona, Persona nuevosDatos) {
-    // No se modifica el documento ni el nombre de la persona
-  }
 }
