@@ -1,22 +1,23 @@
 package ar.edu.utn.frba.dds.necesidad;
 
 import ar.edu.utn.frba.dds.Bienes.Bien;
+import ar.edu.utn.frba.dds.Bienes.Subcategoria;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Peticion {
-  private String subclase;
+  private Subcategoria subclase;
   private int cantidad;
   private List<Bien> bienesAsignados = new ArrayList<>();
 
 
-  public Peticion(String subclase, int cantidad) {
+  public Peticion(Subcategoria subclase, int cantidad) {
     this.subclase = subclase;
     this.cantidad = cantidad;
   }
 
-  public String getSubclase() {
+  public Subcategoria getSubclase() {
     return subclase;
   }
 

@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.Estado.EnDeposito;
 import ar.edu.utn.frba.dds.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.Estado.RegistroCambioEstado;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class DonacionSegmentada {
   private EstadoDonacion estadoActual;
   private List<RegistroCambioEstado> historialEstados;
   private String justificacionFallo;
+  private LocalDate fechaDeEntrega;
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
     this.cantidad = cantidad;
@@ -25,6 +27,10 @@ public class DonacionSegmentada {
 
   public void donar(EntidadBeneficiaria entidad ){
 
+  }
+
+  public LocalDate getFechaDeEntrega() {
+    return this.fechaDeEntrega;
   }
 
   public void setEstado(EstadoDonacion nuevoEstado) {
@@ -61,4 +67,7 @@ public class DonacionSegmentada {
     return estadoActual.getNombre();
   }
 
+  public Subcategoria getSucategoria() {
+    return subcategoria;
+  }
 }

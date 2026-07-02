@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.necesidad;
 
 import ar.edu.utn.frba.dds.Bienes.EstadoDonacion;
+import ar.edu.utn.frba.dds.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.EntidadBeneficiaria;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class Necesidad {
     return estado.equals("listo");
   }
 
-  public void agregarPeticiones(String subclase, int cantidad) {
+  public void agregarPeticiones(Subcategoria subclase, int cantidad) {
     Peticion p = new Peticion(subclase, cantidad);
     peticiones.add(p);
     //Voy aniadiendo a la lista de la necesidad las distintas peticiones de cosas que tengo

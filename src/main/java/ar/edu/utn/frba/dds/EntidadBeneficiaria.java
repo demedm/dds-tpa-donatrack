@@ -1,11 +1,14 @@
 package ar.edu.utn.frba.dds;
 
+import ar.edu.utn.frba.dds.Bienes.Donacion;
+import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
 import ar.edu.utn.frba.dds.necesidad.GestorNecesidades;
 import ar.edu.utn.frba.dds.necesidad.Necesidad;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EntidadBeneficiaria {
@@ -14,6 +17,9 @@ public class EntidadBeneficiaria {
   private String tipo;
   private List<Mail> mailsContacto;
   private Telefono telefono;
+  private List<DonacionSegmentada> donacionesRecibidas = new ArrayList<>();
+
+  private List<Necesidad> necesidades = new ArrayList<>();
 
   public EntidadBeneficiaria(String razon, String tipoEntidad,
                              Telefono telefonoOrganizacion,
@@ -25,6 +31,10 @@ public class EntidadBeneficiaria {
     this.telefono = telefonoOrganizacion;
     this.direccion = direccionEntidad;
     this.tipo = tipoEntidad; //escuelas rurales, comedores, espacios de tutoría de niños, entre otros
+  }
+
+  public List<DonacionSegmentada> getDonacionesRecibidas() {
+    return this.donacionesRecibidas;
   }
 
   public String getTipoEntidad() {
@@ -46,4 +56,8 @@ public class EntidadBeneficiaria {
     return necesidad;
   }
 */
+
+  public List<Necesidad> getNecesidades() {
+    return necesidades;
+  }
 }
