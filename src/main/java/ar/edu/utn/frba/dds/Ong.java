@@ -1,12 +1,14 @@
 package ar.edu.utn.frba.dds;
 
+import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import java.util.List;
 
 public class Ong extends Entidad {
-  List<Donante> historialDonantes;
+  private List<Donante> historialDonantes;
 
   public Ong(String razon, List<Mail> representantesMailList) {
-    super(razon, representantesMailList);
+    razonSocial = razon;
+    mailRepresentantes = representantesMailList;
   }
 
 }

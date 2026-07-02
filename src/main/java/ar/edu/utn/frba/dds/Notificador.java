@@ -1,10 +1,17 @@
 package ar.edu.utn.frba.dds;
 
+import ar.edu.utn.frba.dds.donantes.Persona;
+import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
+
+@Component
 public class Notificador {
+  public Notificacion enviarNotificacionA(Persona persona, String mensajeTexto) {
 
-  public Notificacion enviarNotificacionA(Entidad entidad, String mensajeTexto) {
+    MedioContacto destino = persona.getMedioPreferido();
 
-    MedioContacto destino = entidad.getTipoContactoParaNotificaciones();
+    if (destino == null) {
+      throw new IllegalStateException("El donante '" + persona.getNombreIdentificador() + "' no posee un medio de contacto preferido configurado.");
+    }
 
     Notificacion notificacion = new Notificacion(mensajeTexto);
 
@@ -14,4 +21,4 @@ public class Notificador {
   }
 }
 
-//corroborar si va a ser void o no, segun como se manejen los test
+
