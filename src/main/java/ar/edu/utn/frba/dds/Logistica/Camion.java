@@ -20,6 +20,30 @@ public class Camion {
     this.patente = patente;
   }
 
+  public String getPatente() { return this.patente; }
 
+  public boolean asignarRuta(Ruta ruta) {
+    if(estado == EstadoCamion.DISPONIBLE) {
+      this.rutaActual = ruta;
+      estado = EstadoCamion.RUTA_ASIGNADA;
+      return true;
+    }
+    return false;
+  }
+
+  public void iniciarRuta() {
+    estado = EstadoCamion.REALIZANDO_ENTREGAS;
+    rutaActual.iniciarRuta();
+  }
+
+  public void visitarDestino(String direccion) {
+    rutaActual.visitarParada(direccion);
+  }
+
+  public void regresarADeposito() {
+    estado = EstadoCamion.EN_DEPOSITO;
+    rutaActual.finalizarRuta();
+    estado = EstadoCamion.DISPONIBLE;
+  }
 
 }

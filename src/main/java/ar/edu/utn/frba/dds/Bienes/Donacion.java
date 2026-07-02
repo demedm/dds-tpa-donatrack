@@ -32,7 +32,7 @@ public class Donacion {
           return new DonacionSegmentada(
               grupo.size(),
               bienCriterio.subcategoria(),
-              grupo.getFirst()
+              grupo.stream().findFirst().orElse(null)
           );
         })
         .toList();

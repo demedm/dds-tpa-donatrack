@@ -7,17 +7,12 @@ import java.util.List;
 public class RutaComponenteExterno {
   private List<String> direcciones;
   private List<DonacionSegmentada> entregas;
+  private String patenteCamion;
 
-  public void setDirecciones(List<String> direcciones) {
-    this.direcciones = direcciones;
-  }
+  public List<String> getDirecciones() { return this.direcciones; }
 
-  public List<String> getDirecciones() { return direcciones; }
+  public List<DonacionSegmentada> getEntregas() { return this.entregas; }
 
-  public void setEntregas(List<DonacionSegmentada> entregas) {
-    this.entregas = entregas;
-  }
-
-  public List<DonacionSegmentada> getEntregas() { return entregas; }
+  public String getPatenteCamion() { return this.patenteCamion; }
 
 }
