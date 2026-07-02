@@ -10,9 +10,23 @@ public class Flota {
     this.allCamiones.addAll(camiones);
   }
 
+  // devuelve false si no se pudo asignar
+  public boolean asignarRutaACamion(Ruta ruta) {
+    var patenteCamion = ruta.getPatenteAsignada();
+    var camionAsignado = allCamiones.stream()
+        .filter(camion -> camion.getPatente() == patenteCamion)
+        .findFirst().orElse(null);
+
+    if(camionAsignado != null && camionAsignado.asignarRuta(ruta)) {
+      // notificar entidades que se inicio la ruta: pendiente
+      return true;
+    }
+    return false;
+  }
+
   public List<Ruta> asignarRutasACamiones(List<RutaComponenteExterno> rutasAsignadas) {
     List<Ruta> rutas = rutasAsignadas.stream().map(ruta ->
-        Ruta.rutaExternaToRuta(ruta)).toList();
+        new RutaAdapter().rutaExternaToRuta(ruta)).toList();
     List<Ruta> rutasNoAsignadas = new ArrayList<>();
 
     rutas.forEach(ruta -> {

@@ -12,22 +12,10 @@ public class Ruta {
     this.patenteAsignada = patenteCamion;
   }
 
-  public static Ruta rutaExternaToRuta(RutaComponenteExterno rutaExterna) {
-    List<Destino> listaDestinos = new ArrayList<>();
-    var listaDonaciones = rutaExterna.getEntregas();
-    var listaDirecciones = rutaExterna.getDirecciones();
-
-    for(int i = 0; i < listaDirecciones.size(); i++) {
-     var destino = new Destino(listaDirecciones.get(i),
-         listaDonaciones.get(i));
-     listaDestinos.add(destino);
-    }
-
-    return new Ruta(rutaExterna.getPatenteCamion(), listaDestinos);
-  }
-
   public void iniciarRuta() {
-    destinos.forEach(destino -> { destino.getDonacion().iniciarTraslado(); });
+    destinos.forEach(destino -> {
+      destino.getDonacion().iniciarTraslado();
+    });
   }
 
   public void visitarParada(String direccion) {
@@ -35,16 +23,22 @@ public class Ruta {
         .forEach(parada -> {
               parada.getDonacion().confirmarEntrega();
               parada.setVisitado(true);
+              // new Notificador().enviarNotificacionA(, "Su donación ha sido entregada");
             }
         );
   }
 
   public void finalizarRuta() {
     destinos.stream().filter(destino -> !destino.getVisitado())
-        .forEach(destino -> destino
-            .getDonacion().fallarEntrega("Regreso a depósito"));
+        .forEach(destino -> { destino
+              .getDonacion().fallarEntrega("Regreso a depósito");
+          // new Notificador().enviarNotificacionA(,
+          // "Su entrega no ha podido realizarse con exito");
+        });
   }
 
-  public String getPatenteAsignada() { return this.patenteAsignada; }
+  public String getPatenteAsignada() {
+    return this.patenteAsignada;
+  }
 
 }

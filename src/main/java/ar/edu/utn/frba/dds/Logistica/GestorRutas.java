@@ -5,10 +5,11 @@ import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepositorioRutas {
+public class GestorRutas {
   private PlanificacionRutas planificadorRutas;
   private Flota flota;
   private List<Ruta> rutasPendientesAsignar = new ArrayList<>();
+  private List<AccionesSobreRutas> accionesSobreRutas = new ArrayList<>();
 
   public void gestionarRutas(List<DonacionSegmentada> entregas) {
     this.planificadorRutas.solicitudPlanificacion(
@@ -17,10 +18,14 @@ public class RepositorioRutas {
   }
 
   public void recibirRespuesta(PlanificacionRutasResponse respuesta) {
-    // asignarRutas devuelve las que no pudieron asignarse
-    List<Ruta> rutasNoAsignadas = this.flota.asignarRutasACamiones(respuesta.getRutas());
-    this.rutasPendientesAsignar.addAll(rutasNoAsignadas); // !! REPLANIFICAR RUTAS NO ASIGNADAS (pendiente)
-
+    // !! REPLANIFICAR RUTAS NO ASIGNADAS (pendiente)
+    respuesta.getRutas().stream()
+        .map(RutaAdapter::rutaExternaToRuta)
+        .forEach(ruta -> {
+          boolean asignada = flota.asignarRutaACamion(ruta);
+          accionesSobreRutas.forEach(accion ->
+              accion.actualizarRuta(ruta, asignada));
+        });
   }
 
 }

@@ -41,7 +41,6 @@ public class Camion {
   }
 
   public void regresarADeposito() {
-    estado = EstadoCamion.EN_DEPOSITO;
     rutaActual.finalizarRuta();
     estado = EstadoCamion.DISPONIBLE;
   }
