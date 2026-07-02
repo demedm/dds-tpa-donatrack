@@ -1,32 +1,43 @@
 package ar.edu.utn.frba.dds;
 
+import ar.edu.utn.frba.dds.donantes.Persona;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 public class RegistroDonante {
-  public List<Donante> registroDonantes = new ArrayList<>();
+  private List<Persona> registroDonantes = new ArrayList<>();
+  private final Notificador notificador;
 
-  public void registrarDonante(Donante nuevoDonante) {
+  public RegistroDonante(Notificador notificador) {
+    this.notificador = notificador;
+  }
 
-    Donante existente = buscarPorEmail(nuevoDonante.getMailContacto().getMedioContacto());
+  public void registrarDonante(Persona nuevoDonante) {
 
-    if (existente != null) {
-      existente.actualizarInfo(nuevoDonante.getNombre(), nuevoDonante.getDocumento().toString(), nuevoDonante.getTelefonoContacto());
+    Optional<Persona> existente = buscarPorEmail(nuevoDonante.getMail().toString());
+
+    if (existente.isPresent()) {
+      existente.get().actualizarInfo(nuevoDonante);
       System.out.println("Donante actualizado");
+
     } else {
       registroDonantes.add(nuevoDonante);
-      System.out.println("Nuevo donante registrado");
+      notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
+
+          System.out.println("Nuevo donante registrado");
+
     }
   }
 
-  private Donante buscarPorEmail(String direccionMail) {
-    for (Donante donante : registroDonantes) {
-      if (Objects.equals(donante.getMailContacto().getMedioContacto(), direccionMail)) {
-        return donante;
-      }
-    }
-    return null;
+  public Optional<Persona> buscarPorEmail(String direccionMail) {
+    return registroDonantes.stream()
+        .filter(d -> d.getMail().getMedioContacto().equals(direccionMail))
+        .findFirst();
   }
 
+  public List<Persona> getRegistroDonantes() {
+    return registroDonantes;
+  }
 }

@@ -3,8 +3,8 @@ package ar.edu.utn.frba.dds.Bienes;
 public class BienDuradero extends ar.edu.utn.frba.dds.Bienes.Bien {
   private EstadoUso estado;
 
-  public BienDuradero(Subcategoria subCategoria, Integer cantidad, String foto, String descripcion, EstadoUso estado) {
-    super(subCategoria, cantidad, foto, descripcion);
+  public BienDuradero(Subcategoria subCategoria, String foto, String descripcion, EstadoUso estado) {
+    super(subCategoria, foto, descripcion);
     this.estado = estado;
   }
 

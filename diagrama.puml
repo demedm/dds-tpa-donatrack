@@ -1,0 +1,148 @@
+@startuml
+
+class Persona {}
+class PersonaFisica {}
+class PersonaJuridica {}
+class Ong {}
+class EntidadBeneficiaria {}
+interface MedioContacto {}
+class Mail {}
+class Mensaje {}
+class Telefono {}
+
+class RegistroDonante {}
+
+class ImporterDonantes {}
+class ImporterParser {}
+class ImporterScanner {}
+
+class Necesidad {}
+class GestorNecesidades {}
+class NecesidadExtraordinaria {}
+class NecesidadRecurrente {}
+
+abstract class Bien {
+  - descripcion: String
+  - foto: String
+  - cantidad: Integer
+  - subCategoria: Subcategoria
+  --
+  + {abstract} getCriterioSegmentacion(): Object
+  + getClaveAgrupacion(): Criterio
+}
+class BienPerecedero {
+  - fechaVencimiento: Date
+  --
+  + getCriterioSegmentacion(): Object
+}
+class BienDuradero {
+  - estado: EstadoUso
+  --
+  + getCriterioSegmentacion(): Object
+}
+record Criterio {
+  + subcategoria: Subcategoria
+  + criterio: Object
+}
+class Subcategoria {
+  - categoria: Categoria
+  - descripcion: String
+  --
+  + equals(): boolean
+  + hashCode(): int
+}
+class Categoria {
+  - nombre: String
+}
+class Donacion {
+  - descripcionGeneral: String
+  - donante: Donante
+  - donacionesSegmentadas: List<DonacionSegmentada>
+  --
+  - segmentar(bienes: List<Bien>): List<DonacionSegmentada>
+}
+class DonacionSegmentada {
+  - cantidad: int
+  - subcategoria: Subcategoria
+  - bienesFiltrados: List<Bien>
+  - estado: EstadoDonacion
+}
+enum EstadoUso {}
+enum EstadoDonacion {
+  EN_DEPOSITO
+  ASIGNACION_REALIZADA
+  LISTA_PARA_ENTREGAR
+  EN_TRASLADO
+  ENTREGADA
+  ENTREGA_FALLIDA
+  VENCIDA
+}
+enum EstadoUso {
+  NUEVO
+  USADO
+}
+
+class Notificacion {}
+class Notificador {}
+enum EstadoNotificacion {}
+
+class Camion {}
+enum EstadoCamion {
+    DISPONIBLE,
+    EN_MANTENIMIENTO,
+    REALIZANDO_ENTREGAS
+}
+class Flota {}
+class Ruta {}
+class RutaComponenteExterno {}
+class Destino {}
+interface PlanificadorRutaSend {}
+interface PlanificadorRutaResponse {}
+
+
+Persona <|-- PersonaJuridica
+Persona <|-- PersonaFisica
+PersonaJuridica <|-- Ong
+Persona ..> MedioContacto
+
+MedioContacto <|.. Mail
+MedioContacto <|.. Telefono
+MedioContacto <|.. Mensaje
+
+RegistroDonante --> Persona
+RegistroDonante ..> ImporterDonantes
+ImporterDonantes ..> ImporterScanner
+ImporterDonantes ..> ImporterParser
+
+RegistroDonante ..> Notificador
+Notificador --> Notificacion
+Notificacion --> EstadoNotificacion
+
+GestorNecesidades --> Necesidad
+Necesidad <|.. NecesidadExtraordinaria
+Necesidad <|.. NecesidadRecurrente
+EntidadBeneficiaria --> Necesidad
+GestorNecesidades --> EntidadBeneficiaria
+
+Bien <|-- BienPerecedero
+Bien <|-- BienDuradero
+
+Bien ..> Criterio : crea
+Criterio --> Subcategoria
+Subcategoria --> Categoria
+
+BienDuradero ..> EstadoUso
+
+Donacion *-- DonacionSegmentada : crea
+DonacionSegmentada ..> EstadoDonacion
+
+Flota --> Camion
+Camion --> Ruta
+Camion --> EstadoCamion
+Ruta --> Destino
+Destino --> DonacionSegmentada
+PlanificadorRutaResponse ..> RutaComponenteExterno
+Flota ..> PlanificadorRutaResponse
+Flota ..> PlanificadorRutaSend
+
+@enduml

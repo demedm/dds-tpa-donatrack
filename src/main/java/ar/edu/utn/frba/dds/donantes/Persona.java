@@ -14,11 +14,11 @@ public class Persona {
   private TipoPersona tipoPersona;
   MedioContacto medioPreferido;
 
-  public Persona(String nombre, Mail mail, Identificacion identificacion, TipoPersona tipo) {
-    this.nombreIdentificador = nombre;
+  public Persona(String nombreIdentificador, Mail mail, Identificacion identificacion, TipoPersona tipoPersona) {
+    this.nombreIdentificador = nombreIdentificador;
     this.mail = mail;
     this.identificacion = identificacion;
-    this.tipoPersona = tipo;
+    this.tipoPersona = tipoPersona;
     this.medioPreferido = mail; //por defecto
   }
 
@@ -34,10 +34,9 @@ public class Persona {
     this.telefono = telefono;
   }
 
-  public Telefono getTelefono() {
-    return telefono;
+  public Mail getMail() {
+    return mail;
   }
-
   public String getNombreIdentificador() {
     return nombreIdentificador;
   }
@@ -46,4 +45,8 @@ public class Persona {
     return identificacion.getNroDocumento();
   }
 
+  public void actualizarInfo(Persona nuevosDatos) {
+    this.nombreIdentificador = nuevosDatos.getNombreIdentificador();
+    this.identificacion.setNroDocumento(nuevosDatos.getNroIdentificacion());
+  }
 }

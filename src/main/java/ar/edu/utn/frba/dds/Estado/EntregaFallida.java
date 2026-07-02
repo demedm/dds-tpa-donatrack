@@ -1,38 +1,36 @@
 package ar.edu.utn.frba.dds.Estado;
 
-
-import ar.edu.utn.frba.dds.Bienes.Donacion;
-import ar.edu.utn.frba.dds.EstadoDonacion;
+import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 
 public class EntregaFallida implements EstadoDonacion {
   @Override
-  public void asignar(Donacion donacion) {
+  public void asignar(DonacionSegmentada donacion) {
 
   }
 
   @Override
-  public void planificarRuta(Donacion donacion) {
+  public void planificarRuta(DonacionSegmentada donacion) {
 
   }
 
   @Override
-  public void iniciarTraslado(Donacion donacion) {
+  public void iniciarTraslado(DonacionSegmentada donacion) {
 
   }
 
   @Override
-  public void confirmarEntrega(Donacion donacion) {
+  public void confirmarEntrega(DonacionSegmentada donacion) {
 
   }
 
   @Override
-  public void fallarEntrega(Donacion donacion, String justificacion) {
+  public void fallarEntrega(DonacionSegmentada donacion, String justificacion) {
     donacion.setJustificacionFallo(justificacion);
     donacion.setEstado(new EnDeposito()); // Retorna al depósito
   }
 
   @Override
-  public void vencer(Donacion donacion) {
+  public void vencer(DonacionSegmentada donacion) {
 
   }
 
