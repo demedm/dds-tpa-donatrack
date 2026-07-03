@@ -5,7 +5,6 @@ import ar.edu.utn.frba.dds.Bienes.Donacion;
 import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
-import ar.edu.utn.frba.dds.necesidad.GestorDonaciones;
 
 import java.time.LocalDate;
 import java.util.List;

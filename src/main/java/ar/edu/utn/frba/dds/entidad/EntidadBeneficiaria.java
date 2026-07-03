@@ -1,11 +1,9 @@
-package ar.edu.utn.frba.dds;
+package ar.edu.utn.frba.dds.entidad;
 
 import ar.edu.utn.frba.dds.api.dtos.EntidadBeneficiariaDTO;
 import ar.edu.utn.frba.dds.medioscontacto.Mail;
-import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
-import ar.edu.utn.frba.dds.necesidad.GestorNecesidades;
-import ar.edu.utn.frba.dds.necesidad.Necesidad;
+import ar.edu.utn.frba.dds.necesidad.NecesidadHandler.NecesidadHandler;
 
 import java.util.ArrayList;
 import java.util.List;

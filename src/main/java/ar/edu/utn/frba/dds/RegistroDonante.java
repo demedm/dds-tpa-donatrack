@@ -2,17 +2,17 @@ package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.donantes.Persona;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class RegistroDonante {
   private static List<Persona> registroDonantes = new ArrayList<>();
-  //private final Notificador notificador;
+  //private final Notificador notificador = new Notificador();
 
-  /*public RegistroDonante() {
-    this.notificador = notificador;
-  }*/
+  public RegistroDonante() {
+  }
 
   public static Persona registrarDonante(Persona nuevoDonante) {
     Optional<Persona> existente = buscarPorEmail(nuevoDonante.getMail().toString());
@@ -23,6 +23,10 @@ public class RegistroDonante {
       return existente.get();
     } else {
       registroDonantes.add(nuevoDonante);
+      //notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
+
+          System.out.println("Nuevo donante registrado");
+
       System.out.println("Nuevo donante registrado");
       return nuevoDonante;
     }
@@ -42,6 +46,13 @@ public class RegistroDonante {
   }
 
   public List<Persona> getDonantes() {
+  public List<Persona> buscarInactivosDesde(LocalDate fecha) {
+    // estoy implementando esto: pendiente
+    return null;
+  }
+
+  public List<Persona> getRegistroDonantes() {
     return registroDonantes;
   }
+
 }

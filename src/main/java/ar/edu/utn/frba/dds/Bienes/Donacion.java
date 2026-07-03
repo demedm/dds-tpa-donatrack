@@ -1,58 +1,66 @@
 package ar.edu.utn.frba.dds.Bienes;
 
+import ar.edu.utn.frba.dds.donantes.Persona;
+
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class Donacion {
   private String descripcionGeneral;
   private List<DonacionSegmentada> donacionesSegmentadas;
-  private Donante donante;
+  private Persona donante;
+  private String id;
 
-  public Donacion(String descripcionGeneral, List<ar.edu.utn.frba.dds.Bienes.Bien> bienes, Donante donante) {
+  public Donacion(String descripcionGeneral, List<Bien> bienes, Persona donante) {
     this.descripcionGeneral = descripcionGeneral;
     this.donacionesSegmentadas = this.segmentar(bienes);
     this.donante = donante;
   }
 
-
-  private List<DonacionSegmentada> segmentar(List<ar.edu.utn.frba.dds.Bienes.Bien> bienes) {
-    Map<Criterio, List<ar.edu.utn.frba.dds.Bienes.Bien>> agrupados = bienes.stream()
-            .collect(Collectors.groupingBy(ar.edu.utn.frba.dds.Bienes.Bien::getClaveAgrupacion));
-    return agrupados.entrySet().stream()
-            .map(entry -> new DonacionSegmentada(
-                    entry.getValue().size(), //
-                    entry.getKey().subcategoria(),
-                    entry.getValue(),
-                    entry.getValue().
-            ))
-            .collect(Collectors.toList());
+  public void agregarDonaciones(DonacionSegmentada donacionSegmentada){
+    donacionesSegmentadas.add(donacionSegmentada);
   }
+
+  public String getId() { return id; }
+
+  public void setId(String id) { this.id = id; }
+
+  public List<DonacionSegmentada> getDonaciones(){
+    return donacionesSegmentadas;
+  }
+
+  public void setDonacionesSegmentadas(List <DonacionSegmentada> donacionesSegmentadasAct){
+    donacionesSegmentadas = donacionesSegmentadasAct;
+  }
+
+
+  private List<DonacionSegmentada> segmentar(List<Bien> bienes) {
+
+    List<Criterio> bienesUnicos = bienes.stream()
+        .map(Bien::getCriterioDeAgrupacion)
+        .distinct()
+        .toList();
+
+    return bienesUnicos.stream()
+        .map(bienCriterio ->{
+          List<Bien> grupo = bienes.stream()
+              .filter(elemento -> elemento.getCriterioDeAgrupacion().equals(bienCriterio))
+              .toList();
+
+          return new DonacionSegmentada(
+              grupo.size(),
+              bienCriterio.subcategoria(),
+              grupo.stream().findFirst().orElse(null)
+          );
+        })
+        .toList();
+  }
+
 
 /*
-  public Donacion() {
-    this.estadoActual = new EnDeposito();
-  }
 
-  public void setEstado(EstadoDonacion nuevoEstado) {
-    this.estadoActual = nuevoEstado;
-    this.historialEstados.add(new RegistroCambioEstado(nuevoEstado.getNombre(), LocalDateTime.now()));
-  }
 
-  public void setJustificacionFallo(String justificacion) {
-    this.justificacionFallo = justificacion;
-  }
-  public List<RegistroCambioEstado> getHistorialEstados() {
-    return historialEstados;}
 
-  public void asignar() { estadoActual.asignar(this); }
-  public void planificarRuta() { estadoActual.planificarRuta(this); }
-  public void iniciarTraslado() { estadoActual.iniciarTraslado(this); }
-  public void confirmarEntrega() { estadoActual.confirmarEntrega(this); }
-  public void fallarEntrega(String justificacion) { estadoActual.fallarEntrega(this, justificacion); }
-  public void vencer() { estadoActual.vencer(this); }
-  public String getNombreEstado() { return estadoActual.getNombre(); }
 */
 
 

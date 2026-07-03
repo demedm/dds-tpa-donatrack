@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.importerdonantes;
 
+import ar.edu.utn.frba.dds.RegistroDonante;
 import ar.edu.utn.frba.dds.donantes.Identificacion;
 import ar.edu.utn.frba.dds.donantes.Persona;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 public class ImporterDonantes {
 
-  private List<Persona> registroDonantes = new ArrayList<>(); // registro de donantes importados
+  private RegistroDonante registroDonantes; // registro de donantes importados
   private ImporterParser parser;
   private ImporterScanner scanner;
 
@@ -22,7 +23,7 @@ public class ImporterDonantes {
     return scanner;
   }
 
-  public ImporterDonantes(List<Persona> registro) {
+  public ImporterDonantes(RegistroDonante registro) {
     this.registroDonantes = registro;
     this.scanner = new ImporterScanner();
     this.parser = new ImporterParser();
@@ -49,6 +50,7 @@ public class ImporterDonantes {
   public void importarDonantes(String filePath) {
     List<String[]> nuevosDatos = scanner.scanCSVFile(filePath);
     List<Persona> nuevosDonantes = parser.parseCSVcontent(nuevosDatos);
-    actualizarDonantes(nuevosDonantes);
+    nuevosDonantes.forEach(registroDonantes::registrarDonante);
   }
+
 }

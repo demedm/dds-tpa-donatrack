@@ -17,4 +17,7 @@ public class Identificacion {
     return tipo;
   }
 
+  public void setNroDocumento(String nroDocumento) {
+    this.nroDocumento = nroDocumento;
+  }
 }
