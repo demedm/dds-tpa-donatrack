@@ -23,6 +23,8 @@ public class Donacion {
 
   public String getId() { return id; }
 
+  public Persona getDonante(){ return donante;}
+
   public void setId(String id) { this.id = id; }
 
   public List<DonacionSegmentada> getDonaciones(){

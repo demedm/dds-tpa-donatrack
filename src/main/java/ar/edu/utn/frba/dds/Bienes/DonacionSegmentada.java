@@ -7,6 +7,7 @@ import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DonacionSegmentada {
@@ -24,6 +25,7 @@ public class DonacionSegmentada {
     this.subcategoria = subcategoria;
     this.bienFiltrado = bienFiltrado;
     this.estadoActual = new EnDeposito();
+    this.historialEstados = new ArrayList<>();
   }
 
   public LocalDate getFechaDeEntrega() {

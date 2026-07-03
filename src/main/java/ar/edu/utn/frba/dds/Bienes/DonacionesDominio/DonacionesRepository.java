@@ -2,7 +2,6 @@ package ar.edu.utn.frba.dds.Bienes.DonacionesDominio;
 
 import ar.edu.utn.frba.dds.Bienes.Bien;
 import ar.edu.utn.frba.dds.Bienes.Donacion;
-import ar.edu.utn.frba.dds.necesidad.ResultadoBusqueda;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 

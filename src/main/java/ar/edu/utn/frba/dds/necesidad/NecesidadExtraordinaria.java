@@ -1,10 +1,10 @@
-package ar.edu.utn.frba.dds.necesidad;
+// package ar.edu.utn.frba.dds.necesidad;
 
-import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
-import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
+// import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
+// import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 
-public class NecesidadExtraordinaria extends Necesidad {
-  public NecesidadExtraordinaria(EntidadBeneficiaria entidad, String descripcion) {
-    super(entidad, descripcion);
-  }
-}
+// public class NecesidadExtraordinaria extends Necesidad {
+//   public NecesidadExtraordinaria(EntidadBeneficiaria entidad, String descripcion) {
+//     super(entidad, descripcion);
+//   }
+// }

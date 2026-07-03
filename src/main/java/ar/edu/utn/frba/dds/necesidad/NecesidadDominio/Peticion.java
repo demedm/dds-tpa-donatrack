@@ -12,6 +12,10 @@ public class Peticion {
   private List<String> donacionesAsignados = new ArrayList<>();
 
 
+  public List<String> getDonacionesAsignadas() {
+    return this.donacionesAsignados;
+  }
+
   public Peticion(String subclase, int cantidad) {
     this.subclase = subclase;
     this.cantidadRequerida = cantidad;

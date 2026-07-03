@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.necesidad.NecesidadRecurrente;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
+import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.NecesidadRecurrente;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.NecesidadRepository;
 
 import org.junit.jupiter.api.BeforeEach;

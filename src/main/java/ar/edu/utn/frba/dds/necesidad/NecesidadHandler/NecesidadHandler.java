@@ -14,7 +14,7 @@ public class NecesidadHandler {
         this.entidadRepository = entidadRepository;
     }
 
-    public Necesidad crearNecesidad(String entidadId, String descripcion){
+    public Necesidad crearNecesidad(String entidadId, String descripcion, Integer diasAVencer){
     //Validadciones
 
         if (entidadId==null || entidadId.isEmpty()) {
@@ -27,9 +27,15 @@ public class NecesidadHandler {
         throw new IllegalArgumentException("La entidad ingresada no existe");
         }
 
-        Necesidad necesidad = new Necesidad (entidad,descripcion);
+        Necesidad necesidad;
 
-        necesidad.setDependencias(necesidadRepository,entidadRepository);
+        if (diasAVencer != null) {
+            // Es recurrente
+            necesidad = new NecesidadRecurrente(entidadId, descripcion, diasAVencer);
+        } else {
+            // Es extraordinaria
+            necesidad = new Necesidad(entidadId, descripcion);
+        }
 
         return this.necesidadRepository.agregarNecesidad(necesidad);
         }

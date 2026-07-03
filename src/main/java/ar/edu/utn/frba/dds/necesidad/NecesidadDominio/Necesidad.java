@@ -7,13 +7,15 @@ import java.util.List;
 
 public class Necesidad {
   private String id;
-  private String estado = "preparacion";
+  private String estado = "en_preparacion";
   private String descripcion;
-  private EntidadBeneficiaria entidad;
+  private String entidadId;
   public List<Peticion> peticiones = new ArrayList<>();
+  private List<String> idDonantesParticipantes = new ArrayList<>();
 
-  public Necesidad(EntidadBeneficiaria entidad, String descripcion){
-    this.entidad=entidad;
+
+  public Necesidad(String entidadId, String descripcion){
+    this.entidadId=entidadId;
     this.descripcion =descripcion;
   }
 
@@ -25,13 +27,41 @@ public class Necesidad {
   
   public void setId(String id) { this.id = id; }
 
-  public String getEstado() {return this.estado;}
-
   public List<Peticion> getPeticiones() {return this.peticiones;}
 
   public void setPeticiones(List <Peticion> peticiones){
     this.peticiones = peticiones;
   }
+
+  public List<String> obtenerDonantesUnicos() {
+    return this.peticiones.stream()
+        .flatMap(p -> p.getDonacionesAsignadas().stream())
+        .distinct()
+        .toList();
+  }
+
+  public List<String> getIdDonantesParticipantes() {
+    return this.idDonantesParticipantes;
+  }
+
+  public void actualizarEstado() {
+    if (this.peticiones.isEmpty()) {
+      this.estado = "en_preparacion";
+      return;
+    }
+    
+    boolean todasCubiertas = this.peticiones.stream()
+        .allMatch(p -> p.estaCubierta());
+    
+    if (todasCubiertas) {
+      this.estado = "cubierta";  
+    } else {
+      this.estado = "parcialmente_cubierta";
+    }
+  }
+
+  public String getEstado() { return this.estado; }
+  public void setEstado(String estado) { this.estado = estado; }
 
   // public boolean estaCubierta() {
   //       if (this.peticiones.isEmpty()) return false;

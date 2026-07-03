@@ -1,8 +1,13 @@
 package ar.edu.utn.frba.dds.Bienes.DonacionesHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ar.edu.utn.frba.dds.Notificador;
 import ar.edu.utn.frba.dds.Bienes.Donacion;
 import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 import ar.edu.utn.frba.dds.Bienes.DonacionesDominio.DonacionesRepository;
+import ar.edu.utn.frba.dds.Estado.AsignacionRealizada;
 import ar.edu.utn.frba.dds.entidad.EntidadFunciones;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.NecesidadRepository;
@@ -39,8 +44,10 @@ public class DonacionesHandler {
 
             String subcategoriaRequerida = peticion.getSubclase();
             Integer cantidadNecesitada = peticion.getCantidadNecesitada();
+            List<DonacionSegmentada> donacionesCopia = new ArrayList<>(donacion.getDonaciones());  // ← COPIA
 
-            for(DonacionSegmentada donacionSegmentada : donacion.getDonaciones()){
+
+            for(DonacionSegmentada donacionSegmentada : donacionesCopia){
                 if(!donacionSegmentada.estaAlmacen()||donacionSegmentada.getCantidad()==0){
                     continue;
                 }
@@ -74,6 +81,8 @@ public class DonacionesHandler {
                 peticion.agregarCantidadRecibida(cantidadAAsignar,idDonacion);
                 cantidadNecesitada -= cantidadAAsignar;
 
+                new Notificador().enviarNotificacionA(donacion.getDonante(), "Su donacion fue asignada");
+
                 //Si ya la cubri, entonces dejo el bucle
 
                 if(cantidadNecesitada<=0){
@@ -85,6 +94,8 @@ public class DonacionesHandler {
                 }
         }
 
+        this.necesidadRepository.actualizar(necesidad);
+        necesidad.actualizarEstado();
         this.necesidadRepository.actualizar(necesidad);
     }
 }
