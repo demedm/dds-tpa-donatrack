@@ -2,7 +2,9 @@ package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.donantes.Persona;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Notificador {
   public Notificacion enviarNotificacionA(Persona persona, String mensajeTexto) {
 

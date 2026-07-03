@@ -2,7 +2,7 @@ package ar.edu.utn.frba.dds.necesidad;
 
 import ar.edu.utn.frba.dds.Bienes.Bien;
 import ar.edu.utn.frba.dds.Bienes.Donacion;
-import ar.edu.utn.frba.dds.Bienes.EstadoDonacion;
+import ar.edu.utn.frba.dds.Estado.EstadoDonacion;
 
 import java.util.ArrayList;
 import java.util.List;

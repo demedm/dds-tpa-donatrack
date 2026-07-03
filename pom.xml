@@ -5,6 +5,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.2.5</version>
+    <relativePath/>
+  </parent>
+
   <groupId>ar.edu.utn.frba.dds</groupId>
   <artifactId>ejercicio</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -16,14 +23,37 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <java.version>17</java.version>
+    <twilio.version>9.14.0</twilio.version>
   </properties>
 
   <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-        <version>2.7.18</version>
-      </dependency>
+    <!-- Spring Boot base (incluye @Scheduled, @Async, @Service, etc.) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- JavaMail (Email real) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
+    <!-- Twilio (SMS + WhatsApp real) -->
+    <dependency>
+      <groupId>com.twilio.sdk</groupId>
+      <artifactId>twilio</artifactId>
+      <version>${twilio.version}</version>
+    </dependency>
+
+    <!-- Tests: JUnit 5 + Mockito (incluido en spring-boot-starter-test) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -36,11 +66,14 @@
       <artifactId>opencsv</artifactId>
       <version>5.9</version>
     </dependency>
-
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

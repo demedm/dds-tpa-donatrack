@@ -1,0 +1,36 @@
+@startuml Diagrama de Despliegue
+
+title Diagrama de Despliegue – DonaTrack (Esencial)
+
+' == DISPOSITIVOS CLIENTE ==
+node "Dispositivo Usuario" as cliente <<Servicio>> #f0f4ff {
+    component "Navegador Web" as nav
+}
+
+' == SERVIDOR PRINCIPAL ==
+node "Servidor de Aplicación" as serverBackend <<Ambiente de ejecucion>> #fff8ec {
+    artifact "donatrack-backend.jar" as app
+}
+
+' == BASE DE DATOS ==
+node "Servidor de Base de Datos" as serverBD <<Ambiente de ejecucion>> #eaf4ea {
+    database "PostgreSQL (donatrack_db)" as db
+}
+
+' == EXTERNOS ==
+node "Servicios Externos (Simulados)" as externos <<Sistema externo>> #fdeef5 {
+    component "APIs de Notificación\n(Email / WhatsApp)" as notif
+}
+
+' == CONEXIONES ==
+nav ..> app : HTTPS / REST
+app ..> db : JDBC / SQL
+app ..> notif : HTTP (Simulado)
+
+legend left
+  <b>Notas:</b>
+  • Arquitectura básica de 3 capas.
+  • Los servicios de notificación se encuentran simulados en el código de esta entrega.
+end legend
+
+@enduml
