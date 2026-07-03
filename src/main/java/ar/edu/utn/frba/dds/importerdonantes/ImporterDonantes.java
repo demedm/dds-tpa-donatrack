@@ -1,13 +1,9 @@
 package ar.edu.utn.frba.dds.importerdonantes;
 
-import ar.edu.utn.frba.dds.RegistroDonante;
-import ar.edu.utn.frba.dds.donantes.Identificacion;
+import ar.edu.utn.frba.dds.api.repository.RegistroDonante;
 import ar.edu.utn.frba.dds.donantes.Persona;
-import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ImporterDonantes {
 
@@ -29,7 +25,7 @@ public class ImporterDonantes {
     this.parser = new ImporterParser();
   }
 
-  // info basica de contacto: documento, nombre, email, telefono
+ /* // info basica de contacto: documento, nombre, email, telefono
   public void actualizarDonantes(List<Persona> donantes) {
     boolean actualizado = false;
     registroImportados.forEach(persona -> {
@@ -37,7 +33,7 @@ public class ImporterDonantes {
           esMismaPersona(p, persona))
           .forEach(pActualizar -> actualizarPersona(pActualizar, persona));
       });
-  }
+  }*/
 
   private boolean esMismaPersona(Persona persona, Persona persona2) {
     return persona.getNroIdentificacion() == persona2.getNroIdentificacion();

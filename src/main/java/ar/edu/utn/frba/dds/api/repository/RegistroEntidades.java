@@ -1,6 +1,7 @@
-package ar.edu.utn.frba.dds;
+package ar.edu.utn.frba.dds.api.repository;
 
 import ar.edu.utn.frba.dds.api.dtos.EntidadBeneficiariaDTO;
+import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 
 import java.util.ArrayList;
 import java.util.List;

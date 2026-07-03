@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds;
+package ar.edu.utn.frba.dds.api.repository;
 
 import ar.edu.utn.frba.dds.donantes.Persona;
 
@@ -45,7 +45,6 @@ public class RegistroDonante {
     existente.actualizarDatosDonantes(nuevaInfo);
   }
 
-  public List<Persona> getDonantes() {
   public List<Persona> buscarInactivosDesde(LocalDate fecha) {
     // estoy implementando esto: pendiente
     return null;

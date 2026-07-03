@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.api.controllers;
 
-import ar.edu.utn.frba.dds.EntidadBeneficiaria;
-import ar.edu.utn.frba.dds.RegistroEntidades;
+import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
+import ar.edu.utn.frba.dds.api.repository.RegistroEntidades;
 import ar.edu.utn.frba.dds.api.dtos.EntidadBeneficiariaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/entidades")
@@ -27,23 +28,30 @@ public class EntidadBeneficiariaController {
 
   @GetMapping("/{razonSocial}")
   public ResponseEntity<EntidadBeneficiaria> obtenerEntidad(@PathVariable String razonSocial) {
-    return RegistroEntidades.buscarPorRazonSocial(razonSocial)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+
+    Optional<EntidadBeneficiaria> entidad = RegistroEntidades.buscarPorRazonSocial(razonSocial);
+
+    if (entidad.isPresent()) {
+      return ResponseEntity.ok(entidad.get());
+    }
+    return ResponseEntity.notFound().build();
+
   }
 
   @PostMapping
   public ResponseEntity<EntidadBeneficiaria> crearEntidad(@RequestBody EntidadBeneficiariaDTO dto) {
     EntidadBeneficiaria entidad = dto.convertirDtoAObjeto();
+
     RegistroEntidades.registrar(entidad);
     return ResponseEntity.status(HttpStatus.CREATED).body(entidad);
   }
 
   @PutMapping("/{razonSocial}")
   public ResponseEntity<Void> actualizarEntidad(@PathVariable String razonSocial, @RequestBody EntidadBeneficiariaDTO dto) {
-    try {
+    try{
       RegistroEntidades.actualizarRazonSocial(razonSocial, dto);
       return ResponseEntity.ok().build();
+
     } catch (RuntimeException e) {
       return ResponseEntity.notFound().build();
     }
@@ -52,8 +60,10 @@ public class EntidadBeneficiariaController {
   @DeleteMapping("/{razonSocial}")
   public ResponseEntity<Void> eliminarEntidad(@PathVariable String razonSocial) {
     try {
+
       RegistroEntidades.eliminarRazonSocial(razonSocial);
       return ResponseEntity.ok().build();
+
     } catch (RuntimeException e) {
       return ResponseEntity.notFound().build();
     }

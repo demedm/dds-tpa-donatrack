@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.necesidad;
 
 import ar.edu.utn.frba.dds.EventoNotificacionService;
-import ar.edu.utn.frba.dds.RegistroDonante;
+import ar.edu.utn.frba.dds.api.repository.RegistroDonante;
 import ar.edu.utn.frba.dds.donantes.Persona;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

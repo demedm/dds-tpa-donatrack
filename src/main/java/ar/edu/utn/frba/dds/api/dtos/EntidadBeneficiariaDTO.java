@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.api.dtos;
 
-import ar.edu.utn.frba.dds.EntidadBeneficiaria;
+import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
 
@@ -15,12 +15,7 @@ public class EntidadBeneficiariaDTO {
   public String telefono;
 
   public EntidadBeneficiaria convertirDtoAObjeto() {
-    return new EntidadBeneficiaria(
-        razonSocial,
-        tipo,
-        new Telefono(telefono),
-        mails.stream().map(Mail::new).collect(Collectors.toList()),
-        direccion
-    );
+
+    return new EntidadBeneficiaria(razonSocial, tipo, new Telefono(telefono), mails.stream().map(Mail::new).collect(Collectors.toList()), direccion);
   }
 }

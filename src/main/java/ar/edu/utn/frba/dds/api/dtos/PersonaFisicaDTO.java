@@ -15,15 +15,8 @@ public class PersonaFisicaDTO {
   public Genero genero;
   public String direccion;
 
-  public PersonaFisica toDomain() {
-    return new PersonaFisica(
-        new Mail(mail),
-        nombre,
-        new Identificacion(tipoDocumento, nroDocumento),
-        null,
-        edad,
-        genero,
-        direccion
-    );
+  public PersonaFisica convertirDtoAObjeto() {
+
+    return new PersonaFisica(new Mail(mail), nombre, new Identificacion(tipoDocumento, nroDocumento), null, edad, genero, direccion);
   }
 }

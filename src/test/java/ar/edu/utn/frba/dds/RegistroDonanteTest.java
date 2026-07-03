@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds;
 
+import ar.edu.utn.frba.dds.api.repository.RegistroDonante;
 import ar.edu.utn.frba.dds.donantes.Genero;
 import ar.edu.utn.frba.dds.donantes.Identificacion;
 import ar.edu.utn.frba.dds.donantes.PersonaFisica;

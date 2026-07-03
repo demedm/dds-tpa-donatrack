@@ -13,13 +13,7 @@ public class PersonaJuridicaDTO {
   public TipoEntidadJuridica tipoEntidad;
   public String rubro;
 
-  public PersonaJuridica toDomain() {
-    return new PersonaJuridica(
-        razonSocial,
-        new Mail(mail),
-        tipoEntidad,
-        new Identificacion(TipoDocumento.CUIT, cuit),
-        rubro
-    );
+  public PersonaJuridica convertirDtoAObjeto() {
+    return new PersonaJuridica(razonSocial, new Mail(mail), tipoEntidad, new Identificacion(TipoDocumento.CUIT, cuit), rubro);
   }
 }

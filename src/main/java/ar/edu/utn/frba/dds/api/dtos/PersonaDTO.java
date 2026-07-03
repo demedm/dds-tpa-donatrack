@@ -7,9 +7,11 @@ public class PersonaDTO {
   public String nombre;
   public String telefono;
 
-  public Persona toDomain() {
+  public Persona convertirDtoAObjeto() {
+
     Persona persona = new Persona(nombre, null, null, null);
     persona.setTelefono(new Telefono(telefono));
+
     return persona;
   }
 }
