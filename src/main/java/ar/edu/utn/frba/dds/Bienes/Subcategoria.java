@@ -22,4 +22,8 @@ public class Subcategoria {
   public int hashCode() {
     return Objects.hash(categoria, descripcion);
   }
+
+  public String getDescripcion() {
+    return this.descripcion;
+  }
 }
