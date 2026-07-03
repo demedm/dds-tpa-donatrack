@@ -11,14 +11,27 @@ public class GestorRutas {
   private List<Ruta> rutasPendientesAsignar = new ArrayList<>();
   private List<AccionesSobreRutas> accionesSobreRutas = new ArrayList<>();
 
-  public void gestionarRutas(List<DonacionSegmentada> entregas) {
-    this.planificadorRutas.solicitudPlanificacion(
-        entregas, this.flota.getCamionesDisponibles());
+  private List<DonacionSegmentada> donacionesSinAsignar = new ArrayList<>();
 
+  public void gestionarRutas(List<DonacionSegmentada> entregas) {
+    int tamanioLote = 100;
+
+    for (int i = 0; i < entregas.size(); i += tamanioLote) {
+      List<DonacionSegmentada> lote = entregas.subList(i, Math.min(i + tamanioLote, entregas.size()));
+
+      this.planificadorRutas.solicitudPlanificacion(
+          lote, this.flota.getCamionesDisponibles()
+      );
+    }
   }
 
   public void recibirRespuesta(PlanificacionRutasResponse respuesta) {
-    // !! REPLANIFICAR RUTAS NO ASIGNADAS (pendiente)
+
+    if (respuesta.getDonacionesSinAsignar() != null) {
+      this.donacionesSinAsignar.addAll(respuesta.getDonacionesSinAsignar());
+
+    }
+
     respuesta.getRutas().stream()
         .map(RutaAdapter::rutaExternaToRuta)
         .forEach(ruta -> {
@@ -28,4 +41,7 @@ public class GestorRutas {
         });
   }
 
+  public List<DonacionSegmentada> getDonacionesSinAsignar() {
+    return donacionesSinAsignar;
+  }
 }

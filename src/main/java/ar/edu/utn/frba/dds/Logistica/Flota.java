@@ -23,7 +23,12 @@ public class Flota {
     }
     return false;
   }
-
+  public Camion buscarCamionPorPatente(String patente) {
+    return this.allCamiones.stream()
+        .filter(camion -> camion.getPatente().equals(patente))
+        .findFirst()
+        .orElse(null);
+  }
   public List<Ruta> asignarRutasACamiones(List<RutaComponenteExterno> rutasAsignadas) {
     List<Ruta> rutas = rutasAsignadas.stream().map(ruta ->
         new RutaAdapter().rutaExternaToRuta(ruta)).toList();
@@ -41,7 +46,10 @@ public class Flota {
     });
     return rutasNoAsignadas;
   }
-
+  // Asumiendo que tu lista se llama "camiones". Si se llama distinto (ej: "listaCamiones"), cambialo en el return.
+  public List<Camion> getCamiones() {
+    return this.allCamiones;
+  }
   public List<Camion> getCamionesDisponibles() {
     List<Camion> camionesDisponibles = this.allCamiones.stream().filter(camion ->
         camion.getEstado().equals(EstadoCamion.DISPONIBLE)).toList();

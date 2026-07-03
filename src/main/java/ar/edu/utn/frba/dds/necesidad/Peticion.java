@@ -1,6 +1,9 @@
 package ar.edu.utn.frba.dds.necesidad;
 
 import ar.edu.utn.frba.dds.Bienes.Bien;
+import ar.edu.utn.frba.dds.Bienes.Donacion;
+import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +11,7 @@ import java.util.List;
 public class Peticion {
   private String subclase;
   private int cantidad;
-  private List<Bien> bienesAsignados = new ArrayList<>();
+  private List<DonacionSegmentada> donacionesAsignadas = new ArrayList<>();
 
 
   public Peticion(String subclase, int cantidad) {
@@ -28,11 +31,11 @@ public class Peticion {
     this.cantidad = cantidad;
   }
 
-  public void agregarBienesAsignados(List<Bien> bienes) {
-    bienesAsignados.addAll(bienes);
+  public void agregarDonacionesAsignadas(List<DonacionSegmentada> donaciones) {
+    this.donacionesAsignadas.addAll(donaciones);
   }
 
-  public List<Bien> getBienesAsignados() {
-    return bienesAsignados;
+  public List<DonacionSegmentada> getDonacionesAsignadas() {
+    return donacionesAsignadas;
   }
 }
