@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.necesidad;
 
 import ar.edu.utn.frba.dds.Bienes.Bien;
 import ar.edu.utn.frba.dds.Bienes.Donacion;
+import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 import ar.edu.utn.frba.dds.Estado.EstadoDonacion;
 
 import java.util.ArrayList;
@@ -9,9 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GestorDonaciones {
-  public List<Donacion> donaciones = new ArrayList<>();
+  public List<DonacionSegmentada> donaciones = new ArrayList<>();
 
-  public void agregarDonacion(Donacion donacion){
+  public void agregarDonacion(DonacionSegmentada donacion){
     donaciones.add(donacion);
   }
 

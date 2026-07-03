@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.medioscontacto;
 
 import ar.edu.utn.frba.dds.Notificacion;
+import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
@@ -52,7 +53,12 @@ public class Mail implements MedioContacto {
     props.put("mail.smtp.host",            host);
     props.put("mail.smtp.port",            port);
 
-    Session session = Session.getInstance(props, new PasswordAuthentication(username, password) { });
+    Session session = Session.getInstance(props, new Authenticator() {
+      @Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(username, password);
+      }
+    });
 
     Message message = new MimeMessage(session);
     message.setFrom(new InternetAddress(from));

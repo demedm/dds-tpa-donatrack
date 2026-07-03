@@ -1,7 +1,8 @@
 package ar.edu.utn.frba.dds.necesidad;
 
+import ar.edu.utn.frba.dds.EventoNotificacionService;
 import ar.edu.utn.frba.dds.RegistroDonante;
-import ar.edu.utn.frba.dds.donantes.Donante;
+import ar.edu.utn.frba.dds.donantes.Persona;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +52,7 @@ public class InactividadDonantesScheduler {
 
     LocalDate limiteInactividad = LocalDate.now().minusDays(diasInactividad);
 
-    List<Donante> inactivos = registroDonante.buscarInactivosDesde(limiteInactividad);
+    List<Persona> inactivos = registroDonante.buscarInactivosDesde(limiteInactividad);
 
     if (inactivos.isEmpty()) {
       log.info("[SCHEDULER] No hay donantes inactivos para notificar.");
@@ -61,7 +62,7 @@ public class InactividadDonantesScheduler {
     int enviadas = 0;
     int fallidas = 0;
 
-    for (Donante donante : inactivos) {
+    for (Persona donante : inactivos) {
       try {
         eventoService.notificarInactividadDonante(donante);
         enviadas++;
