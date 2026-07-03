@@ -4,8 +4,6 @@ import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
 
-import java.util.Objects;
-
 public class Persona {
   private String nombreIdentificador; // nombre completo - razon social
   private Mail mail;
@@ -46,4 +44,16 @@ public class Persona {
     return identificacion.getNroDocumento();
   }
 
+  public Mail getMail() {
+    return mail;
+  }
+
+  public void actualizarDatosDonantes(Persona nuevaInfo) {
+    if (nuevaInfo.getNombreIdentificador() != null) {
+      this.nombreIdentificador = nuevaInfo.getNombreIdentificador();
+    }
+    if (nuevaInfo.getTelefono() != null) {
+      this.telefono = nuevaInfo.getTelefono();
+    }
+  }
 }

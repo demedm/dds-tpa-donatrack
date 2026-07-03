@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: donatrack-notificaciones
+
+  # Mailtrap sandbox (desarrollo) — reemplazar por SMTP real en producción
+  mail:
+    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    port: ${MAIL_PORT:2525}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# Twilio
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  from-phone: ${TWILIO_FROM_PHONE}
+  whatsapp-from: ${TWILIO_WA_FROM}
+
+# Configuración del scheduler de inactividad
+notificaciones:
+  inactividad-dias: 20

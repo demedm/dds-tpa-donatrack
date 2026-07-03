@@ -29,7 +29,7 @@ public class ImporterDonantes {
   }
 
   // info basica de contacto: documento, nombre, email, telefono
-  public void actualizarDonantes(List<Persona> registroImportados) {
+  public void actualizarDonantes(List<Persona> donantes) {
     boolean actualizado = false;
     registroImportados.forEach(persona -> {
       registroDonantes.stream().filter(p ->
