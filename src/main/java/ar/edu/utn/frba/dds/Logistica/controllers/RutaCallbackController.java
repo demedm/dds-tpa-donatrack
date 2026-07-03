@@ -1,4 +1,5 @@
-package ar.edu.utn.frba.dds.Logistica;
+package ar.edu.utn.frba.dds.Logistica.controllers;
+import ar.edu.utn.frba.dds.Logistica.GestorRutas;
 import  ar.edu.utn.frba.dds.Logistica.PlanificacionRutasResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

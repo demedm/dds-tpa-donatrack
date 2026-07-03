@@ -32,6 +32,11 @@ public class EntidadBeneficiaria {
   public String getDireccion() {
     return direccion;
   }
+
+  public List<Mail> getMailsContacto() {
+    return this.mailsContacto;
+  }
+
 /*
   public Necesidad crearNecesidad(GestorNecesidades gestor) {
     Necesidad necesidad = new Necesidad(this);

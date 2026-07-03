@@ -61,7 +61,7 @@ public class ImporterTest {
 
   @BeforeEach
   void initImporter() {
-    importer = new ImporterDonantes(registroPrevio);
+    importer = new ImporterDonantes();
   }
 
   @Test
@@ -75,9 +75,31 @@ public class ImporterTest {
     assertEquals(filas.size(), 2001);
   }
 
+  /*
   @Test
-  public void actualizaCorrectamente() {
+  void parseaCorrectamenteUnaFila() {
+      List<String[]> filas = List.of(
+          new String[]{
+              "PERSONA HUMANA",
+              "DNI",
+              "12345678",
+              "Juan Perez",
+              "juan@gmail.com",
+              "+54 11 4444-4444"
+          }
+      );
 
+      List<Persona> personas = importer.getParser().parseCSVcontent(filas);
+
+      assertEquals(1, personas.size());
+
+      Persona persona = personas.getFirst();
+
+      assertEquals("Juan Perez", persona.getNombre());
+      assertEquals(TipoPersona.FISICA, persona.getTipoPersona());
+      assertEquals(TipoDocumento.DNI, persona.getIdentificacion().getTipo());
+      assertEquals("12345678", persona.getIdentificacion().getNumero());
   }
+  */
 
 }

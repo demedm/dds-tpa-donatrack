@@ -23,6 +23,7 @@ public class ImporterParser {
           Mail mail = new Mail(fila[4]);
           Telefono telefono = new Telefono(fila[5]);
           Persona persona = new Persona(fila[3], mail, id, tipo);
+          persona.setTelefono(telefono);
           personas.add(persona);
         }
       );

@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.donantes.Persona;
+import ar.edu.utn.frba.dds.importerdonantes.ImporterDonantes;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ public class RegistroDonante {
           System.out.println("Nuevo donante registrado");
 
     }
+  }
+
+  public void importarDonantesDesdeCSVFile(String filePath) {
+    new ImporterDonantes().importarDonantes(filePath, this);
   }
 
   public Optional<Persona> buscarPorEmail(String direccionMail) {

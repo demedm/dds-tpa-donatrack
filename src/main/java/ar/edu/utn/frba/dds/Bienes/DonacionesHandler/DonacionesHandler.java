@@ -3,20 +3,17 @@ package ar.edu.utn.frba.dds.Bienes.DonacionesHandler;
 import ar.edu.utn.frba.dds.Bienes.Donacion;
 import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 import ar.edu.utn.frba.dds.Bienes.DonacionesDominio.DonacionesRepository;
-import ar.edu.utn.frba.dds.entidad.EntidadRepository;
-import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
-import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.NecesidadRepository;
-import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Peticion;
+import ar.edu.utn.frba.dds.entidad.EntidadFunciones;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.NecesidadRepository;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Peticion;
 
 public class DonacionesHandler {
     private DonacionesRepository donacionesRepository;
-    private EntidadRepository entidadRepository;
+    private EntidadFunciones entidadRepository;
     private NecesidadRepository necesidadRepository;
 
-    public DonacionesHandler(DonacionesRepository donacionesRepository,EntidadRepository entidadRepository,NecesidadRepository necesidadRepository) {
+    public DonacionesHandler(DonacionesRepository donacionesRepository, EntidadFunciones entidadRepository, NecesidadRepository necesidadRepository) {
         this.donacionesRepository = donacionesRepository;
         this.entidadRepository = entidadRepository;
         this.necesidadRepository = necesidadRepository;

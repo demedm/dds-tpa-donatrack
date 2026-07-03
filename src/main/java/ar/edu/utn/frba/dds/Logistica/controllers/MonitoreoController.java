@@ -1,5 +1,8 @@
-package ar.edu.utn.frba.dds.Logistica;
+package ar.edu.utn.frba.dds.Logistica.controllers;
 
+import ar.edu.utn.frba.dds.Logistica.Camion;
+import ar.edu.utn.frba.dds.Logistica.CamionDashboardDTO;
+import ar.edu.utn.frba.dds.Logistica.TelemetriaDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ar.edu.utn.frba.dds.Logistica.Flota;

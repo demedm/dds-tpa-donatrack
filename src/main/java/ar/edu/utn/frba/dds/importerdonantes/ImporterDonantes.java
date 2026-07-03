@@ -10,29 +10,21 @@ import java.util.List;
 import java.util.Objects;
 
 public class ImporterDonantes {
+  private ImporterParser parser = new ImporterParser();
+  private ImporterScanner scanner = new ImporterScanner();
 
-  private RegistroDonante registroDonantes; // registro de donantes importados
-  private ImporterParser parser;
-  private ImporterScanner scanner;
-
-  public ImporterParser getParser() {
-    return parser;
-  }
-
-  public ImporterScanner getScanner() {
-    return scanner;
-  }
-
-  public ImporterDonantes(RegistroDonante registro) {
-    this.registroDonantes = registro;
-    this.scanner = new ImporterScanner();
-    this.parser = new ImporterParser();
-  }
-
-  public void importarDonantes(String filePath) {
+  public void importarDonantes(String filePath, RegistroDonante registroDonantes) {
     List<String[]> nuevosDatos = scanner.scanCSVFile(filePath);
     List<Persona> nuevosDonantes = parser.parseCSVcontent(nuevosDatos);
     nuevosDonantes.forEach(registroDonantes::registrarDonante);
+  }
+
+  public ImporterParser getParser() {
+    return this.parser;
+  }
+
+  public ImporterScanner getScanner() {
+    return this.scanner;
   }
 
 }
