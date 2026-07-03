@@ -1,13 +1,13 @@
 package ar.edu.utn.frba.dds.importerdonantes;
 
-import ar.edu.utn.frba.dds.api.repository.RegistroDonante;
+import ar.edu.utn.frba.dds.api.repository.DonanteRepository;
 import ar.edu.utn.frba.dds.donantes.Persona;
 
 import java.util.List;
 
 public class ImporterDonantes {
 
-  private RegistroDonante registroDonantes; // registro de donantes importados
+  private DonanteRepository donantesRepository; // registro de donantes importados
   private ImporterParser parser;
   private ImporterScanner scanner;
 
@@ -19,8 +19,8 @@ public class ImporterDonantes {
     return scanner;
   }
 
-  public ImporterDonantes(RegistroDonante registro) {
-    this.registroDonantes = registro;
+  public ImporterDonantes(DonanteRepository registro) {
+    this.donantesRepository = registro;
     this.scanner = new ImporterScanner();
     this.parser = new ImporterParser();
   }
@@ -46,7 +46,7 @@ public class ImporterDonantes {
   public void importarDonantes(String filePath) {
     List<String[]> nuevosDatos = scanner.scanCSVFile(filePath);
     List<Persona> nuevosDonantes = parser.parseCSVcontent(nuevosDatos);
-    nuevosDonantes.forEach(registroDonantes::registrarDonante);
+    nuevosDonantes.forEach(DonanteRepository::registrarDonante);
   }
 
 }

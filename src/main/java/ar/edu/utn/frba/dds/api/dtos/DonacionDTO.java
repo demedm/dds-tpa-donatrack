@@ -2,7 +2,7 @@ package ar.edu.utn.frba.dds.api.dtos;
 
 import ar.edu.utn.frba.dds.Bienes.Bien;
 import ar.edu.utn.frba.dds.Bienes.Donacion;
-import ar.edu.utn.frba.dds.api.repository.RegistroDonante;
+import ar.edu.utn.frba.dds.api.repository.DonanteRepository;
 import ar.edu.utn.frba.dds.donantes.Persona;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class DonacionDTO {
 
   public Donacion convertirDtoAObjeto() {
 
-    Persona donante = RegistroDonante.buscarPorEmail(emailDonante)
+    Persona donante = DonanteRepository.buscarPorEmail(emailDonante)
         .orElseThrow(() -> new RuntimeException("No se encontró donante con email: " + emailDonante));
 
     List<Bien> bienes = biensDuraderos.stream().map(BienDuraderoDTO::convertirDtoAObjeto).collect(Collectors.toList());

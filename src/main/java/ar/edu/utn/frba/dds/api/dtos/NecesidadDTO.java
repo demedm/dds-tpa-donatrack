@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.api.dtos;
 
-import ar.edu.utn.frba.dds.api.repository.RegistroEntidades;
+import ar.edu.utn.frba.dds.api.repository.EntidadesRepository;
 import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Peticion;
@@ -14,7 +14,7 @@ public class NecesidadDTO {
   public List<Peticion> peticiones;
 
   public Necesidad convertirDtoAObjeto() {
-    EntidadBeneficiaria entidad =RegistroEntidades.buscarPorRazonSocial(razonSocialEntidad)
+    EntidadBeneficiaria entidad = EntidadesRepository.buscarPorRazonSocial(razonSocialEntidad)
         .orElseThrow(() -> new RuntimeException("No se encontró entidad: " + razonSocialEntidad));
 
     Necesidad necesidad =new Necesidad(entidad, descripcion);

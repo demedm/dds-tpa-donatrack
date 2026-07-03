@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.Bienes.DonacionesHandler;
 import ar.edu.utn.frba.dds.Bienes.Donacion;
 import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 import ar.edu.utn.frba.dds.Bienes.DonacionesDominio.DonacionesRepository;
+import ar.edu.utn.frba.dds.Estado.AsignacionRealizada;
 import ar.edu.utn.frba.dds.entidad.EntidadRepository;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.NecesidadRepository;

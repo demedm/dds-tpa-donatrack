@@ -22,7 +22,7 @@ public class NecesidadMaterialesController {
 
   private final NecesidadRepository necesidadRepository;
 
-  public NecesidadController(NecesidadRepository necesidadRepository) {
+  public NecesidadMaterialesController(NecesidadRepository necesidadRepository) {
     this.necesidadRepository = necesidadRepository;
   }
 

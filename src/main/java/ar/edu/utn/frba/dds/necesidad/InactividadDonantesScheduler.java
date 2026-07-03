@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.necesidad;
 
 import ar.edu.utn.frba.dds.EventoNotificacionService;
-import ar.edu.utn.frba.dds.api.repository.RegistroDonante;
+import ar.edu.utn.frba.dds.api.repository.DonanteRepository;
 import ar.edu.utn.frba.dds.donantes.Persona;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +29,15 @@ public class InactividadDonantesScheduler {
   private static final Logger log = LoggerFactory.getLogger(InactividadDonantesScheduler.class);
 
   private final EventoNotificacionService eventoService;
-  private final RegistroDonante registroDonante;
+  private final DonanteRepository donanteRepository;
 
   @Value("${notificaciones.inactividad-dias:20}")
   private int diasInactividad;
 
   public InactividadDonantesScheduler(EventoNotificacionService eventoService,
-                                      RegistroDonante registroDonante) {
+                                      DonanteRepository donanteRepository) {
     this.eventoService = eventoService;
-    this.registroDonante = registroDonante;
+    this.donanteRepository = donanteRepository;
   }
 
   /**
@@ -52,7 +52,7 @@ public class InactividadDonantesScheduler {
 
     LocalDate limiteInactividad = LocalDate.now().minusDays(diasInactividad);
 
-    List<Persona> inactivos = registroDonante.buscarInactivosDesde(limiteInactividad);
+    List<Persona> inactivos = donanteRepository.buscarInactivosDesde(limiteInactividad);
 
     if (inactivos.isEmpty()) {
       log.info("[SCHEDULER] No hay donantes inactivos para notificar.");

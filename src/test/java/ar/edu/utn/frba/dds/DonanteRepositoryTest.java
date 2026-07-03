@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.api.repository.RegistroDonante;
+import ar.edu.utn.frba.dds.api.repository.DonanteRepository;
 import ar.edu.utn.frba.dds.donantes.Genero;
 import ar.edu.utn.frba.dds.donantes.Identificacion;
 import ar.edu.utn.frba.dds.donantes.PersonaFisica;
@@ -12,13 +12,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RegistroDonanteTest {
+public class DonanteRepositoryTest {
 
-  private RegistroDonante registro;
+  private DonanteRepository registro;
 
   @BeforeEach
   public void setup() {
-    registro = new RegistroDonante();
+    registro = new DonanteRepository();
   }
 
   @Test

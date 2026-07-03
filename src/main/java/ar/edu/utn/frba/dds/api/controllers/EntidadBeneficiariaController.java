@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.api.controllers;
 
 import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
-import ar.edu.utn.frba.dds.api.repository.RegistroEntidades;
+import ar.edu.utn.frba.dds.api.repository.EntidadesRepository;
 import ar.edu.utn.frba.dds.api.dtos.EntidadBeneficiariaDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +23,13 @@ public class EntidadBeneficiariaController {
 
   @GetMapping
   public ResponseEntity<List<EntidadBeneficiaria>> listarEntidades() {
-    return ResponseEntity.ok(RegistroEntidades.getEntidades());
+    return ResponseEntity.ok(EntidadesRepository.getEntidades());
   }
 
   @GetMapping("/{razonSocial}")
   public ResponseEntity<EntidadBeneficiaria> obtenerEntidad(@PathVariable String razonSocial) {
 
-    Optional<EntidadBeneficiaria> entidad = RegistroEntidades.buscarPorRazonSocial(razonSocial);
+    Optional<EntidadBeneficiaria> entidad = EntidadesRepository.buscarPorRazonSocial(razonSocial);
 
     if (entidad.isPresent()) {
       return ResponseEntity.ok(entidad.get());
@@ -42,14 +42,14 @@ public class EntidadBeneficiariaController {
   public ResponseEntity<EntidadBeneficiaria> crearEntidad(@RequestBody EntidadBeneficiariaDTO dto) {
     EntidadBeneficiaria entidad = dto.convertirDtoAObjeto();
 
-    RegistroEntidades.registrar(entidad);
+    EntidadesRepository.registrar(entidad);
     return ResponseEntity.status(HttpStatus.CREATED).body(entidad);
   }
 
   @PutMapping("/{razonSocial}")
   public ResponseEntity<Void> actualizarEntidad(@PathVariable String razonSocial, @RequestBody EntidadBeneficiariaDTO dto) {
     try{
-      RegistroEntidades.actualizarRazonSocial(razonSocial, dto);
+      EntidadesRepository.actualizarRazonSocial(razonSocial, dto);
       return ResponseEntity.ok().build();
 
     } catch (RuntimeException e) {
@@ -61,7 +61,7 @@ public class EntidadBeneficiariaController {
   public ResponseEntity<Void> eliminarEntidad(@PathVariable String razonSocial) {
     try {
 
-      RegistroEntidades.eliminarRazonSocial(razonSocial);
+      EntidadesRepository.eliminarRazonSocial(razonSocial);
       return ResponseEntity.ok().build();
 
     } catch (RuntimeException e) {

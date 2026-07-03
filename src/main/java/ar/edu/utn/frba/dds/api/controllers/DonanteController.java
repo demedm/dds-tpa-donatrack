@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.api.controllers;
 
-import ar.edu.utn.frba.dds.api.repository.RegistroDonante;
+import ar.edu.utn.frba.dds.api.repository.DonanteRepository;
 import ar.edu.utn.frba.dds.api.dtos.PersonaDTO;
 import ar.edu.utn.frba.dds.api.dtos.PersonaFisicaDTO;
 import ar.edu.utn.frba.dds.api.dtos.PersonaJuridicaDTO;
@@ -23,36 +23,36 @@ import java.util.Optional;
 @RequestMapping("/api/donantes")
 public class DonanteController  {
 
-  private final RegistroDonante registroDonante;
+  private final DonanteRepository donanteRepository;
 
-  public DonanteController(RegistroDonante registroDonante) {
-    this.registroDonante = registroDonante;
+  public DonanteController(DonanteRepository donanteRepository) {
+    this.donanteRepository = donanteRepository;
   }
 
   @PostMapping("/fisica")
   public ResponseEntity<Persona> crearDonantePersonaFisica(@RequestBody PersonaFisicaDTO dto) {
 
-    Persona donanteCreado = RegistroDonante.registrarDonante(dto.convertirDtoAObjeto());
+    Persona donanteCreado = DonanteRepository.registrarDonante(dto.convertirDtoAObjeto());
     return ResponseEntity.status(HttpStatus.CREATED).body(donanteCreado);
   }
 
   @PostMapping("/juridica")
   public ResponseEntity<Persona> crearDonantePersonaJuridica(@RequestBody PersonaJuridicaDTO dto) {
 
-    Persona donanteCreado = RegistroDonante.registrarDonante(dto.convertirDtoAObjeto());
+    Persona donanteCreado = DonanteRepository.registrarDonante(dto.convertirDtoAObjeto());
     return ResponseEntity.status(HttpStatus.CREATED).body(donanteCreado);
   }
 
   @GetMapping
   public ResponseEntity<List<Persona>> listarDonantes() {
 
-    return ResponseEntity.ok(registroDonante.getRegistroDonantes());
+    return ResponseEntity.ok(donanteRepository.getRegistroDonantes());
   }
 
   @GetMapping("/{email}")
   public ResponseEntity<Persona> obtenerDonante(@PathVariable String email) {
 
-    Optional<Persona> donante = registroDonante.buscarPorEmail(email);
+    Optional<Persona> donante = donanteRepository.buscarPorEmail(email);
 
     if (donante.isPresent()) {
       return ResponseEntity.ok(donante.get());
@@ -64,7 +64,7 @@ public class DonanteController  {
   public ResponseEntity<Void> actualizarDatosDonantes(@PathVariable String email, @RequestBody PersonaDTO datos) {
 
     try {
-      RegistroDonante.actualizarDonante(email, datos.convertirDtoAObjeto());
+      DonanteRepository.actualizarDonante(email, datos.convertirDtoAObjeto());
       return ResponseEntity.ok().build();
 
     }catch (RuntimeException e) {

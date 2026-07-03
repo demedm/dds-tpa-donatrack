@@ -7,27 +7,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class RegistroDonante {
+public class DonanteRepository {
   private static List<Persona> registroDonantes = new ArrayList<>();
   //private final Notificador notificador = new Notificador();
 
-  public RegistroDonante() {
+  public DonanteRepository() {
   }
 
   public static Persona registrarDonante(Persona nuevoDonante) {
     Optional<Persona> existente = buscarPorEmail(nuevoDonante.getMail().toString());
 
     if (existente.isPresent()) {
+
       existente.get().actualizarDatosDonantes(nuevoDonante);
       System.out.println("Donante actualizado");
+
       return existente.get();
     } else {
       registroDonantes.add(nuevoDonante);
       //notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
-
-          System.out.println("Nuevo donante registrado");
+      System.out.println("Nuevo donante registrado");
 
       System.out.println("Nuevo donante registrado");
+
       return nuevoDonante;
     }
   }
