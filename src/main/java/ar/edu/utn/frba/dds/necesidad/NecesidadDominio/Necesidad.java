@@ -1,11 +1,9 @@
 package ar.edu.utn.frba.dds.necesidad.NecesidadDominio;
 
-import ar.edu.utn.frba.dds.Bienes.EstadoDonacion;
+import ar.edu.utn.frba.dds.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.EntidadBeneficiaria;
 import java.util.ArrayList;
 import java.util.List;
-import ar.edu.utn.dds.necesidad.NecesidadRepository;
-import ar.edu.utn.dds.necesidad.Peticion;
 
 
 public class Necesidad {

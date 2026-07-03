@@ -1,9 +1,10 @@
 package ar.edu.utn.frba.dds.necesidad;
 
+import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 import ar.edu.utn.frba.dds.EntidadBeneficiaria;
 
 public class NecesidadExtraordinaria extends Necesidad {
-  public NecesidadExtraordinaria(EntidadBeneficiaria entidad) {
-    super(entidad);
+  public NecesidadExtraordinaria(EntidadBeneficiaria entidad, String descripcion) {
+    super(entidad, descripcion);
   }
 }
