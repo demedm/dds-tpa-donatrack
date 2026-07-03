@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.Bienes;
 
-import ar.edu.utn.frba.dds.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.Estado.EnDeposito;
 import ar.edu.utn.frba.dds.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.Estado.RegistroCambioEstado;

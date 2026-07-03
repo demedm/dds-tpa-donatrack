@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.necesidad.NecesidadHandler;
 
-import ar.edu.utn.frba.dds.EntidadBeneficiaria;
+import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.entidad.EntidadRepository;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.*;
 

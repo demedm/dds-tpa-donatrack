@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.necesidad.NecesidadDominio;
 
-import ar.edu.utn.frba.dds.Estado.EstadoDonacion;
-import ar.edu.utn.frba.dds.EntidadBeneficiaria;
+import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 import java.util.ArrayList;
 import java.util.List;
 

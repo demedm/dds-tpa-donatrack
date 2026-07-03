@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.necesidad;
 
-import ar.edu.utn.frba.dds.EntidadBeneficiaria;
+import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 
 public class NecesidadRecurrente extends Necesidad {
