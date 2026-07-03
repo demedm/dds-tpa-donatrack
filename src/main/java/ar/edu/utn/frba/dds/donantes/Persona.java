@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
 
 import java.util.Objects;
+import java.time.LocalDate;
 
 public class Persona {
   private String nombreIdentificador; // nombre completo - razon social
@@ -13,6 +14,7 @@ public class Persona {
   private Identificacion identificacion;
   private TipoPersona tipoPersona;
   MedioContacto medioPreferido;
+  private LocalDate ultimaActividad;
 
   public Persona(String nombreIdentificador, Mail mail, Identificacion identificacion, TipoPersona tipoPersona) {
     this.nombreIdentificador = nombreIdentificador;
@@ -20,6 +22,15 @@ public class Persona {
     this.identificacion = identificacion;
     this.tipoPersona = tipoPersona;
     this.medioPreferido = mail; //por defecto
+    this.ultimaActividad = LocalDate.now();
+  }
+
+  public void registrarActividad() {
+    this.ultimaActividad = LocalDate.now();
+  }
+
+  public LocalDate getUltimaActividad() {
+    return ultimaActividad;
   }
 
   public void setMedioPreferido(MedioContacto medioPreferido) {

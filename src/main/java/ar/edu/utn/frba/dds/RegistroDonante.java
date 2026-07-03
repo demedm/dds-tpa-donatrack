@@ -2,9 +2,11 @@ package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.donantes.Persona;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class RegistroDonante {
   private List<Persona> registroDonantes = new ArrayList<>();
@@ -26,7 +28,7 @@ public class RegistroDonante {
       registroDonantes.add(nuevoDonante);
       notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
 
-          System.out.println("Nuevo donante registrado");
+      System.out.println("Nuevo donante registrado");
 
     }
   }
@@ -35,6 +37,13 @@ public class RegistroDonante {
     return registroDonantes.stream()
         .filter(d -> d.getMail().getMedioContacto().equals(direccionMail))
         .findFirst();
+  }
+
+  public List<Persona> buscarInactivosDesde(LocalDate limiteInactividad) {
+    return registroDonantes.stream()
+        .filter(p -> p.getUltimaActividad() != null
+            && p.getUltimaActividad().isBefore(limiteInactividad))
+        .collect(Collectors.toList());
   }
 
   public List<Persona> getRegistroDonantes() {
