@@ -22,7 +22,7 @@ public class DonacionDTO {
 
     List<Bien> bienes = biensDuraderos.stream().map(BienDuraderoDTO::convertirDtoAObjeto).collect(Collectors.toList());
 
-    bienes.addAll(biensPerecederos.stream().map(BienPerecederoDTO::convertirDtoAObjeto).collect(Collectors.toList()));
+    bienes.addAll(biensPerecederos.stream().map(BienPerecederoDTO::convertirDtoAObjeto).toList());
 
     return new Donacion(descripcionGeneral, bienes, donante);
   }
