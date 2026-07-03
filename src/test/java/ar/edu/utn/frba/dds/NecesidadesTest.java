@@ -1,8 +1,9 @@
 package ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.necesidad.Necesidad;
-import ar.edu.utn.frba.dds.necesidad.GestorNecesidades;
 import ar.edu.utn.frba.dds.necesidad.NecesidadRecurrente;
+import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
+import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.NecesidadRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NecesidadesTest {
   private Necesidad necesidad;
   private NecesidadRecurrente necesidadRecurrente;
-  private GestorNecesidades gestor;
+  private NecesidadRepository gestor;
 
   @BeforeEach
   public void setup() {
     necesidad = new Necesidad();
     necesidadRecurrente = new NecesidadRecurrente(7);
-    gestor = new GestorNecesidades();
+    gestor = new NecesidadRepository();
   }
 
   @Test

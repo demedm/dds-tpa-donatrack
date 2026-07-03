@@ -4,7 +4,7 @@ import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
 import ar.edu.utn.frba.dds.necesidad.GestorNecesidades;
-import ar.edu.utn.frba.dds.necesidad.Necesidad;
+import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 
 import java.util.List;
 

@@ -25,25 +25,33 @@ public class DonacionSegmentada {
     this.estadoActual = new EnDeposito();
   }
 
-  public void donar(EntidadBeneficiaria entidad ){
-
-  }
-
   public void setEstado(EstadoDonacion nuevoEstado) {
     this.estadoActual = nuevoEstado;
     this.historialEstados.add(new RegistroCambioEstado(nuevoEstado.getNombre(), LocalDateTime.now()));
+  }
+
+  public boolean estaAlmacen(){
+    return estadoActual instanceof EnDeposito;
   }
 
   public void setJustificacionFallo(String justificacion) {
     this.justificacionFallo = justificacion;
   }
 
-  public Subcategoria getSubcategoria() {
-    return this.subcategoria;
+  public Subcategoria getSubcategoria(){
+    return subcategoria;
   }
 
-  public MedioContacto getMedioContactoEntidad() {
-    return this.medioContactoEntidad;
+  public Integer getCantidad(){
+    return cantidad;
+  }
+
+  public void setCantidad(Integer nuevaCantidad){
+    cantidad = nuevaCantidad;
+  }
+
+  public Bien getBienFiltrado(){
+    return bienFiltrado;
   }
 
   public List<RegistroCambioEstado> getHistorialEstados() {
@@ -70,5 +78,4 @@ public class DonacionSegmentada {
   public String getNombreEstado() {
     return estadoActual.getNombre();
   }
-
 }
