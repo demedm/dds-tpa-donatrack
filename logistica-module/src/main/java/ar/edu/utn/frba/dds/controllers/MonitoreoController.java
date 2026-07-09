@@ -1,14 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.Logistica.Camion;
-import ar.edu.utn.frba.dds.Logistica.CamionDashboardDTO;
-import ar.edu.utn.frba.dds.Logistica.TelemetriaDTO;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ar.edu.utn.frba.dds.Logistica.Flota;
-import java.util.List;
-import java.util.stream.Collectors;
-
+/*
 @RestController
 @RequestMapping("/api/logistica/camiones")
 public class MonitoreoController {
@@ -63,3 +55,5 @@ public class MonitoreoController {
     return ResponseEntity.ok(camionesDashboard);
   }
 }
+
+ */
