@@ -1,6 +1,4 @@
 package ar.edu.utn.frba.dds.controllers;
-import ar.edu.utn.frba.dds.logistica.GestorRutas;
-import  ar.edu.utn.frba.dds.logistica.PlanificacionRutasResponse;
 
 /*
 @RestController
