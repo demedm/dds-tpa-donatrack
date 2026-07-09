@@ -1,7 +1,7 @@
-package ar.edu.utn.frba.dds.donaciones.donantes;
+package ar.edu.utn.frba.dds.model.donantes;
 
-import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Mail;
-import ar.edu.utn.frba.dds.notificaciones.medioscontacto.MedioContacto;
+import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
+import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 
 public class PersonaFisica extends Persona {
   private String apellido;
@@ -9,27 +9,36 @@ public class PersonaFisica extends Persona {
   private Genero genero;
   private String direccionActual;
 
-  public PersonaFisica(Mail mail, String nombreCompleto, Identificacion identificacion,
-                       MedioContacto telefono, int edad, Genero genero,
-                       String direccion) {
-    super(nombreCompleto, mail, identificacion, TipoPersona.FISICA);
-    var nombre = nombreCompleto.split(" ");
-    this.apellido = nombre[1];
-    this.edad = edad;
+  public void setGenero(Genero genero) {
     this.genero = genero;
+  }
+
+  public void setEdad(int edad) {
+    this.edad = edad;
+  }
+
+  public void setDireccionActual(String direccion) {
     this.direccionActual = direccion;
+  }
+
+  public void setApellido(String apellido) {
+    this.apellido = apellido;
+  }
+
+  public Genero getGenero() {
+    return this.genero;
+  }
+
+  public int getEdad() {
+    return this.edad;
+  }
+
+  public String getApellido() {
+    return this.apellido;
   }
 
   public String getDireccionActual() {
     return direccionActual;
-  }
-
-  public MedioContacto getContactoPreferencia() {
-    return super.getMedioPreferido();
-  }
-
-  public void setContactoPreferencia(MedioContacto contactoPreferencia) {
-    super.setMedioPreferido(contactoPreferencia);
   }
 
 }
