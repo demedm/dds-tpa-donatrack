@@ -1,11 +1,14 @@
-package ar.edu.utn.frba.dds.donaciones.donantes;
+package ar.edu.utn.frba.dds.model.donantes;
 
-import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Mail;
+import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 
 public class Ong extends PersonaJuridica {
   private String pathHistorialDonantes;
 
-  public Ong(String razon, Mail mail, TipoEntidadJuridica tipo, Identificacion cuitEntidad, String rubro) {
-    super(razon, mail, tipo, cuitEntidad, rubro);
+  public Ong() {}
+
+  public void setPathHistorialDonantes(String pathHistorialDonantes) {
+    this.pathHistorialDonantes = pathHistorialDonantes;
   }
+
 }
