@@ -14,8 +14,8 @@
   <url>https://github.com/demedm/dds-tpa-donatrack</url>
 
   <modules>
-    <module>donaciones-module</module>
-    <module>logistica-module</module>
+    <module>donaciones-mserv</module>
+    <module>logistica-mserv</module>
   </modules>
 
   <properties>
