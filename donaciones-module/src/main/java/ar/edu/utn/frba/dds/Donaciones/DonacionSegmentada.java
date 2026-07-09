@@ -1,5 +1,7 @@
-package ar.edu.utn.frba.dds.Bienes;
+package ar.edu.utn.frba.dds.Donaciones;
 
+import ar.edu.utn.frba.dds.Bienes.Bien;
+import ar.edu.utn.frba.dds.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.Estado.EnDeposito;
 import ar.edu.utn.frba.dds.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.Estado.RegistroCambioEstado;

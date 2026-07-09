@@ -1,12 +1,12 @@
-package ar.edu.utn.frba.dds.Bienes.DonacionesHandler;
+package ar.edu.utn.frba.dds.Donaciones.DonacionesHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.utn.frba.dds.Notificador;
-import ar.edu.utn.frba.dds.Bienes.Donacion;
-import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
-import ar.edu.utn.frba.dds.Bienes.DonacionesDominio.DonacionesRepository;
+import ar.edu.utn.frba.dds.Donaciones.Donacion;
+import ar.edu.utn.frba.dds.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.Donaciones.DonacionesDominio.DonacionesRepository;
 import ar.edu.utn.frba.dds.Estado.AsignacionRealizada;
 import ar.edu.utn.frba.dds.entidad.EntidadFunciones;
 import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;

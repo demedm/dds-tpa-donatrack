@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.Asignacion;
 
-import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
+import ar.edu.utn.frba.dds.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 
 import java.util.List;

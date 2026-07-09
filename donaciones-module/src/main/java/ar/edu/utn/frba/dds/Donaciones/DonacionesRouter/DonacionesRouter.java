@@ -1,7 +1,7 @@
-package ar.edu.utn.frba.dds.Bienes.DonacionesRouter;
+package ar.edu.utn.frba.dds.Donaciones.DonacionesRouter;
 
-import ar.edu.utn.frba.dds.Bienes.Donacion;
-import ar.edu.utn.frba.dds.Bienes.DonacionesDominio.DonacionesRepository;
+import ar.edu.utn.frba.dds.Donaciones.Donacion;
+import ar.edu.utn.frba.dds.Donaciones.DonacionesDominio.DonacionesRepository;
 import io.javalin.Javalin;
 
 public class DonacionesRouter {

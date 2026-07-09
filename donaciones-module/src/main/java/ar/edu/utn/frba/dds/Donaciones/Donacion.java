@@ -1,5 +1,7 @@
-package ar.edu.utn.frba.dds.Bienes;
+package ar.edu.utn.frba.dds.Donaciones;
 
+import ar.edu.utn.frba.dds.Bienes.Bien;
+import ar.edu.utn.frba.dds.Bienes.Criterio;
 import ar.edu.utn.frba.dds.donantes.Persona;
 
 import java.util.List;

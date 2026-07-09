@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.Asignacion;
 
-import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
+import ar.edu.utn.frba.dds.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.entidad.EntidadBeneficiaria;
 
 
@@ -15,7 +15,8 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
   public List<EntidadBeneficiaria> obtenerRanking(DonacionSegmentada donacion, List<EntidadBeneficiaria> entidades) {
 
     return entidades.stream()
-        .sorted(Comparator.comparingLong(entidad -> this.calcularCompatibilidad(entidad, donacion)))
+        .sorted(Comparator.comparingLong(
+            entidad -> this.calcularCompatibilidad(entidad, donacion)))
         .limit(maxEntidades)
         .toList();
   }
