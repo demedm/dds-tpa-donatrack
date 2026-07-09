@@ -29,14 +29,7 @@ public class CamionController {
         .getByPatente(patente).getRutaActual().getEntregas();
   }
 
-  public Entrega showEntrega(Context ctx) {
-    var patente = ctx.pathParam("patente");
-    var entregaId = Integer.parseInt(ctx.pathParam("id"));
-    Camion camion = CamionRepositorio.Instance.getByPatente(patente);
-    return RutaRepositorio.Instance.getById(camion, entregaId);
-  }
-
-  public void createCamion() {
+  public void save() {
 
   }
 

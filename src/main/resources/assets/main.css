@@ -1,0 +1,24 @@
+.titulo {
+    font-size: 20px;
+}
+
+img {
+    height: 400px;
+    object-fit: contain;
+}
+
+.card-title {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.card-title a {
+    text-decoration: none;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+.card-title a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}

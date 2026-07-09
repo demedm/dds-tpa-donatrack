@@ -5,10 +5,16 @@ import java.util.List;
 public class Ruta {
   private List<Entrega> entregas;
   private String patenteAsignada;
+  private int id;
 
-  public Ruta(String patenteCamion, List<Entrega> entregas) {
+  public Ruta(String patenteCamion, List<Entrega> entregas, int id) {
     this.entregas = entregas;
     this.patenteAsignada = patenteCamion;
+    this.id = id;
+  }
+
+  public int getId() {
+    return this.id;
   }
 
   public String getPatenteAsignada() {

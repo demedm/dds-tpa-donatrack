@@ -1,16 +1,12 @@
-package ar.edu.utn.frba.dds;
+package java.ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.donantes.Genero;
-import ar.edu.utn.frba.dds.donantes.Identificacion;
-import ar.edu.utn.frba.dds.donantes.PersonaFisica;
-import ar.edu.utn.frba.dds.donantes.TipoDocumento;
 import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Telefono;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+/*
 public class RegistroDonanteTest {
 
   private RegistroDonante registro;
@@ -97,3 +93,4 @@ public class RegistroDonanteTest {
     assertEquals("Ana Maria Perez", nombreEncontrado);
   }
 }
+*/

@@ -10,15 +10,23 @@ import java.util.List;
 
 public class RutaRepositorio {
   public static RutaRepositorio Instance = new RutaRepositorio();
+  private List<Ruta> allRutas = new ArrayList<>();
   private PlanificacionRutas planificadorRutas;
   private List<Ruta> rutasPendientesAsignar = new ArrayList<>();
   private List<AccionesSobreRutas> accionesSobreRutas = new ArrayList<>();
 
   private List<Entrega> donacionesSinAsignar = new ArrayList<>();
 
-  public Entrega getById(Camion camion, int id) {
-    return camion.getRutaActual().getEntregas().stream().filter(
-        entrega -> entrega.getEntregaId() == id).toList().get(0);
+  public Ruta findByid(int id) {
+    return allRutas.stream().filter(ruta -> ruta.getId() == id).toList().get(0);
+  }
+
+  public List<Ruta> getAllRutas() {
+    return this.allRutas;
+  }
+
+  public void setAllRutas(List<Ruta> nuevasRutas) {
+    allRutas.addAll(nuevasRutas);
   }
 
   /*

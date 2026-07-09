@@ -47,6 +47,7 @@ public class Camion {
 
   public void asignarRuta(Ruta ruta) {
     this.rutaActual = ruta;
+    estado = EstadoCamion.RUTA_ASIGNADA;
   }
 /*
   public boolean asignarRuta(Ruta ruta) {

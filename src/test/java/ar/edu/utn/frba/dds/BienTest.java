@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds;
+package java.ar.edu.utn.frba.dds;
 
 public class BienTest {
 }

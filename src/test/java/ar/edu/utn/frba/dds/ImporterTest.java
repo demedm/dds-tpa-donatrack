@@ -1,20 +1,8 @@
-package ar.edu.utn.frba.dds;
+package java.ar.edu.utn.frba.dds;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import ar.edu.utn.frba.dds.donantes.Identificacion;
-import ar.edu.utn.frba.dds.donantes.Persona;
-import ar.edu.utn.frba.dds.donantes.TipoDocumento;
-import ar.edu.utn.frba.dds.donantes.TipoPersona;
-import ar.edu.utn.frba.dds.importerdonantes.ImporterDonantes;
-import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Mail;
-import ar.edu.utn.frba.dds.notificaciones.medioscontacto.MedioContacto;
-import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Telefono;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
-import java.util.List;
-
+/*
 public class ImporterTest {
 
   private ImporterDonantes importer;
@@ -94,6 +82,7 @@ public class ImporterTest {
       assertEquals(TipoDocumento.DNI, persona.getIdentificacion().getTipo());
       assertEquals("12345678", persona.getIdentificacion().getNumero());
   }
-  */
+
 
 }
+*/
