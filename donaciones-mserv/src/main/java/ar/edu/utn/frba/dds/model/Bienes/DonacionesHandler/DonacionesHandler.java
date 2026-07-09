@@ -1,16 +1,16 @@
 package ar.edu.utn.frba.dds.model.Bienes.DonacionesHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ar.edu.utn.frba.dds.model.notificaciones.Notificador;
 import ar.edu.utn.frba.dds.model.Bienes.Donacion;
 import ar.edu.utn.frba.dds.model.Bienes.DonacionSegmentada;
-import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.model.Estado.AsignacionRealizada;
 import ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio.Necesidad;
-import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
 import ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio.Peticion;
+import ar.edu.utn.frba.dds.model.notificaciones.Notificador;
+import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
+import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DonacionesHandler {
     private DonacionesRepository donacionesRepository;
@@ -37,7 +37,7 @@ public class DonacionesHandler {
         for(Peticion peticion : necesidad.getPeticiones()){
             if(peticion.estaCubierta()){
                 continue;
-            }//Omite si ay esta cubierta
+            }//Omite si ya esta cubierta
 
             String subcategoriaRequerida = peticion.getSubclase();
             Integer cantidadNecesitada = peticion.getCantidadNecesitada();
