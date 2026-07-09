@@ -1,7 +1,6 @@
-package ar.edu.utn.frba.dds.donaciones.donantes;
+package ar.edu.utn.frba.dds.model.donantes;
 
-import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Mail;
-import ar.edu.utn.frba.dds.notificaciones.medioscontacto.MedioContacto;
+import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,21 +8,28 @@ import java.util.List;
 public class PersonaJuridica extends Persona {
   private String rubro;
   private TipoEntidadJuridica tipo;
-  private List<MedioContacto> mediosContacto = new ArrayList<>();
+  private List<MedioContacto> listaContactos = new ArrayList<>();
 
-  public PersonaJuridica(String razon, Mail mail, TipoEntidadJuridica tipo,
-                         Identificacion cuitEntidad, String rubro) {
-    super(razon, mail, cuitEntidad, TipoPersona.JURIDICA);
+  public PersonaJuridica() {}
+
+  public void setTipo(TipoEntidadJuridica tipo) {
     this.tipo = tipo;
+  }
+
+  public void setRubro(String rubro) {
     this.rubro = rubro;
   }
 
-  public void setMedioContacto(MedioContacto contacto) {
-    this.mediosContacto.add(contacto);
+  public void setListaContactos(List<MedioContacto> contacto) {
+    this.listaContactos.addAll(contacto);
   }
 
-  public void setMedioPreferido(MedioContacto medio) {
-    super.setMedioPreferido(medio);
+  public TipoEntidadJuridica getTipo() {
+    return this.tipo;
+  }
+
+  public String getRubro() {
+    return this.rubro;
   }
 
   //Gubernamental, ONG, Empresa, Institución
