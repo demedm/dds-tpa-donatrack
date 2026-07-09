@@ -23,7 +23,7 @@
 hs_err_pid*
 
 # maven build
-target/**
+logistica-module/target/classes
 
 # IJ files
 *.iml

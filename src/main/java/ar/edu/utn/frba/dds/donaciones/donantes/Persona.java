@@ -1,0 +1,50 @@
+package ar.edu.utn.frba.dds.donaciones.donantes;
+
+import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Mail;
+import ar.edu.utn.frba.dds.notificaciones.medioscontacto.MedioContacto;
+import ar.edu.utn.frba.dds.notificaciones.medioscontacto.Telefono;
+
+public class Persona {
+  private String nombreIdentificador; // nombre completo - razon social
+  private Mail mail;
+  private Telefono telefono;
+  private Identificacion identificacion;
+  private TipoPersona tipoPersona;
+  MedioContacto medioPreferido;
+
+  public Persona(String nombreIdentificador, Mail mail, Identificacion identificacion, TipoPersona tipoPersona) {
+    this.nombreIdentificador = nombreIdentificador;
+    this.mail = mail;
+    this.identificacion = identificacion;
+    this.tipoPersona = tipoPersona;
+    this.medioPreferido = mail; //por defecto
+  }
+
+  public void setMedioPreferido(MedioContacto medioPreferido) {
+    this.medioPreferido = medioPreferido;
+  }
+
+  public MedioContacto getMedioPreferido() {
+    return this.medioPreferido;
+  }
+
+  public void setTelefono(Telefono telefono) {
+    this.telefono = telefono;
+  }
+
+  public Mail getMail() {
+    return mail;
+  }
+  public String getNombreIdentificador() {
+    return nombreIdentificador;
+  }
+
+  public String getNroIdentificacion() {
+    return identificacion.getNroDocumento();
+  }
+
+  public void actualizarInfo(Persona nuevosDatos) {
+    this.nombreIdentificador = nuevosDatos.getNombreIdentificador();
+    this.identificacion.setNroDocumento(nuevosDatos.getNroIdentificacion());
+  }
+}
