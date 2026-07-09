@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.Bienes.Donacion;
 import ar.edu.utn.frba.dds.Bienes.DonacionSegmentada;
 import ar.edu.utn.frba.dds.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.medioscontacto.Telefono;
+import ar.edu.utn.frba.dds.necesidad.NecesidadDominio.Necesidad;
 import ar.edu.utn.frba.dds.necesidad.NecesidadHandler.NecesidadHandler;
 
 import java.util.ArrayList;

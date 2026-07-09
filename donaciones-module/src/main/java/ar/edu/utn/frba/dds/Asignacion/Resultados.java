@@ -6,20 +6,20 @@ import java.util.List;
 
 public class Resultados {
 
-  private List<EntidadBeneficiaria> coincidencias;
-  private List<EntidadBeneficiaria> resultadosDeCompatibilidad;
-  private List<EntidadBeneficiaria> resultadosDeSubAtendidos;
-  private boolean huboCoincidencia;
+  private final List<EntidadBeneficiaria> coincidencias;
+  private final List<EntidadBeneficiaria> resultadoDeCompatibilidad;
+  private final List<EntidadBeneficiaria> resultadoDeSubAtendidos;
+  private final boolean huboCoincidencia;
 
   public Resultados(List<EntidadBeneficiaria> coincidencias,List<EntidadBeneficiaria> resultadosDeCompatibilidad, List<EntidadBeneficiaria> resultadosDeSubAtendidos) {
     this.coincidencias = coincidencias;
-    this.resultadosDeCompatibilidad = resultadosDeCompatibilidad;
-    this.resultadosDeSubAtendidos = resultadosDeSubAtendidos;
+    this.resultadoDeCompatibilidad = resultadosDeCompatibilidad;
+    this.resultadoDeSubAtendidos = resultadosDeSubAtendidos;
     this.huboCoincidencia = !coincidencias.isEmpty();
   }
 
   public List<EntidadBeneficiaria> entidadesPropuestas() {
-    return huboCoincidencia ? coincidencias : resultadosDeCompatibilidad;
+    return huboCoincidencia ? coincidencias : resultadoDeCompatibilidad;
   }
 
 }

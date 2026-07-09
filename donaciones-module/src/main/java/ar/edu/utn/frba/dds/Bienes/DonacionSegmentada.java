@@ -20,6 +20,7 @@ public class DonacionSegmentada {
   private LocalDate fechaDeEntrega;
   private MedioContacto medioContactoEntidad;
 
+
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
     this.cantidad = cantidad;
     this.subcategoria = subcategoria;

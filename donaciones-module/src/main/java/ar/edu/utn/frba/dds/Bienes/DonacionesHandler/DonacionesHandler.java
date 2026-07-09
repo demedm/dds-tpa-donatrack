@@ -40,7 +40,7 @@ public class DonacionesHandler {
         for(Peticion peticion : necesidad.getPeticiones()){
             if(peticion.estaCubierta()){
                 continue;
-            }//Omite si ay esta cubierta
+            }//Omite si ya esta cubierta
 
             String subcategoriaRequerida = peticion.getSubclase();
             Integer cantidadNecesitada = peticion.getCantidadNecesitada();
