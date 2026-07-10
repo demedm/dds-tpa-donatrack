@@ -13,7 +13,7 @@ public class Ruta {
     this.id = UUID.randomUUID().toString();
   }
 
-  public int getId() {
+  public String getId() {
     return this.id;
   }
 

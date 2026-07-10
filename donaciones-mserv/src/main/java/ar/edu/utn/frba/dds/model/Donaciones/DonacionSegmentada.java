@@ -3,6 +3,8 @@ package ar.edu.utn.frba.dds.model.Donaciones;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
+import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
+import ar.edu.utn.frba.dds.model.Estado.Entregada;
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
@@ -66,17 +68,14 @@ public class DonacionSegmentada {
   }
 
   public List<RegistroCambioEstado> getHistorialEstados() {
-    return historialEstados;}
+    return historialEstados;
+  }
 
   public void cambiarEstado(String nuevoEstado) {
-    if(nuevoEstado.equals("PENDIENTE")) {
-      // el estado tiene que regresar a EN DEPOSITO
-    }
-    else if(nuevoEstado.equals("EN_TRASLADO")) {
-      iniciarTraslado();
-    }
-    else if(nuevoEstado.equals("ENTREGADA")) {
-      confirmarEntrega();
+    switch (nuevoEstado) {
+      case "PENDIENTE" -> setEstado(new EnDeposito()); //creo que se debe crear la clase pendiente
+      case "EN_TRASLADO" -> iniciarTraslado();
+      case "ENTREGADA" -> confirmarEntrega();
     }
   }
 
@@ -91,15 +90,13 @@ public class DonacionSegmentada {
   }
   public void confirmarEntrega() {
     estadoActual.confirmarEntrega(this);
+    fechaDeEntrega = LocalDate.now();
   }
   public void fallarEntrega(String justificacion) {
     estadoActual.fallarEntrega(this, justificacion);
   }
   public void vencer() {
     estadoActual.vencer(this);
-  }
-  public String getNombreEstado() {
-    return estadoActual.getNombre();
   }
 
   public Subcategoria getSubcategoria() {

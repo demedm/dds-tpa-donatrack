@@ -60,7 +60,7 @@ public class DonacionesHandler {
 
                 DonacionSegmentada donacionAsignada = new DonacionSegmentada(cantidadAAsignar, donacionSegmentada.getSubcategoria(),donacionSegmentada.getBienFiltrado());
 
-                donacionAsignada.setEstado(new AsignacionRealizada());
+                //donacionAsignada.setEstado(new AsignacionRealizada());
             
                 //Agrego esa nueva a las donaciones 
                 donacion.agregarDonaciones(donacionAsignada);

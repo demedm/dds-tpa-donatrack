@@ -31,24 +31,6 @@ public class DonacionesRepository {
         ctx.status(200);
     }
 
-    // public  ResultadoBusqueda buscarProducto(String subcategoria, int cantidad){
-    //     List<Bien> bienesFiltrrados = donaciones.stream()
-    //         .flatMap(d->d.getBienes().stream())
-    //         .filter(b->b.getSubcategoria().equals(subcategoria))
-    //         .collect(Collectors.toList());
-
-    //     List<Bien> bienesAsignados = new ArrayList<>();
-    //     int restante = cantidad;
-    //     for (Bien bien : bienesFiltrrados) {
-    //     if (restante == 0) break;
-    //     int aRestar = Math.min(bien.getCantidad(), restante);
-    //     bien.copia(aRestar, EstadoDonacion.ASIGNACION_REALIZADA);
-    //     bien.setCantidad(bien.getCantidad() - aRestar);
-    //     restante -= aRestar;
-    //     }
-    //     return new ResultadoBusqueda(restante,bienesAsignados);
-    // }
-
     public DonacionSegmentada obtenerDonacionAsignadaPorId(int id){
         return this.donacionesAsignadas.stream()
             .filter(d->d.getId() == id)
@@ -63,7 +45,7 @@ public class DonacionesRepository {
         .orElse(null);
     }
 
-  //Obtener todas las donaciones  
+  //Obtener todas las donaciones
 
     public List<Donacion> obtenerTodas(){
         return new ArrayList<>(this.donaciones);
@@ -77,5 +59,25 @@ public class DonacionesRepository {
         Donacion existente = obtenerPorId(donacion.getId());
 
         existente.setDonacionesSegmentadas(donacion.getDonaciones());    }
-    }
 
+
+}
+
+
+// public  ResultadoBusqueda buscarProducto(String subcategoria, int cantidad){
+//     List<Bien> bienesFiltrrados = donaciones.stream()
+//         .flatMap(d->d.getBienes().stream())
+//         .filter(b->b.getSubcategoria().equals(subcategoria))
+//         .collect(Collectors.toList());
+
+//     List<Bien> bienesAsignados = new ArrayList<>();
+//     int restante = cantidad;
+//     for (Bien bien : bienesFiltrrados) {
+//     if (restante == 0) break;
+//     int aRestar = Math.min(bien.getCantidad(), restante);
+//     bien.copia(aRestar, EstadoDonacion.ASIGNACION_REALIZADA);
+//     bien.setCantidad(bien.getCantidad() - aRestar);
+//     restante -= aRestar;
+//     }
+//     return new ResultadoBusqueda(restante,bienesAsignados);
+// }
