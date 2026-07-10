@@ -3,8 +3,6 @@ package ar.edu.utn.frba.dds.model.Donaciones;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
-import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
-import ar.edu.utn.frba.dds.model.Estado.Entregada;
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
@@ -13,25 +11,28 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DonacionSegmentada {
-  private int id;
+  private String id;
   private int cantidad;
   private Subcategoria subcategoria;
-  private Bien bienFiltrado;
+  private Bien bien;
   private EstadoDonacion estadoActual;
   private List<RegistroCambioEstado> historialEstados;
-  private String justificacionFallo;
+  private String justificacionFallo; //dto
   private LocalDate fechaDeEntrega;
-  private MedioContacto medioContactoEntidad;
-
+  private String entidadAsignadaId;
+  private Integer donanteId;
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
     this.cantidad = cantidad;
     this.subcategoria = subcategoria;
-    this.bienFiltrado = bienFiltrado;
+    this.bien = bienFiltrado;
     this.estadoActual = new EnDeposito();
     this.historialEstados = new ArrayList<>();
+    this.id = UUID.randomUUID().toString();
+
   }
 
   public LocalDate getFechaDeEntrega() {
@@ -59,11 +60,11 @@ public class DonacionSegmentada {
     cantidad = nuevaCantidad;
   }
 
-  public Bien getBienFiltrado(){
-    return bienFiltrado;
+  public Bien getBien(){
+    return bien;
   }
 
-  public int getId() {
+  public String getId() {
     return id;
   }
 
@@ -71,11 +72,21 @@ public class DonacionSegmentada {
     return historialEstados;
   }
 
+  public String getEntidadAsignadaId() {
+    return entidadAsignadaId;
+  }
+
+  public void setEntidadAsignadaId(String entidadAsignadaId) {
+    this.entidadAsignadaId = entidadAsignadaId;
+  }
+
   public void cambiarEstado(String nuevoEstado) {
     switch (nuevoEstado) {
       case "PENDIENTE" -> setEstado(new EnDeposito()); //creo que se debe crear la clase pendiente
       case "EN_TRASLADO" -> iniciarTraslado();
       case "ENTREGADA" -> confirmarEntrega();
+      case "NO_RECIBIDO" -> fallarEntrega(justificacionFallo);
+
     }
   }
 

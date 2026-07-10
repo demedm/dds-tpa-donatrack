@@ -7,7 +7,7 @@ import java.io.IOException;
 public class App {
 
   public static void main(String[] args) throws IOException, InterruptedException {
-    // Bootstrap.init();
+    Bootstrap.init();
     new Server().start();
   }
 }
