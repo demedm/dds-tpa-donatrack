@@ -2,6 +2,8 @@ package ar.edu.utn.frba.dds.model.importerdonantes;
 
 import ar.edu.utn.frba.dds.model.donantes.Identificacion;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
+import ar.edu.utn.frba.dds.model.donantes.PersonaJuridica;
 import ar.edu.utn.frba.dds.model.donantes.TipoDocumento;
 import ar.edu.utn.frba.dds.model.donantes.TipoPersona;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
@@ -22,7 +24,9 @@ public class ImporterParser {
           Identificacion id = new Identificacion(documento, fila[2]);
           Mail mail = new Mail(fila[4]);
           Telefono telefono = new Telefono(fila[5]);
-          var persona = new Persona();
+          Persona persona = tipo == TipoPersona.FISICA
+              ? new PersonaFisica()
+              : new PersonaJuridica();
           persona.setNombreIdentificador(fila[3]);
           persona.setMail(mail);
           persona.setIdentificacion(id);

@@ -45,7 +45,7 @@ public class PersonaFisicaDTO extends PersonaDTO {
   @Override
   public Persona PersonaDto() {
     PersonaFisica personaFisica = new PersonaFisica();
-    completarDatosComunes(personaFisica);
+    completarDatosComunesParaCreacion(personaFisica);
     personaFisica.setApellido(apellido);
     personaFisica.setEdad(edad);
     personaFisica.setGenero(Genero.valueOf(genero));
@@ -55,7 +55,7 @@ public class PersonaFisicaDTO extends PersonaDTO {
 
   @Override
   public void aplicarCambios(Persona persona) {
-    aplicarCambiosComunes(persona);
+    aplicarCambiosActualizacionComunes(persona);
     PersonaFisica personaFisica = (PersonaFisica) persona;
     if (apellido != null) {
       personaFisica.setApellido(apellido);

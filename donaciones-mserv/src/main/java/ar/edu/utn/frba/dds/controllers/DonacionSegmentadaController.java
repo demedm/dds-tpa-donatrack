@@ -1,13 +1,8 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.dto.CambioEstadoDTO;
-import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
-import ar.edu.utn.frba.dds.model.Estado.AsignacionRealizada;
-import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
-import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
-import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
@@ -35,22 +30,24 @@ public class DonacionSegmentadaController {
     return donacion;
   }
 
-  public DonacionSegmentada asignarDonacion(Context ctx) {
-    String idDonacion = ctx.pathParam("id");
-    String idEntidad = ctx.pathParam("idEntidad");
 
-    DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idDonacion);
-
-    if(donacion == null){
-      throw new NotFoundResponse("DonacionSegmentada no encontrada");
-    }
-
-    donacion.asignar();
-    donacion.setEntidadAsignadaId(idEntidad);
-
-    return donacion;
-
-  }
+//
+//  public DonacionSegmentada asignarDonacion(Context ctx) {
+//    String idDonacion = ctx.pathParam("id");
+//    String idEntidad = ctx.pathParam("idEntidad");
+//
+//    DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idDonacion);
+//
+//    if(donacion == null){
+//      throw new NotFoundResponse("DonacionSegmentada no encontrada");
+//    }
+//
+//    donacion.asignar();
+//    donacion.setEntidadAsignadaId(idEntidad);
+//
+//    return donacion;
+//
+//  }
 
 //
 //

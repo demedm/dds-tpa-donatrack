@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.model;
 
+import java.time.LocalDateTime;
 
 public class Camion {
   private String patente;
@@ -73,12 +74,12 @@ public class Camion {
   public Ubicacion getUbicacionActual() {
     return ubicacionActual;
   }
-/*
+
   public void actualizarUbicacion(Double latitud, Double longitud) {
     // Solo permitimos actualizar si el camión está en ruta
     if (this.estado == EstadoCamion.REALIZANDO_ENTREGAS) {
       this.ubicacionActual = new Ubicacion(latitud, longitud, LocalDateTime.now());
     }
   }
-*/
+
 }
