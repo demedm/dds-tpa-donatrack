@@ -19,12 +19,13 @@ public class Router {
     app.get("/dashboard/camiones/", dashboardController::listarCamiones);
 
     // CRUD CALLBACK
-    app.post("/callback/planificacion/{idLote}", callbackController::recibirPlanificacion);
+    app.post("/callback/planificaciones/", callbackController::recibirPlanificacion);
 
     // CRUD CAMIONES
     app.get("/camiones/random", ctx -> ctx.json(camionController.randomCamion()));
     app.get("/camiones/", ctx -> ctx.json(camionController.showFlota()));
     app.get("/camiones/{patente}", ctx -> ctx.json(camionController.showCamion(ctx)));
+    app.post("/camiones/{patente}", camionController::saveCamion);
 
     // CRUD RUTAS Y ENTREGAS
     app.get("/rutas/", ctx -> ctx.json(rutaController.showAllRutas()));
@@ -37,7 +38,7 @@ public class Router {
     app.post("/rutas/{idRuta}/entregas/", rutaController::saveEntrega);
 
     // RECEPCION DE DONACIONES
-    app.post("/donaciones/{id}", callbackController::recibirDonaciones);
+    app.post("/donaciones/{id}", callbackController::recibirDonacion);
 
   }
 }

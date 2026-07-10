@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.scripts.dto;
 import java.time.LocalDate;
 
 public class RequestPlanificacionDTO {
+  private String id;
   private String direccion;
   private int idEntidad;
   private int idDonacion;
@@ -42,4 +43,11 @@ public class RequestPlanificacionDTO {
     this.fechaVencimiento = fechaVencimiento;
   }
 
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 }
