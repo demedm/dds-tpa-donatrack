@@ -12,23 +12,26 @@ public class Donacion {
   private String descripcionGeneral;
   private List<DonacionSegmentada> donacionesSegmentadas;
   private Persona donante;
-  private String id;
+  private static Integer contador = 0;
+  private Integer id = 0 ;
 
   public Donacion(String descripcionGeneral, List<Bien> bienes, Persona donante) {
-
-    if(bienes.isEmpty() || bienes == null){
+    /*
+    if(bienes == null || bienes.isEmpty()){
       throw new IllegalArgumentException("Una donación no puede crearse sin bienes");
-    }
+    }*/
+
     this.descripcionGeneral = descripcionGeneral;
     this.donacionesSegmentadas = this.segmentar(bienes);
     this.donante = donante;
+    this.id = contador++;
   }
 
   public void agregarDonaciones(DonacionSegmentada donacionSegmentada){
     donacionesSegmentadas.add(donacionSegmentada);
   }
 
-  public String getId() {
+  public Integer getId() {
     return id;
   }
 
@@ -36,7 +39,7 @@ public class Donacion {
     return donante;
   }
 
-  public void setId(String id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 

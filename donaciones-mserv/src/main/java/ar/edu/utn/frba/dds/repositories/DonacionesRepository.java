@@ -38,14 +38,14 @@ public class DonacionesRepository {
             .orElse(null);
     }
 
-    public Donacion obtenerPorId(String id){
+    public Donacion obtenerPorId(int id){
         return this.donaciones.stream()
-        .filter(d->d.getId().equals(id))
+        .filter(d->d.getId()== id)
         .findFirst()
         .orElse(null);
     }
 
-  //Obtener todas las donaciones
+    //Obtener todas las donaciones
 
     public List<Donacion> obtenerTodas(){
         return new ArrayList<>(this.donaciones);

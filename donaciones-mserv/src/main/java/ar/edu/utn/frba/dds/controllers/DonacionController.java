@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.dto.DonacionsDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.repositories.*;
@@ -13,9 +14,69 @@ import io.javalin.http.NotFoundResponse;
 
 public class DonacionController {
 
-    public Donacion asignar(Context ctx){
-        String donacionId = ctx.pathParam("idDonacion");
+
+    public Donacion crearDonacion(Context ctx) {
+        /*
+        DonacionsDTO donacion = ctx.bodyValidator(DonacionsDTO.class)
+            .check(d -> d.getDonante() !=null,
+                "Debe haber un donante")
+            .check(d -> d.getBienes() !=null && !d.getBienes().isEmpty(),
+                "Debe existir al menos una donación segementada")
+            .get();
+
+         */
+        DonacionsDTO donacion = ctx.bodyAsClass(DonacionsDTO.class);
+
+        Donacion d = new Donacion(
+            donacion.getDescripcionGeneral(),
+            donacion.getBienes(),
+            donacion.getDonante()
+        );
+
+        DonacionesRepository.Instance.agregarDonacion(d);
+
+        return d;
+    }
+
+    public Donacion mostrarDonacion(Context ctx){
+        int donacionId = Integer.parseInt(ctx.pathParam("id"));
+
         Donacion donacion = DonacionesRepository.Instance.obtenerPorId(donacionId);
+
+        if(donacion == null){
+            throw new NotFoundResponse("Donacion no encontrada");
+        }
+        return donacion;
+    }
+
+    public List<Donacion> mostrarDonaciones(){
+
+        return  DonacionesRepository.Instance.obtenerTodas();
+
+    }
+
+    public Donacion actualizar(Context ctx){
+        return null;
+    }
+
+    public Donacion eliminar(Context ctx){
+        int donacionId = Integer.parseInt(ctx.pathParam("id"));
+        /*
+        .check(d -> d.getId()!=null,
+            "El id de la donacion es obligatorio")
+        */
+
+        Donacion donacion = DonacionesRepository.Instance.obtenerPorId(donacionId);
+
+        return null;
+    }
+
+
+    public Donacion asignar(Context ctx){
+        int donacionId = Integer.parseInt(ctx.pathParam("idDonacion"));
+
+        Donacion donacion = DonacionesRepository.Instance.obtenerPorId(donacionId);
+
         if (donacion == null) {
             throw new NotFoundResponse("Donacion no encontrada");
         }
@@ -62,7 +123,7 @@ public class DonacionController {
 
                 //Actualizo la peticion, guardando tambien el id de que donacion tome la cantidad en caso de que necesite volver a llevarla al almacen
 
-                peticion.agregarCantidadRecibida(cantidadAAsignar,donacionId);
+                peticion.agregarCantidadRecibida(cantidadAAsignar, String.valueOf(donacionId));
                 cantidadNecesitada -= cantidadAAsignar;
 
                 // new Notificador().enviarNotificacionA(donacion.getDonante(), "Su donacion fue asignada");
@@ -78,6 +139,10 @@ public class DonacionController {
         }
         return DonacionesRepository.Instance.obtenerPorId(donacionId);
     }
+
+
+
+
 
     
     // private DonacionesRepository donacionesRepository;

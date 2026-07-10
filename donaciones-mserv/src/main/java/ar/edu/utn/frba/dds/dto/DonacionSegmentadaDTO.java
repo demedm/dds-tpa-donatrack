@@ -1,10 +1,13 @@
 package ar.edu.utn.frba.dds.dto;
 
-public class DonacionDTO {
+public class DonacionSegmentadaDTO {
+
   private String direccionEntidad;
   private int idEntidadAsignada;
 
-  public DonacionDTO() {}
+  public DonacionSegmentadaDTO() {}
+
+
 
   public void setDireccionEntidad(String direccionEntidad) {
     this.direccionEntidad = direccionEntidad;
