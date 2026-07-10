@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.server;
 
-import ar.edu.utn.frba.dds.dto.DonacionDTO;
+import ar.edu.utn.frba.dds.dto.DonacionSegmentadaDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class Client {
   public void enviarDonacionALogistica(int idDonacion, int idEntidadAsignada,
                                        String direccionEntidadAsignada) {
     try {
-      DonacionDTO donacion = new DonacionDTO();
+      DonacionSegmentadaDTO donacion = new DonacionSegmentadaDTO();
       donacion.setDireccionEntidad(direccionEntidadAsignada);
       donacion.setIdEntidadAsignada(idEntidadAsignada);
       post("/donaciones/" + idDonacion, donacion, String.class); //<-muestra el json solamente

@@ -1,11 +1,13 @@
 package ar.edu.utn.frba.dds.dto;
 
-import java.time.LocalDate;public class DonacionDTO {
+import java.time.LocalDate;
+
+public class DonacionSegmentadaDTO {
   private String direccionEntidad;
   private int idEntidadAsignada;
   private LocalDate fechaVencimiento;
 
-  public DonacionDTO() {}
+  public DonacionSegmentadaDTO() {}
 
   public void setDireccionEntidad(String direccionEntidad) {
     this.direccionEntidad = direccionEntidad;
@@ -15,6 +17,7 @@ import java.time.LocalDate;public class DonacionDTO {
     this.idEntidadAsignada = idEntidadAsignada;
   }
 
+  /*
   public String getDireccionEntidad() {
     return this.direccionEntidad;
   }
@@ -22,7 +25,7 @@ import java.time.LocalDate;public class DonacionDTO {
   public int getIdEntidadAsignada() {
     return idEntidadAsignada;
   }
-
+  */
   public LocalDate getFechaVencimiento() {
     return fechaVencimiento;
   }
