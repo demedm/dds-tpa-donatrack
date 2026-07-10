@@ -48,10 +48,11 @@ public class DonanteRepository {
     return existente.isPresent();
   }
 
-  public List<Persona> buscarInactivosDesde(LocalDate fecha) {
-    // estoy implementando esto: pendiente
-    return null;
-  }
+    public List<Persona> buscarInactivosDesde(LocalDate fecha) {
+      return registroDonantes.stream()
+          .filter(p -> p.getUltimaActividad().isBefore(fecha))
+          .toList();
+    }
 
   public List<Persona> getRegistroDonantes() {
     return registroDonantes;
@@ -59,9 +60,6 @@ public class DonanteRepository {
 }
   
   /*
-  private final Map<Long, Persona> almacenamiento = new ConcurrentHashMap<>();
-  private final AtomicLong secuencia = new AtomicLong(0);
-
   public Persona save(Persona donante) {
     if (donante.getId() == null) {
       donante.setId(secuencia.incrementAndGet());
@@ -86,11 +84,5 @@ public class DonanteRepository {
     return store.remove(id) != null;
   }
 
-  public Optional<Persona> findByEmail(String email) {
-    if (email == null) return Optional.empty();
-    return store.values().stream()
-        .filter(d -> email.equalsIgnoreCase(d.getEmail()))
-        .findFirst();
-  }
 
  */

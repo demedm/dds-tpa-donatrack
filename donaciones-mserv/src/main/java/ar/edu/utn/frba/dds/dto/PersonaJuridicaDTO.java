@@ -27,7 +27,7 @@ public class PersonaJuridicaDTO extends PersonaDTO {
   @Override
   public Persona PersonaDto() {
     PersonaJuridica p = new PersonaJuridica();
-    completarDatosComunes(p);
+    completarDatosComunesParaCreacion(p);
     p.setRubro(rubro);
     p.setTipo(TipoEntidadJuridica.valueOf(tipoEntidad));
     return p;
@@ -35,10 +35,11 @@ public class PersonaJuridicaDTO extends PersonaDTO {
 
   @Override
   public void aplicarCambios(Persona persona) {
-    aplicarCambiosComunes(persona);
+    aplicarCambiosActualizacionComunes(persona);
     PersonaJuridica personaJuridica = (PersonaJuridica) persona;
+
     if (rubro != null) {
-      personaJuridica.setRubro(rubro);
+       personaJuridica.setRubro(rubro);
     }
     if (tipoEntidad != null) {
       personaJuridica.setTipo(TipoEntidadJuridica.valueOf(tipoEntidad));
