@@ -32,12 +32,12 @@ public class Router {
     });
 
     app.get("/donaciones/{id}",ctx-> {
-      ctx.status(200).json(donacionController.mostrarDonacion(ctx));
+      ctx.json(donacionController.mostrarDonacion(ctx));
     });
 
     app.delete("/donaciones/{id}",ctx->{
       donacionController.eliminar(ctx);
-      ctx.status(200);
+      ctx.status(204);
     });
 
     app.patch("/donacionesSegementada/{id}", ctx ->
@@ -48,16 +48,14 @@ public class Router {
         ctx.json(MatchmakingController.asignarDonacion(ctx)));
 */
 
-
     app.get("/matchmaking/ranking/{idSegmentada}", ctx -> {
       ctx.status(200).json(MatchmakingController.obtenerRanking(ctx));
     });
 
     // Asignar donacionsementadaid y entidadbeneficiariaId
     app.post("/matchmaking/asignar",ctx->{
-      ctx.status(400).json(MatchmakingController.asignarDonacion(ctx));
+      ctx.status(201).json(MatchmakingController.asignarDonacion(ctx));
     });
-
 
     //Necesidades
 
