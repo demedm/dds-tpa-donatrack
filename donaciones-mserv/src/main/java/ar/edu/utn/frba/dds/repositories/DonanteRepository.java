@@ -17,7 +17,7 @@ public class DonanteRepository {
 
   public void registrarDonante(Persona nuevoDonante) {
 
-    Optional<Persona> existente = buscarPorEmail(nuevoDonante.getMail().toString());
+    Optional<Persona> existente = buscarPorEmail(nuevoDonante.getMail().getMedioContacto());
 
     if (existente.isPresent()) {
       existente.get().actualizarInfo(nuevoDonante);
