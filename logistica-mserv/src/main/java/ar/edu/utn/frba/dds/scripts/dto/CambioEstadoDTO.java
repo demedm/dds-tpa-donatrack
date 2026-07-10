@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.model.EstadoEntrega;
 
 public class CambioEstadoDTO {
   private String nuevoEstado;
+  private String motivoFalla;
 
   public CambioEstadoDTO() {}
 
@@ -13,6 +14,14 @@ public class CambioEstadoDTO {
 
   public String getNuevoEstado() {
     return this.nuevoEstado;
+  }
+
+  public String getMotivoFalla() {
+    return motivoFalla;
+  }
+
+  public void setMotivoFalla(String motivoFalla) {
+    this.motivoFalla = motivoFalla;
   }
 
 }

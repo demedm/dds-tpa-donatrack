@@ -1,7 +1,8 @@
-package ar.edu.utn.frba.dds.model;
+package ar.edu.utn.frba.dds.model.accionesrutas;
 
 
-// Siempre se logean las rutas para mantener registro
+import ar.edu.utn.frba.dds.model.Ruta;
+
 public class LoggearRuta implements AccionesSobreRutas {
   // private final Logger log = LoggerFactory.getLogger(LoggearRuta.class);
 

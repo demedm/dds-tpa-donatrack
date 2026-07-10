@@ -12,8 +12,8 @@
     <relativePath>../pom.xml</relativePath> <!-- Ruta relativa para encontrar el archivo físico del padre -->
   </parent>
 
-  <artifactId>logistica-mserv</artifactId>
-  <name>servicio-logistica</name>
+  <artifactId>donaciones-mserv</artifactId>
+  <name>servicio-donaciones</name>
 
   <dependencies>
     <!--aca van las dependencias propias del modulo de logistica-->

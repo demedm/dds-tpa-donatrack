@@ -19,7 +19,27 @@ public class RutaController {
     return RutaRepositorio.Instance.findEntregaById(idRuta, idEntrega);
   }
 
+  public List<Entrega> showEntregas(Context ctx) {
+    String idRuta = ctx.pathParam("id");
+    var ruta = RutaRepositorio.Instance.findByid(idRuta);
+    return ruta.getEntregas();
+  }
+
   public List<Ruta> showAllRutas() {
     return RutaRepositorio.Instance.getAllRutas();
   }
+
+  public Ruta saveRuta(Context ctx) {
+    Ruta ruta = ctx.bodyAsClass(Ruta.class);
+    RutaRepositorio.Instance.addRuta(ruta);
+    return ruta;
+  }
+
+  public Entrega saveEntrega(Context ctx) {
+    String idRuta = ctx.pathParam("idRuta");
+    Entrega entrega = ctx.bodyAsClass(Entrega.class);
+    RutaRepositorio.Instance.findByid(idRuta).agregarEntrega(entrega);
+    return entrega;
+  }
+
 }

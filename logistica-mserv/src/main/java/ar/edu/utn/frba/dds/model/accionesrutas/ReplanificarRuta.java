@@ -1,4 +1,6 @@
-package ar.edu.utn.frba.dds.model;
+package ar.edu.utn.frba.dds.model.accionesrutas;
+
+import ar.edu.utn.frba.dds.model.Ruta;
 
 import java.util.List;
 
