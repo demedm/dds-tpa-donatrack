@@ -53,5 +53,27 @@ public class Persona {
   public void actualizarInfo(Persona nuevosDatos) {
     this.nombreIdentificador = nuevosDatos.getNombreIdentificador();
     this.identificacion.setNroDocumento(nuevosDatos.getNroIdentificacion());
+    this.mail = nuevosDatos.getMail();
+    this.telefono = nuevosDatos.getTelefono();
+  }
+
+  public void actualizarDatosComunes(String nombreIdentificador, String nroDocumento,
+      String email, String telefono) {
+    if (nombreIdentificador != null) {
+      this.nombreIdentificador = nombreIdentificador;
+    }
+    if (nroDocumento != null) {
+      this.identificacion.setNroDocumento(nroDocumento);
+    }
+    if (email != null) {
+      this.mail = new Mail(email);
+    }
+    if (telefono != null) {
+      this.telefono = new Telefono(telefono);
+    }
+  }
+
+  public Telefono getTelefono() {
+    return telefono;
   }
 }
