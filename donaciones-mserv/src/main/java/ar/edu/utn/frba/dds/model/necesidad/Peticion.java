@@ -19,6 +19,21 @@ public class Peticion {
     this.cantidadRequerida = cantidadRequerida;
   }
 
+  public void setCantidadRecibida(int cantidadRecibida) {
+    this.cantidadRecibida = cantidadRecibida;
+  }
+
+  public void setDonacionesAsignados(List<String> donacionesAsignados) {
+    this.donacionesAsignados.addAll(donacionesAsignados);
+  }
+
+  public int getCantidadRecibida() {
+    return cantidadRecibida;
+  }
+
+  public List<String> getDonacionesAsignados() {
+    return donacionesAsignados;
+  }
 
   public List<String> getDonacionesAsignadas() {
     return this.donacionesAsignados;

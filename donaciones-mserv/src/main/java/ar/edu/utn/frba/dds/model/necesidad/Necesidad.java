@@ -17,6 +17,8 @@ public class Necesidad {
   public List<Peticion> peticiones = new ArrayList<>();
   private List<String> idDonantesParticipantes = new ArrayList<>();
 
+  public Necesidad() {}
+
   public String getEntidadId(){
     return this.entidadId;
   }
@@ -34,8 +36,9 @@ public class Necesidad {
   }
 
   public enum TipoNecesidad{
-    NORMAL,RECURRENTE;
-  }
+    NORMAL,
+    RECURRENTE
+  };
 
   public long getDiasAvencer() {
     if (this.proximoVencimiento == null) {
@@ -54,6 +57,22 @@ public class Necesidad {
 
   public void agregarPeticion(Peticion peticion){
     this.peticiones.add(peticion);
+  }
+
+  public void setEntidadId(String entidadId) {
+    this.entidadId = entidadId;
+  }
+
+  public void setTipo(TipoNecesidad tipo) {
+    this.tipo = tipo;
+  }
+
+  public void setDescripcion(String descripcion) {
+    this.descripcion = descripcion;
+  }
+
+  public void setDiasRecurrencia(Integer diasRecurrencia) {
+    this.diasRecurrencia = diasRecurrencia;
   }
 
   public String getId() { return id; }
