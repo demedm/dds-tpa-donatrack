@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.scripts.dto;
+package ar.edu.utn.frba.dds.dto;
 
 import java.time.LocalDate;public class DonacionDTO {
   private String direccionEntidad;
