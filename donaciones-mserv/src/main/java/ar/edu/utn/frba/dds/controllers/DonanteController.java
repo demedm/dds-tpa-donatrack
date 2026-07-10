@@ -23,13 +23,18 @@ public class DonanteController {
   }
 
   public void crearDonanteFisica(Context ctx) {
+
     crearDonante(ctx, ctx.bodyAsClass(PersonaFisicaDTO.class));
+
   }
 
   public void crearDonanteJuridica(Context ctx) {
+
     crearDonante(ctx, ctx.bodyAsClass(PersonaJuridicaDTO.class));
+
   }
   public List<Persona> obtenerDonantes(Context ctx){
+
     return registroDonante.getRegistroDonantes();
   }
 
@@ -39,14 +44,13 @@ public class DonanteController {
     .orElseThrow(() -> new NotFoundResponse("No existe un donante con email " + email));
   }
 
+
   public Persona actualizarDonante(Context ctx){
     var email = ctx.pathParam("email");
     Persona existente = registroDonante.buscarPorEmail(email)
         .orElseThrow(() -> new NotFoundResponse("No existe un donante con email " + email));
 
-    PersonaDTO dto = existente instanceof PersonaFisica
-        ? ctx.bodyAsClass(PersonaFisicaDTO.class)
-        : ctx.bodyAsClass(PersonaJuridicaDTO.class);
+    PersonaDTO dto = existente instanceof PersonaFisica ? ctx.bodyAsClass(PersonaFisicaDTO.class) : ctx.bodyAsClass(PersonaJuridicaDTO.class);
 
     dto.aplicarCambios(existente);
     return existente;
