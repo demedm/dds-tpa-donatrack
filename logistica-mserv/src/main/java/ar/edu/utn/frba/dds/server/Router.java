@@ -9,6 +9,7 @@ import io.javalin.http.Context;
 
 public class Router {
   public void configure(Javalin app) {
+    MonitoreoController monitoreoController = new MonitoreoController();
     CamionController camionController = new CamionController();
     RutaController rutaController = new RutaController();
     DashboardController dashboardController = new DashboardController();
@@ -17,6 +18,7 @@ public class Router {
     // DASHBOARD DE MONITOREO
     app.get("/dashboard/", ctx -> ctx.render("dashboard.hbs"));
     app.get("/dashboard/camiones/", dashboardController::listarCamiones);
+    app.post("/camiones/{patente}/telemetria", monitoreoController::recepcionarTelemetria);
 
     // CRUD CALLBACK
     app.post("/callback/planificaciones/", callbackController::recibirPlanificacion);
