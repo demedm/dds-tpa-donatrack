@@ -1,7 +1,10 @@
 package ar.edu.utn.frba.dds.server;
 
+import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;import ar.edu.utn.frba.dds.scripts.dto.CambioEstadoDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import ar.edu.utn.frba.dds.scripts.dto.CamionDTO;
+import ar.edu.utn.frba.dds.scripts.dto.ConfirmationPlanificacionDTO;import ar.edu.utn.frba.dds.scripts.dto.RequestPlanificacionDTO;
+import ar.edu.utn.frba.dds.scripts.dto.SolicitudPlanificacionDTO;import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -9,13 +12,15 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;import java.util.List;
 
 public class Client {
-  private final String base_URL = "http://localhost:9001/";
+  private final String base_URL;
   private final HttpClient client;
   private final ObjectMapper objectMapper;
 
-  public Client(HttpClient client) {
+  public Client(HttpClient client, String URL) {
+    this.base_URL = URL;
     this.client = client;
     this.objectMapper = new ObjectMapper();
   }
@@ -83,6 +88,44 @@ public class Client {
       System.err.println("Error al intentar notificar de entrega fallida a la donacion " +
           idDonacion + e.getMessage());
     }
+  }
+
+  public void solicitudPlanificacion(
+      List<RequestPlanificacionDTO> donacionesAsignadas,
+      List<Camion> camionesDisponibles
+  ) {
+    var tamanioLote = 100;
+    var URLcallback = "/callback/planificaciones/";
+    List<CamionDTO> camiones = camionesDisponibles.stream()
+        .map(this::camionACamionDTO).toList();
+
+    List<List<RequestPlanificacionDTO>> lotes = new ArrayList<>();
+    for(int i=0; i<donacionesAsignadas.size(); i+=tamanioLote) {
+      lotes.add(donacionesAsignadas.subList(i, Math.min(i + tamanioLote, donacionesAsignadas.size())));
+    }
+    for (List<RequestPlanificacionDTO> lote : lotes) {
+      SolicitudPlanificacionDTO solicitud =
+          new SolicitudPlanificacionDTO(lote, camiones, URLcallback);
+
+      try {
+        ConfirmationPlanificacionDTO confirmacion = post(
+            URLcallback, solicitud, ConfirmationPlanificacionDTO.class);
+        System.out.println("Lote enviado correctamente, id de ejecucion: " +
+            confirmacion.getResponseId());
+      } catch (IOException | InterruptedException e) {
+        System.err.println("Error al solicitar planificacion para un lote de "
+            + lote.size() + " donaciones: " + e.getMessage());
+      }
+    }
+  }
+
+  private CamionDTO camionACamionDTO(Camion camion) {
+    CamionDTO c = new CamionDTO();
+    c.setPatente(camion.getPatente());
+    c.setAltura(camion.getAltura());
+    c.setCapacidadCarga(camion.getCapacidadCarga());
+    c.setCapacidadVolumen(camion.getCapacidadVolumen());
+    return c;
   }
 
 }

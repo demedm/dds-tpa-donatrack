@@ -1,16 +1,4 @@
 package ar.edu.utn.frba.dds.model.necesidad;
-
-/**
- * Tarea calendarizada que detecta donantes inactivos y les envía una notificación.
- *
- * Se ejecuta todos los días a las 02:00 AM (horario de baja carga) para no
- * degradar el desempeño del sistema durante las horas pico, tal como pide el TP.
- *
- * Decisión de diseño: la detección de inactividad vive en el scheduler (no en
- * RegistroDonante) para no mezclar lógica de infraestructura con el dominio.
- * RegistroDonante es una clase de dominio que no debería saber nada de scheduling
- * ni de notificaciones.
- */
 /*
 @Component
 public class InactividadDonantesScheduler {

@@ -18,6 +18,8 @@ public class Server {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.registerModule(new Jdk8Module());
       }));
+      initializeTemplating(config);
+      initializeStaticFiles(config);
     });
     new Router().configure(app);
     app.start(9002);

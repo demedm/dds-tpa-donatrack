@@ -32,6 +32,14 @@ public class PersonaJuridica extends Persona {
     return this.rubro;
   }
 
+  @Override
+  public void actualizarInfo(Persona nuevosDatos) {
+    super.actualizarInfo(nuevosDatos);
+    PersonaJuridica nuevaJuridica = (PersonaJuridica) nuevosDatos;
+    this.rubro = nuevaJuridica.getRubro();
+    this.tipo = nuevaJuridica.getTipo();
+  }
+
   //Gubernamental, ONG, Empresa, Institución
   private TipoEntidadJuridica getTipoEntidad(String nombreEntidad) {
     if (nombreEntidad.contains("Fundación") || nombreEntidad.contains("Asociación Civil")) {

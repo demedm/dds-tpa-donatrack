@@ -6,41 +6,38 @@ import ar.edu.utn.frba.dds.model.donantes.Persona;
 
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Donacion {
+
   private String descripcionGeneral;
   private List<DonacionSegmentada> donacionesSegmentadas;
   private Persona donante;
-  private static Integer contador = 0;
-  private Integer id = 0 ;
+  private String id;
+
 
   public Donacion(String descripcionGeneral, List<Bien> bienes, Persona donante) {
-    /*
+
     if(bienes == null || bienes.isEmpty()){
       throw new IllegalArgumentException("Una donación no puede crearse sin bienes");
-    }*/
-
+    }
     this.descripcionGeneral = descripcionGeneral;
     this.donacionesSegmentadas = this.segmentar(bienes);
     this.donante = donante;
-    this.id = contador++;
+    this.id = UUID.randomUUID().toString();
   }
 
   public void agregarDonaciones(DonacionSegmentada donacionSegmentada){
     donacionesSegmentadas.add(donacionSegmentada);
   }
 
-  public Integer getId() {
+  public String getId() {
     return id;
   }
 
   public Persona getDonante(){
     return donante;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
   }
 
   public List<DonacionSegmentada> getDonaciones(){
@@ -74,13 +71,12 @@ public class Donacion {
         .collect(Collectors.toList()); //Para crear una lista mutable
   }
 
+  public String getDescripcionGeneral() {
+    return descripcionGeneral;
+  }
 
-/*
-
-
-
-*/
-
-
+  public void setDescripcionGeneral(String descripcionGeneral) {
+    this.descripcionGeneral = descripcionGeneral;
+  }
 
 }

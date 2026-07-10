@@ -9,6 +9,7 @@ import io.javalin.http.Context;
 
 public class Router {
   public void configure(Javalin app) {
+    MonitoreoController monitoreoController = new MonitoreoController();
     CamionController camionController = new CamionController();
     RutaController rutaController = new RutaController();
     DashboardController dashboardController = new DashboardController();
@@ -17,14 +18,16 @@ public class Router {
     // DASHBOARD DE MONITOREO
     app.get("/dashboard/", ctx -> ctx.render("dashboard.hbs"));
     app.get("/dashboard/camiones/", dashboardController::listarCamiones);
+    app.post("/camiones/{patente}/telemetria", monitoreoController::recepcionarTelemetria);
 
     // CRUD CALLBACK
-    app.post("/callback/planificacion/{idLote}", callbackController::recibirPlanificacion);
+    app.post("/callback/planificaciones/", callbackController::recibirPlanificacion);
 
     // CRUD CAMIONES
     app.get("/camiones/random", ctx -> ctx.json(camionController.randomCamion()));
     app.get("/camiones/", ctx -> ctx.json(camionController.showFlota()));
     app.get("/camiones/{patente}", ctx -> ctx.json(camionController.showCamion(ctx)));
+    app.post("/camiones/{patente}", camionController::saveCamion);
 
     // CRUD RUTAS Y ENTREGAS
     app.get("/rutas/", ctx -> ctx.json(rutaController.showAllRutas()));
@@ -37,7 +40,7 @@ public class Router {
     app.post("/rutas/{idRuta}/entregas/", rutaController::saveEntrega);
 
     // RECEPCION DE DONACIONES
-    app.post("/donaciones/{id}", callbackController::recibirDonaciones);
+    app.post("/donaciones/{id}", callbackController::recibirDonacion);
 
   }
 }

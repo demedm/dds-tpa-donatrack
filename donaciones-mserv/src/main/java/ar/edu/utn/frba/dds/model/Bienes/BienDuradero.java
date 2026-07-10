@@ -9,7 +9,7 @@ public class BienDuradero extends Bien {
   }
 
   @Override
-  public Object getCriterioSegmentacion() {
+  protected Object getCriterioSegmentacion() {
     return this.estado;
   }
 

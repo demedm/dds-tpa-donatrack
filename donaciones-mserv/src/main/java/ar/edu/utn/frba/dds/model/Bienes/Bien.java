@@ -11,11 +11,12 @@ public abstract class  Bien {
     Descripcion = descripcion;
   }
 
-  public abstract Object getCriterioSegmentacion();
+  protected abstract Object getCriterioSegmentacion();
 
   public Criterio getCriterioDeAgrupacion() {
     return new Criterio(this.subCategoria, this.getCriterioSegmentacion());
   }
+
 }
 
 
