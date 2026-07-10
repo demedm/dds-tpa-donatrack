@@ -10,7 +10,7 @@ public class NotificarAdmins implements  AccionesSobreEntregas{
   private final Client client;
 
   public NotificarAdmins() {
-    this.client = new Client(HttpClient.newHttpClient());
+    this.client = new Client(HttpClient.newHttpClient(), "http://localhost:9001/");
   }
 
   @Override

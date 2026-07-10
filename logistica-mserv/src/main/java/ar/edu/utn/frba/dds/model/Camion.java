@@ -49,27 +49,18 @@ public class Camion {
     return this.rutaActual;
   }
 
+  public void improvistoLogistico() {
+    rutaActual.indicarImprovistoLogistico();
+  }
+
   public void asignarRuta(Ruta ruta) {
     this.rutaActual = ruta;
     estado = EstadoCamion.RUTA_ASIGNADA;
-  }
-/*
-  public boolean asignarRuta(Ruta ruta) {
-    if(estado == EstadoCamion.DISPONIBLE) {
-      this.rutaActual = ruta;
-      estado = EstadoCamion.RUTA_ASIGNADA;
-      return true;
-    }
-    return false;
   }
 
   public void iniciarRuta() {
     estado = EstadoCamion.REALIZANDO_ENTREGAS;
     rutaActual.iniciarRuta();
-  }
-
-  public void visitarDestino(String direccion) {
-    rutaActual.visitarParada(direccion);
   }
 
   public void regresarADeposito() {
@@ -80,7 +71,7 @@ public class Camion {
   public Ubicacion getUbicacionActual() {
     return ubicacionActual;
   }
-
+/*
   public void actualizarUbicacion(Double latitud, Double longitud) {
     // Solo permitimos actualizar si el camión está en ruta
     if (this.estado == EstadoCamion.REALIZANDO_ENTREGAS) {

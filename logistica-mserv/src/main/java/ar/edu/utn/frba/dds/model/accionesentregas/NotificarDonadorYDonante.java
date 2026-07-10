@@ -10,7 +10,7 @@ public class NotificarDonadorYDonante implements AccionesSobreEntregas{
   private final Client client;
 
   public NotificarDonadorYDonante() {
-    this.client = new Client(HttpClient.newHttpClient());
+    this.client = new Client(HttpClient.newHttpClient(), "http://localhost:9001/");
   }
 
   @Override
