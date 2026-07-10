@@ -46,7 +46,7 @@ public class DonacionSegmentadaController {
     }
 
     donacion.asignar();
-    donacion.setEntidad(idEntidad);
+    donacion.setEntidadAsignadaId(idEntidad);
 
     return donacion;
 

@@ -33,15 +33,14 @@ public class Router {
       ctx.status(200);
     });
 
+    app.put("/donacionesSegementada/{id}", ctx ->
+        ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx))
+    );
 
-    app.put("/donaciones-segementada/{id}", ctx ->
-        ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx);
 
-
-    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx -> ctx.json(donacionController.asignar(ctx)));
-
+    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx ->
+        ctx.json(donacionSegmentadaController.asignarDonacion(ctx)));
 /*
-
     app.post("/donaciones/{id}/matchmaking",ctx->{
       Donacion donacion = repository.obtenerPorId(ctx.pathParam("id"));
       if(donacion == null) ctx.status(400);
