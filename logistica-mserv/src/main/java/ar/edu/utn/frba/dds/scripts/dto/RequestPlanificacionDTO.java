@@ -1,11 +1,14 @@
 package ar.edu.utn.frba.dds.scripts.dto;
 
-public class PlanificacionDTO {
+import java.time.LocalDate;
+
+public class RequestPlanificacionDTO {
   private String direccion;
   private int idEntidad;
   private int idDonacion;
+  private LocalDate fechaVencimiento;
 
-  public PlanificacionDTO() {}
+  public RequestPlanificacionDTO() {}
 
   public String getDireccion() {
     return direccion;
@@ -29,6 +32,14 @@ public class PlanificacionDTO {
 
   public void setIdDonacion(int idDonacion) {
     this.idDonacion = idDonacion;
+  }
+
+  public LocalDate getFechaVencimiento() {
+    return fechaVencimiento;
+  }
+
+  public void setFechaVencimiento(LocalDate fechaVencimiento) {
+    this.fechaVencimiento = fechaVencimiento;
   }
 
 }

@@ -15,7 +15,7 @@ public class CamionRepositorio {
     return flota.stream().findAny().orElse(null);
   }
 
-  public Camion getByPatente(String patente) {
+  public Camion findByPatente(String patente) {
     var c = flota.stream().filter(camion ->
         camion.getPatente().equals(patente)).toList().get(0);
     return c;

@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.server;
 
-import ar.edu.utn.frba.dds.scripts.dto.CambioEstadoDTO;
+import ar.edu.utn.frba.dds.model.EstadoEntrega;import ar.edu.utn.frba.dds.scripts.dto.CambioEstadoDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -70,6 +70,18 @@ public class Client {
     } catch(IOException | InterruptedException e) {
       System.err.println("Error al intentar notificar de cambio de Estado " +
           nuevoEstado + " a la donacion " + id + e.getMessage());
+    }
+  }
+
+  public void notificarFallaDeEntrega(int idDonacion, String motivo) {
+    try {
+      CambioEstadoDTO cambio = new CambioEstadoDTO();
+      cambio.setNuevoEstado(EstadoEntrega.FALLIDA.name());
+      cambio.setMotivoFalla(motivo);
+      put("/donaciones/" + idDonacion + "/estado", cambio);
+    } catch(IOException | InterruptedException e) {
+      System.err.println("Error al intentar notificar de entrega fallida a la donacion " +
+          idDonacion + e.getMessage());
     }
   }
 
