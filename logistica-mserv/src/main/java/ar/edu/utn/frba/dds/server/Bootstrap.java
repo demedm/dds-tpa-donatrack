@@ -16,7 +16,7 @@ public class Bootstrap {
         CamionRepositorio.Instance.registrarCamion(camion));
     List<Ruta> rutas = rutas();
     Camion camion1 = camiones.get(0);
-    rutas.stream().limit(1).forEach(camion1::asignarRuta);
+    rutas.stream().limit(camiones.size()).forEach(camion1::asignarRuta);
 
     RutaRepositorio.Instance.setAllRutas(rutas());
   }

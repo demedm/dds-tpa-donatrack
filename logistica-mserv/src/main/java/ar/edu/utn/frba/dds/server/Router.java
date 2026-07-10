@@ -28,6 +28,8 @@ public class Router {
     // CRUD RUTAS
     app.get("/rutas/", ctx -> ctx.json(rutaController.showAllRutas()));
     app.get("/rutas/{id}", ctx -> ctx.json(rutaController.showRuta(ctx)));
+    app.get("/rutas/{idRuta}/entregas/{idEntrega}", ctx -> ctx.json(
+        rutaController.showEntrega(ctx)));
 
     // RECEPCION DE DONACIONES
     app.post("/donaciones/{id}", callbackController::recibirDonaciones);

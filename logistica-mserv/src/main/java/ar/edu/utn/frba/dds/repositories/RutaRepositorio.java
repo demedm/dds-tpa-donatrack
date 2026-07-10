@@ -29,6 +29,13 @@ public class RutaRepositorio {
     allRutas.addAll(nuevasRutas);
   }
 
+  public Entrega findEntregaById(String idRuta, String idEntrega) {
+    var rutaBuscada = allRutas.stream().filter(ruta -> ruta.getId().equals(idRuta))
+        .findFirst().orElse(null);
+    return rutaBuscada.getEntregas().stream().filter(entrega ->
+        entrega.getId().equals(idEntrega)).findFirst().orElse(null);
+  }
+
   /*
   public void gestionarRutas(List<Entrega> entregas) {
     int tamanioLote = 100;
