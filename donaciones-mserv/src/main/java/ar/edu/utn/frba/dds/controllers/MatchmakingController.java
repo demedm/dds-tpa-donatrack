@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.dto.AsignarDonacionDTO;
 import ar.edu.utn.frba.dds.dto.DonacionsDTO;
 import ar.edu.utn.frba.dds.dto.ResultadosMatchmakingDTO;
 import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
@@ -30,7 +31,9 @@ public class MatchmakingController {
   public Resultados obtenerRanking(Context ctx){
     String idSegmentada = ctx.pathParam("id");
     DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
-
+    if(!donacion.estaAlmacen()){
+      throw new NotFoundResponse("La donación no se encuentra EN_DEPOSITO");
+    }
     if(donacion == null){
       throw new NotFoundResponse("DonacionSegmentada no encontrada");
     };
@@ -43,8 +46,11 @@ public class MatchmakingController {
 
 
   public DonacionSegmentada asignarDonacion(Context ctx) {
-    String idDonacion = ctx.pathParam("id");
-    String idEntidad = ctx.pathParam("idEntidad");
+
+    AsignarDonacionDTO dto = ctx.bodyAsClass(AsignarDonacionDTO.class);
+
+    String idDonacion = dto.getDonacionSegmentadaId();
+    String idEntidad = dto.getEntidadBeneficiariaId();
 
     DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(idDonacion);
 
