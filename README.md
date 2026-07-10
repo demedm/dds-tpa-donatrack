@@ -1,80 +1,28 @@
-# java-base-project
+## *Trabajo Práctico Anual Integrador - Diseño de Sistemas - 2026*
+# DonaTrack - Sistema de Gestión y Trazabilidad de Donaciones
 
-Esta es una plantilla de proyecto diseñada para: 
+## Integrantes del Proyecto
 
-* Java 17. :warning: Si bien el proyecto no lo limita explícitamente, el comando `mvn verify` no funcionará con versiones más antiguas de Java. 
-* JUnit 5. :warning: La versión 5 de JUnit es la más nueva del framework y presenta algunas diferencias respecto a la versión "clásica" (JUnit 4). Para mayores detalles, ver: 
-  *  [Apunte de herramientas](https://docs.google.com/document/d/1VYBey56M0UU6C0689hAClAvF9ILE6E7nKIuOqrRJnWQ/edit#heading=h.dnwhvummp994)
-  *  [Entrada de Blog (en inglés)](https://www.baeldung.com/junit-5-migration) 
-  *  [Entrada de Blog (en español)](https://www.paradigmadigital.com/dev/nos-espera-junit-5/)
-* Maven 3.8.1 o superior
+| Nombre y Apellido           |                    |
+|:----------------------------|:-------------------|
+| *Denise A. Medina Mosquera* | *demedm*           |
+| *Geraldine Lara*            | *GeraldineLara* |
+| *[Nombre del Integrante 3]* | *[Email / GitHub]* |
+| *[Nombre del Integrante 4]* | *[Email / GitHub]* |
+| *[Nombre del Integrante 5]* | *[Email / GitHub]* |
 
-## Ejecutar tests
+---
 
-```
-mvn test
-```
+### Introducción del Proyecto
+**DonaTrack** es una solución digital integral diseñada para abordar las problemáticas actuales de gestión, organización y trazabilidad de recursos materiales dentro de **UTN Solidaria** (una iniciativa de la Subsecretaría de Asuntos Estudiantiles orientada a asistir a personas en situación de vulnerabilidad).
 
-## Validar el proyecto de forma exahustiva
+El propósito fundamental del sistema es erradicar el desorden, la duplicación de registros y la falta de claridad en el destino de las donaciones recibidas en el depósito (tales como alimentos no perecederos, ropa, abrigo y mobiliario). 
+A través de DonaTrack, se automatiza y optimiza todo el flujo logístico y operativo. Sus funcionalidades principales son las siguientes:
+* **Gestión de Donantes y Entidades:** Registro unificado de personas humanas y jurídicas, junto con la gestión de las necesidades materiales recurrentes o extraordinarias de las entidades beneficiarias.
+* **Segmentación de las donaciones realizadas:** División interna de las cargas de bienes agrupadas obligatoriamente por subcategorías y fechas de vencimiento para garantizar una asignación precisa.
+* **Matchmaking:** Ejecución de algoritmos de asignación asincrónicos (Compatibilidad Semántica y Prioridad a Sub-atendidos) para determinar el destino óptimo de los bienes.
+* **Logística y Tracking en Tiempo Real:** Planificación optimizada de rutas de transporte en lotes y monitoreo en tiempo real de la flota de camiones mediante telemetría (GPS/App móvil) para controlar la llegada de las donaciones a destino.
 
-```
-mvn clean verify
-```
+El sistema se encuentra descentralizado en una arquitectura de **microservicios independientes** (*Servicio de Donaciones* y *Servicio de Logística*), el proyecto garantiza una escalabilidad óptima para el crecimiento del equipo de logística y el volumen de asistencia comunitaria.
 
-Este comando hará lo siguiente:
-
- 1. Ejecutará los tests
- 2. Validará las convenciones de formato mediante checkstyle
- 3. Detectará la presencia de (ciertos) code smells
- 4. Validará la cobertura del proyecto
-
-## Entrega del proyecto
-
-Para entregar el proyecto, crear un tag llamado `entrega-final`. Es importante que antes de realizarlo se corra la validación
-explicada en el punto anterior. Se recomienda hacerlo de la siguiente forma:
-
-```
-mvn clean verify && git tag entrega-final && git push origin HEAD --tags
-```
-
-## Configuración del IDE (IntelliJ)
-
-### Usar el SDK de Java 17
-
-1. En **File/Project Structure...**, ir a **Project Settings | Project**
-2. En **Project SDK** seleccionar la versión 17 y en **Project language level** seleccionar `17 - Sealed types, always-strict floating-point semantics`
-
-![image](https://user-images.githubusercontent.com/39303639/228126065-221b9851-fb96-4f7f-a8e1-010732dc7ef6.png)
-
-### Usar fin de linea unix
-1. En **File/Settings...**, ir a **Editor | Code Style**.
-2. En la lista **Line separator**, seleccionar `Unix and OS X (\n)`.
-
-![image](https://user-images.githubusercontent.com/39303639/228126546-352289fa-8feb-4b39-99db-d8b860915fea.png)
-
-### Tabular con dos espacios
-
-1. En **File/Settings...**, ir a **Editor | Code Style | Java | Tabs and Indents**.
-2. Cambiar **Tab size**, **Indent** y **Continuation indent** a 2, 2 y 4 respectivamente:
-
-![image](https://user-images.githubusercontent.com/39303639/228127009-8c84ea72-969b-4e05-b311-45e3688a4164.png)
-
-### Ordenar los imports
-
-1. En **File/Settings...**, ir a **Editor | Code Style | Java | Imports**.
-2. Cambiar **Class count to use import with '*'** y **Names count to use static import with '*'** a un número muy alto (ej: 99).
-3. En **Import Layout**, dejarlo como se muestra a continuación:
-    - `import static all other imports`
-    - `<blank line>`
-    - `import all other imports`
-
-![image](https://user-images.githubusercontent.com/39303639/228126787-36f9ecff-27f2-4b99-bf11-a6bd89f67087.png)
-
-### Instalar y configurar Checkstyle
-
-1. Instalar el plugin https://plugins.jetbrains.com/plugin/1065-checkstyle-idea:
-2. En **File/Settings...**, ir a **Tools | Checkstyle**.
-3. Configurarlo activando los Checks de Google y la versión de Checkstyle `== 9.0.1`:
-
-![image](https://github.com/dds-utn/java-base-project/assets/11719816/b1edc122-4675-4f8d-bffc-9e3d3366fac6)
-
+---
