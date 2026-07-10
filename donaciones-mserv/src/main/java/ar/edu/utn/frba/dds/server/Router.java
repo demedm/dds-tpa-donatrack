@@ -1,9 +1,11 @@
 package ar.edu.utn.frba.dds.server;
 
 import ar.edu.utn.frba.dds.controllers.DonacionController;
+import ar.edu.utn.frba.dds.controllers.DonacionSegmentadaController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
+import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import io.javalin.Javalin;
 
 import java.io.IOException;
@@ -14,7 +16,9 @@ public class Router {
     DonacionController donacionController = new DonacionController();
     DonanteController donanteController = new DonanteController();
     EntidadBeneficiariaController entidadController = new EntidadBeneficiariaController();
+    DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
 
+    //Donaciones
 
     app.get("/donaciones/", ctx ->
         ctx.json(donacionController.mostrarDonaciones())
@@ -27,21 +31,20 @@ public class Router {
     app.get("/donaciones/{id}",ctx-> {
       ctx.status(200).json(donacionController.mostrarDonacion(ctx));
     });
-    /*
+
     app.delete("/donaciones/{id}",ctx->{
-      donacionController.eliminar(ctx.pathParam("id"));
+      donacionController.eliminar(ctx);
       ctx.status(200);
     });
 
 
+    app.put("/donaciones-segementada/{id}", ctx ->
+        ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx);
 
-     */
 
-
-/*
-    app.put("/donaciones-segementada/{id}", donacionesRepository::cambiarEstadoDonacion);
     app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx -> ctx.json(donacionController.asignar(ctx)));
 
+/*
 
     app.post("/donaciones/{id}/matchmaking",ctx->{
       Donacion donacion = repository.obtenerPorId(ctx.pathParam("id"));
@@ -49,7 +52,6 @@ public class Router {
     });
 
  */
-    //Donaciones
 
 
     //Necesidades
