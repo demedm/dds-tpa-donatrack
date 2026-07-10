@@ -104,12 +104,12 @@ public class DonanteTest {
     registrar(personaFisica("analosada@mail.com"));
 
     PersonaFisica actualizada = personaFisica("analosada@mail.com");
-    actualizada.setNombreIdentificador("Ana Losada");
+    actualizada.setNombreIdentificador("Ana Losada Actualizada");
     registrar(actualizada);
 
-    assertEquals(2, repository.getRegistroDonantes().size());
-    assertEquals("Ana Losada",
-        repository.buscarPorEmail("camila.martinez@mail.com").get().getNombreIdentificador());
+    assertEquals(1, repository.getRegistroDonantes().size());
+    assertEquals("Ana Losada Actualizada",
+        repository.buscarPorEmail("analosada@mail.com").get().getNombreIdentificador());
   }
 
   @Test
