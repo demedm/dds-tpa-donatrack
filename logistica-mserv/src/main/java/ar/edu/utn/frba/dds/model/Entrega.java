@@ -11,6 +11,7 @@ import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +31,9 @@ public class Entrega {
     this.donacionId = idDonacion;
     this.direccion = direccion;
     this.id = UUID.randomUUID().toString();
-
+    accionesSobreEntregas = new ArrayList<>();
+    agregarAccionEntregas(new NotificarAdmins());
+    agregarAccionEntregas(new NotificarDonadorYDonante());
   }
 
   public LocalDate getFechaVencimiento() {
@@ -92,8 +95,11 @@ public class Entrega {
   }
 
   public boolean estaVencida() {
-    marcarComoFallida(new EntregaVencida());
-    return fechaVencimiento != null && fechaVencimiento.isBefore(LocalDate.now());
+    if(fechaVencimiento != null && fechaVencimiento.isBefore(LocalDate.now())) {
+      marcarComoFallida(new EntregaVencida());
+      return true;
+    }
+    return false;
   }
 
   public MotivoFallo getMotivoFallo() {
@@ -114,5 +120,13 @@ public class Entrega {
 
   public void setFoto(String foto) {
     this.foto = foto;
+  }
+
+  public EstadoEntrega getEstado() {
+    return estado;
+  }
+
+  public void setEstado(EstadoEntrega estado) {
+    this.estado = estado;
   }
 }

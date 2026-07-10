@@ -49,7 +49,7 @@ public class Bootstrap {
     ));
 
     Donacion donacion = new Donacion("Donación de alimentos", bienes, null);
-    DonacionesRepository.Instance.agregarDonacion(donacion);
+    // DonacionesRepository.Instance.agregarDonacion(donacion);
 
     return List.of(donacion);
 }

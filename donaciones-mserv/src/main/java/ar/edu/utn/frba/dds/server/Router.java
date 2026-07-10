@@ -38,11 +38,11 @@ public class Router {
     });
 
 
-    app.put("/donaciones-segementada/{id}", ctx ->
-        ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx);
+    //app.put("/donaciones-segementada/{id}", ctx ->
+    //    ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx));
 
 
-    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx -> ctx.json(donacionController.asignar(ctx)));
+    //app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx -> ctx.json(donacionController.asignar(ctx)));
 
 /*
 

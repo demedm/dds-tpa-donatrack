@@ -24,7 +24,7 @@ public class Router {
     // CRUD CAMIONES
     app.get("/camiones/random", ctx -> ctx.json(camionController.randomCamion()));
     app.get("/camiones/", ctx -> ctx.json(camionController.showFlota()));
-    app.get("/camiones/{patente}", ctx -> ctx.json(camionController.showCamion(ctx)));
+    app.get("/camiones/{patente}", camionController::buscarPorPatente);
     app.post("/camiones/{patente}", camionController::saveCamion);
 
     // CRUD RUTAS Y ENTREGAS
