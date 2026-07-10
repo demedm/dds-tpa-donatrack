@@ -1,6 +1,14 @@
+<<<<<<<< HEAD:donaciones-mserv/src/main/java/ar/edu/utn/frba/dds/model/Bienes/Donacion.java
 package ar.edu.utn.frba.dds.model.Bienes;
 
 import ar.edu.utn.frba.dds.model.donantes.Persona;
+========
+package ar.edu.utn.frba.dds.Donaciones;
+
+import ar.edu.utn.frba.dds.Bienes.Bien;
+import ar.edu.utn.frba.dds.Bienes.Criterio;
+import ar.edu.utn.frba.dds.donantes.Persona;
+>>>>>>>> origin/refactor1:donaciones-module/src/main/java/ar/edu/utn/frba/dds/Donaciones/Donacion.java
 
 import java.util.List;
 
