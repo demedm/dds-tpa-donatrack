@@ -11,7 +11,7 @@ public class BienPerecedero extends Bien {
   }
 
   @Override
-  public Object getCriterioSegmentacion() {
+  protected Object getCriterioSegmentacion() {
     return this.fechaVencimiento;
   }
 }

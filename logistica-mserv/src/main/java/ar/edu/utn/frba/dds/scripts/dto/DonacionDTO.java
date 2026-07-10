@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.scripts.dto;
 
-import java.time.LocalDate;public class DonacionDTO {
+import java.time.LocalDate;
+public class DonacionDTO {
   private String direccionEntidad;
   private int idEntidadAsignada;
   private LocalDate fechaVencimiento;

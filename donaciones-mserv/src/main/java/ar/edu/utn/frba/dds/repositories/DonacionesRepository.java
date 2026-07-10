@@ -11,41 +11,28 @@ import java.util.List;
 public class DonacionesRepository {
     public static DonacionesRepository Instance = new DonacionesRepository();
     public List<Donacion> donaciones = new ArrayList<>();
-    public List<DonacionSegmentada> donacionesAsignadas = new ArrayList<>();
 
-    public void agregarDonacion(Donacion donacion){
-        donaciones.add(donacion);
-    }
+    //Donaciones
 
-    public void cambiarEstadoDonacion(Context ctx) {
-        int idDonacion = Integer.parseInt(ctx.pathParam("{id}"));
-        CambioEstadoDTO cambioEstado = ctx.bodyAsClass(CambioEstadoDTO.class);
+    public Donacion guardar(Donacion donacion) {
 
-        DonacionSegmentada donacion = obtenerDonacionAsignadaPorId(idDonacion);
-        if(cambioEstado.getMotivoFallaEntrega() == null) {
-            donacion.cambiarEstado(cambioEstado.getNuevoEstado());
+        Donacion existente = findById(donacion.getId());
+
+        if(existente == null){
+            donaciones.add(donacion);
         } else {
-            donacion.fallarEntrega(cambioEstado.getMotivoFallaEntrega());
+            existente.setDescripcionGeneral(donacion.getDescripcionGeneral());
         }
 
-        ctx.status(200);
+        return existente;
     }
 
-    public DonacionSegmentada obtenerDonacionAsignadaPorId(int id){
-        return this.donacionesAsignadas.stream()
-            .filter(d->d.getId() == id)
+    public Donacion findById(String id){
+        return this.donaciones.stream()
+            .filter(d-> d.getId().equals(id))
             .findFirst()
             .orElse(null);
     }
-
-    public Donacion obtenerPorId(int id){
-        return this.donaciones.stream()
-        .filter(d->d.getId()== id)
-        .findFirst()
-        .orElse(null);
-    }
-
-    //Obtener todas las donaciones
 
     public List<Donacion> obtenerTodas(){
         return new ArrayList<>(this.donaciones);
@@ -55,11 +42,26 @@ public class DonacionesRepository {
         this.donaciones.removeIf(d->d.getId().equals(id));
     }
 
-    public void actualizar(Donacion donacion){
-        Donacion existente = obtenerPorId(donacion.getId());
+    //Donaciones segmentadas
 
-        existente.setDonacionesSegmentadas(donacion.getDonaciones());    }
+    public DonacionSegmentada findSegmentadaById(String segmentadaId) {
+        return this.donaciones.stream()
+            .flatMap(d -> d.getDonaciones().stream())
+            .filter(ds -> ds.getId().equals(segmentadaId))
+            .findFirst()
+            .orElse(null);
+    }
 
+
+
+    //Para los algoritmos
+
+    public List<DonacionSegmentada> findSegmentadasEnDeposito(){
+        return this.donaciones.stream()
+            .flatMap(d->d.getDonaciones().stream())
+            .filter(DonacionSegmentada::estaAlmacen)
+            .toList();
+    }
 
 }
 

@@ -26,7 +26,7 @@ public class DonacionTest {
 @BeforeEach
   public void setUp() {
 
-    categoria = new Categoria();
+    categoria = Categoria.ALIMENTOS;
     subFideos = new Subcategoria(categoria, "fideos");
     subSillas = new Subcategoria(categoria, "sillas");
     repository = new DonacionesRepository();
