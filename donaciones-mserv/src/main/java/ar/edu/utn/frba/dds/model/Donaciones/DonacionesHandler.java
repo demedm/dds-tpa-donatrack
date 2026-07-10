@@ -1,7 +1,5 @@
-package ar.edu.utn.frba.dds.model.Bienes.DonacionesHandler;
+package ar.edu.utn.frba.dds.model.Donaciones;
 
-import ar.edu.utn.frba.dds.model.Bienes.Donacion;
-import ar.edu.utn.frba.dds.model.Bienes.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.Estado.AsignacionRealizada;
 import ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio.Necesidad;
 import ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio.Peticion;

@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.repositories;
 
 import ar.edu.utn.frba.dds.dto.CambioEstadoDTO;
-import ar.edu.utn.frba.dds.model.Bienes.Donacion;
-import ar.edu.utn.frba.dds.model.Bienes.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
+import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import io.javalin.http.Context;
 
 import java.util.ArrayList;

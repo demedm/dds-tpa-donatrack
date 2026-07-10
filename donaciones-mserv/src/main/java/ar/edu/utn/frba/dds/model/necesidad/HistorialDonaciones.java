@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.necesidad;
 
-import ar.edu.utn.frba.dds.model.Bienes.Donacion;
+import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 
 import java.util.ArrayList;
 import java.util.List;

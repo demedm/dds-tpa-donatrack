@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.Asignacion;
 
-import ar.edu.utn.frba.dds.model.Bienes.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 
 import java.time.LocalDate;

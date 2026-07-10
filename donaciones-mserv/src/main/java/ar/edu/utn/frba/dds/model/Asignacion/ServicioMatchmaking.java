@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.Asignacion;
 
-import ar.edu.utn.frba.dds.model.Bienes.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
 
@@ -13,7 +13,7 @@ public class ServicioMatchmaking {
 
   public Resultados ejecutar(DonacionSegmentada donacion, List<EntidadBeneficiaria> entidades){
 
-    if(donacion.getNombreEstado().equals( new EnDeposito().getNombre()) ){
+    if(donacion.estaAlmacen()){
       throw new IllegalStateException("Solo se puede asignar donaciones en estado EN_DEPOSITO");
     }
 
