@@ -1,13 +1,21 @@
 package ar.edu.utn.frba.dds.server;
 
+import ar.edu.utn.frba.dds.model.Bienes.Bien;
+import ar.edu.utn.frba.dds.model.Bienes.BienDuradero;
+import ar.edu.utn.frba.dds.model.Bienes.Categoria;
 import ar.edu.utn.frba.dds.model.Bienes.Donacion;
+import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.donantes.Identificacion;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
+import ar.edu.utn.frba.dds.model.donantes.PersonaJuridica;
 import ar.edu.utn.frba.dds.model.donantes.TipoDocumento;
 import ar.edu.utn.frba.dds.model.donantes.TipoPersona;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
+import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +37,18 @@ public class Bootstrap {
 	}
 
 	private static List<Persona> donadores() {
-		return null;
+		PersonaFisica maria = new PersonaFisica();
+		maria.setNombreIdentificador("Maria A");
+		maria.setMail(new Mail("mariaa@gmail.com"));
+		maria.setEdad(46);
+		PersonaJuridica org = new PersonaJuridica();
+		org.setNombreIdentificador("Patitas");
+		org.setMail(new Mail("patitas@org.com"));
+		org.setRubro("alimenticio");
+		List<MedioContacto> mails = new ArrayList<>();
+		mails.add(new Mail("marior@gmail.com"));
+		mails.add(new Mail("comidas@outlook.com"));
+		org.setListaContactos(mails);
+		return Arrays.asList(maria, org);
 	}
 }

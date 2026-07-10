@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DonacionSegmentada {
+  private int id;
   private int cantidad;
   private Subcategoria subcategoria;
   private Bien bienFiltrado;
@@ -58,8 +59,24 @@ public class DonacionSegmentada {
     return bienFiltrado;
   }
 
+  public int getId() {
+    return id;
+  }
+
   public List<RegistroCambioEstado> getHistorialEstados() {
     return historialEstados;}
+
+  public void cambiarEstado(String nuevoEstado) {
+    if(nuevoEstado.equals("PENDIENTE")) {
+      // el estado tiene que regresar a EN DEPOSITO
+    }
+    else if(nuevoEstado.equals("EN_TRASLADO")) {
+      iniciarTraslado();
+    }
+    else if(nuevoEstado.equals("ENTREGADA")) {
+      confirmarEntrega();
+    }
+  }
 
   public void asignar() {
     estadoActual.asignar(this);

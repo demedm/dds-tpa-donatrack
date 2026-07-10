@@ -28,9 +28,9 @@ public class Bootstrap {
     var listaEntregas2 = Arrays.asList(new Entrega("Luis Maria 777", 12),
         new Entrega("Medrano 1512", 61));
 
-    return Arrays.asList(new Ruta("aaaaAAAA", listaEntregas, 3),
-        new Ruta("bbbbBBBB", listaEntregas2, 65),
-        new Ruta("ccccCCCC", listaEntregas, 10));
+    return Arrays.asList(new Ruta("aaaaAAAA", listaEntregas),
+        new Ruta("bbbbBBBB", listaEntregas2),
+        new Ruta("ccccCCCC", listaEntregas));
   }
 
   private static List<Camion> camiones() {

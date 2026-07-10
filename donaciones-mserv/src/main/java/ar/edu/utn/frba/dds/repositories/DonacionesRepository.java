@@ -1,15 +1,34 @@
 package ar.edu.utn.frba.dds.repositories;
 
+import ar.edu.utn.frba.dds.dto.CambioEstadoDTO;
 import ar.edu.utn.frba.dds.model.Bienes.Donacion;
+import ar.edu.utn.frba.dds.model.Bienes.DonacionSegmentada;
+import io.javalin.http.Context;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DonacionesRepository {
+    public static DonacionesRepository Instance = new DonacionesRepository();
     public List<Donacion> donaciones = new ArrayList<>();
+    public List<DonacionSegmentada> donacionesAsignadas = new ArrayList<>();
 
     public void agregarDonacion(Donacion donacion){
         donaciones.add(donacion);
+    }
+
+    public void cambiarEstadoDonacion(Context ctx) {
+        int idDonacion = Integer.parseInt(ctx.pathParam("{id}"));
+        CambioEstadoDTO cambioEstado = ctx.bodyAsClass(CambioEstadoDTO.class);
+
+        DonacionSegmentada donacion = obtenerDonacionAsignadaPorId(idDonacion);
+        if(cambioEstado.getMotivoFallaEntrega() == null) {
+            donacion.cambiarEstado(cambioEstado.getNuevoEstado());
+        } else {
+            donacion.fallarEntrega(cambioEstado.getMotivoFallaEntrega());
+        }
+
+        ctx.status(200);
     }
 
     // public  ResultadoBusqueda buscarProducto(String subcategoria, int cantidad){
@@ -29,6 +48,13 @@ public class DonacionesRepository {
     //     }
     //     return new ResultadoBusqueda(restante,bienesAsignados);
     // }
+
+    public DonacionSegmentada obtenerDonacionAsignadaPorId(int id){
+        return this.donacionesAsignadas.stream()
+            .filter(d->d.getId() == id)
+            .findFirst()
+            .orElse(null);
+    }
 
     public Donacion obtenerPorId(String id){
         return this.donaciones.stream()

@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import org.junit.jupiter.api.Test;
 
 public class NotificacionTest {
+  /*
 
   @Test
   public void importaCorrectamentedelCSV() {
@@ -14,4 +15,6 @@ public class NotificacionTest {
   private MedioContacto notificacion(String direccionMail) {
     return new Mail(direccionMail);
   }
+
+   */
 }

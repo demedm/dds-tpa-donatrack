@@ -1,16 +1,16 @@
 package ar.edu.utn.frba.dds.model;
 
-import java.util.List;
+import java.util.List;import java.util.UUID;
 
 public class Ruta {
   private List<Entrega> entregas;
   private String patenteAsignada;
-  private int id;
+  private String id;
 
-  public Ruta(String patenteCamion, List<Entrega> entregas, int id) {
+  public Ruta(String patenteCamion, List<Entrega> entregas) {
     this.entregas = entregas;
     this.patenteAsignada = patenteCamion;
-    this.id = id;
+    this.id = UUID.randomUUID().toString();
   }
 
   public int getId() {

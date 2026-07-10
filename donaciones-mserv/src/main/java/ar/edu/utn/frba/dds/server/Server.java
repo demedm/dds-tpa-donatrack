@@ -6,8 +6,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 
+import java.io.IOException;
+
 public class Server {
-  public void start() {
+  public void start() throws IOException, InterruptedException {
     Bootstrap.init();
     var app = Javalin.create(config -> {
       config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {

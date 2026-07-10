@@ -24,7 +24,7 @@ public class Router {
     app.get("/rutas/{id}", ctx -> ctx.json(rutaController.showRuta(ctx)));
 
 
-
+    // todavia no implemento el post de donaciones, pero se crean recibiendo el id
     // app.post("/camiones/", ctx -> ctx.json(camionController.save()));
     // app.post("/entregas/");
     //app.get("/camiones", ctx -> ctx.render("dashboard.hbs",

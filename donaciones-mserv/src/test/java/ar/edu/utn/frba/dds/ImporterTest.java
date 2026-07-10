@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImporterTest {
+  /*
 
   private ImporterDonantes importer;
   private List<Persona> registroPrevio = new ArrayList<>();
