@@ -19,6 +19,12 @@ public class Bootstrap {
     rutas.stream().limit(camiones.size()).forEach(camion1::asignarRuta);
 
     RutaRepositorio.Instance.setAllRutas(rutas());
+    //esto es para probar el dashboard
+// Forzamos a que el camión que ya tiene la ruta asignada arranque a trabajar
+    camion1.iniciarRuta();
+
+    // Le marcamos la primera entrega de SU propia ruta como completada
+    camion1.getRutaActual().getEntregas().get(0).marcarComoEntregada();
   }
 
   private static List<Ruta> rutas() {

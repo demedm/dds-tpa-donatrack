@@ -37,6 +37,18 @@ public class CamionController {
     return null;
   }
 
+  public void buscarPorPatente(Context ctx) {
+    String patente = ctx.pathParam("patente");
+    Camion camion = CamionRepositorio.Instance.findByPatente(patente);
+
+    if (camion == null) {
+      ctx.status(404);
+      return;
+    }
+
+    ctx.json(camion);
+  }
+
   private Camion tryToFindCamion(String patente, Context ctx) {
     if(patente.isEmpty()) {
       ctx.status(400);

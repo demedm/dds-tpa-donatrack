@@ -11,6 +11,8 @@ public class Camion {
   private Ruta rutaActual = null;
   private Ubicacion ubicacionActual;
 
+  public Camion() {}
+
   public void setEstado(EstadoCamion estado) {
     this.estado = estado;
   }

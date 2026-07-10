@@ -1,0 +1,212 @@
+@startuml DonaTrack_Diagram
+
+' ============= ENUMS =============
+enum Categoria {
+  MOBILIARIO
+  ALIMENTOS
+  VESTIMENTA
+}
+
+enum TipoEntidadJuridica {
+  ONG
+  EMPRESA
+  INSTITUCION
+  GUBERNAMENTAL
+}
+
+' ============= BIENES =============
+ABSTRACT class Bien {
+  - Descripcion: String
+  - Foto: String
+  - subCategoria: Subcategoria
+  + getCriterioDeAgrupacion(): Criterio
+  # getCriterioSegmentacion(): Object
+}
+
+class BienDuradero extends Bien {
+  - estado: EstadoUso
+  # getCriterioSegmentacion(): Object
+}
+
+class BienPerecedero extends Bien {
+  - fechaVencimiento: Date
+  # getCriterioSegmentacion(): Object
+}
+
+class Subcategoria {
+  - categoria: Categoria
+  - descripcion: String
+  + equals(Object): boolean
+  + hashCode(): int
+  + getDescripcion(): String
+}
+
+record Criterio {
+  subcategoria: Subcategoria
+  criterio: Object
+}
+
+' ============= DONACIONES =============
+class Donacion {
+  - id: String
+  - descripcionGeneral: String
+  - donacionesSegmentadas: List<DonacionSegmentada>
+  - donante: Persona
+  + agregarDonaciones(DonacionSegmentada): void
+  + getId(): String
+  + getDonante(): Persona
+  + getDonaciones(): List<DonacionSegmentada>
+  - segmentar(List<Bien>): List<DonacionSegmentada>
+}
+
+class DonacionSegmentada {
+  - id: String
+  - cantidad: Integer
+  - subcategoria: Subcategoria
+  - bien: Bien
+  - estadoActual: EstadoDonacion
+  - historialEstados: List<RegistroCambioEstado>
+  - justificacionFallo: String
+  - fechaDeEntrega: LocalDate
+  - entidadAsignadaId: String
+  - donanteId: Integer
+  + getCantidad(): Integer
+  + setCantidad(Integer): void
+  + estaAlmacen(): boolean
+  + cambiarEstado(String): void
+  + getSubcategoria(): Subcategoria
+  + getId(): String
+}
+
+class HistorialDonaciones {
+  - historialDonaciones: List<Donacion>
+}
+
+' ============= NECESIDADES =============
+class Necesidad {
+  - id: String
+  - entidadId: String
+  - tipo: TipoNecesidad
+  - estado: String
+  - descripcion: String
+  - diasRecurrencia: Integer
+  - proximoVencimiento: LocalDate
+  - peticiones: List<Peticion>
+  - idDonantesParticipantes: List<String>
+  + agregarPeticion(Peticion): void
+  + getDiasAvencer(): long
+  + reiniciarPeriodo(): void
+}
+
+class Peticion {
+  - subclase: String
+  - cantidadRequerida: int
+  - cantidadRecibida: int
+  - donacionesAsignados: List<String>
+  + getCantidadRequerida(): Integer
+  + estaCubierta(): boolean
+  + agregarCantidadRecibida(Integer, String): void
+  + getDonacionesAsignadas(): List<String>
+}
+
+' ============= DONANTES =============
+class Persona {
+  - nombreIdentificador: String
+  - mail: Mail
+  - telefono: Telefono
+  - identificacion: Identificacion
+  - tipoPersona: TipoPersona
+  - medioPreferido: MedioContacto
+  + getNombreIdentificador(): String
+  + getMail(): Mail
+  + actualizarInfo(Persona): void
+}
+
+class PersonaFisica extends Persona {
+  - apellido: String
+  - edad: int
+  - genero: Genero
+  - direccionActual: String
+  + getApellido(): String
+  + getEdad(): int
+  + getGenero(): Genero
+}
+
+class PersonaJuridica extends Persona {
+  - rubro: String
+  - tipo: TipoEntidadJuridica
+  - listaContactos: List<MedioContacto>
+  + setTipo(TipoEntidadJuridica): void
+  + getRubro(): String
+  + getTipo(): TipoEntidadJuridica
+}
+
+class Ong extends PersonaJuridica {
+  - pathHistorialDonantes: String
+  + setPathHistorialDonantes(String): void
+}
+
+class Identificacion {
+  - tipo: TipoDocumento
+  - nroDocumento: String
+  + getNroDocumento(): String
+  + getTipo(): TipoDocumento
+}
+
+class RegistroDonante {
+  - registroDonantes: List<Persona>
+  - notificador: Notificador
+  + registrarDonante(Persona): void
+  + importarDonantesDesdeCSVFile(String): void
+  + buscarPorEmail(String): Optional<Persona>
+  + buscarInactivosDesde(LocalDate): List<Persona>
+  + getRegistroDonantes(): List<Persona>
+}
+
+' ============= ENTIDAD BENEFICIARIA =============
+class EntidadBeneficiaria {
+  - id: String
+  - razonSocial: String
+  - direccion: String
+  - tipo: String
+  - mailsContacto: List<Mail>
+  - telefono: Telefono
+  - donacionesRecibidas: List<DonacionSegmentada>
+  - necesidades: List<Necesidad>
+  + getId(): String
+  + getDonacionesRecibidas(): List<DonacionSegmentada>
+  + getNecesidades(): List<Necesidad>
+  + getTipoEntidad(): String
+}
+
+' ============= RELACIONES =============
+
+' Donaciones
+Donacion --> "1" Persona : donante
+Donacion --> "*" DonacionSegmentada : contiene
+DonacionSegmentada --> "1" Bien : referencia
+DonacionSegmentada --> "1" Subcategoria : tiene
+Bien --> "1" Subcategoria : pertenece a
+Subcategoria --> "1" Categoria : clasifica
+Bien --> Criterio : genera
+
+' Necesidades
+Necesidad --> "*" Peticion : contiene
+
+' Donantes
+Persona --> "1" Identificacion : tiene
+Persona --> "1" Mail : contacto
+Persona --> "1" Telefono : contacto
+RegistroDonante --> "*" Persona : gestiona
+PersonaJuridica --> TipoEntidadJuridica : tipo
+PersonaJuridica --> "*" Mail : contactos
+
+' Entidades Beneficiarias
+EntidadBeneficiaria --> "*" DonacionSegmentada : recibe
+EntidadBeneficiaria --> "*" Necesidad : registra
+EntidadBeneficiaria --> "*" Mail : contacto
+
+' Historiales
+HistorialDonaciones --> "*" Donacion : contiene
+
+@enduml

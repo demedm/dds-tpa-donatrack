@@ -1,0 +1,60 @@
+@startuml
+
+' ==================== CONFIGURACION VISUAL ====================
+
+skinparam nodesep 50
+skinparam ranksep 70
+skinparam shadowing false
+
+' ==================== ACTORES / CLIENTES ====================
+
+actor "Administrador" as Admin
+actor "Chofer / Entidad" as ClienteApi
+node "Dispositivo GPS\n(no activo aún)" as GPS
+
+' ==================== SERVIDOR LOGISTICA ====================
+
+node "Servidor Logística" as NodoLogistica {
+  node "JVM 17" as JvmLogistica {
+    artifact "logistica-mserv" as JarLogistica
+  }
+  database "Repositorios en memoria\n(CamionRepositorio, RutaRepositorio, ...)" as RepoLogistica
+}
+
+' ==================== SERVIDOR DONACIONES ====================
+
+node "Servidor Donaciones" as NodoDonaciones {
+  node "JVM 17" as JvmDonaciones {
+    artifact "donaciones-mserv" as JarDonaciones
+  }
+  database "Repositorios en memoria\n(RegistroDonante, EntidadBeneficiaria, ...)" as RepoDonaciones
+}
+
+' ==================== SERVICIOS EXTERNOS ====================
+
+cloud "Servicio Externo de\nPlanificación de Rutas" as Planificador
+cloud "Twilio API\n(SMS / WhatsApp)" as Twilio
+cloud "Servidor SMTP" as SMTP
+node "Archivo CSV local\n(importación de donantes)" as CSV
+
+' ==================== RELACIONES ====================
+
+Admin --> JarLogistica : HTTP\n(dashboard .hbs)
+ClienteApi --> JarLogistica : HTTP/JSON
+' ClienteApi --> JarDonaciones : HTTP/JSON
+GPS ..> JarLogistica : HTTP POST\n(telemetría, no implementado)
+
+JarLogistica --> RepoLogistica
+JarDonaciones --> RepoDonaciones
+
+JarLogistica --> JarDonaciones : HTTP PUT/POST\n(notificarCambioEstado,\nnotificarFallaDeEntrega)
+JarDonaciones --> JarLogistica : HTTP POST\n(recibirDonacion)
+
+JarLogistica --> Planificador : HTTP POST\n(solicitud de planificación por lotes)
+Planificador --> JarLogistica : HTTP POST\n(callback /callback/planificaciones)
+
+JarDonaciones --> Twilio : HTTPS\n(SMS / WhatsApp)
+JarDonaciones --> SMTP : SMTP\n(jakarta mail)
+JarDonaciones --> CSV : lectura local\n(opencsv)
+
+@enduml

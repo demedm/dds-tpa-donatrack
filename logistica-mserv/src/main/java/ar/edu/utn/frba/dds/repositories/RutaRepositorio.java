@@ -2,7 +2,7 @@ package ar.edu.utn.frba.dds.repositories;
 
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
-import ar.edu.utn.frba.dds.model.accionesrutas.AccionesSobreRutas;
+import ar.edu.utn.frba.dds.model.accionesrutas.AccionesSobreRutas;import ar.edu.utn.frba.dds.model.accionesrutas.AsignarCamion;import ar.edu.utn.frba.dds.model.accionesrutas.LoggearRuta;import ar.edu.utn.frba.dds.model.accionesrutas.NotificarSobreRuta;import ar.edu.utn.frba.dds.model.accionesrutas.ReplanificarRuta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,13 @@ public class RutaRepositorio {
   private List<Ruta> allRutas = new ArrayList<>();
   private PlanificacionRutas planificadorRutas;
   List<AccionesSobreRutas> observers = new ArrayList<>();
+
+  public RutaRepositorio() {
+    agregarObserver(new LoggearRuta());
+    agregarObserver(new ReplanificarRuta());
+    agregarObserver(new AsignarCamion());
+    agregarObserver(new NotificarSobreRuta());
+  }
 
   public void agregarObserver(AccionesSobreRutas observer) {
     observers.add(observer);

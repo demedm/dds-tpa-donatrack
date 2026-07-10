@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.model;
 
-
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarDonadorYDonante;
@@ -11,19 +10,22 @@ import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Entrega {
-  private String id; // id propio de la entrega
+  private String id;
   private EstadoEntrega estado;
   private String direccion;
-  private int donacionId; // ids de la donacion/donaciones que se entregan
-  private LocalDate fechaVencimiento; // si aplica a la donacion -> ej. si es perecedero
+  private int donacionId;
+  private LocalDate fechaVencimiento;
   private boolean visitado = false;
   private MotivoFallo motivoFallo;
   private String foto;
-  private List<AccionesSobreEntregas> accionesSobreEntregas;
+
+  // Lista inicializada para evitar el NullPointerException
+  private List<AccionesSobreEntregas> accionesSobreEntregas = new ArrayList<>();
 
   public Entrega(String direccion, int idDonacion) {
     this.estado = EstadoEntrega.PENDIENTE;
@@ -31,6 +33,9 @@ public class Entrega {
     this.direccion = direccion;
     this.id = UUID.randomUUID().toString();
 
+    // Lógica nueva del equipo fusionada correctamente
+    agregarAccionEntregas(new NotificarAdmins());
+    agregarAccionEntregas(new NotificarDonadorYDonante());
   }
 
   public LocalDate getFechaVencimiento() {
@@ -73,7 +78,7 @@ public class Entrega {
   }
 
   public void confirmarEntrega(String url_foto) {
-    setFoto(foto);
+    setFoto(url_foto);
   }
 
   public void marcarComoFallida(MotivoFallo motivo) {
@@ -92,8 +97,11 @@ public class Entrega {
   }
 
   public boolean estaVencida() {
-    marcarComoFallida(new EntregaVencida());
-    return fechaVencimiento != null && fechaVencimiento.isBefore(LocalDate.now());
+    if(fechaVencimiento != null && fechaVencimiento.isBefore(LocalDate.now())) {
+      marcarComoFallida(new EntregaVencida());
+      return true;
+    }
+    return false;
   }
 
   public MotivoFallo getMotivoFallo() {
@@ -114,5 +122,13 @@ public class Entrega {
 
   public void setFoto(String foto) {
     this.foto = foto;
+  }
+
+  public EstadoEntrega getEstado() {
+    return estado;
+  }
+
+  public void setEstado(EstadoEntrega estado) {
+    this.estado = estado;
   }
 }

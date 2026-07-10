@@ -11,7 +11,9 @@ public class Resultados {
   private final List<EntidadBeneficiaria> resultadoDeSubAtendidos;
   private final boolean huboCoincidencia;
 
-  public Resultados(List<EntidadBeneficiaria> coincidencias,List<EntidadBeneficiaria> resultadosDeCompatibilidad, List<EntidadBeneficiaria> resultadosDeSubAtendidos) {
+  public Resultados(List<EntidadBeneficiaria> coincidencias,
+                    List<EntidadBeneficiaria> resultadosDeCompatibilidad,
+                    List<EntidadBeneficiaria> resultadosDeSubAtendidos) {
     this.coincidencias = coincidencias;
     this.resultadoDeCompatibilidad = resultadosDeCompatibilidad;
     this.resultadoDeSubAtendidos = resultadosDeSubAtendidos;

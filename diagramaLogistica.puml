@@ -1,0 +1,137 @@
+@startuml
+
+' configuracion visual
+skinparam nodesep 45
+skinparam ranksep 70
+
+
+' clases, interfaces, etc
+together {
+  class Usuario {
+      id : String
+      email : String
+      password : String
+    }
+  class Administrador
+  class Chofer
+  class EntidadBeneficiaria {
+    id : String
+    contacto : String
+    direccion : String
+  }
+}
+
+together {
+  class Camion {
+      patente : String
+      capacidadVolumen : int
+      altura : int
+      capacidadCarga : int
+    }
+    enum EstadoCamion {
+      DISPONIBLE
+      EN_MANTENIMIENTO
+      RUTA_ASIGNADA
+      REALIZANDO_ENTREGAS
+    }
+    class Ubicacion {
+      latitud : Double
+      longitud : Double
+      timestamp : LocalDateTime
+    }
+
+}
+
+together {
+  class Ruta {
+      id : String
+      patenteAsignada : String
+    }
+
+    class Entrega {
+      id : String
+      direccion : String
+      donacionId : int
+      fechaVencimiento : LocalDate
+      visitado : boolean
+      foto : String
+    }
+    enum EstadoEntrega {
+      PENDIENTE
+      EN_TRASLADO
+      ENTREGADA
+      NO_RECIBIDA
+      FALLIDA
+    }
+
+}
+
+together {
+  interface AccionesSobreEntregas
+  class NotificarAdmins
+  class NotificarDonadorYDonante
+}
+
+together {
+  interface AccionesSobreRutas
+  class ReplanificarRuta
+  class LoggearRuta
+  class NotificarSobreRuta
+  class AsignarCamion
+}
+
+together {
+  interface MotivoFallo
+  class ImprevistoLogistico
+  class NoRecepcionada
+  class EntregaVencida
+}
+
+Administrador --|> Usuario
+Chofer --|> Usuario
+
+NotificarAdmins ..|> AccionesSobreEntregas
+NotificarDonadorYDonante ..|> AccionesSobreEntregas
+
+ReplanificarRuta ..|> AccionesSobreRutas
+LoggearRuta ..|> AccionesSobreRutas
+NotificarSobreRuta ..|> AccionesSobreRutas
+AsignarCamion ..|> AccionesSobreRutas
+
+ImprevistoLogistico ..|> MotivoFallo
+NoRecepcionada ..|> MotivoFallo
+EntregaVencida ..|> MotivoFallo
+
+Camion "1" --> "0..1" Ruta
+Camion "1" --> "1" EstadoCamion
+Camion "1" --> "0..1" Ubicacion
+
+Chofer "1" --> "1" Camion
+
+EntidadBeneficiaria "1" --> "*" Entrega
+
+Ruta "1" --> "*" Entrega
+
+Entrega "1" --> "1" EstadoEntrega
+Entrega "1" --> "0..1" MotivoFallo
+Entrega "1" --> "*" AccionesSobreEntregas
+
+ReplanificarRuta "1" --> "*" Ruta
+
+AccionesSobreEntregas ..> Entrega
+AccionesSobreRutas ..> Ruta
+
+NotificarDonadorYDonante ..> EstadoEntrega
+Administrador ..> Entrega
+
+AsignarCamion ..> Camion
+AsignarCamion ..> EstadoCamion
+
+Ruta ..> ImprevistoLogistico
+
+Entrega ..> NotificarAdmins
+Entrega ..> NotificarDonadorYDonante
+Entrega ..> EntregaVencida
+Entrega ..> NoRecepcionada
+
+@enduml

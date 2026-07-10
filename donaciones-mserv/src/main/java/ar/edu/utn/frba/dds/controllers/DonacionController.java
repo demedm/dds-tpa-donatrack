@@ -16,16 +16,13 @@ public class DonacionController {
 
 
     public Donacion crearDonacion(Context ctx) {
-        /*
+
         DonacionsDTO donacion = ctx.bodyValidator(DonacionsDTO.class)
             .check(d -> d.getDonante() !=null,
                 "Debe haber un donante")
             .check(d -> d.getBienes() !=null && !d.getBienes().isEmpty(),
                 "Debe existir al menos una donación segementada")
             .get();
-
-         */
-        DonacionsDTO donacion = ctx.bodyAsClass(DonacionsDTO.class);
 
         Donacion d = new Donacion(
             donacion.getDescripcionGeneral(),

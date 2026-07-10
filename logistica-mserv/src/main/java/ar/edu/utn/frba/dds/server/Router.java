@@ -3,7 +3,9 @@ package ar.edu.utn.frba.dds.server;
 import ar.edu.utn.frba.dds.controllers.CallbackController;
 import ar.edu.utn.frba.dds.controllers.CamionController;
 import ar.edu.utn.frba.dds.controllers.DashboardController;
+import ar.edu.utn.frba.dds.controllers.MonitoreoController;
 import ar.edu.utn.frba.dds.controllers.RutaController;
+import ar.edu.utn.frba.dds.controllers.MonitoreoController;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -26,7 +28,7 @@ public class Router {
     // CRUD CAMIONES
     app.get("/camiones/random", ctx -> ctx.json(camionController.randomCamion()));
     app.get("/camiones/", ctx -> ctx.json(camionController.showFlota()));
-    app.get("/camiones/{patente}", ctx -> ctx.json(camionController.showCamion(ctx)));
+    app.get("/camiones/{patente}", camionController::buscarPorPatente);
     app.post("/camiones/{patente}", camionController::saveCamion);
 
     // CRUD RUTAS Y ENTREGAS

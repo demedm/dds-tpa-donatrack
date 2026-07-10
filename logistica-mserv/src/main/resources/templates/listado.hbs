@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <title>Monitoreo de Flota</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            <h1 class="mb-4">Monitoreo de Camiones en Tiempo Real</h1>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Patente</th>
+                        <th>Estado</th>
+                        <th>Avance de Ruta</th>
+                        <th>Latitud</th>
+                        <th>Longitud</th>
+                        <th>Última Actualización</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each camiones}}
+                    <tr>
+                        <td class="fw-bold">{{patente}}</td>
+                        <td>
+                            <span class="badge bg-primary">{{estado}}</span>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{porcentajeAvance}}%;" aria-valuenow="{{porcentajeAvance}}" aria-valuemin="0" aria-valuemax="100">
+                                    {{porcentajeAvance}}%
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{#if latitud}}{{latitud}}{{else}}Sin datos{{/if}}</td>
+                        <td>{{#if longitud}}{{longitud}}{{else}}Sin datos{{/if}}</td>
+                        <td>{{#if ultimaActualizacion}}{{ultimaActualizacion}}{{else}}Esperando conexión...{{/if}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
