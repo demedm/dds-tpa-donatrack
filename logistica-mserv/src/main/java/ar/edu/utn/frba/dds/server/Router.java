@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.server;
 import ar.edu.utn.frba.dds.controllers.CallbackController;
 import ar.edu.utn.frba.dds.controllers.CamionController;
 import ar.edu.utn.frba.dds.controllers.DashboardController;
+import ar.edu.utn.frba.dds.controllers.MonitoreoController;
 import ar.edu.utn.frba.dds.controllers.RutaController;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
