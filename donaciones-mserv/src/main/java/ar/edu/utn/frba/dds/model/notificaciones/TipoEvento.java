@@ -1,0 +1,10 @@
+package ar.edu.utn.frba.dds.model.notificaciones;
+
+public enum TipoEvento {
+  INACTIVIDAD_DONANTE,
+  DONACION_ASIGNADA_DONANTE,
+  DONACION_ASIGNADA_BENEFICIARIO,
+  INICIO_RUTA,
+  ENTREGA_EXITOSA,
+  ENTREGA_FALLIDA
+}

@@ -1,12 +1,25 @@
 package ar.edu.utn.frba.dds.model.notificaciones;
 
 import java.time.LocalDateTime;
+//Nace en pendiente
 
 public class Notificacion {
   private String destinatario;
   private final String mensaje;
   private final LocalDateTime fechaHora;
   private EstadoNotificacion estado;
+  private TipoEvento tipoEvento;
+
+  public Notificacion(String mensaje) {
+    this(mensaje, null);
+  }
+
+  public Notificacion(String mensaje, TipoEvento tipoEvento) {
+    this.mensaje = mensaje;
+    this.fechaHora = LocalDateTime.now();
+    this.estado = EstadoNotificacion.PENDIENTE; // Nace pendiente
+    this.tipoEvento = tipoEvento;
+  }
 
   public void setDestinatario(String destinatario) {
     this.destinatario = destinatario;
@@ -19,18 +32,21 @@ public class Notificacion {
   public String getMensaje() {
     return mensaje;
   }
-  //Al menos un medio de contacto (en forma obligatoria correo electrónico y en forma opcional teléfono y/o WhatsApp).
-  //A su vez, podrá determinar cuál de ellos será su medio de contacto predeterminado para recibir notificaciones del sistema.
-  //Public EstadoNotificacion getEstado() { return estado; }
+
+  public LocalDateTime getFechaHora() {
+    return fechaHora;
+  }
 
   public EstadoNotificacion getEstado() {
     return estado;
   }
 
-  public Notificacion(String mensaje) {
-    this.mensaje = mensaje;
-    this.fechaHora = LocalDateTime.now();
-    this.estado = EstadoNotificacion.PENDIENTE; // Nace pendiente
+  public TipoEvento getTipoEvento() {
+    return tipoEvento;
+  }
+
+  public void setTipoEvento(TipoEvento tipoEvento) {
+    this.tipoEvento = tipoEvento;
   }
 
   public void marcarComoCompletada() {

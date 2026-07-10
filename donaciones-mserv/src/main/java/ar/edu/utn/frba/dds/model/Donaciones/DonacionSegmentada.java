@@ -3,6 +3,8 @@ package ar.edu.utn.frba.dds.model.Donaciones;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
+import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
+import ar.edu.utn.frba.dds.model.Estado.Entregada;
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
@@ -14,24 +16,34 @@ import java.util.List;
 import java.util.UUID;
 
 public class DonacionSegmentada {
-  private String id;
+  private int id;
   private int cantidad;
   private Subcategoria subcategoria;
-  private Bien bien;
+  private Bien bienFiltrado;
   private EstadoDonacion estadoActual;
   private List<RegistroCambioEstado> historialEstados;
-  private String justificacionFallo; //dto
+  private String justificacionFallo;
   private LocalDate fechaDeEntrega;
+  private MedioContacto medioContactoEntidad;
+  private String donanteEmail;
+
+  public String getDonanteEmail() {
+    return donanteEmail;
+  }
+
+  public void setDonanteEmail(String donanteEmail) {
+    this.donanteEmail = donanteEmail;
+  }
   private String entidadAsignadaId;
   private Integer donanteId;
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
     this.cantidad = cantidad;
     this.subcategoria = subcategoria;
-    this.bien = bienFiltrado;
+    this.bienFiltrado = bienFiltrado;
     this.estadoActual = new EnDeposito();
     this.historialEstados = new ArrayList<>();
-    this.id = UUID.randomUUID().toString();
+
 
   }
 
@@ -60,11 +72,11 @@ public class DonacionSegmentada {
     cantidad = nuevaCantidad;
   }
 
-  public Bien getBien(){
-    return bien;
+  public Bien getBienFiltrado(){
+    return bienFiltrado;
   }
 
-  public String getId() {
+  public int getId() {
     return id;
   }
 
@@ -85,8 +97,8 @@ public class DonacionSegmentada {
       case "PENDIENTE" -> setEstado(new EnDeposito()); //creo que se debe crear la clase pendiente
       case "EN_TRASLADO" -> iniciarTraslado();
       case "ENTREGADA" -> confirmarEntrega();
-      case "NO_RECIBIDO" -> fallarEntrega(justificacionFallo);
-
+      case "NO_RECIBIDO", "NO_RECIBIDA", "FALLIDA" -> fallarEntrega(justificacionFallo);
+      default -> throw new IllegalArgumentException("Estado desconocido: " + nuevoEstado);
     }
   }
 

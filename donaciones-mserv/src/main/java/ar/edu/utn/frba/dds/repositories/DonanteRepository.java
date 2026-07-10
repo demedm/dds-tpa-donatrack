@@ -48,17 +48,17 @@ public class DonanteRepository {
     return existente.isPresent();
   }
 
-    public List<Persona> buscarInactivosDesde(LocalDate fecha) {
-      return registroDonantes.stream()
-          .filter(p -> p.getUltimaActividad().isBefore(fecha))
-          .toList();
-    }
+  public List<Persona> buscarInactivosDesde(LocalDate fecha) {
+    return registroDonantes.stream()
+        .filter(p -> p.getUltimaActividad().isBefore(fecha))
+        .toList();
+  }
 
   public List<Persona> getRegistroDonantes() {
     return registroDonantes;
   }
 }
-  
+
   /*
   public Persona save(Persona donante) {
     if (donante.getId() == null) {
