@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.controllers.CallbackController;
 import ar.edu.utn.frba.dds.controllers.CamionController;
 import ar.edu.utn.frba.dds.controllers.DashboardController;
 import ar.edu.utn.frba.dds.controllers.RutaController;
+import ar.edu.utn.frba.dds.controllers.MonitoreoController;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 

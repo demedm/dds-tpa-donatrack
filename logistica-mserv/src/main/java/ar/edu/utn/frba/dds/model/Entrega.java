@@ -13,6 +13,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
+import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
+import ar.edu.utn.frba.dds.model.accionesentregas.NotificarDonadorYDonante;
+import ar.edu.utn.frba.dds.model.fallaentrega.EntregaVencida;
+import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
+import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
+import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class Entrega {
   private String id; // id propio de la entrega
@@ -23,16 +36,14 @@ public class Entrega {
   private boolean visitado = false;
   private MotivoFallo motivoFallo;
   private String foto;
-  private List<AccionesSobreEntregas> accionesSobreEntregas;
+  private List<AccionesSobreEntregas> accionesSobreEntregas = new ArrayList<>();
 
   public Entrega(String direccion, int idDonacion) {
     this.estado = EstadoEntrega.PENDIENTE;
     this.donacionId = idDonacion;
     this.direccion = direccion;
     this.id = UUID.randomUUID().toString();
-
   }
-
   public LocalDate getFechaVencimiento() {
     return fechaVencimiento;
   }
