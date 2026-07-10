@@ -16,7 +16,7 @@ public class CamionController {
 
   public Camion showCamion(Context ctx) {
     var patente = ctx.pathParam("patente");
-    return CamionRepositorio.Instance.getByPatente(patente);
+    return CamionRepositorio.Instance.findByPatente(patente);
   }
 
   public List<Camion> showFlota() {
@@ -26,11 +26,7 @@ public class CamionController {
   public List<Entrega> showEntregas(Context ctx) {
     var patente = ctx.pathParam("patente");
     return CamionRepositorio.Instance
-        .getByPatente(patente).getRutaActual().getEntregas();
-  }
-
-  public void save() {
-
+        .findByPatente(patente).getRutaActual().getEntregas();
   }
 
 }

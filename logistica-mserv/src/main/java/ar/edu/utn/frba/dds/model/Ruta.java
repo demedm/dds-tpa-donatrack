@@ -1,6 +1,10 @@
 package ar.edu.utn.frba.dds.model;
 
-import java.util.List;import java.util.UUID;
+import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
+import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
+
+import java.util.List;
+import java.util.UUID;
 
 public class Ruta {
   private List<Entrega> entregas;
@@ -13,8 +17,12 @@ public class Ruta {
     this.id = UUID.randomUUID().toString();
   }
 
-  public int getId() {
+  public String getId() {
     return this.id;
+  }
+
+  public void agregarEntrega(Entrega entrega) {
+    entregas.add(entrega);
   }
 
   public String getPatenteAsignada() {
@@ -25,36 +33,28 @@ public class Ruta {
     return this.entregas;
   }
 
-  /*
   public void iniciarRuta() {
-    entregas.forEach(destino -> {
-      destino.getDonacion().iniciarTraslado();
-    });
+    entregas.forEach(Entrega::marcarComoIniciada);
   }
 
   public void visitarParada(String direccion) {
-    entregas.stream().filter(destino -> destino.getDireccion().equals(direccion))
-        .forEach(parada -> {
-              parada.getDonacion().confirmarEntrega();
-              parada.setVisitado(true);
-              // new Notificador().enviarNotificacionA(, "Su donación ha sido entregada");
-            }
-        );
+    entregas.stream().filter(entrega ->
+        entrega.getDireccion().equals(direccion))
+        .forEach(Entrega::marcarComoEntregada);
+  }
+
+  public void indicarImprovistoLogistico() {
+    entregas.forEach(entrega -> entrega
+        .marcarComoFallida(new ImprevistoLogistico()));
   }
 
   public void finalizarRuta() {
-    entregas.stream().filter(destino -> !destino.getVisitado())
-        .forEach(destino -> { destino
-              .getDonacion().fallarEntrega("Regreso a depósito");
-          // new Notificador().enviarNotificacionA(,
-          // "Su entrega no ha podido realizarse con exito");
-        });
+    entregas.stream().filter(entrega ->
+            !entrega.getVisitado() && entrega.getMotivoFallo() != null)
+        .forEach(Entrega::marcarRegresoADeposito);
   }
 
-  public String getPatenteAsignada() {
-    return this.patenteAsignada;
-  }
-
+/*
   public static class Ubicacion {
     private Double latitud;
     private Double longitud;

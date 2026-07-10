@@ -1,20 +1,70 @@
 package ar.edu.utn.frba.dds.server;
 
-import ar.edu.utn.frba.dds.controllers.DonacionesController;
+import ar.edu.utn.frba.dds.controllers.DonacionController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
-import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
-import ar.edu.utn.frba.dds.repositories.DonanteRepository;
+import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import io.javalin.Javalin;
-import io.javalin.http.HttpStatus;
 
 import java.io.IOException;
 
 public class Router {
   public void configure(Javalin app) throws IOException, InterruptedException {
-    DonacionesRepository donacionesRepository = new DonacionesRepository();
+    NecesidadController necesidadController = new NecesidadController();
+    DonacionController donacionController = new DonacionController();
     DonanteController donanteController = new DonanteController();
-    app.put("/donaciones/{id}", donacionesRepository::cambiarEstadoDonacion);
 
+
+    app.get("/donaciones/", ctx ->
+        ctx.json(donacionController.mostrarDonaciones())
+    );
+
+    app.post("/donaciones",ctx->{
+      ctx.status(201).json(donacionController.crearDonacion(ctx));
+    });
+
+    app.get("/donaciones/{id}",ctx-> {
+      ctx.status(200).json(donacionController.mostrarDonacion(ctx));
+    });
+    /*
+    app.delete("/donaciones/{id}",ctx->{
+      donacionController.eliminar(ctx.pathParam("id"));
+      ctx.status(200);
+    });
+
+
+
+     */
+
+
+/*
+    app.put("/donaciones-segementada/{id}", donacionesRepository::cambiarEstadoDonacion);
+    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx -> ctx.json(donacionController.asignar(ctx)));
+
+
+    app.post("/donaciones/{id}/matchmaking",ctx->{
+      Donacion donacion = repository.obtenerPorId(ctx.pathParam("id"));
+      if(donacion == null) ctx.status(400);
+    });
+
+ */
+    //Donaciones
+
+
+    //Necesidades
+
+    app.post("/necesidades/",ctx ->
+        ctx.status(201).json(necesidadController.crear(ctx)));
+    app.post("/necesidades/{id}/peticiones/",ctx ->
+        ctx.status(201).json(necesidadController.agregarPeticion(ctx)));
+
+    app.get("/necesidades/recurrentes", ctx ->
+        ctx.json(necesidadController.showNecesidadesRecurrentes()));
+    app.get("/necesidades/", ctx ->
+        ctx.status(201).json(necesidadController.showNecesidades()));
+    app.get("/necesidades/{id}",ctx ->
+        ctx.json(necesidadController.showNecesidad(ctx)));
+
+    //Donante
     app.post("/donantes/", donanteController:: crearDonante);
     app.get("/donantes/", ctx -> ctx.json(donanteController.obtenerDonantes(ctx)));
     app.get("/donantes/{email}", ctx -> ctx.json(donanteController.obtenerDonantePorEmail(ctx)));

@@ -1,0 +1,232 @@
+package ar.edu.utn.frba.dds.controllers;
+
+import ar.edu.utn.frba.dds.dto.DonacionsDTO;
+import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
+import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.repositories.*;
+import ar.edu.utn.frba.dds.model.Estado.*;
+import ar.edu.utn.frba.dds.model.necesidad.*;
+import java.util.ArrayList;
+import java.util.List;
+import io.javalin.http.Context;
+import io.javalin.http.NotFoundResponse;
+
+
+public class DonacionController {
+
+
+    public Donacion crearDonacion(Context ctx) {
+        /*
+        DonacionsDTO donacion = ctx.bodyValidator(DonacionsDTO.class)
+            .check(d -> d.getDonante() !=null,
+                "Debe haber un donante")
+            .check(d -> d.getBienes() !=null && !d.getBienes().isEmpty(),
+                "Debe existir al menos una donación segementada")
+            .get();
+
+         */
+        DonacionsDTO donacion = ctx.bodyAsClass(DonacionsDTO.class);
+
+        Donacion d = new Donacion(
+            donacion.getDescripcionGeneral(),
+            donacion.getBienes(),
+            donacion.getDonante()
+        );
+
+        DonacionesRepository.Instance.agregarDonacion(d);
+
+        return d;
+    }
+
+    public Donacion mostrarDonacion(Context ctx){
+        int donacionId = Integer.parseInt(ctx.pathParam("id"));
+
+        Donacion donacion = DonacionesRepository.Instance.obtenerPorId(donacionId);
+
+        if(donacion == null){
+            throw new NotFoundResponse("Donacion no encontrada");
+        }
+        return donacion;
+    }
+
+    public List<Donacion> mostrarDonaciones(){
+
+        return  DonacionesRepository.Instance.obtenerTodas();
+
+    }
+
+    public Donacion actualizar(Context ctx){
+        return null;
+    }
+
+    public Donacion eliminar(Context ctx){
+        int donacionId = Integer.parseInt(ctx.pathParam("id"));
+        /*
+        .check(d -> d.getId()!=null,
+            "El id de la donacion es obligatorio")
+        */
+
+        Donacion donacion = DonacionesRepository.Instance.obtenerPorId(donacionId);
+
+        return null;
+    }
+
+
+    public Donacion asignar(Context ctx){
+        int donacionId = Integer.parseInt(ctx.pathParam("idDonacion"));
+
+        Donacion donacion = DonacionesRepository.Instance.obtenerPorId(donacionId);
+
+        if (donacion == null) {
+            throw new NotFoundResponse("Donacion no encontrada");
+        }
+        String necesidadId = ctx.pathParam("idNecesidad");
+        Necesidad necesidad = NecesidadRepository.Instance.findById(necesidadId);
+        if (necesidad == null) {
+            throw new NotFoundResponse("Necesidad no encontrada");
+        }
+        //Empieza a matchear
+
+        for(Peticion peticion : necesidad.getPeticiones()){
+            if(peticion.estaCubierta()){
+                continue;
+            }//Omite si ay esta cubierta
+
+            String subcategoriaRequerida = peticion.getSubclase();
+            Integer cantidadNecesitada = peticion.getCantidadRequerida();
+            List<DonacionSegmentada> donacionesCopia = new ArrayList<>(donacion.getDonaciones());
+            for(DonacionSegmentada donacionSegmentada : donacionesCopia){
+                if(!donacionSegmentada.estaAlmacen()||donacionSegmentada.getCantidad()==0){
+                    continue;
+                }
+                if(!donacionSegmentada.getSubcategoria().getDescripcion().equals(subcategoriaRequerida)){
+                    continue;
+                }
+                 //Si paso los filtros, me fijo cuanto donar 
+                Integer cantidadAAsignar = Math.min(
+                    donacionSegmentada.getCantidad(),cantidadNecesitada
+                    );
+                //Creo una nueva con estado asignado
+
+                DonacionSegmentada donacionAsignada = new DonacionSegmentada(cantidadAAsignar, donacionSegmentada.getSubcategoria(),donacionSegmentada.getBienFiltrado());
+
+                donacionAsignada.setEstado(new AsignacionRealizada());
+            
+                //Agrego esa nueva a las donaciones 
+                donacion.agregarDonaciones(donacionAsignada);
+
+                donacionSegmentada.setCantidad(donacionSegmentada.getCantidad()-cantidadAAsignar);
+            
+                //Actualizo el repositorio con al donacion 
+
+                DonacionesRepository.Instance.actualizar(donacion);
+
+                //Actualizo la peticion, guardando tambien el id de que donacion tome la cantidad en caso de que necesite volver a llevarla al almacen
+
+                peticion.agregarCantidadRecibida(cantidadAAsignar, String.valueOf(donacionId));
+                cantidadNecesitada -= cantidadAAsignar;
+
+                // new Notificador().enviarNotificacionA(donacion.getDonante(), "Su donacion fue asignada");
+
+                //Si ya la cubri, entonces dejo el bucle
+                if(cantidadNecesitada<=0){
+                    break;
+                }
+            }
+            if(cantidadNecesitada<=0){
+                break;
+                }
+        }
+        return DonacionesRepository.Instance.obtenerPorId(donacionId);
+    }
+
+
+
+
+
+    
+    // private DonacionesRepository donacionesRepository;
+    // private EntidadFunciones entidadRepository;
+    // private NecesidadRepository necesidadRepository;
+
+    // public DonacionesHandler(DonacionesRepository donacionesRepository, EntidadFunciones entidadRepository, NecesidadRepository necesidadRepository) {
+    //     this.donacionesRepository = donacionesRepository;
+    //     this.entidadRepository = entidadRepository;
+    //     this.necesidadRepository = necesidadRepository;
+    // }
+
+    // public void asignarDonacion(String idDonacion,String idNecesidad){
+    //     // Necesidad necesidad = this.necesidadRepository.obtenerPorId(idNecesidad);
+
+    //     if(necesidad == null){
+    //         throw new IllegalArgumentException("La necesidad ingresada no existe");
+    //     }
+
+    //     Donacion donacion = this.donacionesRepository.obtenerPorId(idDonacion);
+
+    //     if(donacion == null){
+    //         throw new IllegalArgumentException("La donacion ingresada no existe");
+    //     }
+    //     //Empiezaa a matchear apra cada una de las donaciones segmentadas, donarlas si es que las pide alguna de las peticiones en la necesidad
+    //     for(Peticion peticion : necesidad.getPeticiones()){
+    //         if(peticion.estaCubierta()){
+    //             continue;
+    //         }//Omite si ay esta cubierta
+
+    //         String subcategoriaRequerida = peticion.getSubclase();
+    //         Integer cantidadNecesitada = peticion.getCantidadNecesitada();
+    //         List<DonacionSegmentada> donacionesCopia = new ArrayList<>(donacion.getDonaciones());  // ← COPIA
+
+
+    //         for(DonacionSegmentada donacionSegmentada : donacionesCopia){
+    //             if(!donacionSegmentada.estaAlmacen()||donacionSegmentada.getCantidad()==0){
+    //                 continue;
+    //             }
+    //             if(!donacionSegmentada.getSubcategoria().equals(subcategoriaRequerida)){
+    //                 continue;
+    //             }
+
+    //             //Si paso los filtros, me fijo cuanto donar 
+
+    //             Integer cantidadAAsignar = Math.min(
+    //                 donacionSegmentada.getCantidad(),cantidadNecesitada
+    //             );
+
+    //             //Creo una nueva con estado asignado
+
+    //             DonacionSegmentada donacionAsignada = new DonacionSegmentada(cantidadAAsignar, donacionSegmentada.getSubcategoria(),donacionSegmentada.getBienFiltrado());
+
+    //             donacionAsignada.setEstado(new AsignacionRealizada());
+            
+    //             //Agrego esa nueva a las donaciones 
+    //             donacion.agregarDonaciones(donacionAsignada);
+
+    //             donacionSegmentada.setCantidad(donacionSegmentada.getCantidad()-cantidadAAsignar);
+            
+    //             //Actualizo el repositorio con al donacion 
+
+    //             this.donacionesRepository.actualizar(donacion);
+
+    //             //Actualizo la peticion, guardando tambien el id de que donacion tome la cantidad en caso de que necesite volver a llevarla al almacen
+
+    //             peticion.agregarCantidadRecibida(cantidadAAsignar,idDonacion);
+    //             cantidadNecesitada -= cantidadAAsignar;
+
+    //             new Notificador().enviarNotificacionA(donacion.getDonante(), "Su donacion fue asignada");
+
+    //             //Si ya la cubri, entonces dejo el bucle
+
+    //             if(cantidadNecesitada<=0){
+    //                 break;
+    //             }
+    //         }
+    //         if(cantidadNecesitada<=0){
+    //             break;
+    //             }
+    //     }
+
+    //     this.necesidadRepository.actualizar(necesidad);
+    //     // necesidad.actualizarEstado();
+    //     this.necesidadRepository.actualizar(necesidad);
+    // }
+}

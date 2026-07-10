@@ -1,25 +1,78 @@
-package ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio;
+package ar.edu.utn.frba.dds.model.necesidad;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 
 public class Necesidad {
   private String id;
+  private String entidadId;
+  private TipoNecesidad tipo;
   private String estado = "en_preparacion";
   private String descripcion;
-  private String entidadId;
+  private Integer diasRecurrencia;
+  private LocalDate proximoVencimiento;
   public List<Peticion> peticiones = new ArrayList<>();
   private List<String> idDonantesParticipantes = new ArrayList<>();
 
+  public Necesidad() {}
 
-  public Necesidad(String entidadId, String descripcion){
-    this.entidadId=entidadId;
-    this.descripcion =descripcion;
+  public String getEntidadId(){
+    return this.entidadId;
+  }
+
+  public String getDescripcion(){
+    return this.descripcion;
+  }
+
+  public Integer getDiasRecurrencia(){
+    return this.diasRecurrencia;
+  }
+
+  public TipoNecesidad getTipo(){
+    return this.tipo;
+  }
+
+  public enum TipoNecesidad{
+    NORMAL,
+    RECURRENTE
+  };
+
+  public long getDiasAvencer() {
+    if (this.proximoVencimiento == null) {
+        return 0;
+    }
+    return ChronoUnit.DAYS.between(LocalDate.now(), proximoVencimiento);
+  }
+
+  public void reiniciarPeriodo(){
+    this.proximoVencimiento=LocalDate.now().plusDays(diasRecurrencia);
+  }
+
+  public void setProximoVencimiento(LocalDate fecha){
+    this.proximoVencimiento=fecha;
   }
 
   public void agregarPeticion(Peticion peticion){
     this.peticiones.add(peticion);
+  }
+
+  public void setEntidadId(String entidadId) {
+    this.entidadId = entidadId;
+  }
+
+  public void setTipo(TipoNecesidad tipo) {
+    this.tipo = tipo;
+  }
+
+  public void setDescripcion(String descripcion) {
+    this.descripcion = descripcion;
+  }
+
+  public void setDiasRecurrencia(Integer diasRecurrencia) {
+    this.diasRecurrencia = diasRecurrencia;
   }
 
   public String getId() { return id; }
@@ -32,35 +85,35 @@ public class Necesidad {
     this.peticiones = peticiones;
   }
 
-  public List<String> obtenerDonantesUnicos() {
-    return this.peticiones.stream()
-        .flatMap(p -> p.getDonacionesAsignadas().stream())
-        .distinct()
-        .toList();
-  }
+  // public List<String> obtenerDonantesUnicos() {
+  //   return this.peticiones.stream()
+  //       .flatMap(p -> p.getDonacionesAsignadas().stream())
+  //       .distinct()
+  //       .toList();
+  // }
 
-  public List<String> getIdDonantesParticipantes() {
-    return this.idDonantesParticipantes;
-  }
+  // public List<String> getIdDonantesParticipantes() {
+  //   return this.idDonantesParticipantes;
+  // }
 
-  public void actualizarEstado() {
-    if (this.peticiones.isEmpty()) {
-      this.estado = "en_preparacion";
-      return;
-    }
+  // public void actualizarEstado() {
+  //   if (this.peticiones.isEmpty()) {
+  //     this.estado = "en_preparacion";
+  //     return;
+  //   }
     
-    boolean todasCubiertas = this.peticiones.stream()
-        .allMatch(p -> p.estaCubierta());
+  //   boolean todasCubiertas = this.peticiones.stream()
+  //       .allMatch(p -> p.estaCubierta());
     
-    if (todasCubiertas) {
-      this.estado = "cubierta";  
-    } else {
-      this.estado = "parcialmente_cubierta";
-    }
-  }
+  //   if (todasCubiertas) {
+  //     this.estado = "cubierta";  
+  //   } else {
+  //     this.estado = "parcialmente_cubierta";
+  //   }
+  // }
 
-  public String getEstado() { return this.estado; }
-  public void setEstado(String estado) { this.estado = estado; }
+  // public String getEstado() { return this.estado; }
+  // public void setEstado(String estado) { this.estado = estado; }
 
   // public boolean estaCubierta() {
   //       if (this.peticiones.isEmpty()) return false;
