@@ -17,8 +17,8 @@ public class RutaRepositorio {
 
   private List<Entrega> donacionesSinAsignar = new ArrayList<>();
 
-  public Ruta findByid(int id) {
-    return allRutas.stream().filter(ruta -> ruta.getId() == id).toList().get(0);
+  public Ruta findByid(String id) {
+    return allRutas.stream().filter(ruta -> ruta.getId().equals(id)).toList().get(0);
   }
 
   public List<Ruta> getAllRutas() {

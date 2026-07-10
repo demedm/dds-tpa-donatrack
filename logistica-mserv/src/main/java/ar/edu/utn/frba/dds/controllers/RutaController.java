@@ -8,7 +8,7 @@ import java.util.List;
 
 public class RutaController {
   public Ruta showRuta(Context ctx) {
-    var id = Integer.parseInt(ctx.pathParam("id"));
+    var id = ctx.pathParam("id");
     return RutaRepositorio.Instance.findByid(id);
   }
 
