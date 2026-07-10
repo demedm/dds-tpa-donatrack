@@ -7,12 +7,14 @@ import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class EntidadBeneficiaria {
+  private String id;
   private String razonSocial;
   private String direccion;
   private String tipo;
-  private List<Mail> mailsContacto;
+  private List<Mail> mailsContacto = new ArrayList<>();
   private Telefono telefono;
   private List<DonacionSegmentada> donacionesRecibidas = new ArrayList<>();
 
@@ -20,6 +22,22 @@ public class EntidadBeneficiaria {
 
   public EntidadBeneficiaria() {}
 
+  public EntidadBeneficiaria(String direccion, List<Mail> mails, String razonSocial, Telefono telefono, String tipo) {
+    this.direccion = direccion;
+    this.mailsContacto = mails;
+    this.razonSocial = razonSocial;
+    this.telefono = telefono;
+    this.tipo = tipo;
+
+  }
+
+  public String getId() {
+    return this.id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
   public void setRazonSocial(String razonSocial) {
     this.razonSocial = razonSocial;
   }
@@ -36,8 +54,11 @@ public class EntidadBeneficiaria {
     this.telefono = telefono;
   }
 
+  public Telefono getTelefono() {
+    return telefono;
+  }
   public void setMailsContacto(List<Mail> mailsContacto) {
-    this.mailsContacto.addAll(mailsContacto);
+    this.mailsContacto = mailsContacto;
   }
 
   public List<DonacionSegmentada> getDonacionesRecibidas() {

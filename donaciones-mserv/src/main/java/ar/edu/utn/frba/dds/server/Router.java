@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.server;
 
 import ar.edu.utn.frba.dds.controllers.DonacionController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
+import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import io.javalin.Javalin;
 
@@ -12,6 +13,7 @@ public class Router {
     NecesidadController necesidadController = new NecesidadController();
     DonacionController donacionController = new DonacionController();
     DonanteController donanteController = new DonanteController();
+    EntidadBeneficiariaController entidadController = new EntidadBeneficiariaController();
 
 
     app.get("/donaciones/", ctx ->
@@ -65,10 +67,18 @@ public class Router {
         ctx.json(necesidadController.showNecesidad(ctx)));
 
     //Donante
-    app.post("/donantes/", donanteController:: crearDonante);
+    app.post("/donantes/fisicas", donanteController::crearDonanteFisica);
+    app.post("/donantes/juridicas", donanteController::crearDonanteJuridica);
     app.get("/donantes/", ctx -> ctx.json(donanteController.obtenerDonantes(ctx)));
     app.get("/donantes/{email}", ctx -> ctx.json(donanteController.obtenerDonantePorEmail(ctx)));
     app.put("/donantes/{email}", ctx -> ctx.json(donanteController.actualizarDonante(ctx)));
     app.delete("/donantes/{email}", donanteController::eliminarDonante);
+
+    //Entidades beneficiarias
+    app.post("/entidades", entidadController::crearEntidad);
+    app.get("/entidades/{id}", ctx -> ctx.json(entidadController.obtenerEntidad(ctx)));
+    app.put("/entidades/{id}", ctx -> ctx.json(entidadController.actualizarEntidad(ctx)));
+    app.delete("/entidades/{id}", entidadController::deleteEntidad);
+    app.get("/entidades",ctx -> ctx.json(entidadController.obtenerEntidades()));
   }
 }

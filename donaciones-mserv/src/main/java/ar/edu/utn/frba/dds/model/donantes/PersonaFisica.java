@@ -41,4 +41,14 @@ public class PersonaFisica extends Persona {
     return direccionActual;
   }
 
+  @Override
+  public void actualizarInfo(Persona nuevosDatos) {
+    super.actualizarInfo(nuevosDatos);
+    PersonaFisica nuevaFisica = (PersonaFisica) nuevosDatos;
+    this.apellido = nuevaFisica.getApellido();
+    this.edad = nuevaFisica.getEdad();
+    this.genero = nuevaFisica.getGenero();
+    this.direccionActual = nuevaFisica.getDireccionActual();
+  }
+
 }

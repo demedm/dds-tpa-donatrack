@@ -12,12 +12,6 @@ import java.util.Optional;
 public class DonanteRepository {
   public static DonanteRepository Instance = new DonanteRepository();
 
-  private List<Persona> donantesAll = new ArrayList<>();
-
-  public void registrar(Persona persona) {
-    this.donantesAll.add(persona);
-  }
-
   private List<Persona> registroDonantes = new ArrayList<>();
   private final Notificador notificador = new Notificador();
 
@@ -63,12 +57,6 @@ public class DonanteRepository {
     return registroDonantes;
   }
 }
-  
-  
-  
-  
-  
-  
   
   /*
   private final Map<Long, Persona> almacenamiento = new ConcurrentHashMap<>();

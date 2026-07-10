@@ -1,6 +1,10 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.dto.PersonaDTO;
+import ar.edu.utn.frba.dds.dto.PersonaFisicaDTO;
+import ar.edu.utn.frba.dds.dto.PersonaJuridicaDTO;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 
 import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 import io.javalin.http.Context;
@@ -12,12 +16,19 @@ public class DonanteController {
 
   private DonanteRepository registroDonante = DonanteRepository.Instance;
 
-  public void crearDonante(Context ctx){
-    Persona nuevoDonante = ctx.bodyAsClass(Persona.class);
+  private void crearDonante(Context ctx, PersonaDTO dto) {
+    Persona nuevoDonante = dto.PersonaDto();
     registroDonante.registrarDonante(nuevoDonante);
     ctx.status(201).json(nuevoDonante);
   }
 
+  public void crearDonanteFisica(Context ctx) {
+    crearDonante(ctx, ctx.bodyAsClass(PersonaFisicaDTO.class));
+  }
+
+  public void crearDonanteJuridica(Context ctx) {
+    crearDonante(ctx, ctx.bodyAsClass(PersonaJuridicaDTO.class));
+  }
   public List<Persona> obtenerDonantes(Context ctx){
     return registroDonante.getRegistroDonantes();
   }
@@ -30,10 +41,14 @@ public class DonanteController {
 
   public Persona actualizarDonante(Context ctx){
     var email = ctx.pathParam("email");
-    Persona datosNuevos = ctx.bodyAsClass(Persona.class);
     Persona existente = registroDonante.buscarPorEmail(email)
         .orElseThrow(() -> new NotFoundResponse("No existe un donante con email " + email));
-    existente.actualizarInfo(datosNuevos);
+
+    PersonaDTO dto = existente instanceof PersonaFisica
+        ? ctx.bodyAsClass(PersonaFisicaDTO.class)
+        : ctx.bodyAsClass(PersonaJuridicaDTO.class);
+
+    dto.aplicarCambios(existente);
     return existente;
   }
 
