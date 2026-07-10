@@ -46,6 +46,7 @@ public class Router {
 
  */
     //Donaciones
+    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx -> ctx.json(donacionController.asignar(ctx)));
 
 
     //Necesidades
