@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds;
 
-import ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio.Necesidad;
-import ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio.NecesidadRecurrente;
+import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NecesidadesTest {
   private Necesidad necesidad;
-  private NecesidadRecurrente necesidadRecurrente;
   private NecesidadRepository gestor;
 /*
   @BeforeEach

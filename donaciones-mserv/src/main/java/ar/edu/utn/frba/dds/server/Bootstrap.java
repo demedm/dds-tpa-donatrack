@@ -1,5 +1,8 @@
 package ar.edu.utn.frba.dds.server;
 
+import ar.edu.utn.frba.dds.model.Bienes.Bien;
+import ar.edu.utn.frba.dds.model.Bienes.BienPerecedero;
+import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
@@ -7,7 +10,9 @@ import ar.edu.utn.frba.dds.model.donantes.PersonaJuridica;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.repositories.DonanteRepository;
+import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,15 +23,29 @@ public class Bootstrap {
 		donadores.forEach((usuario) -> DonanteRepository.Instance.registrar(usuario));
 
 		List<Donacion> donaciones = donaciones();
-
+		donaciones();
 		Persona gaston = donadores.get(0);
 		// donaciones.stream().limit(4).forEach((donacion) -> gaston.capturar(pokemon));
 
 	}
 
 	private static List<Donacion> donaciones() {
-		return null;
-	}
+    Subcategoria subcat = new Subcategoria(null, "Arroz");
+
+    List<Bien> bienes = new ArrayList<>(List.of(
+        new BienPerecedero(subcat, "foto.jpg", "Arroz", new Date()),
+        new BienPerecedero(subcat, "foto.jpg", "Arroz", new Date()),
+        new BienPerecedero(subcat, "foto.jpg", "Arroz", new Date()),
+        new BienPerecedero(subcat, "foto.jpg", "Arroz", new Date()),
+        new BienPerecedero(subcat, "foto.jpg", "Arroz", new Date())
+    ));
+
+    Donacion donacion = new Donacion("Donación de alimentos", bienes, null);
+    donacion.setId("don-1");
+    DonacionesRepository.Instance.agregarDonacion(donacion);
+
+    return List.of(donacion);
+}
 
 	private static List<Persona> donadores() {
 		PersonaFisica maria = new PersonaFisica();

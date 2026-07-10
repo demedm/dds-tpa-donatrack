@@ -24,7 +24,7 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
     return entidad.getNecesidades().stream()
         .flatMap(n -> n.getPeticiones().stream())
         .filter(p -> p.getSubclase().equals(donacion.getSubcategoria().getDescripcion())
-            && p.getCantidadNecesitada()<= donacion.getCantidad())
+            && p.getCantidadRequerida()<= donacion.getCantidad())
         .count();
   }
 }

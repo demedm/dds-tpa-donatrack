@@ -4,7 +4,9 @@ import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Criterio;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Donacion {
   private String descripcionGeneral;
@@ -66,7 +68,7 @@ public class Donacion {
               grupo.stream().findFirst().orElse(null)
           );
         })
-        .toList();
+        .collect(Collectors.toList()); //Para crear una lista mutable
   }
 
 
