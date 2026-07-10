@@ -53,7 +53,6 @@ public class DonacionesRepository {
     }
 
 
-
     //Para los algoritmos
 
     public List<DonacionSegmentada> findSegmentadasEnDeposito(){

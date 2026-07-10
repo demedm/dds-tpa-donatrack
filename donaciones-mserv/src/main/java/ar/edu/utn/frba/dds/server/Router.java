@@ -4,7 +4,9 @@ import ar.edu.utn.frba.dds.controllers.DonacionController;
 import ar.edu.utn.frba.dds.controllers.DonacionSegmentadaController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
+import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
+import ar.edu.utn.frba.dds.model.Asignacion.ServicioMatchmaking;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import io.javalin.Javalin;
 
@@ -17,6 +19,7 @@ public class Router {
     DonanteController donanteController = new DonanteController();
     EntidadBeneficiariaController entidadController = new EntidadBeneficiariaController();
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
+    MatchmakingController MatchmakingController = new MatchmakingController(new ServicioMatchmaking());
 
     //Donaciones
 
@@ -37,20 +40,23 @@ public class Router {
       ctx.status(200);
     });
 
-    app.put("/donacionesSegementada/{id}", ctx ->
+    app.patch("/donacionesSegementada/{id}", ctx ->
         ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx))
     );
-
-
-    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx ->
-        ctx.json(donacionSegmentadaController.asignarDonacion(ctx)));
 /*
-    app.post("/donaciones/{id}/matchmaking",ctx->{
-      Donacion donacion = repository.obtenerPorId(ctx.pathParam("id"));
-      if(donacion == null) ctx.status(400);
+    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx ->
+        ctx.json(MatchmakingController.asignarDonacion(ctx)));
+*/
+
+
+    app.get("/matchmaking/ranking/{idSegmentada}", ctx -> {
+      ctx.status(200).json(MatchmakingController.obtenerRanking(ctx));
     });
 
- */
+    // Asignar donacionsementadaid y entidadbeneficiariaId
+    app.post("/matchmaking/asignar",ctx->{
+      ctx.status(400).json(MatchmakingController.asignarDonacion(ctx));
+    });
 
 
     //Necesidades

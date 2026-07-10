@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.dto.DonacionsDTO;
+import ar.edu.utn.frba.dds.dto.ResultadosMatchmakingDTO;
 import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
 import ar.edu.utn.frba.dds.model.Asignacion.ServicioMatchmaking;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
@@ -24,24 +25,45 @@ public class MatchmakingController {
     this.ServicioMatchmaking = ServicioMatchmaking;
   }
 
-  private ServicioMatchmaking Instance = new ServicioMatchmaking();
+  //donacion Segmentada
 
   public Resultados obtenerRanking(Context ctx){
     String idSegmentada = ctx.pathParam("id");
-
     DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
 
     if(donacion == null){
       throw new NotFoundResponse("DonacionSegmentada no encontrada");
     };
 
-    List<EntidadBeneficiaria> entidades = EntidadRepository.Instance.obtenerTodas();
-
+    List<EntidadBeneficiaria> entidades = EntidadRepository.Instance.obtenerEntidades();
     Resultados resultados = ServicioMatchmaking.ejecutar(donacion, entidades);
 
+    return resultados;
+  }
 
-    return resultados.entidadesPropuestas();
 
+  public DonacionSegmentada asignarDonacion(Context ctx) {
+    String idDonacion = ctx.pathParam("id");
+    String idEntidad = ctx.pathParam("idEntidad");
+
+    DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(idDonacion);
+
+    if(segmentada == null){
+      throw new NotFoundResponse("No se encontro el donacion segmentada con ese ID");
+    }
+    if(segmentada.estaAlmacen()){
+      throw new NotFoundResponse("Solo se puede asignar donaciones en estado EN_DEPOSITO");
+    }
+
+    EntidadBeneficiaria entidad = EntidadRepository.Instance.obtenerPorId(idEntidad);
+    if(entidad == null){
+      throw new NotFoundResponse("No se encontro el entidad con ese ID");
+    }
+
+    segmentada.asignar();
+    segmentada.setEntidadAsignadaId(idEntidad);
+
+    return segmentada;
 
   }
 
