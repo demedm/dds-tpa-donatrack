@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import io.javalin.http.Context;
@@ -8,8 +9,14 @@ import java.util.List;
 
 public class RutaController {
   public Ruta showRuta(Context ctx) {
-    var id = Integer.parseInt(ctx.pathParam("id"));
+    var id = ctx.pathParam("id");
     return RutaRepositorio.Instance.findByid(id);
+  }
+
+  public Entrega showEntrega(Context ctx) {
+    String idRuta = ctx.pathParam("idRuta");
+    String idEntrega = ctx.pathParam("idEntrega");
+    return RutaRepositorio.Instance.findEntregaById(idRuta, idEntrega);
   }
 
   public List<Ruta> showAllRutas() {

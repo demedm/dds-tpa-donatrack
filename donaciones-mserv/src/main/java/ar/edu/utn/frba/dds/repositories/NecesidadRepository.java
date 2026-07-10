@@ -1,15 +1,17 @@
 package ar.edu.utn.frba.dds.repositories;
 
-import ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio.Necesidad;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
+
 public class NecesidadRepository {
   private List<Necesidad> necesidades = new ArrayList<>();
+  public static NecesidadRepository Instance = new NecesidadRepository();
+
   private Integer contadorId =1;
 
-  public Necesidad agregarNecesidad(Necesidad necesidad) {
+  public Necesidad crear(Necesidad necesidad) {
     necesidad.setId("nec-" + contadorId++);
     necesidades.add(necesidad);
     return necesidad;
@@ -36,7 +38,7 @@ public class NecesidadRepository {
   //   necesidades.forEach(n -> n.cumplirNecesidades(gestor));
   // }
 
-  public Necesidad obtenerPorId(String id){
+  public Necesidad findById(String id){
     return this.necesidades.stream()
       .filter(n->n.getId().equals(id))
       .findFirst()
@@ -45,8 +47,14 @@ public class NecesidadRepository {
 
   //Obtener todas las necesidades 
 
-  public List<Necesidad> obtenerTodas(){
-    return new ArrayList<>(this.necesidades);
+  public List<Necesidad> findAll(){
+    return necesidades;
+  }
+
+  public List<Necesidad> findAllRecurrentes(){
+    return this.necesidades.stream()
+      .filter(n-> n.getTipo() == Necesidad.TipoNecesidad.RECURRENTE)
+      .toList();
   }
 
   public void eliminar(String id){
@@ -56,7 +64,7 @@ public class NecesidadRepository {
   // actualizo el que esta en el repositorio
 
   public Necesidad actualizar(Necesidad necesidad){
-    Necesidad existente = obtenerPorId(necesidad.getId());
+    Necesidad existente = findById(necesidad.getId());
 
     existente.setPeticiones(necesidad.getPeticiones());
 

@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.model.entidad;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
-import ar.edu.utn.frba.dds.model.necesidad.NecesidadDominio.Necesidad;
+import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 
 import java.util.ArrayList;
 import java.util.List;

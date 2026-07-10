@@ -12,22 +12,23 @@
     <relativePath>../pom.xml</relativePath> <!-- Ruta relativa para encontrar el archivo físico del padre -->
   </parent>
 
-  <artifactId>donaciones-mserv</artifactId>
-  <name>servicio-donaciones</name>
+  <artifactId>logistica-mserv</artifactId>
+  <name>servicio-logistica</name>
 
   <dependencies>
-    <!--aca van las dependencias propias del modulo de donaciones-->
+    <!--aca van las dependencias propias del modulo de logistica-->
     <dependency>
-      <groupId>com.opencsv</groupId>
-      <artifactId>opencsv</artifactId>
-      <version>5.9</version>
+      <groupId>io.javalin</groupId>
+      <artifactId>javalin-rendering</artifactId>
+      <version>6.3.0</version>
     </dependency>
-      <dependency>
-          <groupId>ar.edu.utn.frba.dds</groupId>
-          <artifactId>logistica-mserv</artifactId>
-          <version>1.0-SNAPSHOT</version>
-          <scope>compile</scope>
-      </dependency>
+
+    <dependency>
+      <groupId>com.github.jknack</groupId>
+      <artifactId>handlebars</artifactId>
+      <version>4.3.1</version>
+    </dependency>
+
   </dependencies>
 
 </project>
