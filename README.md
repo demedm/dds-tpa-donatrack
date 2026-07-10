@@ -8,7 +8,8 @@
 | *Denise A. Medina Mosquera* | *demedm*           |
 | *Geraldine Lara*            | *GeraldineLara*    |
 | Francisco A. Chamorro       | *AntonioChamorro*  |
-| *[Nombre del Integrante 4]* | *[Email / GitHub]* |
+| *Matias Galarza* | *GalarzaMatiasAgustin
+* |
 | *[Nombre del Integrante 5]* | *[Email / GitHub]* |
 
 ---
