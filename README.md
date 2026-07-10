@@ -6,8 +6,8 @@
 | Nombre y Apellido           |                    |
 |:----------------------------|:-------------------|
 | *Denise A. Medina Mosquera* | *demedm*           |
-| *Geraldine Lara*            | *GeraldineLara* |
-| *[Nombre del Integrante 3]* | *[Email / GitHub]* |
+| *Geraldine Lara*            | *GeraldineLara*    |
+| Francisco A. Chamorro       | *AntonioChamorro*  |
 | *[Nombre del Integrante 4]* | *[Email / GitHub]* |
 | *[Nombre del Integrante 5]* | *[Email / GitHub]* |
 
