@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class DonacionSegmentada {
-  private int id;
+  private String id;
   private int cantidad;
   private Subcategoria subcategoria;
   private Bien bienFiltrado;
@@ -34,6 +34,7 @@ public class DonacionSegmentada {
   public void setDonanteEmail(String donanteEmail) {
     this.donanteEmail = donanteEmail;
   }
+
   private String entidadAsignadaId;
   private Integer donanteId;
 
@@ -43,7 +44,6 @@ public class DonacionSegmentada {
     this.bienFiltrado = bienFiltrado;
     this.estadoActual = new EnDeposito();
     this.historialEstados = new ArrayList<>();
-
 
   }
 
@@ -76,7 +76,7 @@ public class DonacionSegmentada {
     return bienFiltrado;
   }
 
-  public int getId() {
+  public String getId() {
     return id;
   }
 
