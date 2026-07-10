@@ -72,4 +72,9 @@ public class Ruta {
 
   }
    */
+public double calcularPorcentajeAvance() {
+  if (entregas == null || entregas.isEmpty()) return 0.0;
+  long entregadas = entregas.stream().filter(Entrega::getVisitado).count();
+  return (double) entregadas / entregas.size() * 100.0;
+}
 }

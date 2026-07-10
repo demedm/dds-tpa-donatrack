@@ -1,7 +1,8 @@
 package ar.edu.utn.frba.dds.scripts.dto;
+import java.time.LocalDateTime;
+
 
 public class TelemetriaDTO {
-  /*
   private String patente;
   private Double latitud;
   private Double longitud;
@@ -21,5 +22,4 @@ public class TelemetriaDTO {
   public void setTimestampReporte(LocalDateTime timestampReporte) {
     this.timestampReporte = timestampReporte;
    }
-   */
 }

@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.model;
 
+import java.time.LocalDateTime;
 
 public class Camion {
   private String patente;
@@ -49,27 +50,18 @@ public class Camion {
     return this.rutaActual;
   }
 
+  public void improvistoLogistico() {
+    rutaActual.indicarImprovistoLogistico();
+  }
+
   public void asignarRuta(Ruta ruta) {
     this.rutaActual = ruta;
     estado = EstadoCamion.RUTA_ASIGNADA;
-  }
-/*
-  public boolean asignarRuta(Ruta ruta) {
-    if(estado == EstadoCamion.DISPONIBLE) {
-      this.rutaActual = ruta;
-      estado = EstadoCamion.RUTA_ASIGNADA;
-      return true;
-    }
-    return false;
   }
 
   public void iniciarRuta() {
     estado = EstadoCamion.REALIZANDO_ENTREGAS;
     rutaActual.iniciarRuta();
-  }
-
-  public void visitarDestino(String direccion) {
-    rutaActual.visitarParada(direccion);
   }
 
   public void regresarADeposito() {
@@ -87,5 +79,5 @@ public class Camion {
       this.ubicacionActual = new Ubicacion(latitud, longitud, LocalDateTime.now());
     }
   }
-*/
+
 }

@@ -4,13 +4,25 @@ import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 
-public class Persona {
+import java.time.LocalDate;
+
+public abstract class Persona {
   private String nombreIdentificador; // nombre completo - razon social
   private Mail mail;
   private Telefono telefono;
   private Identificacion identificacion;
   private TipoPersona tipoPersona;
   MedioContacto medioPreferido;
+
+  public LocalDate getUltimaActividad() {
+    return ultimaActividad;
+  }
+
+  public void setUltimaActividad(LocalDate ultimaActividad) {
+    this.ultimaActividad = ultimaActividad;
+  }
+
+  LocalDate ultimaActividad;
 
   public Persona() {
   }
@@ -55,10 +67,11 @@ public class Persona {
     this.identificacion.setNroDocumento(nuevosDatos.getNroIdentificacion());
     this.mail = nuevosDatos.getMail();
     this.telefono = nuevosDatos.getTelefono();
+    this.ultimaActividad = LocalDate.now();
   }
 
-  public void actualizarDatosComunes(String nombreIdentificador, String nroDocumento,
-      String email, String telefono) {
+  public void actualizarDatosComunes(String nombreIdentificador, String nroDocumento, String email, String telefono ) {
+
     if (nombreIdentificador != null) {
       this.nombreIdentificador = nombreIdentificador;
     }
@@ -71,6 +84,7 @@ public class Persona {
     if (telefono != null) {
       this.telefono = new Telefono(telefono);
     }
+    this.ultimaActividad = LocalDate.now();
   }
 
   public Telefono getTelefono() {

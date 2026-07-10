@@ -6,6 +6,8 @@ import ar.edu.utn.frba.dds.model.donantes.TipoDocumento;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 
+import java.time.LocalDate;
+
 public abstract class PersonaDTO {
   protected String nombreIdentificador;
   protected String email;
@@ -57,14 +59,15 @@ public abstract class PersonaDTO {
 
   public abstract void aplicarCambios(Persona persona);
 
-  protected void completarDatosComunes(Persona persona) {
+  protected void completarDatosComunesParaCreacion(Persona persona) {
     persona.setNombreIdentificador(nombreIdentificador);
     persona.setIdentificacion(new Identificacion(TipoDocumento.valueOf(tipoDocumento), nroDocumento));
     persona.setMail(new Mail(email));
     persona.setTelefono(new Telefono(telefono));
+    persona.setUltimaActividad(LocalDate.now());
   }
 
-  protected void aplicarCambiosComunes(Persona persona) {
+  protected void aplicarCambiosActualizacionComunes(Persona persona) {
     persona.actualizarDatosComunes(nombreIdentificador, nroDocumento, email, telefono);
   }
 }

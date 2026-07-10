@@ -28,7 +28,7 @@ class ClientTest {
   void setUp() {
     httpClientMock = mock(HttpClient.class);
     httpResponseMock = mock(HttpResponse.class);
-    client = new Client(httpClientMock);
+    client = new Client(httpClientMock, "http://localhost:9001/");
   }
 
   @Test
@@ -52,6 +52,14 @@ class ClientTest {
         .thenReturn(httpResponseMock);
 
     assertDoesNotThrow(() -> client.notificarCambioEstado(123, "ENTREGADA"));
+  }
+
+  @Test
+  void notificarFallaDeEntrega() {
+  }
+
+  @Test
+  void solicitudPlanificacion() {
   }
 
 }

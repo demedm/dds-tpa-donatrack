@@ -15,7 +15,7 @@ import java.util.List;
 public class CallbackController {
   List<RequestPlanificacionDTO> donacionesAPlanificar = new ArrayList<>();
 
-  public void recibirDonaciones(Context ctx) {
+  public void recibirDonacion(Context ctx) {
     int idDonacion = Integer.parseInt(ctx.pathParam("id"));
     DonacionDTO donacion = ctx.bodyAsClass(DonacionDTO.class);
 
@@ -30,6 +30,16 @@ public class CallbackController {
     donacionesAPlanificar.add(aPlanificar);
     ctx.status(201); // CREATED
     ctx.json(aPlanificar);
+  }
+
+  public void solicitudReplanificacion(Entrega entrega) {
+    RequestPlanificacionDTO aPlanificar = new RequestPlanificacionDTO();
+    aPlanificar.setIdDonacion(entrega.getDonacionId());
+    aPlanificar.setDireccion(entrega.getDireccion());
+    aPlanificar.setIdEntidad(entrega.getDonacionId());
+    if(entrega.getFechaVencimiento() != null) {
+      aPlanificar.setFechaVencimiento(entrega.getFechaVencimiento());
+    }
   }
 
   public void recibirPlanificacion(Context ctx) {
