@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.Asignacion;
 
-import ar.edu.utn.frba.dds.model.Bienes.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 
 import java.util.Comparator;
@@ -23,7 +23,8 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
 
     return entidad.getNecesidades().stream()
         .flatMap(n -> n.getPeticiones().stream())
-        .filter(p -> p.getSubclase().equals(donacion.getSubcategoria()))
+        .filter(p -> p.getSubclase().equals(donacion.getSubcategoria().getDescripcion())
+            && p.getCantidadNecesitada()<= donacion.getCantidad())
         .count();
   }
 }

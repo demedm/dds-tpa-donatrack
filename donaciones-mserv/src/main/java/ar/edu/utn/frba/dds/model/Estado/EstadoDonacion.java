@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.Estado;
 
-import ar.edu.utn.frba.dds.model.Bienes.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 
 public interface EstadoDonacion {
   void asignar(DonacionSegmentada unaDonacion);
