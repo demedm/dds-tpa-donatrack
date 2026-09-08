@@ -100,7 +100,7 @@
           .map(this::camionACamionDTO).toList();
 
       List<List<RequestPlanificacionDTO>> lotes = new ArrayList<>();
-      for(int i=0; i<donacionesAsignadas.size(); i+=tamanioLote) {
+      for (int i=0; i<donacionesAsignadas.size(); i+=tamanioLote) {
         lotes.add(donacionesAsignadas.subList(i, Math.min(i + tamanioLote, donacionesAsignadas.size())));
       }
       for (List<RequestPlanificacionDTO> lote : lotes) {
