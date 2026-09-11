@@ -4,7 +4,6 @@ import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import io.javalin.http.Context;
-
 import java.util.List;
 
 public class RutaController {
@@ -62,7 +61,7 @@ public class RutaController {
             "El id de la donación debe ser mayor a 0")
         .get();
     Ruta ruta = RutaRepositorio.Instance.findByid(idRuta);
-    if(ruta == null) {
+    if (ruta == null) {
       ctx.status(404);
       return null;
     }

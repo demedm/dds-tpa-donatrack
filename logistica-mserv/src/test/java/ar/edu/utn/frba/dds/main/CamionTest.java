@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
@@ -10,7 +10,7 @@ public class CamionTest {
   @Test
   public void noDebeActualizarUbicacionSiNoEstaRealizandoEntregas() {
     // Arrange
-    Camion camion = new Camion("AA123BB", 1000, 5000, 7);
+    Camion camion = new Camion("AA123BB", 1000.0, 5000.0, 7.0);
     camion.setEstado(EstadoCamion.DISPONIBLE);
 
     // Act
@@ -23,7 +23,7 @@ public class CamionTest {
   @Test
   public void debeActualizarUbicacionSiEstaRealizandoEntregas() {
     // Arrange
-    Camion camion = new Camion("AA123BB", 1000, 5000, 7);
+    Camion camion = new Camion("AA123BB", 1000.0, 5000.0, 7.0);
     camion.setEstado(EstadoCamion.REALIZANDO_ENTREGAS);
 
     // Act

@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.main;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,7 +75,7 @@ class RouterTest {
   @Test
   void getCamionesDevuelveLaFlotaRegistrada() throws Exception {
     CamionRepositorio.Instance.registrarCamion(
-        new Camion("AB123CD", 1000, 500, 220));
+        new Camion("AB123CD", 1000.0, 500.0, 220.0));
 
     HttpResponse<String> response = get("/camiones/");
 
@@ -86,7 +86,7 @@ class RouterTest {
   @Test
   void getCamionPorPatenteDevuelveElCamionCorrecto() throws Exception {
     CamionRepositorio.Instance.registrarCamion(
-        new Camion("AB123CD", 1000, 500, 220));
+        new Camion("AB123CD", 1000.0, 500.0, 220.0));
 
     HttpResponse<String> response = get("/camiones/AB123CD");
 
@@ -189,7 +189,7 @@ class RouterTest {
   @Test
   void recibirPlanificacionAsignaElCamionSiExisteEnLaFlota() throws Exception {
     CamionRepositorio.Instance.registrarCamion(
-        new Camion("AB123CD", 1000, 500, 220));
+        new Camion("AB123CD", 1000.0, 500.0, 220.0));
 
     String body = """
         {

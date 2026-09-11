@@ -1,15 +1,14 @@
 package ar.edu.utn.frba.dds.repositories;
 
-
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
-
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CamionRepositorio {
+public class CamionRepositorio implements WithSimplePersistenceUnit {
   private List<Camion> flota = new ArrayList<>();
-  public static CamionRepositorio Instance = new CamionRepositorio();
+  public static final CamionRepositorio Instance = new CamionRepositorio();
 
   public Camion getRandom() {
     return flota.stream().findAny().orElse(null);
@@ -27,6 +26,21 @@ public class CamionRepositorio {
 
   public void registrarCamion(Camion camion) {
     flota.add(camion);
+  }
+
+  public void registrar(Camion camion) {
+    entityManager().persist(camion);
+  }
+
+  @SuppressWarnings("unchecked")
+  public List<Camion> getAll() {
+    return entityManager()
+        .createQuery("from Camion")
+        .getResultList();
+  }
+
+  public Camion buscar(Long id) {
+    return entityManager().find(Camion.class, id);
   }
 
   /*

@@ -1,12 +1,12 @@
 package ar.edu.utn.frba.dds.scripts.dto;
 
-public class CamionDTO {
+public class CamionDto {
   private String patente;
-  private int capacidadVolumen;
-  private int altura;
-  private int capacidadCarga;
+  private Double capacidadVolumen;
+  private Double altura;
+  private Double capacidadCarga;
 
-  public CamionDTO() {}
+  public CamionDto() {}
 
   public String getPatente() {
     return patente;
@@ -16,27 +16,27 @@ public class CamionDTO {
     this.patente = patente;
   }
 
-  public int getCapacidadVolumen() {
+  public Double getCapacidadVolumen() {
     return capacidadVolumen;
   }
 
-  public void setCapacidadVolumen(int capacidadVolumen) {
+  public void setCapacidadVolumen(Double capacidadVolumen) {
     this.capacidadVolumen = capacidadVolumen;
   }
 
-  public int getAltura() {
+  public Double getAltura() {
     return altura;
   }
 
-  public void setAltura(int altura) {
+  public void setAltura(Double altura) {
     this.altura = altura;
   }
 
-  public int getCapacidadCarga() {
+  public Double getCapacidadCarga() {
     return capacidadCarga;
   }
 
-  public void setCapacidadCarga(int capacidadCarga) {
+  public void setCapacidadCarga(Double capacidadCarga) {
     this.capacidadCarga = capacidadCarga;
   }
 }

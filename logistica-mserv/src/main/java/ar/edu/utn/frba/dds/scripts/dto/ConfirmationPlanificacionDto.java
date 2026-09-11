@@ -1,9 +1,9 @@
 package ar.edu.utn.frba.dds.scripts.dto;
 
-public class ConfirmationPlanificacionDTO {
+public class ConfirmationPlanificacionDto {
   private String responseId;
 
-  public ConfirmationPlanificacionDTO() {}
+  public ConfirmationPlanificacionDto() {}
 
   public String getResponseId() {
     return responseId;

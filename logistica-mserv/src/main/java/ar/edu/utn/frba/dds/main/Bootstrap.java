@@ -1,11 +1,10 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class Bootstrap {
 
     RutaRepositorio.Instance.setAllRutas(rutas());
     //esto es para probar el dashboard
-// Forzamos a que el camión que ya tiene la ruta asignada arranque a trabajar
+    // Forzamos a que el camión que ya tiene la ruta asignada arranque a trabajar
     camion1.iniciarRuta();
 
     // Le marcamos la primera entrega de SU propia ruta como completada
@@ -40,11 +39,11 @@ public class Bootstrap {
   }
 
   private static List<Camion> camiones() {
-    return Arrays.asList(new Camion("aaaaAAAA", 1000,
-            5000, 7), new Camion("bbbbBBBB",
-            300, 6000, 5),
-        new Camion("ccccCCCC", 3400,
-            6700, 10));
+    return Arrays.asList(new Camion("aaaaAAAA", 1000.0,
+            5000.0, 7.0), new Camion("bbbbBBBB",
+            300.0, 6000.0, 5.0),
+        new Camion("ccccCCCC", 3400.0,
+            6700.0, 10.0));
   }
 
 }

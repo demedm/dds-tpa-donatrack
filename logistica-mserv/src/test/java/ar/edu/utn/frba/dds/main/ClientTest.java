@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.main;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,11 +8,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import ar.edu.utn.frba.dds.model.Camion;
-import ar.edu.utn.frba.dds.model.Entrega;
-import ar.edu.utn.frba.dds.scripts.dto.RequestPlanificacionDTO;
+import ar.edu.utn.frba.dds.scripts.dto.RequestPlanificacionDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -24,20 +22,22 @@ import java.util.List;
 
 class ClientTest {
   private HttpClient httpClientMock;
-  Client client;
+  ClientDonaciones clientDonaciones;
+  ClientPlanificacion clientPlanificacion;
   private HttpResponse<String> httpResponseMock;
   private HttpResponse<String> responseOk;
   private HttpResponse<String> responseError;
 
-  private List<RequestPlanificacionDTO> donaciones50;
-  private List<RequestPlanificacionDTO> donaciones250;
+  private List<RequestPlanificacionDto> donaciones50;
+  private List<RequestPlanificacionDto> donaciones250;
   private List<Camion> camiones;
 
   @BeforeEach
   void setUp() {
     httpClientMock = mock(HttpClient.class);
     httpResponseMock = mock(HttpResponse.class);
-    client = new Client(httpClientMock, "http://localhost:9001/");
+    clientDonaciones = new ClientDonaciones(httpClientMock, "http://localhost:9001/");
+    clientPlanificacion = new ClientPlanificacion(httpClientMock, "http://localhost:9002/");
 
     responseOk = mock(HttpResponse.class);
     when(responseOk.statusCode()).thenReturn(200);
@@ -52,10 +52,10 @@ class ClientTest {
     camiones = crearCamiones(3);
   }
 
-  private List<RequestPlanificacionDTO> crearDonaciones(int cantidad) {
-    List<RequestPlanificacionDTO> donaciones = new ArrayList<>();
+  private List<RequestPlanificacionDto> crearDonaciones(int cantidad) {
+    List<RequestPlanificacionDto> donaciones = new ArrayList<>();
     for (int i = 0; i < cantidad; i++) {
-      donaciones.add(mock(RequestPlanificacionDTO.class));
+      donaciones.add(mock(RequestPlanificacionDto.class));
     }
     return donaciones;
   }
@@ -74,7 +74,7 @@ class ClientTest {
     when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
         .thenReturn(httpResponseMock);
 
-    client.notificarCambioEstado(123, "ENTREGADA");
+    clientDonaciones.notificarCambioEstado(123, "ENTREGADA");
 
     // Verificamos que efectivamente se haya intentado mandar el request
     verify(httpClientMock, times(1))
@@ -88,12 +88,12 @@ class ClientTest {
     when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
         .thenReturn(httpResponseMock);
 
-    assertDoesNotThrow(() -> client.notificarCambioEstado(123, "ENTREGADA"));
+    assertDoesNotThrow(() -> clientDonaciones.notificarCambioEstado(123, "ENTREGADA"));
   }
 
   @Test
   void noRealizaLlamadasSiNoHayDonaciones() throws Exception {
-    client.solicitudPlanificacion(Collections.emptyList(), camiones);
+    clientPlanificacion.solicitudPlanificacion(Collections.emptyList(), camiones);
 
     verify(httpClientMock, times(0))
         .send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
@@ -104,7 +104,7 @@ class ClientTest {
     when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
         .thenReturn(responseOk);
 
-    client.solicitudPlanificacion(donaciones50, camiones);
+    clientPlanificacion.solicitudPlanificacion(donaciones50, camiones);
 
     verify(httpClientMock, times(1))
         .send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
@@ -115,7 +115,7 @@ class ClientTest {
     when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
         .thenReturn(responseOk);
 
-    client.solicitudPlanificacion(donaciones250, camiones);
+    clientPlanificacion.solicitudPlanificacion(donaciones250, camiones);
 
     verify(httpClientMock, times(3))
         .send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
@@ -127,7 +127,7 @@ class ClientTest {
         .thenReturn(responseError);
 
     assertDoesNotThrow(() ->
-        client.solicitudPlanificacion(donaciones250, camiones)
+        clientPlanificacion.solicitudPlanificacion(donaciones250, camiones)
     );
 
     verify(httpClientMock, times(3))

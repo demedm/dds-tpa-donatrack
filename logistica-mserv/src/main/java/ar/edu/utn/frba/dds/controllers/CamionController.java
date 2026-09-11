@@ -3,10 +3,7 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
-
-import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import io.javalin.http.Context;
-
 import java.util.List;
 
 public class CamionController {
@@ -17,7 +14,7 @@ public class CamionController {
   public Camion showCamion(Context ctx) {
     var patente = ctx.pathParam("patente");
     Camion camion = tryToFindCamion(patente, ctx);
-    if(camion != null) {
+    if (camion != null) {
       ctx.status(200);
     }
     return camion;
@@ -30,7 +27,7 @@ public class CamionController {
   public List<Entrega> showEntregas(Context ctx) {
     var patente = ctx.pathParam("patente");
     Camion camion = tryToFindCamion(patente, ctx);
-    if(camion != null) {
+    if (camion != null) {
       ctx.status(200);
       return camion.getRutaActual().getEntregas();
     }
@@ -50,12 +47,12 @@ public class CamionController {
   }
 
   private Camion tryToFindCamion(String patente, Context ctx) {
-    if(patente.isEmpty()) {
+    if (patente.isEmpty()) {
       ctx.status(400);
       return null;
     }
     var camion = CamionRepositorio.Instance.findByPatente(patente);
-    if(camion == null) {
+    if (camion == null) {
       ctx.status(404);
       return null;
     }

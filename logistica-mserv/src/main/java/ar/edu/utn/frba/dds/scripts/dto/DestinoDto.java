@@ -1,13 +1,11 @@
 package ar.edu.utn.frba.dds.scripts.dto;
 
-import java.util.List;
-
-public class DestinoDTO {
+public class DestinoDto {
   private String id;
   private String direccion;
   private int donacionId;
 
-  public DestinoDTO() {}
+  public DestinoDto() {}
 
   public String getDireccion() {
     return direccion;
@@ -23,6 +21,10 @@ public class DestinoDTO {
 
   public void setDonacionId(int donacionId) {
     this.donacionId = donacionId;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getId() {

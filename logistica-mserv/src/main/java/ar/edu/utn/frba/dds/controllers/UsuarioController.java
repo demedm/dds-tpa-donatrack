@@ -7,12 +7,12 @@ import io.javalin.http.Context;
 public class UsuarioController {
   public Usuario showUsuario(Context ctx) {
     var idUsuario = ctx.pathParam("id");
-    if(idUsuario.isEmpty()) {
+    if (idUsuario.isEmpty()) {
       ctx.status(400);
       return null;
     }
     var usuario = UsuarioRepositorio.Instance.findUsuarioById(idUsuario);
-    if(usuario == null) {
+    if (usuario == null) {
       ctx.status(404);
       return null;
     }
@@ -23,17 +23,17 @@ public class UsuarioController {
   public void confirmarEntrega(Context ctx) {
     var idUsuario = ctx.pathParam("idUsuario");
     var idEntrega = ctx.pathParam("idEntrega");
-    var URLfoto = ctx.body();
-    if(URLfoto.isEmpty()) {
+    var urlfoto = ctx.body();
+    if (urlfoto.isEmpty()) {
       ctx.status(400);
       return;
     }
     var entidad = UsuarioRepositorio.Instance.findEntidadById(idUsuario);
-    if(entidad == null) {
+    if (entidad == null) {
       ctx.status(404);
       return;
     }
-    entidad.confirmarEntrega(idEntrega, URLfoto);
+    entidad.confirmarEntrega(idEntrega, urlfoto);
     ctx.status(200);
     ctx.json(entidad);
   }

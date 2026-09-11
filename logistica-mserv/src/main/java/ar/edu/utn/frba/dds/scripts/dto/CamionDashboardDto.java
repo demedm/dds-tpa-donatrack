@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.scripts.dto;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
 import java.time.LocalDateTime;
 
-public class CamionDashboardDTO {
+public class CamionDashboardDto {
   private String patente;
   private EstadoCamion estado;
   private Double latitud;

@@ -2,11 +2,11 @@ package ar.edu.utn.frba.dds.scripts.dto;
 
 import java.util.List;
 
-public class RutaPlanificadaDTO {
+public class RutaPlanificadaDto {
   private String patenteCamion;
-  private List<DestinoDTO> destinos;  // ids de las donaciones a entregar
+  private List<DestinoDto> destinos;  // ids de las donaciones a entregar
 
-  public RutaPlanificadaDTO() {}
+  public RutaPlanificadaDto() {}
 
   public String getPatenteCamion() {
     return patenteCamion;
@@ -16,11 +16,11 @@ public class RutaPlanificadaDTO {
     this.patenteCamion = patenteCamion;
   }
 
-  public List<DestinoDTO> getDestinos() {
+  public List<DestinoDto> getDestinos() {
     return destinos;
   }
 
-  public void setDestinos(List<DestinoDTO> destinos) {
+  public void setDestinos(List<DestinoDto> destinos) {
     this.destinos = destinos;
   }
 

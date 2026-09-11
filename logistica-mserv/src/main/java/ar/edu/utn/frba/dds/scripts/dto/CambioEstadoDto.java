@@ -1,12 +1,10 @@
 package ar.edu.utn.frba.dds.scripts.dto;
 
-import ar.edu.utn.frba.dds.model.EstadoEntrega;
-
-public class CambioEstadoDTO {
+public class CambioEstadoDto {
   private String nuevoEstado;
   private String motivoFalla;
 
-  public CambioEstadoDTO() {}
+  public CambioEstadoDto() {}
 
   public void setNuevoEstado(String nuevoEstado) {
     this.nuevoEstado = nuevoEstado;

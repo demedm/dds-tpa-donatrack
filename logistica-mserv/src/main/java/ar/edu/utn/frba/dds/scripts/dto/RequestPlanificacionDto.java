@@ -2,14 +2,14 @@ package ar.edu.utn.frba.dds.scripts.dto;
 
 import java.time.LocalDate;
 
-public class RequestPlanificacionDTO {
+public class RequestPlanificacionDto {
   private String id;
   private String direccion;
   private int idEntidad;
   private int idDonacion;
   private LocalDate fechaVencimiento;
 
-  public RequestPlanificacionDTO() {}
+  public RequestPlanificacionDto() {}
 
   public String getDireccion() {
     return direccion;

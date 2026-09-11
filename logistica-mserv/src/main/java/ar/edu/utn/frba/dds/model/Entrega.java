@@ -1,30 +1,45 @@
 package ar.edu.utn.frba.dds.model;
 
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
+import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
-import ar.edu.utn.frba.dds.model.accionesentregas.NotificarDonadorYDonante;
 import ar.edu.utn.frba.dds.model.fallaentrega.EntregaVencida;
-import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
 import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
+@Entity
 public class Entrega {
+  @Id
+  @GeneratedValue
+  private Long id1;
   private String id;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "estado_entrega")
   private EstadoEntrega estado;
+
   private String direccion;
-  private int donacionId;
+  private Integer donacionId;
   private LocalDate fechaVencimiento;
-  private boolean visitado = false;
+  private boolean entregado = false;
+
+  @Transient
   private MotivoFallo motivoFallo;
+
   private String foto;
 
-  // Lista inicializada para evitar el NullPointerException
+  @Transient
   private List<AccionesSobreEntregas> accionesSobreEntregas = new ArrayList<>();
 
   public Entrega(String direccion, int idDonacion) {
@@ -35,8 +50,10 @@ public class Entrega {
 
     // Lógica nueva del equipo fusionada correctamente
     agregarAccionEntregas(new NotificarAdmins());
-    agregarAccionEntregas(new NotificarDonadorYDonante());
+    agregarAccionEntregas(new Notificar());
   }
+
+  public Entrega() {}
 
   public LocalDate getFechaVencimiento() {
     return fechaVencimiento;
@@ -50,16 +67,24 @@ public class Entrega {
     return this.donacionId;
   }
 
-  public void setVisitado(boolean visitado) {
-    this.visitado = visitado;
+  public void setEntregado(boolean entregado) {
+    this.entregado = entregado;
   }
 
   public String getDireccion() {
     return this.direccion;
   }
 
-  public boolean getVisitado() {
-    return this.visitado;
+  public boolean getEntregado() {
+    return this.entregado;
+  }
+
+  public Long getId1() {
+    return id1;
+  }
+
+  public void setId1(Long id1) {
+    this.id1 = id1;
   }
 
   public String getId() {
@@ -73,12 +98,12 @@ public class Entrega {
   }
 
   public void marcarComoEntregada() {
-    visitado = true;
+    entregado = true;
     estado = EstadoEntrega.ENTREGADA;
   }
 
-  public void confirmarEntrega(String url_foto) {
-    setFoto(url_foto);
+  public void confirmarEntrega(String urlFoto) {
+    setFoto(urlFoto);
   }
 
   public void marcarComoFallida(MotivoFallo motivo) {
@@ -88,7 +113,7 @@ public class Entrega {
         accion.notificarFalloEntrega(this));
   }
 
-  public void marcarRegresoADeposito() {
+  public void marcarRegreso() {
     estado = EstadoEntrega.PENDIENTE;
   }
 
@@ -97,7 +122,7 @@ public class Entrega {
   }
 
   public boolean estaVencida() {
-    if(fechaVencimiento != null && fechaVencimiento.isBefore(LocalDate.now())) {
+    if (fechaVencimiento != null && fechaVencimiento.isBefore(LocalDate.now())) {
       marcarComoFallida(new EntregaVencida());
       return true;
     }
@@ -131,4 +156,5 @@ public class Entrega {
   public void setEstado(EstadoEntrega estado) {
     this.estado = estado;
   }
+
 }

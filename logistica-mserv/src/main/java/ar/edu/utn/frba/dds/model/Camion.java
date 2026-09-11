@@ -1,14 +1,32 @@
 package ar.edu.utn.frba.dds.model;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
+@Entity
 public class Camion {
+  @Id
+  @GeneratedValue
+  private Long id;
   private String patente;
-  private int capacidadVolumen;
-  private int altura;
-  private int capacidadCarga;
+  private Double capacidadVolumen;
+  private Double altura;
+  private Double capacidadCarga;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "estado_camion")
   private EstadoCamion estado;
+
+  @Transient
   private Ruta rutaActual = null;
+
+  @Transient
   private Ubicacion ubicacionActual;
 
   public Camion() {}
@@ -17,13 +35,12 @@ public class Camion {
     this.estado = estado;
   }
 
-  public EstadoCamion getEstado()
-  {
+  public EstadoCamion getEstado() {
     return estado;
   }
 
-  public Camion(String patente, int capacidadCarga, int capacidadVolumen,
-                int altura) {
+  public Camion(String patente, Double capacidadCarga, Double capacidadVolumen,
+                Double altura) {
     this.altura = altura;
     this.capacidadCarga = capacidadCarga;
     this.capacidadVolumen = capacidadVolumen;
@@ -31,20 +48,27 @@ public class Camion {
     this.patente = patente;
   }
 
-  public String getPatente()
-  {
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getPatente() {
     return this.patente;
   }
 
-  public int getAltura() {
+  public Double getAltura() {
     return this.altura;
   }
 
-  public int getCapacidadVolumen() {
+  public Double getCapacidadVolumen() {
     return this.capacidadVolumen;
   }
 
-  public int getCapacidadCarga() {
+  public Double getCapacidadCarga() {
     return this.capacidadCarga;
   }
 
@@ -66,7 +90,7 @@ public class Camion {
     rutaActual.iniciarRuta();
   }
 
-  public void regresarADeposito() {
+  public void regresarDeposito() {
     rutaActual.finalizarRuta();
     estado = EstadoCamion.DISPONIBLE;
   }

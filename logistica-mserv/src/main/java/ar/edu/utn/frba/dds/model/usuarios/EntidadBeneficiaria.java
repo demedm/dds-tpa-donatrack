@@ -1,20 +1,31 @@
 package ar.edu.utn.frba.dds.model.usuarios;
 
 import ar.edu.utn.frba.dds.model.Entrega;
-
 import java.util.List;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
-public class EntidadBeneficiaria {
+@Entity
+@DiscriminatorValue("EB")
+public class EntidadBeneficiaria extends Usuario {
+  @Id
+  @GeneratedValue
+  private Long id1;
   private String contacto;
   private String id;
   private String direccion;
+
+  @OneToMany
   private List<Entrega> entregasAsignadas;
 
   public EntidadBeneficiaria() {}
 
-  public void confirmarEntrega(String idEntrega, String URLfoto) {
+  public void confirmarEntrega(String idEntrega, String urlFoto) {
     entregasAsignadas.stream().filter(entrega -> entrega.getId().equals(idEntrega))
-        .forEach(entrega -> entrega.confirmarEntrega(URLfoto));
+        .forEach(entrega -> entrega.confirmarEntrega(urlFoto));
   }
 
   public String getDireccion() {
@@ -33,6 +44,14 @@ public class EntidadBeneficiaria {
     this.id = id;
   }
 
+  public Long getId1() {
+    return id1;
+  }
+
+  public void setId1(Long id1) {
+    this.id1 = id1;
+  }
+
   public String getContacto() {
     return contacto;
   }
@@ -46,6 +65,7 @@ public class EntidadBeneficiaria {
   }
 
   public List<Entrega> getEntregasAsignadas() {
-  return entregasAsignadas;
+    return entregasAsignadas;
   }
+
 }

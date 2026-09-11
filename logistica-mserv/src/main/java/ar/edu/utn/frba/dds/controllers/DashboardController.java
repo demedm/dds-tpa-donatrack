@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
-import ar.edu.utn.frba.dds.scripts.dto.CamionDashboardDTO;
+import ar.edu.utn.frba.dds.scripts.dto.CamionDashboardDto;
 import io.javalin.http.Context;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +10,9 @@ public class DashboardController {
   public void index(Context ctx) { }
 
   public void listarCamiones(Context ctx) {
-    List<CamionDashboardDTO> camionesProcesados = CamionRepositorio.Instance.getFlota().stream()
+    List<CamionDashboardDto> camionesProcesados = CamionRepositorio.Instance.getFlota().stream()
         .map(camion -> {
-          CamionDashboardDTO dto = new CamionDashboardDTO();
+          CamionDashboardDto dto = new CamionDashboardDto();
           dto.setPatente(camion.getPatente());
           dto.setEstado(camion.getEstado());
 

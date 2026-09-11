@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.main;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,7 +33,7 @@ class CamionRutaEntregaTest {
 
   @BeforeEach
   void setUp() {
-    camion = new Camion("AB123CD", 1000, 500, 220);
+    camion = new Camion("AB123CD", 1000.0, 500.0, 220.0);
 
     entregaA = new Entrega("Calle Falsa 123", 1);
     entregaB = new Entrega("Av. Larga 742", 2);
@@ -80,11 +80,11 @@ class CamionRutaEntregaTest {
 
     ruta.visitarParada("Calle Falsa 123");
 
-    assertTrue(entregaA.getVisitado());
+    assertTrue(entregaA.getEntregado());
     assertEquals(EstadoEntrega.ENTREGADA, entregaA.getEstado());
 
     // La otra entrega de la ruta no se ve afectada
-    assertFalse(entregaB.getVisitado());
+    assertFalse(entregaB.getEntregado());
     assertEquals(EstadoEntrega.EN_TRASLADO, entregaB.getEstado());
   }
 
@@ -96,7 +96,7 @@ class CamionRutaEntregaTest {
     ruta.visitarParada("Calle Falsa 123");       // A se entrega
     entregaB.marcarComoNoRecepcionada();          // B falla (no recepcionada)
 
-    camion.regresarADeposito();
+    camion.regresarDeposito();
 
     assertEquals(EstadoCamion.DISPONIBLE, camion.getEstado());
 
