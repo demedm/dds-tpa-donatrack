@@ -11,25 +11,20 @@ import javax.persistence.InheritanceType;
 public class Usuario {
   @Id
   @GeneratedValue
-  private Long id1;
-  private String id;
+  private Long id;
+
   private String email;
   private String password;
 
-  public Long getId1() {
-    return id1;
+  public Usuario() {}
+
+  public Usuario(String email, String password) {
+    this.email = email;
+    this.password = password;
   }
 
-  public void setId1(Long id1) {
-    this.id1 = id1;
-  }
-
-  public String getId() {
+  public Long getId() {
     return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
   }
 
   public String getEmail() {

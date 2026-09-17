@@ -6,31 +6,39 @@ import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
 import ar.edu.utn.frba.dds.model.fallaentrega.EntregaVencida;
 import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
 import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
+import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 @Entity
 public class Entrega {
   @Id
   @GeneratedValue
-  private Long id1;
-  private String id;
+  private Long id;
+
+  @ManyToOne
+  private EntidadBeneficiaria entidadBeneficiaria;
+
+  @ManyToOne
+  @JoinColumn(name = "ruta_id")
+  private Ruta ruta = null;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "estado_entrega")
   private EstadoEntrega estado;
 
   private String direccion;
-  private Integer donacionId;
+  private Long donacionId;
   private LocalDate fechaVencimiento;
   private boolean entregado = false;
 
@@ -42,12 +50,10 @@ public class Entrega {
   @Transient
   private List<AccionesSobreEntregas> accionesSobreEntregas = new ArrayList<>();
 
-  public Entrega(String direccion, int idDonacion) {
+  public Entrega(String direccion, Long idDonacion) {
     this.estado = EstadoEntrega.PENDIENTE;
     this.donacionId = idDonacion;
     this.direccion = direccion;
-    this.id = UUID.randomUUID().toString();
-
     // Lógica nueva del equipo fusionada correctamente
     agregarAccionEntregas(new NotificarAdmins());
     agregarAccionEntregas(new Notificar());
@@ -63,7 +69,7 @@ public class Entrega {
     this.fechaVencimiento = fechaVencimiento;
   }
 
-  public int getDonacionId() {
+  public Long getDonacionId() {
     return this.donacionId;
   }
 
@@ -79,15 +85,7 @@ public class Entrega {
     return this.entregado;
   }
 
-  public Long getId1() {
-    return id1;
-  }
-
-  public void setId1(Long id1) {
-    this.id1 = id1;
-  }
-
-  public String getId() {
+  public Long getId() {
     return this.id;
   }
 
@@ -157,4 +155,19 @@ public class Entrega {
     this.estado = estado;
   }
 
+  public EntidadBeneficiaria getEntidadBeneficiaria() {
+    return entidadBeneficiaria;
+  }
+
+  public void setEntidadBeneficiaria(EntidadBeneficiaria entidadBeneficiaria) {
+    this.entidadBeneficiaria = entidadBeneficiaria;
+  }
+
+  public Ruta getRuta() {
+    return ruta;
+  }
+
+  public void setRuta(Ruta ruta) {
+    this.ruta = ruta;
+  }
 }

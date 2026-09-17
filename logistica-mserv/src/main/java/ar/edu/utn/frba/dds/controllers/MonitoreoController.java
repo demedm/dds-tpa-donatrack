@@ -16,7 +16,7 @@ public class MonitoreoController {
       return;
     }
 
-    Camion camion = CamionRepositorio.Instance.findByPatente(patente);
+    Camion camion = CamionRepositorio.Instance.buscarPorPatente(patente);
     if (camion == null) {
       ctx.status(404).result("Camión no encontrado.");
       return;

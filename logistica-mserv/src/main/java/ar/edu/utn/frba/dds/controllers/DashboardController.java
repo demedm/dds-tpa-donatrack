@@ -1,23 +1,28 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.model.EstadoRuta;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
+import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.CamionDashboardDto;
 import io.javalin.http.Context;
 import java.util.List;
 import java.util.Map;
 
 public class DashboardController {
+
   public void index(Context ctx) { }
 
   public void listarCamiones(Context ctx) {
-    List<CamionDashboardDto> camionesProcesados = CamionRepositorio.Instance.getFlota().stream()
+    List<CamionDashboardDto> camionesProcesados = CamionRepositorio.Instance.mostrarTodos().stream()
         .map(camion -> {
           CamionDashboardDto dto = new CamionDashboardDto();
           dto.setPatente(camion.getPatente());
           dto.setEstado(camion.getEstado());
 
-          if (camion.getRutaActual() != null) {
-            dto.setPorcentajeAvance(camion.getRutaActual().calcularPorcentajeAvance());
+          var ruta = RutaRepositorio.Instance.buscarRutasDeCamionConEstado(
+              camion.getId(), EstadoRuta.EN_CURSO);
+          if (ruta != null) {
+            dto.setPorcentajeAvance(ruta.calcularPorcentajeAvance());
           } else {
             dto.setPorcentajeAvance(0.0);
           }
@@ -32,4 +37,5 @@ public class DashboardController {
 
     ctx.render("listado.hbs", Map.of("camiones", camionesProcesados));
   }
+
 }

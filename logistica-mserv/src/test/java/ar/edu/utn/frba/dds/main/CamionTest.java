@@ -11,7 +11,6 @@ public class CamionTest {
   public void noDebeActualizarUbicacionSiNoEstaRealizandoEntregas() {
     // Arrange
     Camion camion = new Camion("AA123BB", 1000.0, 5000.0, 7.0);
-    camion.setEstado(EstadoCamion.DISPONIBLE);
 
     // Act
     camion.actualizarUbicacion(-34.6037, -58.3816);
@@ -24,7 +23,7 @@ public class CamionTest {
   public void debeActualizarUbicacionSiEstaRealizandoEntregas() {
     // Arrange
     Camion camion = new Camion("AA123BB", 1000.0, 5000.0, 7.0);
-    camion.setEstado(EstadoCamion.REALIZANDO_ENTREGAS);
+    camion.iniciarRuta();
 
     // Act
     camion.actualizarUbicacion(-34.6037, -58.3816);

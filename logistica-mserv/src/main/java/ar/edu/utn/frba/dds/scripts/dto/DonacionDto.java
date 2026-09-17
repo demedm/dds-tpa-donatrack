@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class DonacionDto {
   private String direccionEntidad;
-  private int idEntidadAsignada;
+  private Long idEntidadAsignada;
   private LocalDate fechaVencimiento;
 
   public DonacionDto() {}
@@ -13,7 +13,7 @@ public class DonacionDto {
     this.direccionEntidad = direccionEntidad;
   }
 
-  public void setIdEntidadAsignada(int idEntidadAsignada) {
+  public void setIdEntidadAsignada(Long idEntidadAsignada) {
     this.idEntidadAsignada = idEntidadAsignada;
   }
 
@@ -21,7 +21,7 @@ public class DonacionDto {
     return this.direccionEntidad;
   }
 
-  public int getIdEntidadAsignada() {
+  public Long getIdEntidadAsignada() {
     return idEntidadAsignada;
   }
 

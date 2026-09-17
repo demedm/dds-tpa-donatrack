@@ -74,7 +74,7 @@ class ClientTest {
     when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
         .thenReturn(httpResponseMock);
 
-    clientDonaciones.notificarCambioEstado(123, "ENTREGADA");
+    clientDonaciones.notificarCambioEstado((long) 123, "ENTREGADA");
 
     // Verificamos que efectivamente se haya intentado mandar el request
     verify(httpClientMock, times(1))
@@ -88,7 +88,7 @@ class ClientTest {
     when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
         .thenReturn(httpResponseMock);
 
-    assertDoesNotThrow(() -> clientDonaciones.notificarCambioEstado(123, "ENTREGADA"));
+    assertDoesNotThrow(() -> clientDonaciones.notificarCambioEstado((long)123, "ENTREGADA"));
   }
 
   @Test

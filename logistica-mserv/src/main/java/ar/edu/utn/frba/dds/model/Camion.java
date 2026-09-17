@@ -7,6 +7,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 @Entity
@@ -24,16 +26,9 @@ public class Camion {
   private EstadoCamion estado;
 
   @Transient
-  private Ruta rutaActual = null;
-
-  @Transient
   private Ubicacion ubicacionActual;
 
   public Camion() {}
-
-  public void setEstado(EstadoCamion estado) {
-    this.estado = estado;
-  }
 
   public EstadoCamion getEstado() {
     return estado;
@@ -72,26 +67,19 @@ public class Camion {
     return this.capacidadCarga;
   }
 
-  public Ruta getRutaActual() {
-    return this.rutaActual;
-  }
-
   public void improvistoLogistico() {
-    rutaActual.indicarImprovistoLogistico();
+    estado = EstadoCamion.EN_MANTENIMIENTO;
   }
 
-  public void asignarRuta(Ruta ruta) {
-    this.rutaActual = ruta;
+  public void asignarRuta() {
     estado = EstadoCamion.RUTA_ASIGNADA;
   }
 
   public void iniciarRuta() {
     estado = EstadoCamion.REALIZANDO_ENTREGAS;
-    rutaActual.iniciarRuta();
   }
 
   public void regresarDeposito() {
-    rutaActual.finalizarRuta();
     estado = EstadoCamion.DISPONIBLE;
   }
 

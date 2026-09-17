@@ -11,7 +11,7 @@ public class ClientDonaciones extends Client {
     super(client, url);
   }
 
-  public void notificarCambioEstado(int id, String nuevoEstado) {
+  public void notificarCambioEstado(Long id, String nuevoEstado) {
     try {
       CambioEstadoDto cambio = new CambioEstadoDto();
       cambio.setNuevoEstado(nuevoEstado);
@@ -22,7 +22,7 @@ public class ClientDonaciones extends Client {
     }
   }
 
-  public void notificarFallaDeEntrega(int idDonacion, String motivo) {
+  public void notificarFallaDeEntrega(Long idDonacion, String motivo) {
     try {
       CambioEstadoDto cambio = new CambioEstadoDto();
       cambio.setNuevoEstado(EstadoEntrega.FALLIDA.name());

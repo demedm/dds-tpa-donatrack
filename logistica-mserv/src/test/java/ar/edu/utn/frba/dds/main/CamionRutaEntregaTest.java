@@ -13,9 +13,11 @@ import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
+import ar.edu.utn.frba.dds.model.EstadoRuta;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
+import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,37 +35,37 @@ class CamionRutaEntregaTest {
 
   @BeforeEach
   void setUp() {
+    Chofer chofer = new Chofer("Carlos", "Hola");
     camion = new Camion("AB123CD", 1000.0, 500.0, 220.0);
 
-    entregaA = new Entrega("Calle Falsa 123", 1);
-    entregaB = new Entrega("Av. Larga 742", 2);
+    entregaA = new Entrega("Calle Falsa 123", (long)1);
+    entregaB = new Entrega("Av. Larga 742", (long)2);
 
     accionMock = mock(AccionesSobreEntregas.class);
     entregaA.agregarAccionEntregas(accionMock);
     entregaB.agregarAccionEntregas(accionMock);
 
     entregas = new ArrayList<>(List.of(entregaA, entregaB));
-    ruta = new Ruta(camion.getPatente(), entregas);
+    ruta = new Ruta(chofer, entregas);
   }
 
   @Test
   void alCrearseElCamionEstaDisponible() {
     assertEquals(EstadoCamion.DISPONIBLE, camion.getEstado());
-    assertNull(camion.getRutaActual());
   }
 
   @Test
-  void asignarRutaCambiaEstadoDelCamionYLeAsignaLaRuta() {
-    camion.asignarRuta(ruta);
-
+  void iniciarRutaCambiaEstadoDelCamion() {
+    ruta.setCamion(camion);
     assertEquals(EstadoCamion.RUTA_ASIGNADA, camion.getEstado());
-    assertEquals(ruta, camion.getRutaActual());
+    ruta.iniciarRuta();
+    assertEquals(EstadoRuta.EN_CURSO, ruta.getEstado());
   }
 
   @Test
   void iniciarRutaPropagaElInicioATodasLasEntregasYNotifica() {
-    camion.asignarRuta(ruta);
-    camion.iniciarRuta();
+    ruta.setCamion(camion);
+    ruta.iniciarRuta();
 
     assertEquals(EstadoCamion.REALIZANDO_ENTREGAS, camion.getEstado());
     assertEquals(EstadoEntrega.EN_TRASLADO, entregaA.getEstado());
@@ -75,8 +77,8 @@ class CamionRutaEntregaTest {
 
   @Test
   void visitarParadaMarcaSoloLaEntregaDeEsaDireccionComoEntregada() {
-    camion.asignarRuta(ruta);
-    camion.iniciarRuta();
+    ruta.setCamion(camion);
+    ruta.iniciarRuta();
 
     ruta.visitarParada("Calle Falsa 123");
 
@@ -89,30 +91,30 @@ class CamionRutaEntregaTest {
   }
 
   @Test
-  void regresarADepositoDejaAlCamionDisponibleYReintegraEntregasNoVisitadasConFallo() {
-    camion.asignarRuta(ruta);
-    camion.iniciarRuta();
+  void regresarADepositoDejaAlCamionDisponibleYRegresarEntregasADepositoCambiaEstado() {
+    ruta.setCamion(camion);
+    ruta.iniciarRuta();
 
-    ruta.visitarParada("Calle Falsa 123");       // A se entrega
-    entregaB.marcarComoNoRecepcionada();          // B falla (no recepcionada)
+    ruta.visitarParada("Calle Falsa 123");
+    entregaB.marcarRegreso();
 
     camion.regresarDeposito();
 
     assertEquals(EstadoCamion.DISPONIBLE, camion.getEstado());
 
-    // A fue visitada, entonces no se reintegra a PENDIENTE
+    // A fue visitada
     assertEquals(EstadoEntrega.ENTREGADA, entregaA.getEstado());
 
-    // B no fue visitada y tiene motivo de fallo => vuelve a PENDIENTE
+    // B regresa a deposito => vuelve a PENDIENTE
     assertEquals(EstadoEntrega.PENDIENTE, entregaB.getEstado());
   }
 
   @Test
   void improvistoLogisticoMarcaTodasLasEntregasDeLaRutaComoFallidasPorImprovisto() {
-    camion.asignarRuta(ruta);
-    camion.iniciarRuta();
+    ruta.setCamion(camion);
+    ruta.iniciarRuta();
 
-    camion.improvistoLogistico();
+    ruta.indicarImprovistoLogistico();
 
     assertEquals(EstadoEntrega.FALLIDA, entregaA.getEstado());
     assertEquals(EstadoEntrega.FALLIDA, entregaB.getEstado());

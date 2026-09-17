@@ -14,7 +14,7 @@ public class CallbackController {
   List<RequestPlanificacionDto> donacionesAplanificar = new ArrayList<>();
 
   public void recibirDonacion(Context ctx) {
-    int idDonacion = Integer.parseInt(ctx.pathParam("id"));
+    Long idDonacion = (long) Integer.parseInt(ctx.pathParam("id"));
     DonacionDto donacion = ctx.bodyAsClass(DonacionDto.class);
 
     RequestPlanificacionDto replanificar = new RequestPlanificacionDto();
@@ -40,6 +40,7 @@ public class CallbackController {
     }
   }
 
+  /*
   public void recibirPlanificacion(Context ctx) {
     ResponsePlanificacionDto respuesta = ctx.bodyAsClass(ResponsePlanificacionDto.class);
 
@@ -47,8 +48,10 @@ public class CallbackController {
     respuesta.getRutasPlanificadas().forEach(rutaPlanificada -> {
       var patente = rutaPlanificada.getPatenteCamion();
       var entregas = rutaPlanificada.getDestinos().stream().map(destino ->
-          new Entrega(destino.getDireccion(), destino.getDonacionId())).toList();
-      var ruta = new Ruta(patente, entregas);
+          new Entrega(destino.getDireccion(), (long) destino.getDonacionId())).toList();
+      var ruta = new Ruta(
+          RutaRepositorio.Instance.buscarEnCursoPorCamionAsignado(),
+          entregas);
       nuevasRutas.add(ruta);
     });
 
@@ -58,5 +61,6 @@ public class CallbackController {
     RutaRepositorio.Instance.addRutasPlanificadas(nuevasRutas);
     ctx.status(200); // OK
   }
+  */
 
 }

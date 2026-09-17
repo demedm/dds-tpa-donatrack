@@ -6,12 +6,12 @@ import io.javalin.http.Context;
 
 public class UsuarioController {
   public Usuario showUsuario(Context ctx) {
-    var idUsuario = ctx.pathParam("id");
-    if (idUsuario.isEmpty()) {
+    var idUsuario = (long) Integer.parseInt(ctx.pathParam("id"));
+    if (idUsuario != 0) {
       ctx.status(400);
       return null;
     }
-    var usuario = UsuarioRepositorio.Instance.findUsuarioById(idUsuario);
+    var usuario = UsuarioRepositorio.Instance.buscarPorId(idUsuario);
     if (usuario == null) {
       ctx.status(404);
       return null;
@@ -21,19 +21,19 @@ public class UsuarioController {
   }
 
   public void confirmarEntrega(Context ctx) {
-    var idUsuario = ctx.pathParam("idUsuario");
-    var idEntrega = ctx.pathParam("idEntrega");
+    var idUsuario = (long) Integer.parseInt(ctx.pathParam("idUsuario"));
+    var idEntrega = (long) Integer.parseInt(ctx.pathParam("idEntrega"));
     var urlfoto = ctx.body();
     if (urlfoto.isEmpty()) {
       ctx.status(400);
       return;
     }
-    var entidad = UsuarioRepositorio.Instance.findEntidadById(idUsuario);
+    var entidad = UsuarioRepositorio.Instance.buscarEntidadBeneficiariaPorId(idUsuario);
     if (entidad == null) {
       ctx.status(404);
       return;
     }
-    entidad.confirmarEntrega(idEntrega, urlfoto);
+    UsuarioRepositorio.Instance.confirmarEntrega(entidad.getId(), idEntrega, urlfoto);
     ctx.status(200);
     ctx.json(entidad);
   }

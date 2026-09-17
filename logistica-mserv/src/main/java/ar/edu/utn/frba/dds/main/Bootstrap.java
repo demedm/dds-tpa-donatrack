@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.main;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
+import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import java.util.Arrays;
@@ -11,31 +12,36 @@ import java.util.List;
 public class Bootstrap {
   public static void init() {
     List<Camion> camiones = camiones();
-    camiones.forEach(camion ->
-        CamionRepositorio.Instance.registrarCamion(camion));
+    camiones.forEach(CamionRepositorio.Instance::registrar);
     List<Ruta> rutas = rutas();
-    Camion camion1 = camiones.get(0);
-    rutas.stream().limit(camiones.size()).forEach(camion1::asignarRuta);
+    rutas.forEach(RutaRepositorio.Instance::registrar);
 
-    RutaRepositorio.Instance.setAllRutas(rutas());
-    //esto es para probar el dashboard
-    // Forzamos a que el camión que ya tiene la ruta asignada arranque a trabajar
-    camion1.iniciarRuta();
+    rutas.get(0).asignarCamion(camiones.get(0));
+    rutas.get(1).asignarCamion(camiones.get(1));
+    rutas.get(2).asignarCamion(camiones.get(2));
 
-    // Le marcamos la primera entrega de SU propia ruta como completada
-    camion1.getRutaActual().getEntregas().get(0).marcarComoEntregada();
+    Ruta ruta1 = rutas.get(0);
+
+    // Para probar el dashboard:
+    ruta1.iniciarRuta();
+
+    // Marcamos la primera entrega como entregada
+    ruta1.getEntregas().get(0).marcarComoEntregada();
   }
 
   private static List<Ruta> rutas() {
-    var listaEntregas = Arrays.asList(new Entrega("Av Libertad 123", 13),
-        new Entrega("Helguera 516", 57),
-        new Entrega("Mandioca 67", 4551));
-    var listaEntregas2 = Arrays.asList(new Entrega("Luis Maria 777", 12),
-        new Entrega("Medrano 1512", 61));
+    var listaEntregas = Arrays.asList(new Entrega("Av Libertad 123", (long) 13),
+        new Entrega("Helguera 516", (long) 57),
+        new Entrega("Mandioca 67", (long) 4551));
+    var listaEntregas2 = Arrays.asList(new Entrega("Luis Maria 777", (long) 12),
+        new Entrega("Medrano 1512", (long) 61));
 
-    return Arrays.asList(new Ruta("aaaaAAAA", listaEntregas),
-        new Ruta("bbbbBBBB", listaEntregas2),
-        new Ruta("ccccCCCC", listaEntregas));
+    Chofer chofer = new Chofer("Matias", "Moreno");
+    Chofer chofer2 = new Chofer("Carlos", "Lop");
+    Chofer chofer3 = new Chofer("Maria", "Molas");
+    return Arrays.asList(new Ruta(chofer, listaEntregas),
+        new Ruta(chofer2, listaEntregas2),
+        new Ruta(chofer3, listaEntregas));
   }
 
   private static List<Camion> camiones() {

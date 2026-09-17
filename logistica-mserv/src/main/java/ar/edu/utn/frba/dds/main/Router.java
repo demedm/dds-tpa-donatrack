@@ -21,7 +21,7 @@ public class Router {
     app.post("/camiones/{patente}/telemetria", monitoreoController::recepcionarTelemetria);
 
     // CRUD CALLBACK
-    app.post("/callback/planificaciones/", callbackController::recibirPlanificacion);
+    // app.post("/callback/planificaciones/", callbackController::recibirPlanificacion);
 
     // CRUD CAMIONES
     app.get("/camiones/random", ctx -> ctx.json(camionController.randomCamion()));
@@ -36,8 +36,8 @@ public class Router {
         rutaController.showEntrega(ctx)));
     app.get("/rutas/{id}/entregas/", ctx -> ctx.json(
         rutaController.showEntregas(ctx)));
-    app.post("/rutas/", rutaController::saveRuta);
-    app.post("/rutas/{idRuta}/entregas/", rutaController::saveEntrega);
+    // app.post("/rutas/", rutaController::saveRuta);
+    //app.post("/rutas/{idRuta}/entregas/", rutaController::saveEntrega);
 
     // RECEPCION DE DONACIONES
     app.post("/donaciones/{id}", callbackController::recibirDonacion);

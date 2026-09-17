@@ -1,36 +1,47 @@
 package ar.edu.utn.frba.dds.model;
 
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
+import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import java.util.List;
-import java.util.UUID;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
 public class Ruta {
   @Id
   @GeneratedValue
-  private Long id1;
+  private Long id;
 
   @OneToMany
   @JoinColumn(name = "entrega_id")
   private List<Entrega> entregas;
 
-  private String patenteAsignada;
-  private String id;
+  @ManyToOne
+  @JoinColumn(name = "camion_id")
+  private Camion camion;
 
-  public Ruta(String patenteCamion, List<Entrega> entregas) {
+  @ManyToOne
+  @JoinColumn(name = "chofer_id")
+  private Chofer chofer;
+
+  @Enumerated(EnumType.STRING)
+  private EstadoRuta estado;
+
+  public Ruta(Chofer chofer, List<Entrega> entregas) {
     this.entregas = entregas;
-    this.patenteAsignada = patenteCamion;
-    this.id = UUID.randomUUID().toString();
+    this.chofer = chofer;
+    this.estado = EstadoRuta.NO_INICIADA;
   }
 
   public Ruta() {}
 
-  public String getId() {
+  public Long getId() {
     return this.id;
   }
 
@@ -38,16 +49,8 @@ public class Ruta {
     entregas.add(entrega);
   }
 
-  public String getPatenteAsignada() {
-    return this.patenteAsignada;
-  }
-
-  public Long getId1() {
-    return id1;
-  }
-
-  public void setId1(Long id1) {
-    this.id1 = id1;
+  public void asignarCamion(Camion camion) {
+    this.camion = camion;
   }
 
   public List<Entrega> getEntregas() {
@@ -55,6 +58,8 @@ public class Ruta {
   }
 
   public void iniciarRuta() {
+    estado = EstadoRuta.EN_CURSO;
+    camion.iniciarRuta();
     entregas.forEach(Entrega::marcarComoIniciada);
   }
 
@@ -65,11 +70,14 @@ public class Ruta {
   }
 
   public void indicarImprovistoLogistico() {
+    estado = EstadoRuta.CANCELADA;
+    camion.improvistoLogistico();
     entregas.forEach(entrega -> entrega
         .marcarComoFallida(new ImprevistoLogistico()));
   }
 
   public void finalizarRuta() {
+    estado = EstadoRuta.FINALIZADA;
     entregas.stream().filter(entrega ->
             !entrega.getEntregado() && entrega.getMotivoFallo() != null)
         .forEach(Entrega::marcarRegreso);
@@ -81,5 +89,22 @@ public class Ruta {
     }
     long entregadas = entregas.stream().filter(Entrega::getEntregado).count();
     return (double) entregadas / entregas.size() * 100.0;
+  }
+
+  public Chofer getChofer() {
+    return chofer;
+  }
+
+  public EstadoRuta getEstado() {
+    return estado;
+  }
+
+  public void setCamion(Camion camion) {
+    this.camion = camion;
+    camion.asignarRuta();
+  }
+
+  public Camion getCamion() {
+    return camion;
   }
 }
