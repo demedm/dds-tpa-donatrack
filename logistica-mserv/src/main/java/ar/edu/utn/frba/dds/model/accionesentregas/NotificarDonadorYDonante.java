@@ -2,7 +2,7 @@ package ar.edu.utn.frba.dds.model.accionesentregas;
 
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
-import ar.edu.utn.frba.dds.server.Client;
+import ar.edu.utn.frba.dds.main.Client;
 
 import java.net.http.HttpClient;
 

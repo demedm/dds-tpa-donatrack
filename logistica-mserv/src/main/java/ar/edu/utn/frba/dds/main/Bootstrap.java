@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;

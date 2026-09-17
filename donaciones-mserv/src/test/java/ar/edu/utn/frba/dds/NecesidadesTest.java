@@ -1,13 +1,11 @@
 package ar.edu.utn.frba.dds;
 
 import io.javalin.Javalin;
-import io.javalin.http.BadRequestResponse;
-import io.javalin.http.NotFoundResponse;
 import io.javalin.testtools.JavalinTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import ar.edu.utn.frba.dds.server.Router;
+import ar.edu.utn.frba.dds.main.Router;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

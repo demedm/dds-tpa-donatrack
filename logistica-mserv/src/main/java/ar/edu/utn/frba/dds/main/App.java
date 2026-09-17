@@ -1,6 +1,4 @@
-package ar.edu.utn.frba.dds.server;
-
-import io.javalin.Javalin;
+package ar.edu.utn.frba.dds.main;
 
 
 public class App {

@@ -1,10 +1,10 @@
-  package ar.edu.utn.frba.dds.server;
+  package ar.edu.utn.frba.dds.main;
 
   import ar.edu.utn.frba.dds.model.Camion;
   import ar.edu.utn.frba.dds.model.EstadoEntrega;import ar.edu.utn.frba.dds.scripts.dto.CambioEstadoDTO;
   import ar.edu.utn.frba.dds.scripts.dto.CamionDTO;
   import ar.edu.utn.frba.dds.scripts.dto.ConfirmationPlanificacionDTO;import ar.edu.utn.frba.dds.scripts.dto.RequestPlanificacionDTO;
-  import ar.edu.utn.frba.dds.scripts.dto.SolicitudPlanificacionDTO;import com.fasterxml.jackson.core.JsonProcessingException;
+  import ar.edu.utn.frba.dds.scripts.dto.SolicitudPlanificacionDTO;
   import com.fasterxml.jackson.databind.ObjectMapper;
 
   import java.io.IOException;
