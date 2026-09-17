@@ -19,7 +19,6 @@ public class Router {
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
     //MatchmakingController MatchmakingController = new MatchmakingController();
 
-    //List<AlgoritmoAsignacion> algoritmos = List.of(new)
     //Donaciones
 
     app.get("/donaciones/", ctx ->
