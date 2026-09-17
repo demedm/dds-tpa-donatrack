@@ -1,32 +1,54 @@
 package ar.edu.utn.frba.dds.repositories;
 
-
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
-
-import java.util.ArrayList;
+import ar.edu.utn.frba.dds.model.EstadoRuta;
+import ar.edu.utn.frba.dds.model.Ruta;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import java.util.List;
 
-public class CamionRepositorio {
-  private List<Camion> flota = new ArrayList<>();
-  public static CamionRepositorio Instance = new CamionRepositorio();
+public class CamionRepositorio implements WithSimplePersistenceUnit {
+  public static final CamionRepositorio Instance = new CamionRepositorio();
 
-  public Camion getRandom() {
-    return flota.stream().findAny().orElse(null);
+  public void reportarImprevisto(Long id) {
+    Camion camion = buscarPorId(id);
+    camion.improvistoLogistico();
+    var rutaEnCurso = RutaRepositorio.Instance
+        .buscarRutasDeCamionConEstado(id, EstadoRuta.EN_CURSO);
+    rutaEnCurso.indicarImprovistoLogistico();
   }
 
-  public Camion findByPatente(String patente) {
-    var c = flota.stream().filter(camion ->
-        camion.getPatente().equals(patente)).findFirst().orElse(null);
-    return c;
+  public void registrar(Camion camion) {
+    entityManager().persist(camion);
   }
 
-  public List<Camion> getFlota() {
-    return this.flota;
+  @SuppressWarnings("unchecked")
+  public List<Camion> mostrarTodos() {
+    return entityManager()
+        .createQuery("from Camion")
+        .getResultList();
   }
 
-  public void registrarCamion(Camion camion) {
-    flota.add(camion);
+  public Camion buscarPorId(Long id) {
+    return entityManager()
+        .createQuery("from Camion c where c.id = :id", Camion.class)
+        .setParameter("id", id)
+        .getSingleResult();
+  }
+
+  public Camion buscarPorPatente(String patente) {
+    return entityManager()
+        .createQuery("from Camion c where c.patente = :patente", Camion.class)
+        .setParameter("patente", patente)
+        .getSingleResult();
+  }
+
+  @SuppressWarnings("unchecked")
+  public List<Camion> mostrarCamionesDisponibles() {
+    return entityManager()
+        .createQuery("from Camion c where c.estado = :estado")
+        .setParameter("estado", EstadoCamion.DISPONIBLE)
+        .getResultList();
   }
 
   /*
@@ -73,11 +95,5 @@ public class CamionRepositorio {
     return this.allCamiones;
   }
   */
-
-  public List<Camion> getCamionesDisponibles() {
-    List<Camion> camionesDisponibles = this.flota.stream().filter(camion ->
-        camion.getEstado().equals(EstadoCamion.DISPONIBLE)).toList();
-    return camionesDisponibles;
-  }
 
 }

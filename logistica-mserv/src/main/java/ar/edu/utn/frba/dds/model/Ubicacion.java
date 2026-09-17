@@ -1,6 +1,9 @@
 package ar.edu.utn.frba.dds.model;
 
 import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 public class Ubicacion {
   private Double latitud;
@@ -13,7 +16,18 @@ public class Ubicacion {
     this.timestamp = timestamp;
   }
 
-  public Double getLatitud() { return latitud; }
-  public Double getLongitud() { return longitud; }
-  public LocalDateTime getTimestamp() { return timestamp; }
+  public Ubicacion() {}
+
+  public Double getLatitud() {
+    return latitud;
+  }
+
+  public Double getLongitud() {
+    return longitud;
+  }
+
+  public LocalDateTime getTimestamp() {
+    return timestamp;
+  }
+
 }

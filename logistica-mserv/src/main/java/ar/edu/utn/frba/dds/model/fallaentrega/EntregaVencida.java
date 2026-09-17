@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.fallaentrega;
 
-public class EntregaVencida implements MotivoFallo{
+public class EntregaVencida implements MotivoFallo {
   @Override
   public boolean esReplanificable() {
     return false;

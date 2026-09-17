@@ -1,24 +1,61 @@
 package ar.edu.utn.frba.dds.repositories;
 
+import ar.edu.utn.frba.dds.model.Camion;
+import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.usuarios.Usuario;
-
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsuarioRepositorio {
-  public static UsuarioRepositorio Instance = new UsuarioRepositorio();
+public class UsuarioRepositorio implements WithSimplePersistenceUnit {
+  public static final UsuarioRepositorio Instance = new UsuarioRepositorio();
   public List<Usuario> usuarios = new ArrayList<>(); //choferes y admins
   public List<EntidadBeneficiaria> entidades = new ArrayList<>();
 
-  public Usuario findUsuarioById(String id) {
-    return usuarios.stream().filter(usuario -> usuario.getId().equals(id))
-        .findFirst().orElse(null);
+  public void registrar(Usuario usuario) {
+    entityManager().persist(usuario);
   }
 
-  public EntidadBeneficiaria findEntidadById(String id) {
-    return entidades.stream().filter(entidad -> entidad.getId().equals(id))
-        .findFirst().orElse(null);
+  @SuppressWarnings("unchecked")
+  public List<Camion> getAll() {
+    return entityManager()
+        .createQuery("from Usuario")
+        .getResultList();
+  }
+
+  @SuppressWarnings("unchecked")
+  public Usuario buscarPorId(Long id) {
+    return entityManager()
+        .createQuery("from Usuario where id = :id", Usuario.class)
+        .setParameter("id", id)
+        .getResultList().get(0);
+  }
+
+  public EntidadBeneficiaria buscarEntidadBeneficiariaPorId(Long id) {
+    return entityManager()
+        .createQuery("from Usuario u where u.id = :id", EntidadBeneficiaria.class)
+        .setParameter("id", id)
+        .getResultList().get(0);
+  }
+
+  /* Entidad Beneficiaria */
+  public void noRecepcionaEntrega(Long idEntidad, Long idEntrega) {
+    var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
+    var entidad = buscarEntidadBeneficiariaPorId(idEntidad);
+    if (!entrega.getEntidadBeneficiaria().getId().equals(idEntidad)) {
+      return; // error (falta excepcion)
+    }
+    entrega.marcarComoNoRecepcionada();
+  }
+
+  public void confirmarEntrega(Long idEntidad, Long idEntrega, String urlFoto) {
+    var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
+    var entidad = buscarEntidadBeneficiariaPorId(idEntidad);
+    if (!entrega.getEntidadBeneficiaria().getId().equals(idEntidad)) {
+      return; // error (falta excepcion)
+    }
+    entrega.confirmarEntrega(urlFoto);
   }
 
 }

@@ -1,33 +1,25 @@
 package ar.edu.utn.frba.dds.model.usuarios;
 
-import ar.edu.utn.frba.dds.model.Camion;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-public class Chofer extends Usuario{
-  private Camion camion;
+@Entity
+@DiscriminatorValue("CH")
+public class Chofer extends Usuario {
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  private String nombre;
+  private String apellido;
 
   public Chofer() {}
 
-  public void iniciarRuta() {
-    camion.getRutaActual().iniciarRuta();
+  public Chofer(String nombre, String apellido) {
+    this.nombre = nombre;
+    this.apellido = apellido;
   }
 
-  public void finalizarRuta() {
-    camion.getRutaActual().finalizarRuta();
-  }
-
-  public void visitarParada(String direccionParada) {
-    camion.getRutaActual().visitarParada(direccionParada);
-  }
-
-  public void improvistoLogistico() {
-    camion.improvistoLogistico();
-  }
-
-  public Camion getCamion() {
-    return camion;
-  }
-
-  public void setCamion(Camion camion) {
-    this.camion = camion;
-  }
 }
