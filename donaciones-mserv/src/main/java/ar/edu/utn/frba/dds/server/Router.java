@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.main;
+package ar.edu.utn.frba.dds.server;
 
 import ar.edu.utn.frba.dds.controllers.DonacionController;
 import ar.edu.utn.frba.dds.controllers.DonacionSegmentadaController;

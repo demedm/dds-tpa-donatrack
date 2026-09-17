@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.main.templates;
+package ar.edu.utn.frba.dds.server.templates;
 
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;

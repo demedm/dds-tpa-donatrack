@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.main;
+package ar.edu.utn.frba.dds.server;
 
 import java.util.Arrays;
 

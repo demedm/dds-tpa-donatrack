@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.main;
+package ar.edu.utn.frba.dds.server;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
