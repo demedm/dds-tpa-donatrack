@@ -7,21 +7,26 @@ import java.util.List;
 public class Resultados {
 
   private final List<EntidadBeneficiaria> coincidencias;
-  private final List<EntidadBeneficiaria> resultadoDeCompatibilidad;
-  private final List<EntidadBeneficiaria> resultadoDeSubAtendidos;
+  private final List<List<EntidadBeneficiaria>> resultadoPorAlgoritmo;
   private final boolean huboCoincidencia;
 
   public Resultados(List<EntidadBeneficiaria> coincidencias,
-                    List<EntidadBeneficiaria> resultadosDeCompatibilidad,
-                    List<EntidadBeneficiaria> resultadosDeSubAtendidos) {
+                    List<List<EntidadBeneficiaria>> resultadoPorAlgoritmo) {
     this.coincidencias = coincidencias;
-    this.resultadoDeCompatibilidad = resultadosDeCompatibilidad;
-    this.resultadoDeSubAtendidos = resultadosDeSubAtendidos;
+    this.resultadoPorAlgoritmo = resultadoPorAlgoritmo;
     this.huboCoincidencia = !coincidencias.isEmpty();
   }
 
   public List<EntidadBeneficiaria> entidadesPropuestas() {
-    return huboCoincidencia ? coincidencias : resultadoDeCompatibilidad;
+    if(this.huboCoincidencia) return coincidencias;
+
+    return resultadoPorAlgoritmo.stream().flatMap(List::stream).distinct().toList();
+
   }
+
+  public List<List<EntidadBeneficiaria>> getResultadoPorAlgoritmo() {
+    return resultadoPorAlgoritmo;
+  }
+
 
 }

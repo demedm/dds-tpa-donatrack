@@ -6,10 +6,7 @@ import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
 import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
-import ar.edu.utn.frba.dds.model.Asignacion.ServicioMatchmaking;
-import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import io.javalin.Javalin;
-import io.javalin.http.Context;
 
 import java.io.IOException;
 
@@ -20,7 +17,7 @@ public class Router {
     DonanteController donanteController = new DonanteController();
     EntidadBeneficiariaController entidadController = new EntidadBeneficiariaController();
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
-    MatchmakingController MatchmakingController = new MatchmakingController(new ServicioMatchmaking());
+    //MatchmakingController MatchmakingController = new MatchmakingController();
 
     //Donaciones
 
