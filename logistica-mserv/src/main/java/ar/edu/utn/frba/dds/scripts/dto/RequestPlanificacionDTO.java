@@ -5,8 +5,8 @@ import java.time.LocalDate;
 public class RequestPlanificacionDTO {
   private String id;
   private String direccion;
-  private int idEntidad;
-  private int idDonacion;
+  private String idEntidad;
+  private String idDonacion;
   private LocalDate fechaVencimiento;
 
   public RequestPlanificacionDTO() {}
@@ -19,19 +19,19 @@ public class RequestPlanificacionDTO {
     this.direccion = direccion;
   }
 
-  public int getIdEntidad() {
+  public String getEntidadId() {
     return idEntidad;
   }
 
-  public void setIdEntidad(int idEntidad) {
+  public void setIdEntidad(String idEntidad) {
     this.idEntidad = idEntidad;
   }
 
-  public int getIdDonacion() {
+  public String getIdDonacion() {
     return idDonacion;
   }
 
-  public void setIdDonacion(int idDonacion) {
+  public void setIdDonacion(String idDonacion) {
     this.idDonacion = idDonacion;
   }
 

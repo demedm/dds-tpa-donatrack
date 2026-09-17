@@ -4,12 +4,13 @@ import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
+import ar.edu.utn.frba.dds.model.notificaciones.Destinatario;
 
-public class EntidadBeneficiaria {
+public class EntidadBeneficiaria implements Destinatario{
   private String id;
   private String razonSocial;
   private String direccion;
@@ -77,6 +78,13 @@ public class EntidadBeneficiaria {
     return this.mailsContacto;
   }
 
+  @Override
+  public MedioContacto medioDeContacto() {
+    if (mailsContacto != null && !mailsContacto.isEmpty()) {
+      return mailsContacto.get(0);
+    }
+    return telefono;
+  }
 /*
   public Necesidad crearNecesidad(GestorNecesidades gestor) {
     Necesidad necesidad = new Necesidad(this);
@@ -92,5 +100,10 @@ public class EntidadBeneficiaria {
 
   public List<Necesidad> getNecesidades() {
     return necesidades;
+  }
+
+  @Override
+  public String nombreParaMostrar() {
+    return razonSocial;
   }
 }

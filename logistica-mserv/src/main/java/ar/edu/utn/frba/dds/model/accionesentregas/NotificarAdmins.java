@@ -9,8 +9,13 @@ import java.net.http.HttpClient;
 public class NotificarAdmins implements  AccionesSobreEntregas{
   private final Client client;
 
+  private static String urlDonaciones() {
+    String url = System.getenv("DONACIONES_URL");
+    return url != null ? url : "http://localhost:9001/";
+  }
+
   public NotificarAdmins() {
-    this.client = new Client(HttpClient.newHttpClient(), "http://localhost:9001/");
+    this.client = new Client(HttpClient.newHttpClient(), urlDonaciones());
   }
 
   @Override

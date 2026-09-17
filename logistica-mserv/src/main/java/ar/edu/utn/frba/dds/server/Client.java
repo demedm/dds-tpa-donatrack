@@ -67,7 +67,20 @@
       }
     }
 
-    public void notificarCambioEstado(int id, String nuevoEstado) {
+    public void notificarInicioDeRuta(String donacionId, String rutaId, String urlMapa) {
+      try {
+        CambioEstadoDTO cambio = new CambioEstadoDTO();
+        cambio.setNuevoEstado("EN_TRASLADO");
+        cambio.setRutaId(rutaId);
+        cambio.setUrlMapa(urlMapa);
+        put("/donaciones/" + donacionId + "/estado", cambio);
+      } catch (IOException | InterruptedException e) {
+        System.err.println("Error al notificar inicio de ruta de la donacion "
+            + donacionId + ": " + e.getMessage());
+      }
+    }
+
+    public void notificarCambioEstado(String id, String nuevoEstado) {
       try {
         CambioEstadoDTO cambio = new CambioEstadoDTO();
         cambio.setNuevoEstado(nuevoEstado);
@@ -78,15 +91,29 @@
       }
     }
 
-    public void notificarFallaDeEntrega(int idDonacion, String motivo) {
+    public void notificarEntregaExitosa(String donacionId, String fechaHora, String patente) {
       try {
         CambioEstadoDTO cambio = new CambioEstadoDTO();
-        cambio.setNuevoEstado(EstadoEntrega.FALLIDA.name());
+        cambio.setNuevoEstado("ENTREGADA");
+        cambio.setFechaHora(fechaHora);
+        cambio.setPatenteCamion(patente);
+        put("/donaciones/" + donacionId + "/estado", cambio);
+      } catch (IOException | InterruptedException e) {
+        System.err.println("Error al notificar entrega exitosa de la donacion "
+            + donacionId + ": " + e.getMessage());
+      }
+    }
+
+    public void notificarFallaDeEntrega(String donacionId, String motivo, boolean replanificable) {
+      try {
+        CambioEstadoDTO cambio = new CambioEstadoDTO();
+        cambio.setNuevoEstado("FALLIDA");
         cambio.setMotivoFalla(motivo);
-        put("/donaciones/" + idDonacion + "/estado", cambio);
-      } catch(IOException | InterruptedException e) {
-        System.err.println("Error al intentar notificar de entrega fallida a la donacion " +
-            idDonacion + e.getMessage());
+        cambio.setReplanificable(replanificable);
+        put("/donaciones/" + donacionId + "/estado", cambio);
+      } catch (IOException | InterruptedException e) {
+        System.err.println("Error al notificar entrega fallida de la donacion "
+            + donacionId + ": " + e.getMessage());
       }
     }
 

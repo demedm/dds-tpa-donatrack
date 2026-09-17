@@ -5,7 +5,7 @@ import java.util.List;
 public class DestinoDTO {
   private String id;
   private String direccion;
-  private int donacionId;
+  private String donacionId;
 
   public DestinoDTO() {}
 
@@ -17,11 +17,11 @@ public class DestinoDTO {
     this.direccion = direccion;
   }
 
-  public int getDonacionId() {
+  public String getDonacionId() {
     return donacionId;
   }
 
-  public void setDonacionId(int donacionId) {
+  public void setDonacionId(String donacionId) {
     this.donacionId = donacionId;
   }
 

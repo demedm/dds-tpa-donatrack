@@ -18,16 +18,21 @@ public class Entrega {
   private String id;
   private EstadoEntrega estado;
   private String direccion;
-  private int donacionId;
+  private String donacionId;
   private LocalDate fechaVencimiento;
   private boolean visitado = false;
   private MotivoFallo motivoFallo;
   private String foto;
+  private String entidadId;
 
   // Lista inicializada para evitar el NullPointerException
   private List<AccionesSobreEntregas> accionesSobreEntregas = new ArrayList<>();
 
-  public Entrega(String direccion, int idDonacion) {
+  public String getEntidadId() { return entidadId;}
+
+  public void setEntidadId(String entidadId) { this.entidadId = entidadId; }
+
+  public Entrega(String direccion, String idDonacion) {
     this.estado = EstadoEntrega.PENDIENTE;
     this.donacionId = idDonacion;
     this.direccion = direccion;
@@ -46,7 +51,7 @@ public class Entrega {
     this.fechaVencimiento = fechaVencimiento;
   }
 
-  public int getDonacionId() {
+  public String getDonacionId() {
     return this.donacionId;
   }
 

@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.scripts.dto;
 import java.time.LocalDate;
 public class DonacionDTO {
   private String direccionEntidad;
-  private int idEntidadAsignada;
+  private String idEntidadAsignada;
   private LocalDate fechaVencimiento;
 
   public DonacionDTO() {}
@@ -12,7 +12,7 @@ public class DonacionDTO {
     this.direccionEntidad = direccionEntidad;
   }
 
-  public void setIdEntidadAsignada(int idEntidadAsignada) {
+  public void setIdEntidadAsignada(String idEntidadAsignada) {
     this.idEntidadAsignada = idEntidadAsignada;
   }
 
@@ -20,7 +20,7 @@ public class DonacionDTO {
     return this.direccionEntidad;
   }
 
-  public int getIdEntidadAsignada() {
+  public String getIdEntidadAsignada() {
     return idEntidadAsignada;
   }
 

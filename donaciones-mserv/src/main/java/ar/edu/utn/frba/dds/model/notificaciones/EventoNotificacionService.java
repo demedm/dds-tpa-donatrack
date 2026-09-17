@@ -1,147 +1,147 @@
 package ar.edu.utn.frba.dds.model.notificaciones;
 
-import ar.edu.utn.frba.dds.model.donantes.Persona;
-import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
-import ar.edu.utn.frba.dds.repositories.NotificacionRepository;
-import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
+import ar.edu.utn.frba.dds.repositories.AdministradorRepository;
+import java.util.List;
 
+/**
+ * Traduce un evento del dominio al texto de la notificacion y la manda.
+ *
+ * Un metodo por evento (antes habia dos sobrecargas de varios: una para Persona
+ * y otra para MedioContacto, con el mismo texto duplicado).
+ *
+ * Los eventos con MULTIPLES destinatarios reciben una lista, porque el enunciado
+ * pide notificar "a todas las entidades beneficiarias y a los donantes cuyas
+ * entregas formen parte de la ruta" y, en la entrega fallida, tambien a las
+ * personas administradoras.
+ */
 public class EventoNotificacionService {
 
-    /**
-     * Instancia lista para usar desde los controllers, con envío asincrónico
-     * por defecto (para no bloquear el request HTTP que dispara la notificación).
-     */
-    public static final EventoNotificacionService Instance =
-        new EventoNotificacionService(new NotificadorAsincronico(NotificacionRepository.Instance));
+  public static final EventoNotificacionService Instance =
+      new EventoNotificacionService(new NotificadorAsincronico());
 
-    private final EnviadorNotificaciones enviador;
+  private final EnviadorNotificaciones enviador;
 
-    public EventoNotificacionService(EnviadorNotificaciones enviador) {
-      this.enviador = enviador;
-    }
+  public EventoNotificacionService(EnviadorNotificaciones enviador) {
+    this.enviador = enviador;
+  }
 
-    /** 1. Donante sin actividad por más de 20 días. */
-    public Notificacion notificarInactividadDonante(Persona donante) {
-      String mensaje = String.format(
-          "Hola %s, te extrañamos en DonaTrack. "
-              + "Han pasado más de 20 días desde tu última actividad. "
-              + "¿Querés realizar una nueva donación? Ingresá a la plataforma.",
-          donante.getNombreIdentificador());
+  // ---------- 1. Ausencia de la plataforma ----------
 
-      return etiquetar(enviador.enviarNotificacionA(donante, mensaje), TipoEvento.INACTIVIDAD_DONANTE);
-    }
+  public Notificacion notificarInactividadDonante(Destinatario donante) {
+    return enviar(donante, String.format(
+        "Hola %s, te extranamos en DonaTrack. Pasaron mas de 20 dias desde tu "
+            + "ultima actividad. Queres realizar una nueva donacion?",
+        donante.nombreParaMostrar()));
+  }
 
-    /** 3. Notificación al donante cuando su donación fue asignada. */
-    public Notificacion notificarDonacionAsignadaDonante(Persona donante,
-                                                         String donacionId, String nombreEntidad) {
-      String mensaje = String.format(
-          "Hola %s, tu donación (ID: %s) fue asignada a %s. ¡Gracias por tu generosidad!",
-          donante.getNombreIdentificador(), donacionId, nombreEntidad);
+  // ---------- 2 y 3. Donacion asignada ----------
 
-      return etiquetar(enviador.enviarNotificacionA(donante, mensaje),
-          TipoEvento.DONACION_ASIGNADA_DONANTE);
-    }
+  public Notificacion notificarDonacionAsignadaDonante(Destinatario donante,
+                                                       String donacionId,
+                                                       String nombreEntidad) {
+    return enviar(donante, String.format(
+        "Hola %s, tu donacion (ID: %s) fue asignada a %s. Gracias por tu generosidad!",
+        donante.nombreParaMostrar(), donacionId, nombreEntidad));
+  }
 
-    /** 2. Notificación a una entidad beneficiaria cuando se le asigna una donación. */
-    public Notificacion notificarDonacionAsignadaBeneficiario(MedioContacto medioEntidad,
-                                                              String nombreEntidad, String donacionId) {
-      String mensaje = String.format(
-          "Estimada/o %s, se les ha asignado una donación (ID: %s) "
-              + "acorde a sus necesidades registradas. "
-              + "Próximamente recibirán información sobre la entrega.",
-          nombreEntidad, donacionId);
+  /**
+   * nombreEntidad va como parametro y no sale de nombreParaMostrar() porque el
+   * destinatario podria ser un MedioContacto suelto, y ahi devolveria el mail.
+   */
+  public Notificacion notificarDonacionAsignadaBeneficiario(Destinatario beneficiario,
+                                                            String nombreEntidad,
+                                                            String donacionId) {
+    return enviar(beneficiario, String.format(
+        "Estimada/o %s, se les ha asignado una donacion (ID: %s) acorde a sus "
+            + "necesidades registradas. Proximamente recibiran informacion sobre la entrega.",
+        nombreEntidad, donacionId));
+  }
 
-      return etiquetar(enviador.enviarNotificacionA(medioEntidad, mensaje),
-          TipoEvento.DONACION_ASIGNADA_BENEFICIARIO);
-    }
+  // ---------- 4. Inicio de ruta ----------
 
-    /** 4. Inicio de ruta — incluye URL del mapa en tiempo real, si se conoce. */
-    public Notificacion notificarInicioRuta(Persona persona, String rutaId, String urlMapa) {
-      String enlace = (urlMapa != null) ? urlMapa : "disponible próximamente en la plataforma";
-      String mensaje = String.format(
-          "La ruta de entrega %s ha comenzado. Podés seguir el camión en tiempo real aquí: %s",
-          rutaId, enlace);
+  /**
+   * El enunciado pide notificar a TODAS las entidades beneficiarias y a los
+   * donantes de la ruta, con enlace al mapa interactivo.
+   */
+  public void notificarInicioRuta(List<Destinatario> destinatarios,
+                                  String rutaId,
+                                  String urlMapa) {
+    String enlace = (urlMapa != null && !urlMapa.isBlank())
+        ? urlMapa
+        : "disponible proximamente en la plataforma";
 
-      return etiquetar(enviador.enviarNotificacionA(persona, mensaje), TipoEvento.INICIO_RUTA);
-    }
+    String mensaje = String.format(
+        "La ruta de entrega %s ha comenzado. Podes seguir el camion en tiempo real aqui: %s",
+        rutaId, enlace);
 
-    /** 4. Variante para destinatarios que no son Persona (entidad beneficiaria). */
-    public Notificacion notificarInicioRuta(MedioContacto medio, String rutaId, String urlMapa) {
-      String enlace = (urlMapa != null) ? urlMapa : "disponible próximamente en la plataforma";
-      String mensaje = String.format(
-          "La ruta de entrega %s ha comenzado. Podés seguir el camión en tiempo real aquí: %s",
-          rutaId, enlace);
+    destinatarios.forEach(destinatario -> enviarSeguro(destinatario, mensaje));
+  }
 
-      return etiquetar(enviador.enviarNotificacionA(medio, mensaje), TipoEvento.INICIO_RUTA);
-    }
+  // ---------- 5. Entrega exitosa ----------
 
-    /** 5. Entrega confirmada exitosamente — incluye comprobante. */
-    public Notificacion notificarEntregaExitosa(Persona persona,
-                                                String donacionId, String fechaHora, String patenteCamion) {
-      String mensaje = String.format(
-          "La donación (ID: %s) fue entregada exitosamente. "
-              + "Fecha y hora: %s | Camión: %s. ¡Muchas gracias!",
-          donacionId, fechaHora, patenteCamion != null ? patenteCamion : "no especificado");
+  /** Comprobante de entrega: fecha, hora y camion responsable. */
+  public void notificarEntregaExitosa(List<Destinatario> destinatarios,
+                                      String donacionId,
+                                      String fechaHora,
+                                      String patenteCamion) {
+    String mensaje = String.format(
+        "La donacion (ID: %s) fue entregada exitosamente.%n"
+            + "Comprobante de entrega:%n"
+            + "  Fecha y hora: %s%n"
+            + "  Camion: %s%n"
+            + "Muchas gracias!",
+        donacionId,
+        fechaHora != null ? fechaHora : "no informada",
+        patenteCamion != null ? patenteCamion : "no informado");
 
-      return etiquetar(enviador.enviarNotificacionA(persona, mensaje), TipoEvento.ENTREGA_EXITOSA);
-    }
+    destinatarios.forEach(destinatario -> enviarSeguro(destinatario, mensaje));
+  }
 
-    /** 5. Variante para la entidad beneficiaria. */
-    public Notificacion notificarEntregaExitosa(MedioContacto medio,
-                                                String donacionId, String fechaHora, String patenteCamion) {
-      String mensaje = String.format(
-          "La donación (ID: %s) fue entregada exitosamente. "
-              + "Fecha y hora: %s | Camión: %s. ¡Muchas gracias por confirmar la recepción!",
-          donacionId, fechaHora, patenteCamion != null ? patenteCamion : "no especificado");
+  // ---------- 6. Entrega no satisfactoria ----------
 
-      return etiquetar(enviador.enviarNotificacionA(medio, mensaje), TipoEvento.ENTREGA_EXITOSA);
-    }
+  /**
+   * Va a la entidad, al donante Y a las personas administradoras.
+   * Los admins salen del repositorio, no de System.getenv dentro del dominio.
+   */
+  public void notificarEntregaFallida(List<Destinatario> destinatarios,
+                                      String donacionId,
+                                      String motivo,
+                                      boolean replanificable) {
+    String motivoTexto = (motivo != null && !motivo.isBlank()) ? motivo : "no especificado";
 
-    /** 6. Entrega fallida — para destinatarios que son Persona (donante). */
-    public Notificacion notificarEntregaFallida(Persona persona, String donacionId, String motivo) {
-      String mensaje = String.format(
-          "La entrega de la donación (ID: %s) no pudo concretarse. "
-              + "Motivo: %s. El equipo administrativo revisará el caso "
-              + "y coordinará una nueva asignación si corresponde.",
-          donacionId, motivo != null ? motivo : "no especificado");
+    String mensajeInvolucrados = String.format(
+        "La entrega de la donacion (ID: %s) no pudo concretarse. Motivo: %s.%s",
+        donacionId, motivoTexto,
+        replanificable
+            ? " La entrega sera replanificada."
+            : " El equipo administrativo revisara el caso.");
 
-      return etiquetar(enviador.enviarNotificacionA(persona, mensaje), TipoEvento.ENTREGA_FALLIDA);
-    }
+    destinatarios.forEach(destinatario -> enviarSeguro(destinatario, mensajeInvolucrados));
 
-    /** 6. Variante para destinatarios que no son Persona (entidad beneficiaria). */
-    public Notificacion notificarEntregaFallida(MedioContacto medio, String donacionId, String motivo) {
-      String mensaje = String.format(
-          "La entrega de la donación (ID: %s) no pudo concretarse. "
-              + "Motivo: %s. El equipo administrativo revisará el caso.",
-          donacionId, motivo != null ? motivo : "no especificado");
+    String mensajeAdmins = String.format(
+        "[ADMIN] Entrega fallida. Donacion: %s | Motivo: %s | Replanificable: %s",
+        donacionId, motivoTexto, replanificable ? "si" : "no");
 
-      return etiquetar(enviador.enviarNotificacionA(medio, mensaje), TipoEvento.ENTREGA_FALLIDA);
-    }
+    AdministradorRepository.Instance.administradores()
+        .forEach(admin -> enviarSeguro(admin, mensajeAdmins));
+  }
 
-    /**
-     * 6. Notificación a personas administradoras. Como el sistema todavía no
-     * modela una entidad "Administrador" (no hay altas/bajas de admins, ni
-     * medio de contacto propio), se resuelve con una casilla fija configurada
-     * por variable de entorno. Si no está configurada, se deja constancia en
-     * el log del servidor en lugar de fallar el resto del flujo.
-     */
-    public void notificarEntregaFallidaAdmins(String donacionId, String motivo) {
-      String mailAdmin = System.getenv("ADMIN_MAIL");
-      String mensaje = String.format(
-          "[Entrega no satisfactoria] Donación %s. Motivo: %s. Requiere revisión administrativa.",
-          donacionId, motivo != null ? motivo : "no especificado");
+  // ---------- helpers ----------
 
-      if (mailAdmin == null || mailAdmin.isBlank()) {
-        System.out.println("[Notificaciones][ADMIN] " + mensaje
-            + " (no hay ADMIN_MAIL configurado, se deja constancia solo en el log)");
-        return;
-      }
+  private Notificacion enviar(Destinatario destinatario, String mensaje) {
+    return enviador.enviarNotificacionA(destinatario, mensaje);
+  }
 
-      etiquetar(enviador.enviarNotificacionA(new Mail(mailAdmin), mensaje), TipoEvento.ENTREGA_FALLIDA);
-    }
-
-    private Notificacion etiquetar(Notificacion notificacion, TipoEvento tipo) {
-      notificacion.setTipoEvento(tipo);
-      return notificacion;
+  /**
+   * En los eventos con varios destinatarios, que uno no tenga medio de contacto
+   * no puede impedir que los demas se enteren.
+   */
+  private void enviarSeguro(Destinatario destinatario, String mensaje) {
+    try {
+      enviador.enviarNotificacionA(destinatario, mensaje);
+    } catch (Exception e) {
+      System.err.println("[Notificaciones] No se pudo notificar a "
+          + destinatario.nombreParaMostrar() + ": " + e.getMessage());
     }
   }
+}

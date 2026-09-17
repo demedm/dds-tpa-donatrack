@@ -9,8 +9,13 @@ import java.net.http.HttpClient;
 public class NotificarDonadorYDonante implements AccionesSobreEntregas{
   private final Client client;
 
+  private static String urlDonaciones() {
+    String url = System.getenv("DONACIONES_URL");
+    return url != null ? url : "http://localhost:9001/";
+  }
+
   public NotificarDonadorYDonante() {
-    this.client = new Client(HttpClient.newHttpClient(), "http://localhost:9001/");
+    this.client = new Client(HttpClient.newHttpClient(), urlDonaciones());
   }
 
   @Override
@@ -23,7 +28,7 @@ public class NotificarDonadorYDonante implements AccionesSobreEntregas{
   public void notificarFalloEntrega(Entrega entrega) {
     var fallo = entrega.getMotivoFallo();
     client.notificarFallaDeEntrega(entrega.getDonacionId(),
-        fallo.darMotivoFallo());
+        fallo.darMotivoFallo(), fallo.esReplanificable());
     if(fallo.esReplanificable()) {
       // enviar a replanificar
     }

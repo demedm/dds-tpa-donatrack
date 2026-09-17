@@ -1,11 +1,11 @@
 package ar.edu.utn.frba.dds.model.notificaciones;
 
-import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.repositories.NotificacionRepository;
 
-/* Envio sincrono, es decir, va a bloquearse hasta que el medio de contacto termina de contactar */
+/** Envio sincronico. Para procesos batch, donde no hay request que desbloquear. */
 public class Notificador implements EnviadorNotificaciones {
+
   private final NotificacionRepository repositorio;
 
   public Notificador() {
@@ -17,24 +17,27 @@ public class Notificador implements EnviadorNotificaciones {
   }
 
   @Override
-  public Notificacion enviarNotificacionA(Persona persona, String mensajeTexto) {
-    MedioContacto destino = persona.getMedioPreferido();
+  public Notificacion enviarNotificacionA(Destinatario destinatario, String mensajeTexto) {
+    MedioContacto destino = destinatario.medioDeContacto();
 
     if (destino == null) {
       throw new IllegalStateException(
-          "El donante '" + persona.getNombreIdentificador()
-              + "' no posee un medio de contacto preferido configurado.");
+          "'" + destinatario.nombreParaMostrar() + "' no tiene medio de contacto configurado.");
     }
 
-    return enviarNotificacionA(destino, mensajeTexto);
-  }
-
-  @Override
-  public Notificacion enviarNotificacionA(MedioContacto medio, String mensajeTexto) {
     Notificacion notificacion = new Notificacion(mensajeTexto);
-    medio.contactar(notificacion);
+    destino.contactar(notificacion);
     repositorio.registrar(notificacion);
     return notificacion;
   }
 }
+
+
+
+
+
+
+
+
+
 

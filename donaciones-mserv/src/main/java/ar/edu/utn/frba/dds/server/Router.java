@@ -10,6 +10,8 @@ import ar.edu.utn.frba.dds.model.Asignacion.ServicioMatchmaking;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import ar.edu.utn.frba.dds.controllers.EstadoEntregaController;
+import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
 
 import java.io.IOException;
 
@@ -21,6 +23,7 @@ public class Router {
     EntidadBeneficiariaController entidadController = new EntidadBeneficiariaController();
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
     MatchmakingController MatchmakingController = new MatchmakingController(new ServicioMatchmaking());
+    EstadoEntregaController estadoEntregaController = new EstadoEntregaController();
 
     //Donaciones
 
@@ -86,5 +89,12 @@ public class Router {
     app.put("/entidades/{id}", ctx -> ctx.json(entidadController.actualizarEntidad(ctx)));
     app.delete("/entidades/{id}", entidadController::deleteEntidad);
     app.get("/entidades",ctx -> ctx.json(entidadController.obtenerEntidades()));
+
+    app.put("/donaciones/{id}/estado", estadoEntregaController::cambiarEstado);
+
+    app.post("/tareas/notificar-inactivos", ctx -> {
+      int dias = ctx.queryParam("dias") != null ? Integer.parseInt(ctx.queryParam("dias")) : 20;
+      ctx.json(NotificarInactivos.ejecutar(dias));
+    });
   }
 }
