@@ -26,12 +26,13 @@ public class NecesidadController {
         if (necesidad.getTipo() == Necesidad.TipoNecesidad.RECURRENTE) {
             necesidad.setProximoVencimiento(LocalDate.now().plusDays(necesidad.getDiasRecurrencia()));
         }    
-        return NecesidadRepository.Instance.crear(necesidad);
+        NecesidadRepository.getInstance().guardar(necesidad);
+        return necesidad;
     }
 
     public Necesidad agregarPeticion(Context ctx){
-        String necesidadId = ctx.pathParam("id");
-        Necesidad necesidad = NecesidadRepository.Instance.findById(necesidadId);
+        Long necesidadId = Long.parseLong(ctx.pathParam("id"));
+        Necesidad necesidad = NecesidadRepository.getInstance().findById(necesidadId);
         if (necesidad == null) {
             throw new NotFoundResponse("Necesidad no encontrada");
         }
@@ -42,23 +43,24 @@ public class NecesidadController {
 
         necesidad.agregarPeticion(peticion);
 
-        return NecesidadRepository.Instance.actualizar(necesidad);
+        NecesidadRepository.getInstance().actualizar(necesidad);
+        return necesidad;
     }
 
     public Necesidad showNecesidad(Context ctx){
-        String necesidadId = ctx.pathParam("id");
-        Necesidad necesidad = NecesidadRepository.Instance.findById(necesidadId);
+        Long necesidadId = Long.parseLong(ctx.pathParam("id"));
+        Necesidad necesidad = NecesidadRepository.getInstance().findById(necesidadId);
         if(necesidad == null){
             throw new NotFoundResponse("Necesidad no encontrada");
         }
-        return NecesidadRepository.Instance.findById(necesidadId);
+        return necesidad;
     }
 
     public List<Necesidad> showNecesidades(){
-        return NecesidadRepository.Instance.findAll();
+        return NecesidadRepository.getInstance().findAll();
     }
 
     public List<Necesidad> showNecesidadesRecurrentes(){
-        return NecesidadRepository.Instance.findAllRecurrentes();
+        return NecesidadRepository.getInstance().findAllRecurrentes();
     }
 }

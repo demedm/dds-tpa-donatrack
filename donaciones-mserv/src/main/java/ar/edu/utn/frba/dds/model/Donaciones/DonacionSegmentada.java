@@ -17,14 +17,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DonacionSegmentada {
   private String id;
   private int cantidad;
   private Subcategoria subcategoria;
+  @JsonIgnore
   private Bien bienFiltrado;
+  @JsonIgnore
   private EstadoDonacion estadoActual;
+  @JsonIgnore
   private List<RegistroCambioEstado> historialEstados;
   private String justificacionFallo;
   private LocalDate fechaDeEntrega;
@@ -59,7 +63,7 @@ public class DonacionSegmentada {
     this.estadoActual = nuevoEstado;
     this.historialEstados.add(new RegistroCambioEstado(nuevoEstado.getNombre(), LocalDateTime.now()));
   }
-
+  @JsonIgnore
   public boolean estaAlmacen(){
     return estadoActual instanceof EnDeposito;
   }
@@ -75,7 +79,7 @@ public class DonacionSegmentada {
   public void setCantidad(Integer nuevaCantidad){
     cantidad = nuevaCantidad;
   }
-
+  @JsonIgnore
   public Bien getBienFiltrado(){
     return bienFiltrado;
   }
@@ -83,7 +87,7 @@ public class DonacionSegmentada {
   public String getId() {
     return id;
   }
-
+  @JsonIgnore
   public List<RegistroCambioEstado> getHistorialEstados() {
     return historialEstados;
   }
@@ -125,7 +129,7 @@ public class DonacionSegmentada {
   public void vencer() {
     estadoActual.vencer(this);
   }
-
+  @JsonIgnore
   public Subcategoria getSubcategoria() {
     return subcategoria;
   }
