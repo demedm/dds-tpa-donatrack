@@ -2,20 +2,35 @@ package ar.edu.utn.frba.dds.model.necesidad;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.*;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@Entity
+@Table(name = "necesidades")
 
 public class Necesidad {
-  private String id;
+  @Id //La insatncio como primary key
+  @GeneratedValue(strategy = GenerationType.IDENTITY) //Hace autoincremento
+
+  private Long id;
   private String entidadId;
+
+  @Enumerated(EnumType.STRING) //Guarda el enum como texto
   private TipoNecesidad tipo;
+
   private String estado = "en_preparacion";
   private String descripcion;
   private Integer diasRecurrencia;
   private LocalDate proximoVencimiento;
+
+  @OneToMany(cascade = CascadeType.ALL) //Con cascada puedo ahcer que caundo guardo o modifico la nencesidad, guardo todas las peticioens que le agregue
+  @JoinColumn(name = "necesidad_id") //El campo que vinculo a la necesidad. 
+
   public List<Peticion> peticiones = new ArrayList<>();
-  private List<String> idDonantesParticipantes = new ArrayList<>();
+  //private List<String> idDonantesParticipantes = new ArrayList<>();
 
   public Necesidad() {}
 
@@ -75,103 +90,13 @@ public class Necesidad {
     this.diasRecurrencia = diasRecurrencia;
   }
 
-  public String getId() { return id; }
+  public Long getId() { return id; }
   
-  public void setId(String id) { this.id = id; }
+  public void setId(Long id) { this.id = id; }
 
   public List<Peticion> getPeticiones() {return this.peticiones;}
 
   public void setPeticiones(List <Peticion> peticiones){
     this.peticiones = peticiones;
   }
-
-  // public List<String> obtenerDonantesUnicos() {
-  //   return this.peticiones.stream()
-  //       .flatMap(p -> p.getDonacionesAsignadas().stream())
-  //       .distinct()
-  //       .toList();
-  // }
-
-  // public List<String> getIdDonantesParticipantes() {
-  //   return this.idDonantesParticipantes;
-  // }
-
-  // public void actualizarEstado() {
-  //   if (this.peticiones.isEmpty()) {
-  //     this.estado = "en_preparacion";
-  //     return;
-  //   }
-    
-  //   boolean todasCubiertas = this.peticiones.stream()
-  //       .allMatch(p -> p.estaCubierta());
-    
-  //   if (todasCubiertas) {
-  //     this.estado = "cubierta";  
-  //   } else {
-  //     this.estado = "parcialmente_cubierta";
-  //   }
-  // }
-
-  // public String getEstado() { return this.estado; }
-  // public void setEstado(String estado) { this.estado = estado; }
-
-  // public boolean estaCubierta() {
-  //       if (this.peticiones.isEmpty()) return false;
-  //       return this.peticiones.stream()
-  //           .allMatch(p -> p.estaCubierta());
-  //   }
-
-  // public List<Peticion> getPeticiones() {
-  //   return peticiones;
-  // }
-
-  // public String getEstado() {
-  //   return estado;
-  // }
-
-  // public void pedidoListo() {
-  //   estado = "listo";
-  // }
-
-  // public void pedidoEnEntrega() {
-  //   estado = "enviado";
-  // }
-
-  // public void pedidoRecibido() {
-  //   estado = "recibido";
-  // }
-
-
-  // public void cumplirNecesidades(GestorDonaciones gestorDonaciones) {
-  //   for (Peticion peticion : peticiones) {
-  //     ResultadoBusqueda resultado = gestorDonaciones.buscarProducto(
-  //         peticion.getSubclase(),peticion.getCantidad()
-  //     );
-  //     peticion.setCantidad(resultado.getRestante());
-  //     peticion.agregarBienesAsignados(resultado.getBienesAsignados());
-  //   }
-  //   boolean todasCubiertas = peticiones.stream().allMatch(p->p.getCantidad()==0);
-  //   if (todasCubiertas) this.pedidoListo();
-  // }
-  // public void marcarListaParaEntregar() {
-  //   peticiones.forEach (p ->
-  //       p.getBienesAsignados().forEach(b ->
-  //           b.setEstado(EstadoDonacion.LISTA_PARA_ENTREGAR)
-  //       )
-  //   );
-  // }
-  // public void marcarEnTraslado() {
-  //   peticiones.forEach(p ->
-  //       p.getBienesAsignados().forEach(b -> b.setEstado(EstadoDonacion.EN_TRASLADO)
-  //       )
-  //   );
-  // }
-
-  // public void marcarEntregaFallida() {
-  //   peticiones.forEach(p ->
-  //       p.getBienesAsignados().forEach(b ->
-  //           b.setEstado(EstadoDonacion.ENTREGA_FALLIDA)
-  //       )
-  //   );
-  // }
 }

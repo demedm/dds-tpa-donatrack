@@ -12,6 +12,8 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class Router {
   public void configure(Javalin app) throws IOException, InterruptedException {
@@ -44,10 +46,14 @@ public class Router {
     app.patch("/donacionesSegementada/{id}", ctx ->
         ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx))
     );
-/*
-    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx ->
-        ctx.json(MatchmakingController.asignarDonacion(ctx)));
-*/
+
+
+    //PRUEBA DE ASIGNACION 
+    app.post("/donaciones/asignar", ctx ->
+        {
+          List<Map<String, Object>> resultado = donacionController.asignarDonacionANecesidad(ctx);
+    ctx.json(resultado);});
+
 
     app.get("/matchmaking/ranking/{idSegmentada}", ctx -> {
       ctx.status(200).json(MatchmakingController.obtenerRanking(ctx));
