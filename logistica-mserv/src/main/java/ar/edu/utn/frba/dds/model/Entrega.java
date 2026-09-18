@@ -3,7 +3,9 @@ package ar.edu.utn.frba.dds.model;
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
+import ar.edu.utn.frba.dds.model.accionesentregas.NotificarDonadorYDonante;
 import ar.edu.utn.frba.dds.model.fallaentrega.EntregaVencida;
+import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
 import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
@@ -46,6 +48,7 @@ public class Entrega {
   private MotivoFallo motivoFallo;
 
   private String foto;
+  private String entidadId;
 
   @Transient
   private List<AccionesSobreEntregas> accionesSobreEntregas = new ArrayList<>();
@@ -56,10 +59,15 @@ public class Entrega {
     this.direccion = direccion;
     // Lógica nueva del equipo fusionada correctamente
     agregarAccionEntregas(new NotificarAdmins());
-    agregarAccionEntregas(new Notificar());
+    agregarAccionEntregas(new NotificarDonadorYDonante());
   }
 
   public Entrega() {}
+
+  public String getEntidadId() { return entidadId;}
+
+  public void setEntidadId(String entidadId) { this.entidadId = entidadId; }
+
 
   public LocalDate getFechaVencimiento() {
     return fechaVencimiento;

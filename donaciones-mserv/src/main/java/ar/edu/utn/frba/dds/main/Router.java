@@ -21,6 +21,8 @@ public class Router {
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
     //MatchmakingController MatchmakingController = new MatchmakingController();
 
+    EstadoEntregaController estadoEntregaController = new EstadoEntregaController();
+
     //Donaciones
 
     app.get("/donaciones/", ctx ->
@@ -45,13 +47,13 @@ public class Router {
     );
 
 
-    //PRUEBA DE ASIGNACION 
+    //PRUEBA DE ASIGNACION
     app.post("/donaciones/asignar", ctx ->
         {
           List<Map<String, Object>> resultado = donacionController.asignarDonacionANecesidad(ctx);
     ctx.json(resultado);});
 
-
+  /*
     app.get("/matchmaking/ranking/{idSegmentada}", ctx -> {
       ctx.status(200).json(MatchmakingController.obtenerRanking(ctx));
     });
@@ -60,7 +62,7 @@ public class Router {
     app.post("/matchmaking/asignar",ctx->{
       ctx.status(201).json(MatchmakingController.asignarDonacion(ctx));
     });
-
+  */
     //Necesidades
 
     app.post("/necesidades/",ctx ->
@@ -89,5 +91,12 @@ public class Router {
     app.put("/entidades/{id}", ctx -> ctx.json(entidadController.actualizarEntidad(ctx)));
     app.delete("/entidades/{id}", entidadController::deleteEntidad);
     app.get("/entidades",ctx -> ctx.json(entidadController.obtenerEntidades()));
+
+    app.put("/donaciones/{id}/estado", estadoEntregaController::cambiarEstado);
+
+    app.post("/tareas/notificar-inactivos", ctx -> {
+      int dias = ctx.queryParam("dias") != null ? Integer.parseInt(ctx.queryParam("dias")) : 20;
+      ctx.json(NotificarInactivos.ejecutar(dias));
+    });
   }
 }
