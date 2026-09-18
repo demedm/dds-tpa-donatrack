@@ -18,7 +18,7 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   }
 
   @SuppressWarnings("unchecked")
-  public List<Camion> getAll() {
+  public List<Usuario> getAll() {
     return entityManager()
         .createQuery("from Usuario")
         .getResultList();
@@ -29,14 +29,14 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
     return entityManager()
         .createQuery("from Usuario where id = :id", Usuario.class)
         .setParameter("id", id)
-        .getResultList().get(0);
+        .getResultList().stream().findFirst().orElse(null);
   }
 
   public EntidadBeneficiaria buscarEntidadBeneficiariaPorId(Long id) {
     return entityManager()
         .createQuery("from Usuario u where u.id = :id", EntidadBeneficiaria.class)
         .setParameter("id", id)
-        .getResultList().get(0);
+        .getResultList().stream().findFirst().orElse(null);
   }
 
   /* Entidad Beneficiaria */

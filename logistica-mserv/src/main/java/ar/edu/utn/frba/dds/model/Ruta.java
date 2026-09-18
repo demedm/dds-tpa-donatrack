@@ -2,6 +2,8 @@ package ar.edu.utn.frba.dds.model;
 
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -19,15 +21,13 @@ public class Ruta {
   private Long id;
 
   @OneToMany
-  @JoinColumn(name = "entrega_id")
+  @JoinColumn(name = "ruta_id")
   private List<Entrega> entregas;
 
   @ManyToOne
-  @JoinColumn(name = "camion_id")
   private Camion camion;
 
   @ManyToOne
-  @JoinColumn(name = "chofer_id")
   private Chofer chofer;
 
   @Enumerated(EnumType.STRING)
@@ -63,10 +63,10 @@ public class Ruta {
     entregas.forEach(Entrega::marcarComoIniciada);
   }
 
-  public void visitarParada(String direccion) {
+  public void visitarParada(String direccion, LocalDateTime fechaHoraEntrega) {
     entregas.stream().filter(entrega ->
         entrega.getDireccion().equals(direccion))
-        .forEach(Entrega::marcarComoEntregada);
+        .forEach(entrega -> entrega.marcarComoEntregada(camion, fechaHoraEntrega));
   }
 
   public void indicarImprovistoLogistico() {

@@ -8,18 +8,22 @@ import javax.persistence.Id;
 @Entity
 @DiscriminatorValue("CH")
 public class Chofer extends Usuario {
-  @Id
-  @GeneratedValue
-  private Long id;
-
   private String nombre;
   private String apellido;
 
   public Chofer() {}
 
-  public Chofer(String nombre, String apellido) {
+  public Chofer(String email, String pass, String nombre, String apellido) {
+    super(email, pass);
     this.nombre = nombre;
     this.apellido = apellido;
   }
 
+  public String getNombre() {
+    return nombre;
+  }
+
+  public String getApellido() {
+    return apellido;
+  }
 }

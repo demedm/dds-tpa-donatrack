@@ -27,10 +27,11 @@ public class DashboardController {
             dto.setPorcentajeAvance(0.0);
           }
 
-          if (camion.getUbicacionActual() != null) {
-            dto.setLatitud(camion.getUbicacionActual().getLatitud());
-            dto.setLongitud(camion.getUbicacionActual().getLongitud());
-            dto.setUltimaActualizacion(camion.getUbicacionActual().getTimestamp());
+          var ubicacion = CamionRepositorio.Instance.verUbicacionDeCamion(camion);
+          if (ubicacion != null) {
+            dto.setLatitud(ubicacion.getLatitud());
+            dto.setLongitud(ubicacion.getLongitud());
+            dto.setUltimaActualizacion(ubicacion.getTimestamp());
           }
           return dto;
         }).toList();

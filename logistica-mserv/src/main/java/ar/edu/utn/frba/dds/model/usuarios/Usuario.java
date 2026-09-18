@@ -8,7 +8,7 @@ import javax.persistence.InheritanceType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class Usuario {
+public abstract class Usuario {
   @Id
   @GeneratedValue
   private Long id;
@@ -16,9 +16,9 @@ public class Usuario {
   private String email;
   private String password;
 
-  public Usuario() {}
+  protected Usuario() {}
 
-  public Usuario(String email, String password) {
+  protected Usuario(String email, String password) {
     this.email = email;
     this.password = password;
   }

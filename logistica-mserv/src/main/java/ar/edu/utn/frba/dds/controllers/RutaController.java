@@ -45,7 +45,7 @@ public class RutaController {
                 e.getDireccion() != null && !e.getDireccion().isBlank()),
             "Todas las entregas deben tener una dirección")
         .check(r -> r.getEntregas().stream().allMatch(e ->
-                e.getDonacionId() > 0),
+                    e.getDonacionId() != null && !e.getDonacionId().isBlank()),
             "Todas las entregas deben tener un id de donación válido")
         .get();
     RutaRepositorio.Instance.addRuta(ruta);
@@ -59,7 +59,7 @@ public class RutaController {
             "El id de la entrega es obligatorio")
         .check(e -> e.getDireccion() != null && !e.getDireccion().isBlank(),
             "La dirección es obligatoria")
-        .check(e -> e.getDonacionId() > 0,
+        .check(e -> e.getDonacionId() != null && !e.getDonacionId().isBlank(),
             "El id de la donación debe ser mayor a 0")
         .get();
     Ruta ruta = RutaRepositorio.Instance.findByid(idRuta);

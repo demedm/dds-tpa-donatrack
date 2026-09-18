@@ -47,6 +47,7 @@ public class DonacionSegmentada {
   private Integer donanteId;
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
+    this.id = UUID.randomUUID().toString();
     this.cantidad = cantidad;
     this.subcategoria = subcategoria;
     this.bienFiltrado = bienFiltrado;
