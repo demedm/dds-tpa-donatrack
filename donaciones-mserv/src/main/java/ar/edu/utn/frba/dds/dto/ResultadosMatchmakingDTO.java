@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.dto;
 
-import ar.edu.utn.frba.dds.model.Asignacion.ServicioMatchmaking;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 
 import java.util.List;

@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Donacion {
 
   private String descripcionGeneral;
   private List<DonacionSegmentada> donacionesSegmentadas;
+  @JsonIgnore
   private Persona donante;
   private String id;
 
@@ -35,7 +38,7 @@ public class Donacion {
   public String getId() {
     return id;
   }
-
+  @JsonIgnore
   public Persona getDonante(){
     return donante;
   }
@@ -77,6 +80,10 @@ public class Donacion {
 
   public void setDescripcionGeneral(String descripcionGeneral) {
     this.descripcionGeneral = descripcionGeneral;
+  }
+
+  public void setId(String id){
+    this.id=id;
   }
 
 }

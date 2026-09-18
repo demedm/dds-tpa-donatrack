@@ -4,14 +4,15 @@ import ar.edu.utn.frba.dds.controllers.DonacionController;
 import ar.edu.utn.frba.dds.controllers.DonacionSegmentadaController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
+import ar.edu.utn.frba.dds.controllers.EstadoEntregaController;
 import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
-import ar.edu.utn.frba.dds.model.Asignacion.ServicioMatchmaking;
-import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
+import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
 import io.javalin.Javalin;
-import io.javalin.http.Context;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class Router {
   public void configure(Javalin app) throws IOException, InterruptedException {
@@ -20,7 +21,9 @@ public class Router {
     DonanteController donanteController = new DonanteController();
     EntidadBeneficiariaController entidadController = new EntidadBeneficiariaController();
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
-    MatchmakingController MatchmakingController = new MatchmakingController(new ServicioMatchmaking());
+    //MatchmakingController MatchmakingController = new MatchmakingController();
+
+    EstadoEntregaController estadoEntregaController = new EstadoEntregaController();
 
     //Donaciones
 
@@ -44,11 +47,15 @@ public class Router {
     app.patch("/donacionesSegementada/{id}", ctx ->
         ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx))
     );
-/*
-    app.patch("/donaciones/{idDonacion}/necesidades/{idNecesidad}", ctx ->
-        ctx.json(MatchmakingController.asignarDonacion(ctx)));
-*/
 
+
+    //PRUEBA DE ASIGNACION
+    app.post("/donaciones/asignar", ctx ->
+        {
+          List<Map<String, Object>> resultado = donacionController.asignarDonacionANecesidad(ctx);
+    ctx.json(resultado);});
+
+  /*
     app.get("/matchmaking/ranking/{idSegmentada}", ctx -> {
       ctx.status(200).json(MatchmakingController.obtenerRanking(ctx));
     });
@@ -57,7 +64,7 @@ public class Router {
     app.post("/matchmaking/asignar",ctx->{
       ctx.status(201).json(MatchmakingController.asignarDonacion(ctx));
     });
-
+  */
     //Necesidades
 
     app.post("/necesidades/",ctx ->
@@ -86,5 +93,12 @@ public class Router {
     app.put("/entidades/{id}", ctx -> ctx.json(entidadController.actualizarEntidad(ctx)));
     app.delete("/entidades/{id}", entidadController::deleteEntidad);
     app.get("/entidades",ctx -> ctx.json(entidadController.obtenerEntidades()));
+
+    app.put("/donaciones/{id}/estado", estadoEntregaController::cambiarEstado);
+
+    app.post("/tareas/notificar-inactivos", ctx -> {
+      int dias = ctx.queryParam("dias") != null ? Integer.parseInt(ctx.queryParam("dias")) : 20;
+      ctx.json(NotificarInactivos.ejecutar(dias));
+    });
   }
 }

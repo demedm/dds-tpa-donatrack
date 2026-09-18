@@ -44,6 +44,7 @@ public class Entrega {
 
   private String foto;
   private LocalDateTime fechaHoraEntrega;
+  private String entidadId;
 
   @ManyToOne
   private Camion camionQueEntrego;
@@ -55,6 +56,11 @@ public class Entrega {
   }
 
   public Entrega() {}
+
+  public String getEntidadId() { return entidadId;}
+
+  public void setEntidadId(String entidadId) { this.entidadId = entidadId; }
+
 
   public LocalDate getFechaVencimiento() {
     return fechaVencimiento;

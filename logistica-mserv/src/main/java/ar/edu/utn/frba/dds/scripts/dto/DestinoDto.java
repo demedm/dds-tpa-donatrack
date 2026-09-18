@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.scripts.dto;
 public class DestinoDto {
   private String id;
   private String direccion;
-  private int donacionId;
+  private String donacionId;
 
   public DestinoDto() {}
 
@@ -15,11 +15,11 @@ public class DestinoDto {
     this.direccion = direccion;
   }
 
-  public int getDonacionId() {
+  public String getDonacionId() {
     return donacionId;
   }
 
-  public void setDonacionId(int donacionId) {
+  public void setDonacionId(String donacionId) {
     this.donacionId = donacionId;
   }
 

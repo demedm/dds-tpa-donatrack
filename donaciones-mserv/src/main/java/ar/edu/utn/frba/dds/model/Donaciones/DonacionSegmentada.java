@@ -1,5 +1,8 @@
 package ar.edu.utn.frba.dds.model.Donaciones;
 
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
+import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
@@ -7,20 +10,25 @@ import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
 import ar.edu.utn.frba.dds.model.Estado.Entregada;
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
+import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DonacionSegmentada {
   private String id;
   private int cantidad;
   private Subcategoria subcategoria;
+  @JsonIgnore
   private Bien bienFiltrado;
+  @JsonIgnore
   private EstadoDonacion estadoActual;
+  @JsonIgnore
   private List<RegistroCambioEstado> historialEstados;
   private String justificacionFallo;
   private LocalDate fechaDeEntrega;
@@ -39,6 +47,7 @@ public class DonacionSegmentada {
   private Integer donanteId;
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
+    this.id = UUID.randomUUID().toString();
     this.cantidad = cantidad;
     this.subcategoria = subcategoria;
     this.bienFiltrado = bienFiltrado;
@@ -55,7 +64,7 @@ public class DonacionSegmentada {
     this.estadoActual = nuevoEstado;
     this.historialEstados.add(new RegistroCambioEstado(nuevoEstado.getNombre(), LocalDateTime.now()));
   }
-
+  @JsonIgnore
   public boolean estaAlmacen(){
     return estadoActual instanceof EnDeposito;
   }
@@ -71,7 +80,7 @@ public class DonacionSegmentada {
   public void setCantidad(Integer nuevaCantidad){
     cantidad = nuevaCantidad;
   }
-
+  @JsonIgnore
   public Bien getBienFiltrado(){
     return bienFiltrado;
   }
@@ -79,7 +88,7 @@ public class DonacionSegmentada {
   public String getId() {
     return id;
   }
-
+  @JsonIgnore
   public List<RegistroCambioEstado> getHistorialEstados() {
     return historialEstados;
   }
@@ -121,8 +130,34 @@ public class DonacionSegmentada {
   public void vencer() {
     estadoActual.vencer(this);
   }
-
+  @JsonIgnore
   public Subcategoria getSubcategoria() {
     return subcategoria;
   }
+
+  private Resultados resultadosPropuestos;
+
+
+  public Resultados buscarCandidatas(List<EntidadBeneficiaria> entidades, List<AlgoritmoAsignacion> algoritmos) {
+    if (!this.estaAlmacen()) {
+      throw new IllegalStateException("Solo se puede asignar donaciones en estado EN_DEPOSITO");
+    }
+
+    List<List<EntidadBeneficiaria>> rankings = algoritmos.stream()
+        .map(algoritmo -> algoritmo.obtenerRanking(this, entidades))
+        .toList();
+
+    List<EntidadBeneficiaria> coincidencias = rankings.get(0).stream()
+        .filter(entidad -> rankings.stream().allMatch(ranking -> ranking.contains(entidad)))
+        .toList();
+
+    this.resultadosPropuestos = new Resultados(coincidencias, rankings);
+    return this.resultadosPropuestos;
+
+  }
+
+  public Resultados getResultadosPropuestos(){
+    return this.resultadosPropuestos;
+  }
+
 }

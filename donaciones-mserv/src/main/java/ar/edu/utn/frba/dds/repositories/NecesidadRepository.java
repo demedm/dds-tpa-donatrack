@@ -1,73 +1,64 @@
 package ar.edu.utn.frba.dds.repositories;
 
-import java.util.ArrayList;
 import java.util.List;
-
+import javax.persistence.EntityManager;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
+import ar.edu.utn.frba.dds.model.necesidad.Necesidad.TipoNecesidad;
 
 public class NecesidadRepository {
-  private List<Necesidad> necesidades = new ArrayList<>();
-  public static NecesidadRepository Instance = new NecesidadRepository();
 
-  private Integer contadorId =1;
+  private static NecesidadRepository Instance; // Uso lazy init para ue lo haga cuando lo pida
 
-  public Necesidad crear(Necesidad necesidad) {
-    necesidad.setId("nec-" + contadorId++);
-    necesidades.add(necesidad);
-    return necesidad;
+  private EntityManager em;
+
+  private NecesidadRepository() {
+      this.em = EntityManagerHelper.getEntityManager();
+    }
+
+  public static NecesidadRepository getInstance() {
+      if (Instance == null) {
+        Instance = new NecesidadRepository();
+      }
+      return Instance;
+    };
+
+  public void guardar(Necesidad necesidad) {
+        em.getTransaction().begin();
+        em.persist(necesidad);
+        em.getTransaction().commit();
+    }
+
+  public Necesidad findById(Long id) {
+        return em.find(Necesidad.class, id);
+    }
+
+    public List<Necesidad> findAll() {
+        return em.createQuery("FROM Necesidad", Necesidad.class).getResultList();
+    }
+
+  public List<Necesidad> findAllRecurrentes() {
+    return em.createQuery(
+        "FROM Necesidad n WHERE n.tipo = :tipo", 
+        Necesidad.class)
+      .setParameter("tipo", TipoNecesidad.RECURRENTE)
+      .getResultList();
   }
 
-  // public void evaluarPeticionesRecurrentes(GestorDonaciones gestor) {
-  //   //Ordena a las que son recurrentes por cuantos dias le queden apra vencer
-  //   necesidades.stream()
-  //       .filter(n -> n instanceof NecesidadRecurrente)
-  //       .map(n -> (NecesidadRecurrente) n)
-  //       .sorted((a, b) -> a.getDiasAvencer() - b.getDiasAvencer())
-  //       .forEach(n -> n.cumplirNecesidades(gestor));
-  // }
-
-  // public void evaluarPeticionesExtraordinarias(GestorDonaciones gestor) {
-  //   //Va completandoa las ue son no recurrentes en abse a como estan en la lista
-  //   necesidades.stream()
-  //       .filter(n -> !(n instanceof NecesidadRecurrente))
-  //       .forEach(n -> n.cumplirNecesidades(gestor));
-  // }
-
-  // public void evaluarTodasLasPeticiones(GestorDonaciones gestor) {
-  //   // Completa segun el orden
-  //   necesidades.forEach(n -> n.cumplirNecesidades(gestor));
-  // }
-
-  public Necesidad findById(String id){
-    return this.necesidades.stream()
-      .filter(n->n.getId().equals(id))
-      .findFirst()
-      .orElse(null);
-  }
-
-  //Obtener todas las necesidades 
-
-  public List<Necesidad> findAll(){
-    return necesidades;
-  }
-
-  public List<Necesidad> findAllRecurrentes(){
-    return this.necesidades.stream()
-      .filter(n-> n.getTipo() == Necesidad.TipoNecesidad.RECURRENTE)
-      .toList();
-  }
-
-  public void eliminar(String id){
-    this.necesidades.removeIf(n->n.getId().equals(id));
+  public void eliminar(Long id) {
+    em.getTransaction().begin();
+    Necesidad necesidad = em.find(Necesidad.class, id);
+    if (necesidad != null) {
+      em.remove(necesidad);  // Cascade elimina Peticiones automáticamente
+    }
+    em.getTransaction().commit();
   }
 
   // actualizo el que esta en el repositorio
 
-  public Necesidad actualizar(Necesidad necesidad){
-    Necesidad existente = findById(necesidad.getId());
-
-    existente.setPeticiones(necesidad.getPeticiones());
-
-    return existente;
+  public Necesidad actualizar(Necesidad necesidad) {
+    em.getTransaction().begin();
+    Necesidad actualizada = em.merge(necesidad);  // merge en vez de persist, cambia lo necesario. 
+    em.getTransaction().commit();
+    return actualizada;
   }
 }
