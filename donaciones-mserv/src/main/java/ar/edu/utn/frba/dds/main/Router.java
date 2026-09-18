@@ -6,6 +6,9 @@ import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
 import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoSubatendidos;
 import io.javalin.Javalin;
 
 import java.io.IOException;
@@ -19,7 +22,10 @@ public class Router {
     DonanteController donanteController = new DonanteController();
     EntidadBeneficiariaController entidadController = new EntidadBeneficiariaController();
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
-    //MatchmakingController MatchmakingController = new MatchmakingController();
+
+    List<AlgoritmoAsignacion> algoritmos = List.of(new AlgoritmoDeCompatibilidad(),new AlgoritmoSubatendidos());
+
+    MatchmakingController MatchmakingController = new MatchmakingController(algoritmos);
 
     //Donaciones
 
@@ -51,6 +57,7 @@ public class Router {
           List<Map<String, Object>> resultado = donacionController.asignarDonacionANecesidad(ctx);
     ctx.json(resultado);});
 
+  //matchmaking
 
     app.get("/matchmaking/ranking/{idSegmentada}", ctx -> {
       ctx.status(200).json(MatchmakingController.obtenerRanking(ctx));
@@ -60,6 +67,9 @@ public class Router {
     app.post("/matchmaking/asignar",ctx->{
       ctx.status(201).json(MatchmakingController.asignarDonacion(ctx));
     });
+
+    app.post("/matchmaking/procesar-pendientes", ctx ->
+        ctx.status(201).json(MatchmakingController.procesarPendientes(ctx)));
 
     //Necesidades
 

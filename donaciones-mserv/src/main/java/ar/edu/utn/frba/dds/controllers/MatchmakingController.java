@@ -8,20 +8,19 @@ import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.*;
 
 import java.util.List;
+import java.util.Map;
+
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
 public class MatchmakingController {
-
-  //Inyeccion de dependencia
 
   private final List<AlgoritmoAsignacion> algoritmos;
 
   public MatchmakingController(List<AlgoritmoAsignacion> algoritmos) {
     this.algoritmos = algoritmos;
   }
-
-  //donacion Segmentada
 
   public Resultados obtenerRanking(Context ctx){
     String idSegmentada = ctx.pathParam("id");
@@ -72,5 +71,33 @@ public class MatchmakingController {
     return segmentada;
 
   }
+
+  public Map<String, Object> procesarPendientes(Context ctx){
+    List<DonacionSegmentada> enDeposito = DonacionesRepository.Instance.findSegmentadasEnDeposito();
+    List<EntidadBeneficiaria> entidades = EntidadRepository.Instance.obtenerEntidades();
+
+    int procesadas = 0;
+
+    for(DonacionSegmentada donacion : enDeposito){
+      try{
+        donacion.buscarCandidatas(entidades , algoritmos);
+        procesadas++;
+      } catch (Exception e) {
+        System.err.println(e.getMessage());
+      }
+    }
+
+    return Map.of("Procesadas",procesadas,"total",enDeposito.size());
+  }
+
+  private void validarTokenDeJob(Context ctx){
+    String tokenEsperado = System.getenv().getOrDefault("MATCHMAKING_JOB_TOKEN","dev_secret_local");
+    String tokenRecibido = ctx.header("X-Job-Token");
+
+    if(!tokenEsperado.equals(tokenRecibido)){
+      throw  new BadRequestResponse("No autorizado");
+    }
+  }
+
 
 }
