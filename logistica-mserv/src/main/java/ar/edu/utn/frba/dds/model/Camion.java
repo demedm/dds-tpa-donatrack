@@ -25,9 +25,6 @@ public class Camion {
   @Column(name = "estado_camion")
   private EstadoCamion estado;
 
-  @Transient
-  private Ubicacion ubicacionActual;
-
   public Camion() {}
 
   public EstadoCamion getEstado() {
@@ -81,17 +78,6 @@ public class Camion {
 
   public void regresarDeposito() {
     estado = EstadoCamion.DISPONIBLE;
-  }
-
-  public Ubicacion getUbicacionActual() {
-    return ubicacionActual;
-  }
-
-  public void actualizarUbicacion(Double latitud, Double longitud) {
-    // Solo permitimos actualizar si el camión está en ruta
-    if (this.estado == EstadoCamion.REALIZANDO_ENTREGAS) {
-      this.ubicacionActual = new Ubicacion(latitud, longitud, LocalDateTime.now());
-    }
   }
 
 }

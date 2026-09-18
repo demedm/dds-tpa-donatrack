@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.main;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ar.edu.utn.frba.dds.model.Camion;
+import ar.edu.utn.frba.dds.model.usuarios.Administrador;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
@@ -53,11 +54,11 @@ public class ContextTest implements SimplePersistenceTest {
 
   @Test
   public void seRegistranLosUsuarios() {
-    Usuario usuario1 = new Usuario("Maria", "mariam@gmail.com");
+    Administrador maria = new Administrador("mariam@gmail.com", "Maria");
     Chofer chofer1 = new Chofer();
-    repositorioUsuarios.registrar(usuario1);
+    repositorioUsuarios.registrar(maria);
 
-    assertNotNull(usuario1.getId());
+    assertNotNull(maria.getId());
     assertEquals(1, repositorioUsuarios.getAll().size());
   }
 

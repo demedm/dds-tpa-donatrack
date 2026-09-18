@@ -42,6 +42,12 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   }
   */
 
+  public void iniciarRuta(Long idRuta) {
+    Ruta ruta = buscarPorId(idRuta);
+    ruta.iniciarRuta(); // cambia estado de Ruta y de cada Entrega
+    ruta.getEntregas().forEach(EntregaRepositorio.Instance::notificarInicioDeEntrega);
+  }
+
   public void registrar(Ruta ruta) {
     entityManager().persist(ruta);
     observers.forEach(observer -> observer.actualizarRuta(ruta, true));
@@ -59,7 +65,7 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     return (Ruta) entityManager()
         .createQuery("from Ruta where id = :id")
         .setParameter("id", id)
-        .getResultList().get(0);
+        .getResultList().stream().findFirst().orElse(null);
   }
 
   @SuppressWarnings("unchecked")
@@ -70,6 +76,15 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
         .getResultList();
   }
 
+  public Ruta buscarRutaEnCursoDeCamion(Long idCamion) {
+    return entityManager()
+        .createQuery("from Ruta r where r.camion.id = :id and r.estado = :estado",
+            Ruta.class)
+        .setParameter("id", idCamion)
+        .setParameter("estado", EstadoRuta.EN_CURSO)
+        .getResultList().stream().findFirst().orElse(null);
+  }
+
   @SuppressWarnings("unchecked")
   public Ruta buscarRutasDeCamionConEstado(Long idCamion, EstadoRuta estadoRuta) {
     return entityManager()
@@ -77,7 +92,7 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
             Ruta.class)
         .setParameter("id", idCamion)
         .setParameter("estado", estadoRuta)
-        .getSingleResult();
+        .getResultList().stream().findFirst().orElse(null);
   }
 
   @SuppressWarnings("unchecked")
