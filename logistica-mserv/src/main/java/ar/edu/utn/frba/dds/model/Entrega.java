@@ -3,9 +3,7 @@ package ar.edu.utn.frba.dds.model;
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
-import ar.edu.utn.frba.dds.model.accionesentregas.NotificarDonadorYDonante;
 import ar.edu.utn.frba.dds.model.fallaentrega.EntregaVencida;
-import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
 import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
@@ -59,7 +57,7 @@ public class Entrega {
     this.direccion = direccion;
     // Lógica nueva del equipo fusionada correctamente
     agregarAccionEntregas(new NotificarAdmins());
-    agregarAccionEntregas(new NotificarDonadorYDonante());
+    agregarAccionEntregas(new Notificar());
   }
 
   public Entrega() {}

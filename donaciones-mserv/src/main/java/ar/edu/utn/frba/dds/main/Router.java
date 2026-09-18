@@ -4,8 +4,10 @@ import ar.edu.utn.frba.dds.controllers.DonacionController;
 import ar.edu.utn.frba.dds.controllers.DonacionSegmentadaController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
+import ar.edu.utn.frba.dds.controllers.EstadoEntregaController;
 import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
+import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
 import io.javalin.Javalin;
 
 import java.io.IOException;
