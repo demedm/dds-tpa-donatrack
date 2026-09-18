@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.main;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +37,7 @@ class CamionRutaEntregaTest {
 
   @BeforeEach
   void setUp() {
-    Chofer chofer = new Chofer("Carlos", "Hola");
+    Chofer chofer = new Chofer("carlitos@outlook.com", "passseguro", "Carlos", "Hola");
     camion = new Camion("AB123CD", 1000.0, 500.0, 220.0);
 
     entregaA = new Entrega("Calle Falsa 123", (long)1);
@@ -80,10 +82,9 @@ class CamionRutaEntregaTest {
     ruta.setCamion(camion);
     ruta.iniciarRuta();
 
-    ruta.visitarParada("Calle Falsa 123");
+    ruta.visitarParada("Calle Falsa 123", LocalDateTime.now());
 
     assertTrue(entregaA.getEntregado());
-    assertEquals(EstadoEntrega.ENTREGADA, entregaA.getEstado());
 
     // La otra entrega de la ruta no se ve afectada
     assertFalse(entregaB.getEntregado());
@@ -91,20 +92,24 @@ class CamionRutaEntregaTest {
   }
 
   @Test
-  void regresarADepositoDejaAlCamionDisponibleYRegresarEntregasADepositoCambiaEstado() {
+  void visitarUnaParadaSeteaComoEntregada() {
     ruta.setCamion(camion);
     ruta.iniciarRuta();
 
-    ruta.visitarParada("Calle Falsa 123");
+    ruta.visitarParada("Calle Falsa 123", LocalDateTime.now());
+    // el camion visita la parada de la entregaA entonces se deberia setear la parada como visitada
+    // el estado de la entrega no se setea como entregado hasta que se confirme la entrega
+    assertTrue(entregaA.getEntregado());
+    assertNotEquals(EstadoEntrega.ENTREGADA, entregaA.getEstado());
+  }
+
+  @Test
+  void regresarADepositoDejaAlCamionDisponibleYLaEntregaCambiaEstado() {
+    ruta.setCamion(camion);
+    ruta.iniciarRuta();
     entregaB.marcarRegreso();
-
     camion.regresarDeposito();
-
     assertEquals(EstadoCamion.DISPONIBLE, camion.getEstado());
-
-    // A fue visitada
-    assertEquals(EstadoEntrega.ENTREGADA, entregaA.getEstado());
-
     // B regresa a deposito => vuelve a PENDIENTE
     assertEquals(EstadoEntrega.PENDIENTE, entregaB.getEstado());
   }

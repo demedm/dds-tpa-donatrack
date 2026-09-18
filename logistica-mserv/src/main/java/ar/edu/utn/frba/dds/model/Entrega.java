@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
 import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -29,10 +30,6 @@ public class Entrega {
   @ManyToOne
   private EntidadBeneficiaria entidadBeneficiaria;
 
-  @ManyToOne
-  @JoinColumn(name = "ruta_id")
-  private Ruta ruta = null;
-
   @Enumerated(EnumType.STRING)
   @Column(name = "estado_entrega")
   private EstadoEntrega estado;
@@ -46,18 +43,16 @@ public class Entrega {
   private MotivoFallo motivoFallo;
 
   private String foto;
+  private LocalDateTime fechaHoraEntrega;
   private String entidadId;
 
-  @Transient
-  private List<AccionesSobreEntregas> accionesSobreEntregas = new ArrayList<>();
+  @ManyToOne
+  private Camion camionQueEntrego;
 
   public Entrega(String direccion, Long idDonacion) {
     this.estado = EstadoEntrega.PENDIENTE;
     this.donacionId = idDonacion;
     this.direccion = direccion;
-    // Lógica nueva del equipo fusionada correctamente
-    agregarAccionEntregas(new NotificarAdmins());
-    agregarAccionEntregas(new Notificar());
   }
 
   public Entrega() {}
@@ -97,24 +92,22 @@ public class Entrega {
 
   public void marcarComoIniciada() {
     estado = EstadoEntrega.EN_TRASLADO;
-    accionesSobreEntregas.forEach(accion ->
-        accion.notificarInicioRuta(this));
   }
 
-  public void marcarComoEntregada() {
+  public void marcarComoEntregada(Camion camion, LocalDateTime fechaHoraEntrega) {
     entregado = true;
-    estado = EstadoEntrega.ENTREGADA;
+    this.camionQueEntrego = camion;
+    this.fechaHoraEntrega = fechaHoraEntrega;
   }
 
   public void confirmarEntrega(String urlFoto) {
+    estado = EstadoEntrega.ENTREGADA;
     setFoto(urlFoto);
   }
 
   public void marcarComoFallida(MotivoFallo motivo) {
     estado = EstadoEntrega.FALLIDA;
     setMotivoFallo(motivo);
-    accionesSobreEntregas.forEach(accion ->
-        accion.notificarFalloEntrega(this));
   }
 
   public void marcarRegreso() {
@@ -122,6 +115,7 @@ public class Entrega {
   }
 
   public void marcarComoNoRecepcionada() {
+    estado = EstadoEntrega.NO_RECIBIDA;
     marcarComoFallida(new NoRecepcionada());
   }
 
@@ -139,10 +133,6 @@ public class Entrega {
 
   public void setMotivoFallo(MotivoFallo motivoFallo) {
     this.motivoFallo = motivoFallo;
-  }
-
-  public void agregarAccionEntregas(AccionesSobreEntregas accion) {
-    accionesSobreEntregas.add(accion);
   }
 
   public String getFoto() {
@@ -169,11 +159,4 @@ public class Entrega {
     this.entidadBeneficiaria = entidadBeneficiaria;
   }
 
-  public Ruta getRuta() {
-    return ruta;
-  }
-
-  public void setRuta(Ruta ruta) {
-    this.ruta = ruta;
-  }
 }

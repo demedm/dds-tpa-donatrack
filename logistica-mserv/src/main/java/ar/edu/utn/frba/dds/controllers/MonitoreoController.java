@@ -21,8 +21,8 @@ public class MonitoreoController {
       ctx.status(404).result("Camión no encontrado.");
       return;
     }
-
-    camion.actualizarUbicacion(telemetria.getLatitud(), telemetria.getLongitud());
+    var ubicacion = CamionRepositorio.Instance.verUbicacionDeCamion(camion);
+    ubicacion.actualizarUbicacion(telemetria.getLatitud(), telemetria.getLongitud());
     ctx.status(200).result("Ubicación actualizada correctamente.");
   }
 }
