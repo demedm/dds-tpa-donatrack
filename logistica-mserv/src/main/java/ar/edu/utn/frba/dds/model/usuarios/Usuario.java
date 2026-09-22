@@ -1,16 +1,30 @@
 package ar.edu.utn.frba.dds.model.usuarios;
 
-public class Usuario {
-  private String id;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Usuario {
+  @Id
+  @GeneratedValue
+  private Long id;
+
   private String email;
   private String password;
 
-  public String getId() {
-    return id;
+  protected Usuario() {}
+
+  protected Usuario(String email, String password) {
+    this.email = email;
+    this.password = password;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public Long getId() {
+    return id;
   }
 
   public String getEmail() {

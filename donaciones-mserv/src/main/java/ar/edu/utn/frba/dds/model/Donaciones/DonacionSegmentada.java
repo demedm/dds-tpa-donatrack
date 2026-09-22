@@ -1,5 +1,8 @@
 package ar.edu.utn.frba.dds.model.Donaciones;
 
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
+import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
@@ -7,6 +10,7 @@ import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
 import ar.edu.utn.frba.dds.model.Estado.Entregada;
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
+import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 
 import java.time.LocalDate;
@@ -44,6 +48,7 @@ public class DonacionSegmentada {
   private Integer donanteId;
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
+    this.id = UUID.randomUUID().toString();
     this.cantidad = cantidad;
     this.subcategoria = subcategoria;
     this.bienFiltrado = bienFiltrado;
@@ -130,4 +135,30 @@ public class DonacionSegmentada {
   public Subcategoria getSubcategoria() {
     return subcategoria;
   }
+
+  private Resultados resultadosPropuestos;
+
+
+  public Resultados buscarCandidatas(List<EntidadBeneficiaria> entidades, List<AlgoritmoAsignacion> algoritmos) {
+    if (!this.estaAlmacen()) {
+      throw new IllegalStateException("Solo se puede asignar donaciones en estado EN_DEPOSITO");
+    }
+
+    List<List<EntidadBeneficiaria>> rankings = algoritmos.stream()
+        .map(algoritmo -> algoritmo.obtenerRanking(this, entidades))
+        .toList();
+
+    List<EntidadBeneficiaria> coincidencias = rankings.get(0).stream()
+        .filter(entidad -> rankings.stream().allMatch(ranking -> ranking.contains(entidad)))
+        .toList();
+
+    this.resultadosPropuestos = new Resultados(coincidencias, rankings);
+    return this.resultadosPropuestos;
+
+  }
+
+  public Resultados getResultadosPropuestos(){
+    return this.resultadosPropuestos;
+  }
+
 }

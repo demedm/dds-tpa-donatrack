@@ -1,29 +1,38 @@
 package ar.edu.utn.frba.dds.model;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
+@Entity
 public class Camion {
+  @Id
+  @GeneratedValue
+  private Long id;
   private String patente;
-  private int capacidadVolumen;
-  private int altura;
-  private int capacidadCarga;
+  private Double capacidadVolumen;
+  private Double altura;
+  private Double capacidadCarga;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "estado_camion")
   private EstadoCamion estado;
-  private Ruta rutaActual = null;
-  private Ubicacion ubicacionActual;
 
   public Camion() {}
 
-  public void setEstado(EstadoCamion estado) {
-    this.estado = estado;
-  }
-
-  public EstadoCamion getEstado()
-  {
+  public EstadoCamion getEstado() {
     return estado;
   }
 
-  public Camion(String patente, int capacidadCarga, int capacidadVolumen,
-                int altura) {
+  public Camion(String patente, Double capacidadCarga, Double capacidadVolumen,
+                Double altura) {
     this.altura = altura;
     this.capacidadCarga = capacidadCarga;
     this.capacidadVolumen = capacidadVolumen;
@@ -31,55 +40,44 @@ public class Camion {
     this.patente = patente;
   }
 
-  public String getPatente()
-  {
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getPatente() {
     return this.patente;
   }
 
-  public int getAltura() {
+  public Double getAltura() {
     return this.altura;
   }
 
-  public int getCapacidadVolumen() {
+  public Double getCapacidadVolumen() {
     return this.capacidadVolumen;
   }
 
-  public int getCapacidadCarga() {
+  public Double getCapacidadCarga() {
     return this.capacidadCarga;
   }
 
-  public Ruta getRutaActual() {
-    return this.rutaActual;
-  }
-
   public void improvistoLogistico() {
-    rutaActual.indicarImprovistoLogistico();
+    estado = EstadoCamion.EN_MANTENIMIENTO;
   }
 
-  public void asignarRuta(Ruta ruta) {
-    this.rutaActual = ruta;
+  public void asignarRuta() {
     estado = EstadoCamion.RUTA_ASIGNADA;
   }
 
   public void iniciarRuta() {
     estado = EstadoCamion.REALIZANDO_ENTREGAS;
-    rutaActual.iniciarRuta();
   }
 
-  public void regresarADeposito() {
-    rutaActual.finalizarRuta();
+  public void regresarDeposito() {
     estado = EstadoCamion.DISPONIBLE;
-  }
-
-  public Ubicacion getUbicacionActual() {
-    return ubicacionActual;
-  }
-
-  public void actualizarUbicacion(Double latitud, Double longitud) {
-    // Solo permitimos actualizar si el camión está en ruta
-    if (this.estado == EstadoCamion.REALIZANDO_ENTREGAS) {
-      this.ubicacionActual = new Ubicacion(latitud, longitud, LocalDateTime.now());
-    }
   }
 
 }

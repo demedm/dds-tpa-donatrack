@@ -1,23 +1,47 @@
 package ar.edu.utn.frba.dds.model;
 
-import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
+import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+@Entity
 public class Ruta {
-  private List<Entrega> entregas;
-  private String patenteAsignada;
-  private String id;
+  @Id
+  @GeneratedValue
+  private Long id;
 
-  public Ruta(String patenteCamion, List<Entrega> entregas) {
+  @OneToMany
+  @JoinColumn(name = "ruta_id")
+  private List<Entrega> entregas;
+
+  @ManyToOne
+  private Camion camion;
+
+  @ManyToOne
+  private Chofer chofer;
+
+  @Enumerated(EnumType.STRING)
+  private EstadoRuta estado;
+
+  public Ruta(Chofer chofer, List<Entrega> entregas) {
     this.entregas = entregas;
-    this.patenteAsignada = patenteCamion;
-    this.id = UUID.randomUUID().toString();
+    this.chofer = chofer;
+    this.estado = EstadoRuta.NO_INICIADA;
   }
 
-  public String getId() {
+  public Ruta() {}
+
+  public Long getId() {
     return this.id;
   }
 
@@ -25,8 +49,8 @@ public class Ruta {
     entregas.add(entrega);
   }
 
-  public String getPatenteAsignada() {
-    return this.patenteAsignada;
+  public void asignarCamion(Camion camion) {
+    this.camion = camion;
   }
 
   public List<Entrega> getEntregas() {
@@ -34,47 +58,53 @@ public class Ruta {
   }
 
   public void iniciarRuta() {
+    estado = EstadoRuta.EN_CURSO;
+    camion.iniciarRuta();
     entregas.forEach(Entrega::marcarComoIniciada);
   }
 
-  public void visitarParada(String direccion) {
+  public void visitarParada(String direccion, LocalDateTime fechaHoraEntrega) {
     entregas.stream().filter(entrega ->
         entrega.getDireccion().equals(direccion))
-        .forEach(Entrega::marcarComoEntregada);
+        .forEach(entrega -> entrega.marcarComoEntregada(camion, fechaHoraEntrega));
   }
 
   public void indicarImprovistoLogistico() {
+    estado = EstadoRuta.CANCELADA;
+    camion.improvistoLogistico();
     entregas.forEach(entrega -> entrega
         .marcarComoFallida(new ImprevistoLogistico()));
   }
 
   public void finalizarRuta() {
+    estado = EstadoRuta.FINALIZADA;
     entregas.stream().filter(entrega ->
-            !entrega.getVisitado() && entrega.getMotivoFallo() != null)
-        .forEach(Entrega::marcarRegresoADeposito);
+            !entrega.getEntregado() && entrega.getMotivoFallo() != null)
+        .forEach(Entrega::marcarRegreso);
   }
 
-/*
-  public static class Ubicacion {
-    private Double latitud;
-    private Double longitud;
-    private LocalDateTime timestamp;
-
-    public Ubicacion(Double latitud, Double longitud, LocalDateTime timestamp) {
-      this.latitud = latitud;
-      this.longitud = longitud;
-      this.timestamp = timestamp;
+  public double calcularPorcentajeAvance() {
+    if (entregas == null || entregas.isEmpty()) {
+      return 0.0;
     }
-
-    public Double getLatitud() { return latitud; }
-    public Double getLongitud() { return longitud; }
-    public LocalDateTime getTimestamp() { return timestamp; }
-
+    long entregadas = entregas.stream().filter(Entrega::getEntregado).count();
+    return (double) entregadas / entregas.size() * 100.0;
   }
-   */
-public double calcularPorcentajeAvance() {
-  if (entregas == null || entregas.isEmpty()) return 0.0;
-  long entregadas = entregas.stream().filter(Entrega::getVisitado).count();
-  return (double) entregadas / entregas.size() * 100.0;
-}
+
+  public Chofer getChofer() {
+    return chofer;
+  }
+
+  public EstadoRuta getEstado() {
+    return estado;
+  }
+
+  public void setCamion(Camion camion) {
+    this.camion = camion;
+    camion.asignarRuta();
+  }
+
+  public Camion getCamion() {
+    return camion;
+  }
 }

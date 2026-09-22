@@ -21,11 +21,11 @@ public class DonacionSegmentadaController {
       throw new NotFoundResponse("DonacionSegmentada no encontrada");
     }
 
-    if(cambioEstado.getMotivoFallaEntrega() == null) {
+    if(cambioEstado.getMotivoFalla() == null) {
       donacion.cambiarEstado(cambioEstado.getNuevoEstado());
     } else {
       donacion.cambiarEstado(cambioEstado.getNuevoEstado());
-      donacion.setJustificacionFallo(cambioEstado.getMotivoFallaEntrega());
+      donacion.setJustificacionFallo(cambioEstado.getMotivoFalla());
     }
     return donacion;
   }

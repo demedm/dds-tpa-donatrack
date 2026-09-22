@@ -8,6 +8,15 @@
     <persistence-unit name="simple-persistence-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <class>ar.edu.utn.frba.dds.model.Camion</class>
+        <class>ar.edu.utn.frba.dds.model.Ruta</class>
+        <class>ar.edu.utn.frba.dds.model.Entrega</class>
+        <class>ar.edu.utn.frba.dds.model.Ubicacion</class>
+        <class>ar.edu.utn.frba.dds.model.usuarios.Usuario</class>
+        <class>ar.edu.utn.frba.dds.model.usuarios.Chofer</class>
+        <class>ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria</class>
+        <class>ar.edu.utn.frba.dds.model.usuarios.Administrador</class>
+
         <!-- archivo de configuracion para Hibernate -->
         <properties>
             <property name="hibernate.archive.autodetection" value="class"/>

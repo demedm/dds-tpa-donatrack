@@ -5,8 +5,9 @@ import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 
 import java.time.LocalDate;
+import ar.edu.utn.frba.dds.model.notificaciones.Destinatario;
 
-public abstract class Persona {
+public abstract class Persona implements Destinatario{
   private String nombreIdentificador; // nombre completo - razon social
   private Mail mail;
   private Telefono telefono;
@@ -89,5 +90,18 @@ public abstract class Persona {
 
   public Telefono getTelefono() {
     return telefono;
+  }
+
+  @Override
+  public MedioContacto medioDeContacto() {
+    if (medioPreferido != null) {
+      return medioPreferido;
+    }
+    return getMail() != null ? getMail() : getTelefono();
+  }
+
+  @Override
+  public String nombreParaMostrar() {
+    return getNombreIdentificador();
   }
 }

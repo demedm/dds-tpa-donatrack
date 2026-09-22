@@ -2,33 +2,34 @@ package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
+import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import io.javalin.http.Context;
-
 import java.util.List;
 
 public class RutaController {
+
   public Ruta showRuta(Context ctx) {
-    var id = ctx.pathParam("id");
-    return RutaRepositorio.Instance.findByid(id);
+    var id = (long) Integer.parseInt(ctx.pathParam("id"));
+    return RutaRepositorio.Instance.buscarPorId(id);
   }
 
   public Entrega showEntrega(Context ctx) {
     String idRuta = ctx.pathParam("idRuta");
-    String idEntrega = ctx.pathParam("idEntrega");
-    return RutaRepositorio.Instance.findEntregaById(idRuta, idEntrega);
+    var idEntrega = (long) Integer.parseInt(ctx.pathParam("idEntrega"));
+    return EntregaRepositorio.Instance.buscarPorId(idEntrega);
   }
 
   public List<Entrega> showEntregas(Context ctx) {
-    String idRuta = ctx.pathParam("id");
-    var ruta = RutaRepositorio.Instance.findByid(idRuta);
-    return ruta.getEntregas();
+    var idRuta = (long) Integer.parseInt(ctx.pathParam("id"));
+    var ruta = RutaRepositorio.Instance.buscarPorId(idRuta);
+    return EntregaRepositorio.Instance.buscarEntregasDeRuta(idRuta);
   }
 
   public List<Ruta> showAllRutas() {
-    return RutaRepositorio.Instance.getAllRutas();
+    return RutaRepositorio.Instance.mostrarTodos();
   }
-
+  /*
   public Ruta saveRuta(Context ctx) {
     Ruta ruta = ctx.bodyValidator(Ruta.class)
         .check(r -> r.getId() != null && !r.getId().isBlank(),
@@ -44,7 +45,7 @@ public class RutaController {
                 e.getDireccion() != null && !e.getDireccion().isBlank()),
             "Todas las entregas deben tener una dirección")
         .check(r -> r.getEntregas().stream().allMatch(e ->
-                e.getDonacionId() > 0),
+                    e.getDonacionId() != null && !e.getDonacionId().isBlank()),
             "Todas las entregas deben tener un id de donación válido")
         .get();
     RutaRepositorio.Instance.addRuta(ruta);
@@ -58,16 +59,16 @@ public class RutaController {
             "El id de la entrega es obligatorio")
         .check(e -> e.getDireccion() != null && !e.getDireccion().isBlank(),
             "La dirección es obligatoria")
-        .check(e -> e.getDonacionId() > 0,
+        .check(e -> e.getDonacionId() != null && !e.getDonacionId().isBlank(),
             "El id de la donación debe ser mayor a 0")
         .get();
     Ruta ruta = RutaRepositorio.Instance.findByid(idRuta);
-    if(ruta == null) {
+    if (ruta == null) {
       ctx.status(404);
       return null;
     }
     ruta.agregarEntrega(entrega);
     return ruta;
   }
-
+*/
 }
