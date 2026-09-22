@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -34,6 +36,34 @@ public class Necesidad {
 
   public Necesidad() {}
 
+  public Necesidad(String entidadId, TipoNecesidad tipo, String estado, String descripcion, Integer diasRecurrencia,List <Peticion> peticiones){
+    this.entidadId = entidadId;
+    this.tipo=tipo;
+    this.estado = estado;
+    this.descripcion = descripcion;
+    this.diasRecurrencia=diasRecurrencia;
+    this.proximoVencimiento= this.reiniciarPeriodo();
+    this.peticiones = peticiones;
+    }
+
+  public Necesidad crearSiguienteRecurrencia(){
+    List <Peticion> peticionesReiniciadas = new ArrayList<>();
+    //Tengo que crear una nueva porque si no sigue guardando la conexion 
+    for(Peticion p: this.peticiones){
+      Peticion nuevaPeticion= new Peticion(p.getSubclase(),p.getCantidadRequerida());
+      peticionesReiniciadas.add(nuevaPeticion);
+    }
+
+    return new Necesidad(
+      this.entidadId,
+      this.tipo,
+      "en_preparacion",
+      this.descripcion,
+      this.diasRecurrencia,
+      peticionesReiniciadas
+    );
+  }
+
   public String getEntidadId(){
     return this.entidadId;
   }
@@ -50,10 +80,18 @@ public class Necesidad {
     return this.tipo;
   }
 
+  public String getEstado(){
+    return this.estado;
+  }
+
   public enum TipoNecesidad{
     NORMAL,
     RECURRENTE
   };
+
+  public boolean estaVencida(){
+    return this.proximoVencimiento.isBefore(LocalDate.now());
+  }
 
   public long getDiasAvencer() {
     if (this.proximoVencimiento == null) {
@@ -62,8 +100,8 @@ public class Necesidad {
     return ChronoUnit.DAYS.between(LocalDate.now(), proximoVencimiento);
   }
 
-  public void reiniciarPeriodo(){
-    this.proximoVencimiento=LocalDate.now().plusDays(diasRecurrencia);
+  public LocalDate reiniciarPeriodo(){
+    return LocalDate.now().plusDays(diasRecurrencia);
   }
 
   public void setProximoVencimiento(LocalDate fecha){
@@ -88,6 +126,10 @@ public class Necesidad {
 
   public void setDiasRecurrencia(Integer diasRecurrencia) {
     this.diasRecurrencia = diasRecurrencia;
+  }
+
+  public void setEstado(String estado){
+    this.estado = estado;
   }
 
   public Long getId() { return id; }

@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.BienPerecedero;
@@ -124,7 +124,7 @@ public class Bootstrap {
         nec2.setDescripcion("Medicinas semanales");
         nec2.setTipo(Necesidad.TipoNecesidad.RECURRENTE);
         nec2.setDiasRecurrencia(7);
-        nec2.setProximoVencimiento(LocalDate.now().plusDays(7));
+        nec2.setProximoVencimiento(LocalDate.now().minusDays(7));
         
         Peticion pet3 = new Peticion("IBUPROFENO", 30);
         nec2.agregarPeticion(pet3);

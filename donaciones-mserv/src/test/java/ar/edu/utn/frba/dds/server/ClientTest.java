@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server;
+package ar.edu.utn.frba.dds.main;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
