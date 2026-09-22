@@ -74,7 +74,6 @@ public class Peticion {
     return subclase;
   }
 
-
   public void agregarCantidadRecibida (Integer cantidad, String idDonacion){
     this.cantidadRecibida += cantidad;
     this.donacionesAsignados.add(idDonacion);

@@ -56,6 +56,21 @@ public class NecesidadController {
         return necesidad;
     }
 
+    public void actualizarVencidas() {
+    try {
+        List<Necesidad> necesidades = NecesidadRepository.getInstance().findAllRecurrentesActivasVencidas();
+        for (Necesidad n : necesidades) {
+            n.setEstado("vencida");
+            NecesidadRepository.getInstance().actualizar(n);
+            Necesidad nuevaRecurrencia = n.crearSiguienteRecurrencia();
+            NecesidadRepository.getInstance().guardar(nuevaRecurrencia);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+
     public List<Necesidad> showNecesidades(){
         return NecesidadRepository.getInstance().findAll();
     }
