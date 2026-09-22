@@ -45,12 +45,16 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   public void iniciarRuta(Long idRuta) {
     Ruta ruta = buscarPorId(idRuta);
     ruta.iniciarRuta(); // cambia estado de Ruta y de cada Entrega
+    observers.forEach(observer -> observer.actualizarRuta(ruta, true));
     ruta.getEntregas().forEach(EntregaRepositorio.Instance::notificarInicioDeEntrega);
   }
 
   public void registrar(Ruta ruta) {
     entityManager().persist(ruta);
-    observers.forEach(observer -> observer.actualizarRuta(ruta, true));
+  }
+
+  public void eliminarRuta(Ruta ruta) {
+    entityManager().remove(ruta);
   }
 
   @SuppressWarnings("unchecked")

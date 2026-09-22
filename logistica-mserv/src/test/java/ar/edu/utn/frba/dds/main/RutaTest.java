@@ -21,7 +21,7 @@ public class RutaTest {
 
     // Simulamos que ya se entregó 1 de 2 paquetes
     entrega1.marcarComoEntregada(camion, LocalDateTime.now());
-    Chofer chofer = new Chofer("carlosmartinez@gmail.com", "passsuper", "Carlos", "Martinez");
+    Chofer chofer = new Chofer("carlosmartinez@gmail.com", "Carlos", "Martinez");
     Ruta ruta = new Ruta(chofer, Arrays.asList(entrega1, entrega2));
 
     // Act

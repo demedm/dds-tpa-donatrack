@@ -6,7 +6,6 @@ import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +28,10 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
 
   public void registrar(Entrega entrega) {
     entityManager().persist(entrega);
+  }
+
+  public void eliminarEntrega(Entrega entrega) {
+    entityManager().remove(entrega);
   }
 
   @SuppressWarnings("unchecked")

@@ -2,7 +2,6 @@ package ar.edu.utn.frba.dds.model;
 
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Entity;
@@ -79,7 +78,7 @@ public class Ruta {
   public void finalizarRuta() {
     estado = EstadoRuta.FINALIZADA;
     entregas.stream().filter(entrega ->
-            !entrega.getEntregado() && entrega.getMotivoFallo() != null)
+            !entrega.getParadaVisitada() && entrega.getMotivoFallo() != null)
         .forEach(Entrega::marcarRegreso);
   }
 
@@ -87,7 +86,7 @@ public class Ruta {
     if (entregas == null || entregas.isEmpty()) {
       return 0.0;
     }
-    long entregadas = entregas.stream().filter(Entrega::getEntregado).count();
+    long entregadas = entregas.stream().filter(Entrega::getParadaVisitada).count();
     return (double) entregadas / entregas.size() * 100.0;
   }
 

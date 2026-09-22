@@ -2,8 +2,6 @@ package ar.edu.utn.frba.dds.repositories;
 
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
-import ar.edu.utn.frba.dds.model.EstadoRuta;
-import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.Ubicacion;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import java.util.List;
@@ -23,6 +21,10 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
 
   public void registrar(Camion camion) {
     entityManager().persist(camion);
+  }
+
+  public void eliminarCamion(Camion camion) {
+    entityManager().remove(camion);
   }
 
   @SuppressWarnings("unchecked")

@@ -15,14 +15,13 @@ public class RutaController {
   }
 
   public Entrega showEntrega(Context ctx) {
-    String idRuta = ctx.pathParam("idRuta");
+    // String idRuta = ctx.pathParam("idRuta");
     var idEntrega = (long) Integer.parseInt(ctx.pathParam("idEntrega"));
     return EntregaRepositorio.Instance.buscarPorId(idEntrega);
   }
 
   public List<Entrega> showEntregas(Context ctx) {
     var idRuta = (long) Integer.parseInt(ctx.pathParam("id"));
-    var ruta = RutaRepositorio.Instance.buscarPorId(idRuta);
     return EntregaRepositorio.Instance.buscarEntregasDeRuta(idRuta);
   }
 

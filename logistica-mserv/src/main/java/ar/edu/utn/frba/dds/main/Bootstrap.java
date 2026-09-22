@@ -6,7 +6,6 @@ import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -38,12 +37,11 @@ public class Bootstrap {
     var listaEntregas2 = Arrays.asList(new Entrega("Luis Maria 777", (long) 12),
         new Entrega("Medrano 1512", (long) 61));
 
-    Chofer chofer = new Chofer("matias@gmail.com", "123123123", "Matias", "Moreno");
-    Chofer chofer2 = new Chofer("carloslop@gmail.com", "123calleviva","Carlos", "Lop");
-    Chofer chofer3 = new Chofer("mariamm@gmail.com", "hsodfi1290","Maria", "Molas");
+    Chofer chofer = new Chofer("matias@gmail.com", "Matias", "Moreno");
+    Chofer chofer2 = new Chofer("carloslop@gmail.com", "Carlos", "Lop");
+    Chofer chofer3 = new Chofer("mariamm@gmail.com", "Maria", "Molas");
     return Arrays.asList(new Ruta(chofer, listaEntregas),
-        new Ruta(chofer2, listaEntregas2),
-        new Ruta(chofer3, listaEntregas));
+        new Ruta(chofer2, listaEntregas2), new Ruta(chofer3, listaEntregas));
   }
 
   private static List<Camion> camiones() {

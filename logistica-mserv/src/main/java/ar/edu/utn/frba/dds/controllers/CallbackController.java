@@ -30,7 +30,7 @@ public class CallbackController {
     ctx.json(replanificar);
   }
 
-  public void solicitudReplanificacion(Entrega entrega) {
+  public RequestPlanificacionDto solicitudReplanificacion(Entrega entrega) {
     RequestPlanificacionDto planificar = new RequestPlanificacionDto();
     planificar.setIdDonacion(entrega.getDonacionId());
     planificar.setDireccion(entrega.getDireccion());
@@ -38,6 +38,7 @@ public class CallbackController {
     if (entrega.getFechaVencimiento() != null) {
       planificar.setFechaVencimiento(entrega.getFechaVencimiento());
     }
+    return planificar;
   }
 
   /*

@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.repositories;
 
-import ar.edu.utn.frba.dds.model.Camion;
-import ar.edu.utn.frba.dds.model.Entrega;
+import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
@@ -18,10 +17,14 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   }
 
   @SuppressWarnings("unchecked")
-  public List<Usuario> getAll() {
+  public List<Usuario> mostrarTodos() {
     return entityManager()
         .createQuery("from Usuario")
         .getResultList();
+  }
+
+  public void eliminarUsuario(Usuario usuario) {
+    entityManager().remove(usuario);
   }
 
   @SuppressWarnings("unchecked")
@@ -32,9 +35,17 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
         .getResultList().stream().findFirst().orElse(null);
   }
 
+  public Chofer buscarChoferPorId(Long id) {
+    return entityManager()
+        .createQuery("from Chofer u where u.id = :id", Chofer.class)
+        .setParameter("id", id)
+        .getResultList().stream().findFirst().orElse(null);
+  }
+
   public EntidadBeneficiaria buscarEntidadBeneficiariaPorId(Long id) {
     return entityManager()
-        .createQuery("from Usuario u where u.id = :id", EntidadBeneficiaria.class)
+        .createQuery("from EntidadBeneficiaria u where u.id = :id",
+            EntidadBeneficiaria.class)
         .setParameter("id", id)
         .getResultList().stream().findFirst().orElse(null);
   }
@@ -43,7 +54,7 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   public void noRecepcionaEntrega(Long idEntidad, Long idEntrega) {
     var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
     var entidad = buscarEntidadBeneficiariaPorId(idEntidad);
-    if (!entrega.getEntidadBeneficiaria().getId().equals(idEntidad)) {
+    if (!entidad.getId().equals(idEntidad)) {
       return; // error (falta excepcion)
     }
     entrega.marcarComoNoRecepcionada();
@@ -52,7 +63,7 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   public void confirmarEntrega(Long idEntidad, Long idEntrega, String urlFoto) {
     var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
     var entidad = buscarEntidadBeneficiariaPorId(idEntidad);
-    if (!entrega.getEntidadBeneficiaria().getId().equals(idEntidad)) {
+    if (!entidad.getId().equals(idEntidad)) {
       return; // error (falta excepcion)
     }
     entrega.confirmarEntrega(urlFoto);
