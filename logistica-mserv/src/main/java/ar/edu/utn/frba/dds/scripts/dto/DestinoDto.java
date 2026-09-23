@@ -1,9 +1,8 @@
 package ar.edu.utn.frba.dds.scripts.dto;
 
 public class DestinoDto {
-  private String id;
   private String direccion;
-  private String donacionId;
+  private Long donacionId;
 
   public DestinoDto() {}
 
@@ -15,19 +14,12 @@ public class DestinoDto {
     this.direccion = direccion;
   }
 
-  public String getDonacionId() {
+  public Long getDonacionId() {
     return donacionId;
   }
 
-  public void setDonacionId(String donacionId) {
+  public void setDonacionId(Long donacionId) {
     this.donacionId = donacionId;
   }
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getId() {
-    return id;
-  }
 }

@@ -37,11 +37,8 @@ public class Bootstrap {
     var listaEntregas2 = Arrays.asList(new Entrega("Luis Maria 777", (long) 12),
         new Entrega("Medrano 1512", (long) 61));
 
-    Chofer chofer = new Chofer("matias@gmail.com", "Matias", "Moreno");
-    Chofer chofer2 = new Chofer("carloslop@gmail.com", "Carlos", "Lop");
-    Chofer chofer3 = new Chofer("mariamm@gmail.com", "Maria", "Molas");
-    return Arrays.asList(new Ruta(chofer, listaEntregas),
-        new Ruta(chofer2, listaEntregas2), new Ruta(chofer3, listaEntregas));
+    return Arrays.asList(new Ruta(listaEntregas),
+        new Ruta(listaEntregas2), new Ruta(listaEntregas));
   }
 
   private static List<Camion> camiones() {

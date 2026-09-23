@@ -1,19 +1,21 @@
 package ar.edu.utn.frba.dds.scripts.dto;
 
+import ar.edu.utn.frba.dds.model.Camion;
+
 import java.util.List;
 
 public class RutaPlanificadaDto {
-  private String patenteCamion;
+  private Camion camion;
   private List<DestinoDto> destinos;  // ids de las donaciones a entregar
 
   public RutaPlanificadaDto() {}
 
-  public String getPatenteCamion() {
-    return patenteCamion;
+  public Camion getCamion() {
+    return camion;
   }
 
-  public void setPatenteCamion(String patenteCamion) {
-    this.patenteCamion = patenteCamion;
+  public void setCamion(Camion camion) {
+    this.camion = camion;
   }
 
   public List<DestinoDto> getDestinos() {

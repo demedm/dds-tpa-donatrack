@@ -118,7 +118,7 @@ public class ContextTest implements SimplePersistenceTest {
     Entrega entregaB = new Entrega("Av. Larga 742", (long)2);
     var entregas = new ArrayList<>(List.of(entregaA, entregaB));
     Chofer chofer = new Chofer("chofer@outlook.com", "Carlos", "Mandala");
-    Ruta ruta = new Ruta(chofer, entregas);
+    Ruta ruta = new Ruta(entregas);
     entregas.forEach(repositorioEntregas::registrar);
     repositorioUsuarios.registrar(chofer);
     repositorioRutas.registrar(ruta);
@@ -133,7 +133,7 @@ public class ContextTest implements SimplePersistenceTest {
     Entrega entregaB = new Entrega("Av. Larga 742", (long)2);
     var entregas = new ArrayList<>(List.of(entregaA, entregaB));
     Chofer chofer = new Chofer("chofer@outlook.com", "Carlos", "Mandala");
-    Ruta ruta = new Ruta(chofer, entregas);
+    Ruta ruta = new Ruta(entregas);
     entregas.forEach(repositorioEntregas::registrar);
     repositorioUsuarios.registrar(chofer);
     repositorioRutas.registrar(ruta);
@@ -149,7 +149,7 @@ public class ContextTest implements SimplePersistenceTest {
     Entrega entregaB = new Entrega("Av. Larga 742", (long)2);
     var entregas = new ArrayList<>(List.of(entregaA, entregaB));
     Chofer chofer = new Chofer("chofer@outlook.com", "Carlos", "Mandala");
-    Ruta ruta = new Ruta(chofer, entregas);
+    Ruta ruta = new Ruta(entregas);
     entregas.forEach(repositorioEntregas::registrar);
     repositorioUsuarios.registrar(chofer);
     repositorioRutas.registrar(ruta);
@@ -165,7 +165,7 @@ public class ContextTest implements SimplePersistenceTest {
     Entrega entregaB = new Entrega("Av. Larga 742", (long)2);
     var entregas = new ArrayList<>(List.of(entregaA, entregaB));
     Chofer chofer = new Chofer("chofer@outlook.com", "Carlos", "Mandala");
-    Ruta ruta = new Ruta(chofer, entregas);
+    Ruta ruta = new Ruta(entregas);
     entregas.forEach(repositorioEntregas::registrar);
     repositorioUsuarios.registrar(chofer);
     repositorioRutas.registrar(ruta);

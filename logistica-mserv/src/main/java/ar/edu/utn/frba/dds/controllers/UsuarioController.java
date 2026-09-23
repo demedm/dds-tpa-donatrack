@@ -23,17 +23,14 @@ public class UsuarioController {
   public void confirmarEntrega(Context ctx) {
     var idUsuario = (long) Integer.parseInt(ctx.pathParam("idUsuario"));
     var idEntrega = (long) Integer.parseInt(ctx.pathParam("idEntrega"));
-    var urlfoto = ctx.body();
-    if (urlfoto.isEmpty()) {
-      ctx.status(400);
-      return;
-    }
+    var idCamion = (long) Integer.parseInt(ctx.pathParam("idCamion"));
+
     var entidad = UsuarioRepositorio.Instance.buscarEntidadBeneficiariaPorId(idUsuario);
     if (entidad == null) {
       ctx.status(404);
       return;
     }
-    UsuarioRepositorio.Instance.confirmarEntrega(entidad.getId(), idEntrega, urlfoto);
+    UsuarioRepositorio.Instance.confirmarEntrega(idUsuario, idEntrega, idCamion);
     ctx.status(200);
     ctx.json(entidad);
   }

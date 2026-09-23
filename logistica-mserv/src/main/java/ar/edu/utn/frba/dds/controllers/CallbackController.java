@@ -41,25 +41,14 @@ public class CallbackController {
     return planificar;
   }
 
-  /*
   public void recibirPlanificacion(Context ctx) {
-    ResponsePlanificacionDTO respuesta = ctx.bodyAsClass(ResponsePlanificacionDTO.class);
-
-    List<Ruta> nuevasRutas = new ArrayList<>();
-    respuesta.getRutasPlanificadas().forEach(rutaPlanificada -> {
-      var patente = rutaPlanificada.getPatenteCamion();
-      var entregas = rutaPlanificada.getDestinos().stream().map(destino ->
-          new Entrega(destino.getDireccion(), destino.getDonacionId())).toList();
-      var ruta = new Ruta(patente, entregas);
-      nuevasRutas.add(ruta);
-    });
+    ResponsePlanificacionDto respuesta = ctx.bodyAsClass(ResponsePlanificacionDto.class);
 
     // por ahora, esta es la replanificacion, no se esta notificando de que no se realizo la entrega
-    donacionesAPlanificar.addAll(respuesta.getDonacionesNoPlanificadas());
+    // donacionesAPlanificar.addAll(respuesta.getDonacionesNoPlanificadas());
 
-    RutaRepositorio.Instance.addRutasPlanificadas(nuevasRutas);
+    RutaRepositorio.Instance.recibirRespuestaPlanificacion(respuesta);
     ctx.status(200); // OK
   }
-  */
 
 }

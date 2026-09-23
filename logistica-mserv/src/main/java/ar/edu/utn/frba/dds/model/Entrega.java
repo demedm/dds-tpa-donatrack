@@ -31,7 +31,6 @@ public class Entrega {
   private String direccion;
   private Long donacionId;
   private LocalDate fechaVencimiento;
-  private boolean paradaVisitada = false;
 
   @Transient
   private MotivoFallo motivoFallo;
@@ -71,16 +70,8 @@ public class Entrega {
     return this.donacionId;
   }
 
-  public void setParadaVisitada(boolean entregado) {
-    this.paradaVisitada = entregado;
-  }
-
   public String getDireccion() {
     return this.direccion;
-  }
-
-  public boolean getParadaVisitada() {
-    return this.paradaVisitada;
   }
 
   public Long getId() {
@@ -92,13 +83,12 @@ public class Entrega {
   }
 
   public void marcarComoEntregada(Camion camion, LocalDateTime fechaHoraEntrega) {
-    paradaVisitada = true;
+    estado = EstadoEntrega.ENTREGADA;
     this.camionQueEntrego = camion;
     this.fechaHoraEntrega = fechaHoraEntrega;
   }
 
-  public void confirmarEntrega(String urlFoto) {
-    estado = EstadoEntrega.ENTREGADA;
+  public void cargarFoto(String urlFoto) {
     setFoto(urlFoto);
   }
 
@@ -152,4 +142,7 @@ public class Entrega {
     this.entidadBeneficiaria = entidadBeneficiaria;
   }
 
+  public EntidadBeneficiaria getEntidadBeneficiaria() {
+    return entidadBeneficiaria;
+  }
 }

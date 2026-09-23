@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.repositories;
 
+import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoRuta;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.accionesrutas.AccionesSobreRutas;
@@ -7,6 +8,8 @@ import ar.edu.utn.frba.dds.model.accionesrutas.AsignarCamion;
 import ar.edu.utn.frba.dds.model.accionesrutas.LoggearRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.NotificarSobreRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.ReplanificarRuta;
+import ar.edu.utn.frba.dds.scripts.dto.ResponsePlanificacionDto;
+import ar.edu.utn.frba.dds.scripts.dto.RutaPlanificadaDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +65,13 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     return entityManager()
         .createQuery("from Ruta")
         .getResultList();
+  }
+
+  public List<Ruta> mostrarRutasActivasConChoferAsignado() {
+    var rutas = buscarRutasConEstado(EstadoRuta.NO_INICIADA)
+        .stream().filter(ruta -> ruta.getChofer() != null).toList();
+    rutas.addAll(buscarRutasConEstado(EstadoRuta.EN_CURSO));
+    return rutas;
   }
 
   @SuppressWarnings("unchecked")
@@ -128,21 +138,39 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     }
   }
 
-  public void recibirRespuesta(PlanificacionRutasResponse respuesta) {
+   */
 
-    if (respuesta.getDonacionesSinAsignar() != null) {
-      this.donacionesSinAsignar.addAll(respuesta.getDonacionesSinAsignar());
+  // RutaPlanificadaDto --> Ruta
+  private Ruta crearRuta(RutaPlanificadaDto rutaDto) {
+    var entregas = rutaDto.getDestinos().stream().map(destinoDto ->
+        new Entrega(destinoDto.getDireccion(), destinoDto.getDonacionId())).toList();
+    // despues de crearse las entregas se persisten
+    entregas.forEach(EntregaRepositorio.Instance::registrar);
 
-    }
-
-    respuesta.getRutas().stream()
-        .map(RutaAdapter::rutaExternaToRuta)
-        .forEach(ruta -> {
-          boolean asignada = flota.asignarRutaACamion(ruta);
-          accionesSobreRutas.forEach(accion ->
-              accion.actualizarRuta(ruta, asignada));
-        });
+    Ruta ruta = new Ruta(entregas);
+    ruta.asignarCamion(rutaDto.getCamion());
+    return ruta;
   }
-*/
+
+  public void asignarChoferes(List<Ruta> rutas) {
+    var choferes = UsuarioRepositorio.Instance.mostrarChoferesNoAsignados();
+    for (int i = 0; i < choferes.size(); i++) {
+      var ruta = rutas.get(i);
+      if (ruta != null) {
+        ruta.asignarChofer(choferes.get(i));
+      }
+    }
+    // no contempla el caso en el que rutas.size() > choferes.size()
+  }
+
+  public void recibirRespuestaPlanificacion(ResponsePlanificacionDto respuesta) {
+    List<RutaPlanificadaDto> rutasPlanificadas = respuesta.getRutasPlanificadas();
+    List<Ruta> rutas = rutasPlanificadas.stream().map(this::crearRuta).toList();
+    // persisto rutas creadas
+    rutas.forEach(this::registrar);
+    // asignar los choferes
+    asignarChoferes(rutas);
+    // replanificar (pendiente)
+  }
 
 }

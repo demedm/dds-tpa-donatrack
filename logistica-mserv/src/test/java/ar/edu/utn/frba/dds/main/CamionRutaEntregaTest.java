@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import ar.edu.utn.frba.dds.model.Camion;
@@ -29,7 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +60,7 @@ class CamionRutaEntregaTest implements SimplePersistenceTest {
     accionMock = mock(AccionesSobreEntregas.class);
 
     entregas = new ArrayList<>(List.of(entregaA, entregaB));
-    ruta = new Ruta(chofer, entregas);
+    ruta = new Ruta(entregas);
   }
 
   @Test
@@ -72,7 +70,8 @@ class CamionRutaEntregaTest implements SimplePersistenceTest {
 
   @Test
   void iniciarRutaCambiaEstadoDelCamion() {
-    ruta.setCamion(camion);
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(chofer);
     assertEquals(EstadoCamion.RUTA_ASIGNADA, camion.getEstado());
     ruta.iniciarRuta();
     assertEquals(EstadoRuta.EN_CURSO, ruta.getEstado());
@@ -80,7 +79,8 @@ class CamionRutaEntregaTest implements SimplePersistenceTest {
 
   @Test
   void iniciarRutaPropagaElInicioATodasLasEntregas() {
-    ruta.setCamion(camion);
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(chofer);
     ruta.iniciarRuta();
 
     assertEquals(EstadoCamion.REALIZANDO_ENTREGAS, camion.getEstado());
@@ -88,35 +88,20 @@ class CamionRutaEntregaTest implements SimplePersistenceTest {
     assertEquals(EstadoEntrega.EN_TRASLADO, entregaB.getEstado());
   }
 
+  /*
   @Test
-  void visitarParadaMarcaSoloLaEntregaDeEsaDireccionComoEntregada() {
-    ruta.setCamion(camion);
+  public void marcarUnaEntregaComoEntregadaCambiaSuEstado() {
+    ruta.asignarCamion(camion);
     ruta.iniciarRuta();
 
-    ruta.visitarParada("Calle Falsa 123", LocalDateTime.now());
 
-    assertTrue(entregaA.getParadaVisitada());
-
-    // La otra entrega de la ruta no se ve afectada
-    assertFalse(entregaB.getParadaVisitada());
-    assertEquals(EstadoEntrega.EN_TRASLADO, entregaB.getEstado());
   }
-
-  @Test
-  void visitarUnaParadaSeteaComoVisitadaPeroNoEntregada() {
-    ruta.setCamion(camion);
-    ruta.iniciarRuta();
-
-    ruta.visitarParada("Calle Falsa 123", LocalDateTime.now());
-    // el camion visita la parada de la entregaA entonces se deberia setear la parada como visitada
-    // el estado de la entrega no se setea como entregado hasta que se confirme la entrega
-    assertTrue(entregaA.getParadaVisitada());
-    assertNotEquals(EstadoEntrega.ENTREGADA, entregaA.getEstado());
-  }
+   */
 
   @Test
   void regresarADepositoDejaAlCamionDisponibleYLaEntregaCambiaEstado() {
-    ruta.setCamion(camion);
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(chofer);
     ruta.iniciarRuta();
     entregaB.marcarRegreso();
     camion.regresarDeposito();
@@ -137,7 +122,8 @@ class CamionRutaEntregaTest implements SimplePersistenceTest {
     assertNotNull(ruta.getId());
     assertEquals(1, rutaRepositorio.mostrarTodos().size());
 
-    ruta.setCamion(camion);
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(chofer);
     ruta.iniciarRuta();
 
     camionRepositorio.reportarImprevisto(camion.getId());
