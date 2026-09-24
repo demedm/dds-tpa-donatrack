@@ -12,7 +12,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 public class AsignacionCronScheduler {
 
-  private static final String HORARIO_BAJA_CARGA = "0 */2 * * * ?"; //"0 0 3 * * ?";
+  private static final String HORARIO_BAJA_CARGA = "0 0 3 * * ?"; //"0 0 3 * * ?";
 
   public static final JobKey JOB_KEY = JobKey.jobKey("asignaciónDonacionesJob", "grupoDonaciones");
 
