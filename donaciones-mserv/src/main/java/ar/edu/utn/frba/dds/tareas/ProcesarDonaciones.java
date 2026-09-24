@@ -37,7 +37,7 @@ public class ProcesarDonaciones {
 
     List<String> fallidas = new ArrayList<>();
 
-    for (DonacionSegmentada donacion : DonacionesRepository.Instance.findSegmentadasEnDeposito()) {
+    for (DonacionSegmentada donacion : donaciones) {
 
       try {
         donacion.buscarCandidatas(entidades, algoritmos);

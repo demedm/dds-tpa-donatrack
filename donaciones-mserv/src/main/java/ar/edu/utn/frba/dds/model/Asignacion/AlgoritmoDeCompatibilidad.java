@@ -15,7 +15,8 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
   public List<EntidadBeneficiaria> obtenerRanking(DonacionSegmentada donacion, List<EntidadBeneficiaria> entidades) {
 
     return entidades.stream()
-        .sorted(Comparator.comparingLong(entidad -> this.calcularCompatibilidad(entidad, donacion)))
+        .sorted(Comparator.comparingLong(
+                (EntidadBeneficiaria entidad) -> this.calcularCompatibilidad(entidad, donacion)).reversed())
         .limit(maxEntidades)
         .toList();
   }
