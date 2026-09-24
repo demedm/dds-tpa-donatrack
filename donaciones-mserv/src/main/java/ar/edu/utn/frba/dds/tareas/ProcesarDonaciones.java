@@ -8,7 +8,6 @@ import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
-import org.quartz.SchedulerException;
 
 import java.util.ArrayList;
 import java.util.List;
