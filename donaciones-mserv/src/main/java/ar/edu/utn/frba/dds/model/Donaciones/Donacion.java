@@ -11,13 +11,36 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "donaciones")
+
 public class Donacion {
 
+  @Id
+  private String id;
+
   private String descripcionGeneral;
+
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "donacion_id")
   private List<DonacionSegmentada> donacionesSegmentadas;
+
+  @Transient
+  /*
+  luego pasarl oa
+  @ManyToOne @JoinColumn(name ="donante_id")
+  cuando la persona sea @Entity
+   */
   @JsonIgnore
   private Persona donante;
-  private String id;
 
 
   public Donacion(String descripcionGeneral, List<Bien> bienes, Persona donante) {
@@ -47,8 +70,9 @@ public class Donacion {
     return donacionesSegmentadas;
   }
 
-  public void setDonacionesSegmentadas(List <DonacionSegmentada> donacionesSegmentadasAct){
-    donacionesSegmentadas = donacionesSegmentadasAct;
+  public void setDonacionesSegmentadas(List <DonacionSegmentada> nuevas){
+    this.donacionesSegmentadas.clear();
+    this.donacionesSegmentadas.addAll(nuevas);
   }
 
 
