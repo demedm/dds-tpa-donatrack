@@ -21,20 +21,70 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "donaciones_segmentadas")
+
 public class DonacionSegmentada {
+  @Id
   private String id;
+
   private int cantidad;
+
+  @Embedded
   private Subcategoria subcategoria;
+
+  @ManyToOne(cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "bien_id")
   @JsonIgnore
   private Bien bienFiltrado;
+
+  @Convert(converter = EstadoDonacion.class)
+  @Column(name = "estado")
   @JsonIgnore
   private EstadoDonacion estadoActual;
+
+  @ElementCollection
+  @CollectionTable(name ="historial_estados",
+      joinColumns = @JoinColumn(name = "donacion_segementada_id"))
+  @OrderBy("fechaHora")
   @JsonIgnore
   private List<RegistroCambioEstado> historialEstados;
+
   private String justificacionFallo;
   private LocalDate fechaDeEntrega;
-  private MedioContacto medioContactoEntidad;
   private String donanteEmail;
+  private String entidadAsignadaId;
+  private Integer donanteId;
+
+  @Transient
+  private Resultados resultadosPropuestos;
+
+  @Transient
+  private MedioContacto medioContactoEntidad;
+
+  @ManyToOne
+  @JoinTable(name = "propuestas_asignacion",
+    joinColumns = @JoinColumn(name = "donacion_segmentada_id"),
+    inverseJoinColumns = @JoinColumn(name ="entidad_id"))
+  @JsonIgnore
+  private List<EntidadBeneficiaria> entidadesPropuestas = new ArrayList<>();
+
 
   public String getDonanteEmail() {
     return donanteEmail;
@@ -44,8 +94,6 @@ public class DonacionSegmentada {
     this.donanteEmail = donanteEmail;
   }
 
-  private String entidadAsignadaId;
-  private Integer donanteId;
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
     this.id = UUID.randomUUID().toString();
@@ -136,8 +184,7 @@ public class DonacionSegmentada {
     return subcategoria;
   }
 
-  private Resultados resultadosPropuestos;
-
+  //algoritmo de asignación
 
   public Resultados buscarCandidatas(List<EntidadBeneficiaria> entidades, List<AlgoritmoAsignacion> algoritmos) {
     if (!this.estaAlmacen()) {
@@ -153,6 +200,9 @@ public class DonacionSegmentada {
         .toList();
 
     this.resultadosPropuestos = new Resultados(coincidencias, rankings);
+    this.entidadesPropuestas.clear();
+    this.entidadesPropuestas.addAll(resultadosPropuestos.entidadesPropuestas());
+
     return this.resultadosPropuestos;
 
   }
@@ -160,5 +210,8 @@ public class DonacionSegmentada {
   public Resultados getResultadosPropuestos(){
     return this.resultadosPropuestos;
   }
+
+
+
 
 }
