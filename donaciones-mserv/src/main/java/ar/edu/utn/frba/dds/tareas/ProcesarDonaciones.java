@@ -8,7 +8,6 @@ import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
-import org.quartz.SchedulerException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,7 @@ public class ProcesarDonaciones {
 
     List<String> fallidas = new ArrayList<>();
 
-    for (DonacionSegmentada donacion : DonacionesRepository.Instance.findSegmentadasEnDeposito()) {
+    for (DonacionSegmentada donacion : donaciones) {
 
       try {
         donacion.buscarCandidatas(entidades, algoritmos);

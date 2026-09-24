@@ -13,9 +13,7 @@ public class AsignacionDonacionesJob implements Job {
         ProcesarDonaciones.ejecutar();
 
       }catch (Exception e){
-        //throw new JobExecutionException(e);
-        System.err.println("Error al ejecutar el job: " + e.getMessage());
-        e.printStackTrace();
+        throw new JobExecutionException(e);
       }
   }
 }

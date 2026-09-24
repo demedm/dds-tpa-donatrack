@@ -2,6 +2,10 @@ package ar.edu.utn.frba.dds.model.Bienes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Entity;
+
+@Entity
+
 public abstract class  Bien {
   private String Descripcion;
   private String Foto;
