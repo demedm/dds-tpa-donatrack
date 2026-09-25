@@ -92,7 +92,6 @@ class Necesidad {
   - diasRecurrencia: Integer
   - proximoVencimiento: LocalDate
   - peticiones: List<Peticion>
-  - idDonantesParticipantes: List<String>
   + agregarPeticion(Peticion): void
   + getDiasAvencer(): long
   + reiniciarPeriodo(): void
@@ -192,6 +191,8 @@ Bien --> Criterio : genera
 
 ' Necesidades
 Necesidad --> "*" Peticion : contiene
+Peticion ..|> Subcategoria
+
 
 ' Donantes
 Persona --> "1" Identificacion : tiene
