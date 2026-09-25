@@ -96,12 +96,77 @@ public class DonacionController {
     String idDonacion = dto.getDonacionId();
     Long idNecesidad = dto.getNecesidadId(); 
 
+<<<<<<< Updated upstream
     if (idDonacion == null || idNecesidad == null) {
         throw new IllegalArgumentException("Los IDs de donación y necesidad no pueden ser nulos.");
     }
         Donacion donacion = DonacionesRepository.Instance.findById(idDonacion);
         if (donacion == null) {
             throw new NotFoundResponse("No se encontró la donación.");
+=======
+        if (idDonacion == null || idNecesidad == null) {
+            throw new IllegalArgumentException("Los IDs de donación y necesidad no pueden ser nulos.");
+        }
+            Donacion donacion = DonacionesRepository.Instance.findById(idDonacion);
+            if (donacion == null) {
+                throw new NotFoundResponse("No se encontró la donación.");
+            }
+
+            Necesidad necesidad = NecesidadRepository.getInstance().findById(idNecesidad);
+            if (necesidad == null) {
+                throw new NotFoundResponse("No se encontró la necesidad.");
+            }
+
+            List<DonacionSegmentada> nuevasSegmentadasAsignadas = new ArrayList<>();
+
+            EntityManagerHelper.beginTransaction();
+
+            for (DonacionSegmentada segmentada : donacion.getDonaciones()) {
+
+                // Solo procesa las que tengan stock disponible y estén en depósito
+                if (!segmentada.estaAlmacen() || segmentada.getCantidad() <= 0) {
+                    continue;
+                }
+                for (Peticion peticion : necesidad.getPeticiones()) {
+
+                    if (segmentada.getCantidad() <= 0) break; // Si nos quedamos sin stock en esta segmentada
+
+                    if (peticion.getSubclase().equalsIgnoreCase(segmentada.getSubcategoria().getDescripcion()) &&
+                        peticion.getCantidadRecibida() < peticion.getCantidadRequerida()) {
+
+                        int faltantePeticion = peticion.getCantidadRequerida() - peticion.getCantidadRecibida();
+                        int cantidadAAsignar = Math.min(segmentada.getCantidad(), faltantePeticion);
+
+                        segmentada.setCantidad(segmentada.getCantidad() - cantidadAAsignar);
+
+                        //creo la nueva segmentada ASIGNADA
+
+                        DonacionSegmentada asignada = new DonacionSegmentada(cantidadAAsignar,segmentada.getSubcategoria(),segmentada.getBienFiltrado());
+                        asignada.setEntidadAsignadaId(necesidad.getEntidadId());
+                        //asignada.setEstado(EstadoDonacion.ASIGNADA);
+                        asignada.asignar();
+
+                        // Guardar la nueva segmentada en memoria
+                        nuevasSegmentadasAsignadas.add(asignada);
+
+                        peticion.setCantidadRecibida(peticion.getCantidadRecibida() + cantidadAAsignar);
+                    }
+                }
+            }
+        DonacionesRepository.Instance.guardar(donacion);
+
+        EntityManagerHelper.commit();
+
+            List<java.util.Map<String, Object>> respuestaDTO = new ArrayList<>();
+
+        for (DonacionSegmentada ds : nuevasSegmentadasAsignadas) {//Pruebo mapenado, si no me devolvia bucle infito
+            java.util.Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", ds.getId());
+            map.put("cantidad", ds.getCantidad());
+            map.put("subcategoria", ds.getSubcategoria().getDescripcion());
+            map.put("entidadAsignadaId", ds.getEntidadAsignadaId());
+            respuestaDTO.add(map);
+>>>>>>> Stashed changes
         }
 
         Necesidad necesidad = NecesidadRepository.getInstance().findById(idNecesidad);

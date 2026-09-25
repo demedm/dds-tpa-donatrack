@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.model.Bienes.Categoria;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.donantes.Identificacion;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
@@ -74,9 +75,15 @@ public class Bootstrap {
         // Segmentada 2: 5 paquetes de Fideos en depósito
         DonacionSegmentada segFideos = new DonacionSegmentada(5, subcatFideos, fideosBien);
 
+<<<<<<< Updated upstream
         donacion.setDonacionesSegmentadas(List.of(segArroz, segFideos));
 
         DonacionesRepository.Instance.guardar(donacion);
+=======
+		// Segmentada 2: 5 paquetes de Fideos en depósito
+		DonacionSegmentada segFideos = new DonacionSegmentada(5, subcatFideos, fideosBien);
+		donacion.setDonacionesSegmentadas(List.of(segArroz, segFideos));
+>>>>>>> Stashed changes
 
         System.out.println("Donaciones y Segmentadas inicializadas correctamente.");
 
@@ -109,6 +116,7 @@ public class Bootstrap {
 	}
 
 	private static List<Necesidad> crearNecesidades() {
+<<<<<<< Updated upstream
         Necesidad nec1 = new Necesidad();
         nec1.setEntidadId("ent-001");
         nec1.setDescripcion("Comida para invierno");
@@ -130,5 +138,28 @@ public class Bootstrap {
         nec2.agregarPeticion(pet3);
         
         return List.of(nec1, nec2);
+=======
+		Necesidad nec1 = new Necesidad();
+		nec1.setEntidadId("ent-001");
+		nec1.setDescripcion("Comida para invierno");
+		nec1.setTipo(Necesidad.TipoNecesidad.NORMAL);
+
+		Peticion pet1 = new Peticion("ARROZ", 100);
+		Peticion pet2 = new Peticion("FIDEOS", 50);
+		nec1.agregarPeticion(pet1);
+		nec1.agregarPeticion(pet2);
+
+		Necesidad nec2 = new Necesidad();
+		nec2.setEntidadId("ent-002");
+		nec2.setDescripcion("Medicinas semanales");
+		nec2.setTipo(Necesidad.TipoNecesidad.RECURRENTE);
+		nec2.setDiasRecurrencia(7);
+		nec2.setProximoVencimiento(LocalDate.now().minusDays(7));
+
+		Peticion pet3 = new Peticion("ARROZ", 30);
+		nec2.agregarPeticion(pet3);
+
+		return List.of(nec1, nec2);
+>>>>>>> Stashed changes
     }
 }

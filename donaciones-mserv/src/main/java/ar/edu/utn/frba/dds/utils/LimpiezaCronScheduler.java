@@ -18,7 +18,7 @@ public class LimpiezaCronScheduler {
                     .build();
             Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity("limpiezaNecesidadesTrigger", "grupoCron")
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?"))//*/10 * * * * ? Si quier probar, para que se haga cada 10 segundos 
+                    .withSchedule(CronScheduleBuilder.cronSchedule("*/10 * * * * "))//*/10 * * * * ? Si quier probar, para que se haga cada 10 segundos
                     .build();
 
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
