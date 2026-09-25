@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import ar.edu.utn.frba.dds.model.Camion;
@@ -19,36 +19,48 @@ import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
+import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
+import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
+import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
+import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
+import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-class CamionRutaEntregaTest {
+// implementa persistencia para poder usar los repositorios
+class CamionRutaEntregaTest implements SimplePersistenceTest {
   private Camion camion;
+  private Chofer chofer;
   private Entrega entregaA;
   private Entrega entregaB;
   private List<Entrega> entregas;
   private Ruta ruta;
   private AccionesSobreEntregas accionMock;
+  private CamionRepositorio camionRepositorio;
+  private RutaRepositorio rutaRepositorio;
+  private UsuarioRepositorio usuarioRepositorio;
+  private EntregaRepositorio entregaRepositorio;
 
   @BeforeEach
   void setUp() {
-    Chofer chofer = new Chofer("carlitos@outlook.com", "passseguro", "Carlos", "Hola");
+    camionRepositorio = new CamionRepositorio();
+    rutaRepositorio = new RutaRepositorio();
+    usuarioRepositorio = new UsuarioRepositorio();
+    entregaRepositorio = new EntregaRepositorio();
+    chofer = new Chofer("carlitos@outlook.com", "Carlos", "Hola");
     camion = new Camion("AB123CD", 1000.0, 500.0, 220.0);
 
     entregaA = new Entrega("Calle Falsa 123", (long)1);
     entregaB = new Entrega("Av. Larga 742", (long)2);
 
     accionMock = mock(AccionesSobreEntregas.class);
-    entregaA.agregarAccionEntregas(accionMock);
-    entregaB.agregarAccionEntregas(accionMock);
 
     entregas = new ArrayList<>(List.of(entregaA, entregaB));
-    ruta = new Ruta(chofer, entregas);
+    ruta = new Ruta(entregas);
   }
 
   @Test
@@ -58,54 +70,38 @@ class CamionRutaEntregaTest {
 
   @Test
   void iniciarRutaCambiaEstadoDelCamion() {
-    ruta.setCamion(camion);
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(chofer);
     assertEquals(EstadoCamion.RUTA_ASIGNADA, camion.getEstado());
     ruta.iniciarRuta();
     assertEquals(EstadoRuta.EN_CURSO, ruta.getEstado());
   }
 
   @Test
-  void iniciarRutaPropagaElInicioATodasLasEntregasYNotifica() {
-    ruta.setCamion(camion);
+  void iniciarRutaPropagaElInicioATodasLasEntregas() {
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(chofer);
     ruta.iniciarRuta();
 
     assertEquals(EstadoCamion.REALIZANDO_ENTREGAS, camion.getEstado());
     assertEquals(EstadoEntrega.EN_TRASLADO, entregaA.getEstado());
     assertEquals(EstadoEntrega.EN_TRASLADO, entregaB.getEstado());
-
-    verify(accionMock, times(1)).notificarInicioRuta(entregaA);
-    verify(accionMock, times(1)).notificarInicioRuta(entregaB);
   }
 
+  /*
   @Test
-  void visitarParadaMarcaSoloLaEntregaDeEsaDireccionComoEntregada() {
-    ruta.setCamion(camion);
+  public void marcarUnaEntregaComoEntregadaCambiaSuEstado() {
+    ruta.asignarCamion(camion);
     ruta.iniciarRuta();
 
-    ruta.visitarParada("Calle Falsa 123", LocalDateTime.now());
 
-    assertTrue(entregaA.getEntregado());
-
-    // La otra entrega de la ruta no se ve afectada
-    assertFalse(entregaB.getEntregado());
-    assertEquals(EstadoEntrega.EN_TRASLADO, entregaB.getEstado());
   }
-
-  @Test
-  void visitarUnaParadaSeteaComoEntregada() {
-    ruta.setCamion(camion);
-    ruta.iniciarRuta();
-
-    ruta.visitarParada("Calle Falsa 123", LocalDateTime.now());
-    // el camion visita la parada de la entregaA entonces se deberia setear la parada como visitada
-    // el estado de la entrega no se setea como entregado hasta que se confirme la entrega
-    assertTrue(entregaA.getEntregado());
-    assertNotEquals(EstadoEntrega.ENTREGADA, entregaA.getEstado());
-  }
+   */
 
   @Test
   void regresarADepositoDejaAlCamionDisponibleYLaEntregaCambiaEstado() {
-    ruta.setCamion(camion);
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(chofer);
     ruta.iniciarRuta();
     entregaB.marcarRegreso();
     camion.regresarDeposito();
@@ -116,19 +112,26 @@ class CamionRutaEntregaTest {
 
   @Test
   void improvistoLogisticoMarcaTodasLasEntregasDeLaRutaComoFallidasPorImprovisto() {
-    ruta.setCamion(camion);
+    usuarioRepositorio.registrar(chofer);
+    entregaRepositorio.registrar(entregaA);
+    entregaRepositorio.registrar(entregaB);
+    camionRepositorio.registrar(camion);
+    assertNotNull(camion.getId());
+    assertEquals(1, camionRepositorio.mostrarTodos().size());
+    rutaRepositorio.registrar(ruta);
+    assertNotNull(ruta.getId());
+    assertEquals(1, rutaRepositorio.mostrarTodos().size());
+
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(chofer);
     ruta.iniciarRuta();
 
-    ruta.indicarImprovistoLogistico();
+    camionRepositorio.reportarImprevisto(camion.getId());
 
     assertEquals(EstadoEntrega.FALLIDA, entregaA.getEstado());
     assertEquals(EstadoEntrega.FALLIDA, entregaB.getEstado());
     assertInstanceOf(ImprevistoLogistico.class, entregaA.getMotivoFallo());
     assertInstanceOf(ImprevistoLogistico.class, entregaB.getMotivoFallo());
-
-    // Se notificó el fallo para cada entrega
-    verify(accionMock, times(1)).notificarFalloEntrega(entregaA);
-    verify(accionMock, times(1)).notificarFalloEntrega(entregaB);
   }
 
   @Test

@@ -9,11 +9,24 @@
     <persistence-unit name="simple-persistence-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+<<<<<<< HEAD
         <!-- Clases mapeadas (¡No olvides agregar las nuevas que vayamos haciendo!) -->
         <class>ar.edu.utn.frba.dds.model.donantes.Persona</class>
         <class>ar.edu.utn.frba.dds.model.donantes.PersonaFisica</class>
         <class>ar.edu.utn.frba.dds.model.donantes.PersonaJuridica</class>
 
+=======
+        <class>ar.edu.utn.frba.dds.model.Bienes.Bien</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.BienPerecedero</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.BienDuradero</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.Subcategoria</class>
+        <class>ar.edu.utn.frba.dds.model.Donaciones.Donacion</class>
+        <class>ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada</class>
+        <class>ar.edu.utn.frba.dds.model.necesidad.Necesidad</class>
+        <class>ar.edu.utn.frba.dds.model.necesidad.Peticion</class>
+
+        <!-- archivo de configuracion para Hibernate -->
+>>>>>>> 13de755f28e7f883e85daf2e2275cafd0e6c49ea
         <properties>
             <!-- Conexión a MariaDB -->
             <property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver" />
@@ -22,6 +35,7 @@
             <!-- Cambiá "password" por la contraseña de tu base de datos local -->
             <property name="javax.persistence.jdbc.password" value="" />
 
+<<<<<<< HEAD
             <!-- Dialecto y configuración de Hibernate -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect" />
             <property name="hibernate.show_sql" value="true" />
@@ -29,6 +43,27 @@
             <property name="hibernate.use_sql_comments" value="true" />
             <!-- update permite que Hibernate cree y actualice las tablas automáticamente -->
             <property name="hibernate.hbm2ddl.auto" value="update" />
+=======
+            <!--
+            <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver" />
+            <property name="hibernate.connection.url"
+                      value="jdbc:mariadb://localhost:3306/donaciones"/>
+            <property name="hibernate.connection.username" value="root" />
+            <property name="hibernate.connection.password" value="" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
+            -->
+
+            <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
+            <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:app-db"/>
+            <property name="hibernate.connection.username" value="sa"/>
+            <property name="hibernate.connection.password" value=""/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="use_sql_comments" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+>>>>>>> 13de755f28e7f883e85daf2e2275cafd0e6c49ea
         </properties>
     </persistence-unit>
 

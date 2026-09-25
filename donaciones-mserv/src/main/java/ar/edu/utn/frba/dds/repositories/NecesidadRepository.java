@@ -36,13 +36,27 @@ public class NecesidadRepository {
         return em.createQuery("FROM Necesidad", Necesidad.class).getResultList();
     }
 
+  public List<Necesidad> findAllRecurrentesActivasVencidas() {
+    return em.createQuery(
+        "FROM Necesidad n WHERE n.tipo = :tipo AND n.estado = :estado AND n.proximoVencimiento < CURRENT_DATE",Necesidad.class)
+      .setParameter("tipo", Necesidad.TipoNecesidad.RECURRENTE)
+      .setParameter("estado", "en_preparacion")
+      .getResultList();
+}
+  
   public List<Necesidad> findAllRecurrentes() {
     return em.createQuery(
-        "FROM Necesidad n WHERE n.tipo = :tipo", 
-        Necesidad.class)
+        "FROM Necesidad n WHERE n.tipo = :tipo",Necesidad.class)
       .setParameter("tipo", TipoNecesidad.RECURRENTE)
       .getResultList();
-  }
+}
+  // public List<Necesidad> findAllVencidas() {
+  //   return em.createQuery(
+  //       "FROM Necesidad n WHERE n.tipo = :tipo && n.estaVencida()", 
+  //       Necesidad.class)
+  //     .setParameter("tipo", TipoNecesidad.RECURRENTE)
+  //     .getResultList();
+  // }
 
   public void eliminar(Long id) {
     em.getTransaction().begin();

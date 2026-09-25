@@ -23,7 +23,7 @@ public class MatchmakingController {
   }
 
   public Resultados obtenerRanking(Context ctx){
-    String idSegmentada = ctx.pathParam("id");
+    Long idSegmentada = ctx.pathParamAsClass("id", Long.class).get();
     DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
     if(!donacion.estaAlmacen()){
       throw new NotFoundResponse("La donación no se encuentra EN_DEPOSITO");
@@ -48,7 +48,7 @@ public class MatchmakingController {
 
     AsignarDonacionDTO dto = ctx.bodyAsClass(AsignarDonacionDTO.class);
 
-    String idDonacion = dto.getDonacionSegmentadaId();
+    Long idDonacion = dto.getDonacionSegmentadaId();
     String idEntidad = dto.getEntidadBeneficiariaId();
 
     DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(idDonacion);

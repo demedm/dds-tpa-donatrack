@@ -14,13 +14,11 @@ public abstract class Usuario {
   private Long id;
 
   private String email;
-  private String password;
 
   protected Usuario() {}
 
-  protected Usuario(String email, String password) {
+  protected Usuario(String email) {
     this.email = email;
-    this.password = password;
   }
 
   public Long getId() {
@@ -33,14 +31,6 @@ public abstract class Usuario {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 
 }

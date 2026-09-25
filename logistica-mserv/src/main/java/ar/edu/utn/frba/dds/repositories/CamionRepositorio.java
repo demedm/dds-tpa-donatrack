@@ -1,11 +1,13 @@
 package ar.edu.utn.frba.dds.repositories;
 
+import ar.edu.utn.frba.dds.exceptions.CamionNotFoundException;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
-import ar.edu.utn.frba.dds.model.EstadoRuta;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.Ubicacion;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+
+import javax.persistence.EntityTransaction;
 import java.util.List;
 
 public class CamionRepositorio implements WithSimplePersistenceUnit {
@@ -21,8 +23,45 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
     }
   }
 
+  private boolean iniciarTransaccion() {
+    if (!entityManager().getTransaction().isActive()) {
+      entityManager().getTransaction().begin();
+      return true;
+    }
+    return false;
+  }
+
+  private void commit(boolean transaccionPropia) {
+    if (transaccionPropia) {
+      entityManager().getTransaction().commit();
+    }
+  }
+
   public void registrar(Camion camion) {
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
     entityManager().persist(camion);
+
+    commit(transaccionPropia);
+  }
+
+  public void eliminarCamion(Camion camion) {
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
+    entityManager().remove(camion);
+
+    commit(transaccionPropia);
+  }
+
+  public Camion actualizar(Camion camion) {
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
+    Camion actualizado = entityManager().merge(camion);
+    commit(transaccionPropia);
+    return actualizado;
   }
 
   @SuppressWarnings("unchecked")
@@ -33,17 +72,25 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
   }
 
   public Camion buscarPorId(Long id) {
-    return entityManager()
+    var camion = entityManager()
         .createQuery("from Camion c where c.id = :id", Camion.class)
         .setParameter("id", id)
         .getResultList().stream().findFirst().orElse(null);
+    if (camion == null) {
+      throw new CamionNotFoundException(id);
+    }
+    return camion;
   }
 
   public Camion buscarPorPatente(String patente) {
-    return entityManager()
+    var camion = entityManager()
         .createQuery("from Camion c where c.patente = :patente", Camion.class)
         .setParameter("patente", patente)
         .getResultList().stream().findFirst().orElse(null);
+    if (camion == null) {
+      throw new CamionNotFoundException(patente);
+    }
+    return camion;
   }
 
   @SuppressWarnings("unchecked")
@@ -61,49 +108,10 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
         .getResultList().stream().findFirst().orElse(null);
   }
 
-  /*
-  // devuelve false si no se pudo asignar
-  public boolean asignarRutaACamion(Ruta ruta) {
-    var patenteCamion = ruta.getPatenteAsignada();
-    var camionAsignado = allCamiones.stream()
-        .filter(camion -> camion.getPatente() == patenteCamion)
-        .findFirst().orElse(null);
-
-    if(camionAsignado != null && camionAsignado.asignarRuta(ruta)) {
-      // notificar entidades que se inicio la ruta: pendiente
-      return true;
-    }
-    return false;
+  public EstadoCamion buscarEstadoPorId(Long id) {
+    return entityManager()
+        .createQuery("select c.estado from Camion c where c.id = :id", EstadoCamion.class)
+        .setParameter("id", id)
+        .getSingleResult();
   }
-  public Camion buscarCamionPorPatente(String patente) {
-    return this.allCamiones.stream()
-        .filter(camion -> camion.getPatente().equals(patente))
-        .findFirst()
-        .orElse(null);
-  }
-
-  public List<Ruta> asignarRutasACamiones(List<RutaComponenteExterno> rutasAsignadas) {
-    List<Ruta> rutas = rutasAsignadas.stream().map(ruta ->
-        new RutaAdapter().rutaExternaToRuta(ruta)).toList();
-    List<Ruta> rutasNoAsignadas = new ArrayList<>();
-
-    rutas.forEach(ruta -> {
-      Camion camion = allCamiones.stream()
-          .filter(c -> c.getPatente().equals(ruta.getPatenteAsignada()))
-          .findFirst()
-          .orElse(null);
-
-      if(camion == null || !camion.asignarRuta(ruta)) {
-        rutasNoAsignadas.add(ruta);
-      }
-    });
-    return rutasNoAsignadas;
-  }
-  // Asumiendo que tu lista se llama "camiones". Si se llama distinto
-  // (ej: "listaCamiones"), cambialo en el return.
-  public List<Camion> getCamiones() {
-    return this.allCamiones;
-  }
-  */
-
 }

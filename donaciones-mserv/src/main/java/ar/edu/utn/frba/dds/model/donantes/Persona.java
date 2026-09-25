@@ -49,11 +49,16 @@ public abstract class Persona implements Destinatario{
   }
 
 
+<<<<<<< HEAD
 
   public Persona() {}
 
   public Long getId() {
     return id;
+=======
+  public Persona() {
+    this.ultimaActividad = LocalDate.now();
+>>>>>>> 13de755f28e7f883e85daf2e2275cafd0e6c49ea
   }
 
   public void setNombreIdentificador(String nombre) {

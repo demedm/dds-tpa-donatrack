@@ -65,11 +65,18 @@ public class DonanteRepository implements WithSimplePersistenceUnit {
   }
 
   public List<Persona> buscarInactivosDesde(LocalDate fecha) {
+<<<<<<< HEAD
     // HQL para comparar fechas directo en la base de datos
     return entityManager()
         .createQuery("SELECT p FROM Persona p WHERE p.ultimaActividad < :fecha", Persona.class)
         .setParameter("fecha", fecha)
         .getResultList();
+=======
+    return registroDonantes.stream()
+        .filter(p -> p.getUltimaActividad() != null)
+        .filter(p -> p.getUltimaActividad().isBefore(fecha))
+        .toList();
+>>>>>>> 13de755f28e7f883e85daf2e2275cafd0e6c49ea
   }
 
   public List<Persona> getRegistroDonantes() {

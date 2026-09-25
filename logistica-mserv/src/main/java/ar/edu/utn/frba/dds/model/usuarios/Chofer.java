@@ -13,8 +13,8 @@ public class Chofer extends Usuario {
 
   public Chofer() {}
 
-  public Chofer(String email, String pass, String nombre, String apellido) {
-    super(email, pass);
+  public Chofer(String email, String nombre, String apellido) {
+    super(email);
     this.nombre = nombre;
     this.apellido = apellido;
   }

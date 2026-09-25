@@ -28,23 +28,43 @@ public class CambioEstadoDto {
     this.motivoFalla = motivoFalla;
   }
 
-  public boolean isReplanificable() { return replanificable; }
+  public boolean isReplanificable() {
+    return replanificable;
+  }
 
-  public void setReplanificable(boolean replanificable) { this.replanificable = replanificable; }
+  public void setReplanificable(boolean replanificable) {
+    this.replanificable = replanificable;
+  }
 
-  public String getRutaId() { return rutaId; }
+  public String getRutaId() {
+    return rutaId;
+  }
 
-  public void setRutaId(String rutaId) { this.rutaId = rutaId; }
+  public void setRutaId(String rutaId) {
+    this.rutaId = rutaId;
+  }
 
-  public String getUrlMapa() { return urlMapa; }
+  public String getUrlMapa() {
+    return urlMapa;
+  }
 
-  public void setUrlMapa(String urlMapa) { this.urlMapa = urlMapa; }
+  public void setUrlMapa(String urlMapa) {
+    this.urlMapa = urlMapa;
+  }
 
-  public String getFechaHora() { return fechaHora; }
+  public String getFechaHora() {
+    return fechaHora;
+  }
 
-  public void setFechaHora(String fechaHora) { this.fechaHora = fechaHora; }
+  public void setFechaHora(String fechaHora) {
+    this.fechaHora = fechaHora;
+  }
 
-  public String getPatenteCamion() { return patenteCamion; }
+  public String getPatenteCamion() {
+    return patenteCamion;
+  }
 
-  public void setPatenteCamion(String patenteCamion) { this.patenteCamion = patenteCamion; }
+  public void setPatenteCamion(String patenteCamion) {
+    this.patenteCamion = patenteCamion;
+  }
 }

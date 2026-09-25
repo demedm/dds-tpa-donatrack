@@ -5,20 +5,48 @@ import ar.edu.utn.frba.dds.model.Bienes.Criterio;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "donaciones")
+
 public class Donacion {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long Id;
+
   private String descripcionGeneral;
-  private List<DonacionSegmentada> donacionesSegmentadas;
+
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "donacion_id")
+  private List<DonacionSegmentada> donacionesSegmentadas = new ArrayList<>();
+
+  @Transient
+  /*
+  luego pasarl oa
+  @ManyToOne @JoinColumn(name ="donante_id")
+  cuando la persona sea @Entity
+   */
   @JsonIgnore
   private Persona donante;
-  private String id;
 
+  protected Donacion() {}
 
   public Donacion(String descripcionGeneral, List<Bien> bienes, Persona donante) {
 
@@ -28,16 +56,16 @@ public class Donacion {
     this.descripcionGeneral = descripcionGeneral;
     this.donacionesSegmentadas = this.segmentar(bienes);
     this.donante = donante;
-    this.id = UUID.randomUUID().toString();
   }
 
   public void agregarDonaciones(DonacionSegmentada donacionSegmentada){
     donacionesSegmentadas.add(donacionSegmentada);
   }
 
-  public String getId() {
-    return id;
+  public Long getId() {
+    return Id;
   }
+
   @JsonIgnore
   public Persona getDonante(){
     return donante;
@@ -47,8 +75,9 @@ public class Donacion {
     return donacionesSegmentadas;
   }
 
-  public void setDonacionesSegmentadas(List <DonacionSegmentada> donacionesSegmentadasAct){
-    donacionesSegmentadas = donacionesSegmentadasAct;
+  public void setDonacionesSegmentadas(List <DonacionSegmentada> nuevas){
+    this.donacionesSegmentadas.clear();
+    this.donacionesSegmentadas.addAll(nuevas);
   }
 
 
@@ -82,8 +111,5 @@ public class Donacion {
     this.descripcionGeneral = descripcionGeneral;
   }
 
-  public void setId(String id){
-    this.id=id;
-  }
 
 }

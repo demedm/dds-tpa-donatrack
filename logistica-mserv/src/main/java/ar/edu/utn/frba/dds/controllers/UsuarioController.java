@@ -1,41 +1,59 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.model.usuarios.Usuario;
+import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
+import ar.edu.utn.frba.dds.scripts.dto.ConfirmacionEntregaDto;
 import io.javalin.http.Context;
 
 public class UsuarioController {
-  public Usuario showUsuario(Context ctx) {
-    var idUsuario = (long) Integer.parseInt(ctx.pathParam("id"));
+  public void showUsuario(Context ctx) {
+    var idUsuario = Long.parseLong(ctx.pathParam("id"));
     if (idUsuario != 0) {
       ctx.status(400);
-      return null;
+      return;
     }
     var usuario = UsuarioRepositorio.Instance.buscarPorId(idUsuario);
     if (usuario == null) {
       ctx.status(404);
-      return null;
+      return;
     }
     ctx.status(200);
-    return usuario;
+    ctx.json(usuario);
   }
 
   public void confirmarEntrega(Context ctx) {
-    var idUsuario = (long) Integer.parseInt(ctx.pathParam("idUsuario"));
-    var idEntrega = (long) Integer.parseInt(ctx.pathParam("idEntrega"));
-    var urlfoto = ctx.body();
-    if (urlfoto.isEmpty()) {
-      ctx.status(400);
-      return;
-    }
+    var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
+    var idEntrega = Long.parseLong(ctx.pathParam("id"));
+    var confirmacion = ctx.bodyAsClass(ConfirmacionEntregaDto.class);
+
     var entidad = UsuarioRepositorio.Instance.buscarEntidadBeneficiariaPorId(idUsuario);
-    if (entidad == null) {
-      ctx.status(404);
-      return;
-    }
-    UsuarioRepositorio.Instance.confirmarEntrega(entidad.getId(), idEntrega, urlfoto);
+
+    var entrega = UsuarioRepositorio.Instance.confirmarEntrega(entidad, idEntrega, confirmacion);
     ctx.status(200);
-    ctx.json(entidad);
+    ctx.json(entrega);
+  }
+
+  public void marcarEntregaComoNoRecepcionada(Context ctx) {
+    var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
+    var idEntrega = Long.parseLong(ctx.pathParam("id"));
+    var entidad = UsuarioRepositorio.Instance.buscarEntidadBeneficiariaPorId(idUsuario);
+    var entrega = UsuarioRepositorio.Instance.noRecepcionaEntrega(entidad, idEntrega);
+    ctx.status(200);
+    ctx.json(entrega);
+  }
+
+  public void iniciarRuta(Context ctx) {
+    var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
+    var idRuta = Long.parseLong(ctx.pathParam("id"));
+    var chofer = UsuarioRepositorio.Instance.buscarChoferPorId(idUsuario);
+    var ruta = RutaRepositorio.Instance.iniciarRuta(chofer, idRuta);
+    if (ruta == null) {
+      ctx.status(400);
+    } else {
+      ctx.status(200);
+      ctx.json(ruta);
+    }
   }
 
 }

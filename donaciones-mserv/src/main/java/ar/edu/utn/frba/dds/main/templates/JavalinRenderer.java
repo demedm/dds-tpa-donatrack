@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.server.templates;
+package ar.edu.utn.frba.dds.main.templates;
 
 import io.javalin.http.Context;
 import io.javalin.rendering.FileRenderer;

@@ -14,7 +14,7 @@ public class CallbackController {
   List<RequestPlanificacionDto> donacionesAplanificar = new ArrayList<>();
 
   public void recibirDonacion(Context ctx) {
-    Long idDonacion = (long) Integer.parseInt(ctx.pathParam("id"));
+    Long idDonacion = Long.parseLong(ctx.pathParam("id"));
     DonacionDto donacion = ctx.bodyAsClass(DonacionDto.class);
 
     RequestPlanificacionDto replanificar = new RequestPlanificacionDto();
@@ -30,7 +30,7 @@ public class CallbackController {
     ctx.json(replanificar);
   }
 
-  public void solicitudReplanificacion(Entrega entrega) {
+  public RequestPlanificacionDto solicitudReplanificacion(Entrega entrega) {
     RequestPlanificacionDto planificar = new RequestPlanificacionDto();
     planificar.setIdDonacion(entrega.getDonacionId());
     planificar.setDireccion(entrega.getDireccion());
@@ -38,27 +38,14 @@ public class CallbackController {
     if (entrega.getFechaVencimiento() != null) {
       planificar.setFechaVencimiento(entrega.getFechaVencimiento());
     }
+    return planificar;
   }
 
-  /*
   public void recibirPlanificacion(Context ctx) {
-    ResponsePlanificacionDTO respuesta = ctx.bodyAsClass(ResponsePlanificacionDTO.class);
+    ResponsePlanificacionDto respuesta = ctx.bodyAsClass(ResponsePlanificacionDto.class);
 
-    List<Ruta> nuevasRutas = new ArrayList<>();
-    respuesta.getRutasPlanificadas().forEach(rutaPlanificada -> {
-      var patente = rutaPlanificada.getPatenteCamion();
-      var entregas = rutaPlanificada.getDestinos().stream().map(destino ->
-          new Entrega(destino.getDireccion(), destino.getDonacionId())).toList();
-      var ruta = new Ruta(patente, entregas);
-      nuevasRutas.add(ruta);
-    });
-
-    // por ahora, esta es la replanificacion, no se esta notificando de que no se realizo la entrega
-    donacionesAPlanificar.addAll(respuesta.getDonacionesNoPlanificadas());
-
-    RutaRepositorio.Instance.addRutasPlanificadas(nuevasRutas);
+    RutaRepositorio.Instance.recibirRespuestaPlanificacion(respuesta);
     ctx.status(200); // OK
   }
-  */
 
 }
