@@ -6,14 +6,39 @@ import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 
 import java.time.LocalDate;
 import ar.edu.utn.frba.dds.model.notificaciones.Destinatario;
+import javax.persistence.*;
 
+
+@Entity
+@Table(name = "persona")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_persona")
 public abstract class Persona implements Destinatario{
-  private String nombreIdentificador; // nombre completo - razon social
-  private Mail mail;
-  private Telefono telefono;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Column(name = "nombre_identificador")
+  private String nombreIdentificador;
+
+  @Embedded
   private Identificacion identificacion;
+
+  @Embedded
+  private Mail mail;
+
+  @Embedded
+  private Telefono telefono;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "tipo_persona_enum")
   private TipoPersona tipoPersona;
-  MedioContacto medioPreferido;
+
+  @Column(name = "ultima_actividad")
+  private LocalDate ultimaActividad;
+
+  @Transient // JPA no puede persistir interfaces nativamente. Conviene guardar un Enum (ej: MAIL, TELEFONO)
+  private MedioContacto medioPreferido;
 
   public LocalDate getUltimaActividad() {
     return ultimaActividad;
@@ -23,7 +48,9 @@ public abstract class Persona implements Destinatario{
     this.ultimaActividad = ultimaActividad;
   }
 
-  LocalDate ultimaActividad;
+  public Long getId() {
+    return id;
+  }
 
   public Persona() {
     this.ultimaActividad = LocalDate.now();

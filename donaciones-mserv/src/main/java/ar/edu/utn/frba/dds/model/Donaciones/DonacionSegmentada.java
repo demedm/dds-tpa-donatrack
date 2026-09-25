@@ -18,6 +18,9 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.UUID;
+
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -36,6 +39,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "donaciones_segmentadas")
+
 
 public class DonacionSegmentada {
   @Id

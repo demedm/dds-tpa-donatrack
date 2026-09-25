@@ -1,12 +1,24 @@
 package ar.edu.utn.frba.dds.model.donantes;
+import javax.persistence.*;
 
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 
+@Entity
+@DiscriminatorValue("FISICA")
 public class PersonaFisica extends Persona {
+
+  @Column(name = "apellido")
   private String apellido;
+
+  @Column(name = "edad")
   private int edad;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "genero")
   private Genero genero;
+
+  @Column(name = "direccion_actual")
   private String direccionActual;
 
   public void setGenero(Genero genero) {
