@@ -10,6 +10,7 @@ import ar.edu.utn.frba.dds.repositories.*;
 import java.util.List;
 import java.util.Map;
 
+import ar.edu.utn.frba.dds.tareas.ProcesarDonaciones;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
@@ -25,12 +26,14 @@ public class MatchmakingController {
   public Resultados obtenerRanking(Context ctx){
     Long idSegmentada = ctx.pathParamAsClass("id", Long.class).get();
     DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
+
+    if(donacion == null){
+      throw new NotFoundResponse("DonacionSegmentada no encontrada");
+    }
+
     if(!donacion.estaAlmacen()){
       throw new NotFoundResponse("La donación no se encuentra EN_DEPOSITO");
     }
-    if(donacion == null){
-      throw new NotFoundResponse("DonacionSegmentada no encontrada");
-    };
 
     List<EntidadBeneficiaria> entidades = EntidadRepository.Instance.obtenerEntidades();
 
@@ -56,7 +59,8 @@ public class MatchmakingController {
     if(segmentada == null){
       throw new NotFoundResponse("No se encontro el donacion segmentada con ese ID");
     }
-    if(segmentada.estaAlmacen()){
+
+    if(!segmentada.estaAlmacen()){
       throw new NotFoundResponse("Solo se puede asignar donaciones en estado EN_DEPOSITO");
     }
 
@@ -73,7 +77,12 @@ public class MatchmakingController {
   }
 
   public Map<String, Object> procesarPendientes(Context ctx){
+    ProcesarDonaciones.ejecutar();
+    return Map.of("resultado","ok");
+
+    /*
     List<DonacionSegmentada> enDeposito = DonacionesRepository.Instance.findSegmentadasEnDeposito();
+
     List<EntidadBeneficiaria> entidades = EntidadRepository.Instance.obtenerEntidades();
 
     int procesadas = 0;
@@ -88,6 +97,7 @@ public class MatchmakingController {
     }
 
     return Map.of("Procesadas",procesadas,"total",enDeposito.size());
+    */
   }
 
   private void validarTokenDeJob(Context ctx){
