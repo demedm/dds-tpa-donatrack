@@ -3,12 +3,14 @@ package ar.edu.utn.frba.dds.repositories;
 import ar.edu.utn.frba.dds.dto.CambioEstadoDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.http.Context;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DonacionesRepository {
+public class DonacionesRepository implements WithSimplePersistenceUnit {
+
     public static DonacionesRepository Instance = new DonacionesRepository();
     public List<Donacion> donaciones = new ArrayList<>();
 
@@ -17,7 +19,6 @@ public class DonacionesRepository {
     public Donacion guardar(Donacion donacion) {
 
         Donacion existente = findById(donacion.getId());
-
         if(existente == null){
             donaciones.add(donacion);
         } else {
@@ -63,22 +64,3 @@ public class DonacionesRepository {
     }
 
 }
-
-
-// public  ResultadoBusqueda buscarProducto(String subcategoria, int cantidad){
-//     List<Bien> bienesFiltrrados = donaciones.stream()
-//         .flatMap(d->d.getBienes().stream())
-//         .filter(b->b.getSubcategoria().equals(subcategoria))
-//         .collect(Collectors.toList());
-
-//     List<Bien> bienesAsignados = new ArrayList<>();
-//     int restante = cantidad;
-//     for (Bien bien : bienesFiltrrados) {
-//     if (restante == 0) break;
-//     int aRestar = Math.min(bien.getCantidad(), restante);
-//     bien.copia(aRestar, EstadoDonacion.ASIGNACION_REALIZADA);
-//     bien.setCantidad(bien.getCantidad() - aRestar);
-//     restante -= aRestar;
-//     }
-//     return new ResultadoBusqueda(restante,bienesAsignados);
-// }

@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class Server {
   public void start() throws IOException, InterruptedException {
-    Bootstrap.init();
+    //Bootstrap.init();
     var app = Javalin.create(config -> {
       config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
         mapper.registerModule(new JavaTimeModule());
