@@ -107,8 +107,9 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
 
     if (!rutasNoIniciadas.isEmpty()) {
       rutas = rutasNoIniciadas.stream().filter(ruta -> ruta.getChofer() != null).toList();
+    } else if (!rutasEnCurso.isEmpty()) {
+      rutas.addAll(rutasEnCurso);
     }
-    rutas.addAll(rutasEnCurso);
     return rutas;
   }
 

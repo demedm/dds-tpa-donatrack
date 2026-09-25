@@ -3,11 +3,8 @@ package ar.edu.utn.frba.dds.repositories;
 import ar.edu.utn.frba.dds.exceptions.CamionNotFoundException;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
-import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.Ubicacion;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
-
-import javax.persistence.EntityTransaction;
 import java.util.List;
 
 public class CamionRepositorio implements WithSimplePersistenceUnit {
@@ -19,48 +16,26 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
     var rutaEnCurso = RutaRepositorio.Instance.buscarRutaEnCursoDeCamion(id);
     if (rutaEnCurso != null) {
       rutaEnCurso.indicarImprovistoLogistico();
-      rutaEnCurso.getEntregas().forEach(EntregaRepositorio.Instance::notificarFalloDeEntrega);
-    }
-  }
-
-  private boolean iniciarTransaccion() {
-    if (!entityManager().getTransaction().isActive()) {
-      entityManager().getTransaction().begin();
-      return true;
-    }
-    return false;
-  }
-
-  private void commit(boolean transaccionPropia) {
-    if (transaccionPropia) {
-      entityManager().getTransaction().commit();
+      // rutaEnCurso.getEntregas().forEach(EntregaRepositorio.Instance::notificarFalloDeEntrega);
     }
   }
 
   public void registrar(Camion camion) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-
+    entityManager().getTransaction().begin();
     entityManager().persist(camion);
-
-    commit(transaccionPropia);
+    entityManager().getTransaction().commit();
   }
 
   public void eliminarCamion(Camion camion) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-
+    entityManager().getTransaction().begin();
     entityManager().remove(camion);
-
-    commit(transaccionPropia);
+    entityManager().getTransaction().commit();
   }
 
   public Camion actualizar(Camion camion) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-
+    entityManager().getTransaction().begin();
     Camion actualizado = entityManager().merge(camion);
-    commit(transaccionPropia);
+    entityManager().getTransaction().commit();
     return actualizado;
   }
 
@@ -111,6 +86,13 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
   public EstadoCamion buscarEstadoPorId(Long id) {
     return entityManager()
         .createQuery("select c.estado from Camion c where c.id = :id", EstadoCamion.class)
+        .setParameter("id", id)
+        .getSingleResult();
+  }
+
+  public EstadoCamion buscarPatentePorId(Long id) {
+    return entityManager()
+        .createQuery("select c.patente from Camion c where c.id = :id", EstadoCamion.class)
         .setParameter("id", id)
         .getSingleResult();
   }

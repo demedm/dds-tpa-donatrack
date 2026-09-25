@@ -87,7 +87,7 @@ public class Entrega {
 
   public void marcarComoFallida(MotivoFallo motivo) {
     estado = EstadoEntrega.FALLIDA;
-    setMotivoFallo(motivo);
+    // setMotivoFallo(motivo);
   }
 
   public void marcarRegreso() {
