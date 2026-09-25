@@ -61,7 +61,7 @@ public class Peticion {
   }
 
     public Integer getCantidadRequerida(){
-    return cantidadRequerida -cantidadRecibida;
+    return cantidadRequerida;
   }
 
   public boolean estaCubierta(){

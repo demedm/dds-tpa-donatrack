@@ -130,7 +130,7 @@ public class DonacionSegmentada {
   }
   @JsonIgnore
   public boolean estaAlmacen(){
-    return estadoActual instanceof EnDeposito;
+    return estadoActual == null ||estadoActual instanceof EnDeposito;
   }
 
   public void setJustificacionFallo(String justificacion) {
