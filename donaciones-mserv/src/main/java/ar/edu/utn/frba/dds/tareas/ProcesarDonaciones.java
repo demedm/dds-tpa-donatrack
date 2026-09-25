@@ -8,11 +8,12 @@ import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProcesarDonaciones {
+public class ProcesarDonaciones implements WithSimplePersistenceUnit {
 
   private static final List<AlgoritmoAsignacion> ALGORITMOS =
     List.of(new AlgoritmoDeCompatibilidad(), new AlgoritmoSubatendidos());
@@ -22,11 +23,27 @@ public class ProcesarDonaciones {
     ejecutar();
   }
 
+  //
+
   public static void ejecutar() {
 
-    procesar(DonacionesRepository.Instance.findSegmentadasEnDeposito(),
-        EntidadRepository.Instance.obtenerEntidades(),
-        ALGORITMOS);
+    List<RuntimeException> errores = new ArrayList<>();
+
+    new ProcesarDonaciones().withTransaction(() -> {
+      try {
+        procesar(DonacionesRepository.Instance.findSegmentadasEnDeposito(),
+            EntidadRepository.Instance.obtenerEntidades(),
+            ALGORITMOS);
+      } catch (RuntimeException e) {
+        //se guarda el error para lanzarlo despues del commit
+        errores.add(e);
+      }
+
+      if(!errores.isEmpty()) {
+        throw errores.get(0);
+      }
+
+    });
 
   }
 

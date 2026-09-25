@@ -1,13 +1,10 @@
 package ar.edu.utn.frba.dds.model.Donaciones;
 
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
 import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
-import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
-import ar.edu.utn.frba.dds.model.Estado.Entregada;
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
@@ -28,10 +25,8 @@ import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -61,10 +56,10 @@ public class DonacionSegmentada {
 
   @ElementCollection
   @CollectionTable(name ="historial_estados",
-      joinColumns = @JoinColumn(name = "donacion_segementada_id"))
+      joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
   @OrderBy("fechaHora")
   @JsonIgnore
-  private List<RegistroCambioEstado> historialEstados;
+  private List<RegistroCambioEstado> historialEstados = new ArrayList<>();
 
   private String justificacionFallo;
   private LocalDate fechaDeEntrega;
@@ -78,13 +73,16 @@ public class DonacionSegmentada {
   @Transient
   private MedioContacto medioContactoEntidad;
 
-  @ManyToOne
-  @JoinTable(name = "propuestas_asignacion",
-    joinColumns = @JoinColumn(name = "donacion_segmentada_id"),
-    inverseJoinColumns = @JoinColumn(name ="entidad_id"))
+  @ElementCollection
+  @CollectionTable(name = "propuestas_asignacion",
+    joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
+  @Column(name ="entidad_id")
   @JsonIgnore
-  private List<EntidadBeneficiaria> entidadesPropuestas = new ArrayList<>();
+  private List<String> idsEntidadesPropuestas = new ArrayList<>();
 
+  public List<String> getIdsEntidadesPropuestas() {
+    return idsEntidadesPropuestas;
+  }
 
   public String getDonanteEmail() {
     return donanteEmail;
@@ -200,8 +198,11 @@ public class DonacionSegmentada {
         .toList();
 
     this.resultadosPropuestos = new Resultados(coincidencias, rankings);
-    this.entidadesPropuestas.clear();
-    this.entidadesPropuestas.addAll(resultadosPropuestos.entidadesPropuestas());
+    this.idsEntidadesPropuestas.clear();
+    this.idsEntidadesPropuestas.addAll(
+        resultadosPropuestos.entidadesPropuestas().stream()
+            .map(EntidadBeneficiaria::getId)
+            .toList());
 
     return this.resultadosPropuestos;
 

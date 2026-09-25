@@ -20,19 +20,21 @@ import javax.persistence.Table;
 public abstract class  Bien {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
-  private String Descripcion;
-  private String Foto;
+  private String descripcion;
+  private String foto;
 
   @Embedded
   @JsonIgnore
   private Subcategoria subCategoria;
 
+  protected Bien() {}
+
   public Bien(Subcategoria subCategoria, String foto, String descripcion) {
     this.subCategoria = subCategoria;
-    Foto = foto;
-    Descripcion = descripcion;
+    this.foto = foto;
+    this.descripcion = descripcion;
   }
 
   @JsonIgnore

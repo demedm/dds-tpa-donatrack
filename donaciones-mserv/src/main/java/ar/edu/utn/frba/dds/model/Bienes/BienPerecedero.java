@@ -16,6 +16,8 @@ public class BienPerecedero extends Bien {
   @Column(name = "fecha_vencimiento")
   private Date fechaVencimiento;
 
+  protected BienPerecedero() {}
+
   public BienPerecedero(Subcategoria subCategoria, String foto, String descripcion, Date fechaVencimiento) {
     super(subCategoria, foto, descripcion);
     this.fechaVencimiento = fechaVencimiento;

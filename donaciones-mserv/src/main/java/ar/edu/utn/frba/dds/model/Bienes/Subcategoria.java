@@ -17,6 +17,8 @@ public class Subcategoria {
   @Column(name ="subcategoria")
   private String descripcion;
 
+  protected Subcategoria() {}
+
   public Subcategoria(Categoria categoria, String descripcion) {
     this.categoria = categoria;
     this.descripcion = descripcion;
