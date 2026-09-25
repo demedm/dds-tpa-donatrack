@@ -16,7 +16,7 @@ import ar.edu.utn.frba.dds.scripts.dto.ResponsePlanificacionDto;
 import ar.edu.utn.frba.dds.scripts.dto.RutaDto;
 import ar.edu.utn.frba.dds.scripts.dto.RutaPlanificadaDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
-
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,10 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   public static final RutaRepositorio Instance = new RutaRepositorio();
   private PlanificacionRutas planificadorRutas;
   List<AccionesSobreRutas> observers = new ArrayList<>();
+  private EntityManager em;
 
   public RutaRepositorio() {
+    em = this.em = EntityManagerHelper.getEntityManager();
     agregarObserver(new LoggearRuta());
     agregarObserver(new ReplanificarRuta());
     agregarObserver(new AsignarCamion());
@@ -42,23 +44,9 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     observers.remove(observer);
   }
 
-  private boolean iniciarTransaccion() {
-    if (!entityManager().getTransaction().isActive()) {
-      entityManager().getTransaction().begin();
-      return true;
-    }
-    return false;
-  }
-
-  private void commit(boolean transaccionPropia) {
-    if (transaccionPropia) {
-      entityManager().getTransaction().commit();
-    }
-  }
-
   public Ruta iniciarRuta(Chofer chofer, Long idRuta) {
     EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
+    em.getTransaction().begin();
     Ruta ruta = buscarPorId(idRuta);
     if (!Objects.equals(chofer.getId(), ruta.getChofer().getId())) {
       return null;
@@ -66,30 +54,24 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     ruta.iniciarRuta(); // cambia estado de Ruta y de cada Entrega
     observers.forEach(observer -> observer.actualizarRuta(ruta, true));
     ruta.getEntregas().forEach(EntregaRepositorio.Instance::notificarInicioDeEntrega);
-    commit(transaccionPropia);
+    em.getTransaction().commit();
     return ruta;
   }
 
   public void registrar(Ruta ruta) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-
-    entityManager().persist(ruta);
-
-    commit(transaccionPropia);
+    em.getTransaction().begin();
+    em.persist(ruta);
+    em.getTransaction().commit();
   }
 
   public void eliminarRuta(Ruta ruta) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-
-    entityManager().remove(ruta);
-
-    commit(transaccionPropia);
+    em.getTransaction().begin();
+    em.remove(ruta);
+    em.getTransaction().commit();
   }
 
   private void eliminar(Ruta ruta) {
-    entityManager().remove(ruta);
+    em.remove(ruta);
   }
 
   @SuppressWarnings("unchecked")
@@ -215,8 +197,7 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public Ruta actualizarRuta(Ruta ruta, RutaDto dto) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
+    em.getTransaction().begin();
     if (dto.getChoferId() != null) {
       var chofer = UsuarioRepositorio.Instance.buscarChoferPorId(dto.getChoferId());
       ruta.asignarChofer(chofer);
@@ -234,17 +215,16 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
             "No se permite regresar el estado de una ruta a NO_INICIADA");
       }
     }
-    commit(transaccionPropia);
+    em.getTransaction().commit();
     return ruta;
   }
 
   public void eliminarRutaYEntregas(Ruta ruta) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
+    em.getTransaction().begin();
     ruta.getCamion().regresarDeposito();
     ruta.getEntregas().forEach(EntregaRepositorio.Instance::eliminarEntrega);
     eliminar(ruta);
-    commit(transaccionPropia);
+    em.getTransaction().commit();
   }
 
 }

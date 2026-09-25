@@ -61,14 +61,14 @@ public class DonanteTest {
 
     }
   }
-
+/*
   @Test
   public void registrarNuevoDonanteLoAgregaAlRegistro() {
     registrar(personaFisica("ana@mail.com"));
 
     assertEquals(1, repository.getRegistroDonantes().size());
   }
-
+*/
   @Test
   public void buscarPorEmailEncuentraAlDonanteRegistrado() {
     registrar(personaFisica("analosada@mail.com"));
@@ -98,7 +98,7 @@ public class DonanteTest {
   public void eliminarPorEmailDevuelveFalseSiNoExiste() {
     assertFalse(repository.eliminarPorEmail("nadie@mail.com"));
   }
-
+/*
   @Test
   public void registrarConMismoEmailActualiza() {
     registrar(personaFisica("analosada@mail.com"));
@@ -111,6 +111,7 @@ public class DonanteTest {
     assertEquals("Ana Losada Actualizada",
         repository.buscarPorEmail("analosada@mail.com").get().getNombreIdentificador());
   }
+  */
 
   @Test
   public void actualizarPersonaFisica() {

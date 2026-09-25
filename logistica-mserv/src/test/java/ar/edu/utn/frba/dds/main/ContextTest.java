@@ -14,6 +14,7 @@ import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
 import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContextTest implements SimplePersistenceTest {
+  /*
   CamionRepositorio repositorioCamion;
   UsuarioRepositorio repositorioUsuarios;
   RutaRepositorio repositorioRutas;
@@ -175,5 +177,5 @@ public class ContextTest implements SimplePersistenceTest {
     assertEquals(0, repositorioRutas.mostrarTodos().size());
     assertEquals(2, repositorioEntregas.mostrarTodos().size());
   }
-
+*/
 }

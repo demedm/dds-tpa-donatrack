@@ -2,26 +2,25 @@ package ar.edu.utn.frba.dds.repositories;
 
 import ar.edu.utn.frba.dds.exceptions.EntregaNotFoundException;
 import ar.edu.utn.frba.dds.model.Entrega;
-import ar.edu.utn.frba.dds.model.EstadoCamion;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
-import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
 import ar.edu.utn.frba.dds.scripts.dto.DestinoDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
-
-import javax.persistence.EntityTransaction;
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntregaRepositorio implements WithSimplePersistenceUnit {
   public static final EntregaRepositorio Instance = new EntregaRepositorio();
   private final List<AccionesSobreEntregas> observers = new ArrayList<>();
+  private EntityManager em;
 
   public EntregaRepositorio() {
     observers.add(new NotificarAdmins());
     observers.add(new Notificar());
+    this.em = EntityManagerHelper.getEntityManager();
   }
 
   public void notificarInicioDeEntrega(Entrega entrega) {
@@ -36,42 +35,22 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
     return new Entrega(dto.getDireccion(), dto.getDonacionId());
   }
 
-  private boolean iniciarTransaccion() {
-    if (!entityManager().getTransaction().isActive()) {
-      entityManager().getTransaction().begin();
-      return true;
-    }
-    return false;
-  }
-
-  private void commit(boolean transaccionPropia) {
-    if (transaccionPropia) {
-      entityManager().getTransaction().commit();
-    }
-  }
-
   public void registrar(Entrega entrega) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-
-    entityManager().persist(entrega);
-
-    commit(transaccionPropia);
+    em.getTransaction().begin();
+    em.persist(entrega);
+    em.getTransaction().commit();
   }
 
   public void eliminarEntrega(Entrega entrega) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-
-    entityManager().remove(entrega);
-
-    commit(transaccionPropia);
+    em.getTransaction().begin();
+    em.remove(entrega);
+    em.getTransaction().commit();
   }
 
   public Entrega actualizar(Entrega entrega) {
-    entityManager().getTransaction().begin();
+    em.getTransaction().begin();
     Entrega actualizada = entityManager().merge(entrega);
-    entityManager().getTransaction().commit();
+    em.getTransaction().commit();
     return actualizada;
   }
 

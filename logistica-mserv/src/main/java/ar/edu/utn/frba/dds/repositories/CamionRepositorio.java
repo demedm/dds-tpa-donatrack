@@ -5,10 +5,17 @@ import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
 import ar.edu.utn.frba.dds.model.Ubicacion;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+
+import javax.persistence.EntityManager;
 import java.util.List;
 
 public class CamionRepositorio implements WithSimplePersistenceUnit {
   public static final CamionRepositorio Instance = new CamionRepositorio();
+  private EntityManager em;
+
+  public CamionRepositorio() {
+    this.em = EntityManagerHelper.getEntityManager();
+  }
 
   public void reportarImprevisto(Long id) {
     Camion camion = buscarPorId(id);
@@ -21,21 +28,21 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
   }
 
   public void registrar(Camion camion) {
-    entityManager().getTransaction().begin();
-    entityManager().persist(camion);
-    entityManager().getTransaction().commit();
+    em.getTransaction().begin();
+    em.persist(camion);
+    em.getTransaction().commit();
   }
 
   public void eliminarCamion(Camion camion) {
-    entityManager().getTransaction().begin();
-    entityManager().remove(camion);
-    entityManager().getTransaction().commit();
+    em.getTransaction().begin();
+    em.remove(camion);
+    em.getTransaction().commit();
   }
 
   public Camion actualizar(Camion camion) {
-    entityManager().getTransaction().begin();
+    em.getTransaction().begin();
     Camion actualizado = entityManager().merge(camion);
-    entityManager().getTransaction().commit();
+    em.getTransaction().commit();
     return actualizado;
   }
 

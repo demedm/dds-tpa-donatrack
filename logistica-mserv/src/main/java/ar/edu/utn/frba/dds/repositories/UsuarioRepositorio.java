@@ -9,34 +9,23 @@ import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import ar.edu.utn.frba.dds.scripts.dto.ConfirmacionEntregaDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   public static final UsuarioRepositorio Instance = new UsuarioRepositorio();
+  private EntityManager em;
 
-  private boolean iniciarTransaccion() {
-    if (!entityManager().getTransaction().isActive()) {
-      entityManager().getTransaction().begin();
-      return true;
-    }
-    return false;
-  }
-
-  private void commit(boolean transaccionPropia) {
-    if (transaccionPropia) {
-      entityManager().getTransaction().commit();
-    }
+  public UsuarioRepositorio() {
+    em = this.em = EntityManagerHelper.getEntityManager();
   }
 
   public void registrar(Usuario usuario) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-
-    entityManager().persist(usuario);
-
-    commit(transaccionPropia);
+    em.getTransaction().begin();
+    em.persist(usuario);
+    em.getTransaction().commit();
   }
 
   @SuppressWarnings("unchecked")
@@ -61,10 +50,9 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   }
 
   public void eliminarUsuario(Usuario usuario) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
-    entityManager().remove(usuario);
-    commit(transaccionPropia);
+    em.getTransaction().begin();
+    em.remove(usuario);
+    em.getTransaction().commit();
   }
 
   @SuppressWarnings("unchecked")
@@ -112,23 +100,21 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
 
   /* Entidad Beneficiaria */
   public Entrega noRecepcionaEntrega(EntidadBeneficiaria entidadBeneficiaria, Long idEntrega) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
+    em.getTransaction().begin();
     var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
     if (entrega.getEntidadBeneficiaria().getId().equals(entidadBeneficiaria.getId())
       && !entrega.estaVencida()) {
       entrega.marcarComoNoRecepcionada();
       // EntregaRepositorio.Instance.notificarFalloDeEntrega(entrega);
     }
-    commit(transaccionPropia);
+    em.getTransaction().commit();
     return entrega;
   }
 
   public Entrega confirmarEntrega(EntidadBeneficiaria entidadBeneficiaria,
                                Long idEntrega,
                                ConfirmacionEntregaDto dto) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    boolean transaccionPropia = iniciarTransaccion();
+    em.getTransaction().begin();
     var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
     var camion = CamionRepositorio.Instance.buscarPorId(dto.getCamionId());
     if (entrega.getEntidadBeneficiaria().getId().equals(entidadBeneficiaria.getId())
@@ -136,7 +122,7 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
       entrega.marcarComoEntregada(camion, LocalDateTime.of(
           dto.getAnio(), dto.getMes(), dto.getDia(), dto.getHora(), dto.getMinutos()));
     }
-    commit(transaccionPropia);
+    em.getTransaction().commit();
     return entrega;
   }
 

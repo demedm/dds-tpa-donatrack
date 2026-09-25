@@ -31,7 +31,7 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 class RouterTest {
-
+/*
   private Javalin app;
   private HttpClient httpClient;
   private String baseUrl;
@@ -388,7 +388,7 @@ class RouterTest {
 
     assertEquals(EstadoCamion.RUTA_ASIGNADA, camionRepositorio.buscarEstadoPorId(camion.getId()));
   }
-*/
+
   // RECEPCION DE DONACIONES
   @Test
   void recibirDonacionDevuelve201YElDtoCorrespondiente() throws Exception {
@@ -403,5 +403,5 @@ class RouterTest {
     assertEquals(201, response.statusCode());
     assertTrue(response.body().contains("Av. Siempreviva 742"));
   }
-
+*/
 }

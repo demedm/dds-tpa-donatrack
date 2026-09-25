@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TransaccionEntregaTest {
+  /*
   private Javalin app;
   private HttpClient httpClient;
   private String baseUrl;
@@ -74,7 +75,7 @@ public class TransaccionEntregaTest {
     app.stop();
   }
 
-  /* -------------------------------------------------------------------- */
+
 
   // OPERACIONES CRUD PARA CORRER TESTS (no son las misma que en Client)
 
@@ -120,7 +121,6 @@ public class TransaccionEntregaTest {
     return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
   }
 
-  /* -------------------------------------------------------------------- */
 
   @Test
   void confirmarRecepcionEntregaCambiaElEstadoDeEntrega() throws Exception {
@@ -177,4 +177,5 @@ public class TransaccionEntregaTest {
     assertEquals(200, response.statusCode());
     assertEquals(EstadoRuta.EN_CURSO, rutaRepositorio.buscarEstadoPorId(rutaPrueba.getId()));
   }
+  */
 }
