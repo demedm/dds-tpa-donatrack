@@ -1,84 +1,72 @@
 package ar.edu.utn.frba.dds.repositories;
 
-import ar.edu.utn.frba.dds.dto.CambioEstadoDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
-import io.javalin.http.Context;
+import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class DonacionesRepository {
-    public static DonacionesRepository Instance = new DonacionesRepository();
-    public List<Donacion> donaciones = new ArrayList<>();
+public class DonacionesRepository implements WithSimplePersistenceUnit {
+
+    public static final DonacionesRepository Instance = new DonacionesRepository();
+
 
     //Donaciones
 
-    public Donacion guardar(Donacion donacion) {
+    public void guardar(Donacion donacion) {
+        withTransaction(() -> {
+            if (donacion.getId() == null){
+                entityManager().persist(donacion);
+            }else{
+                entityManager().merge(donacion);
+            }
+        });
 
-        Donacion existente = findById(donacion.getId());
-
-        if(existente == null){
-            donaciones.add(donacion);
-        } else {
-            existente.setDescripcionGeneral(donacion.getDescripcionGeneral());
-        }
-
-        return existente;
     }
 
-    public Donacion findById(String id){
-        return this.donaciones.stream()
-            .filter(d-> d.getId().equals(id))
-            .findFirst()
-            .orElse(null);
+    public Donacion findById(Long id){
+        return entityManager().find(Donacion.class, id);
     }
 
     public List<Donacion> obtenerTodas(){
-        return new ArrayList<>(this.donaciones);
+        return entityManager().createQuery("from Donacion", Donacion.class).getResultList();
     }
 
-    public void eliminar(String id){
-        this.donaciones.removeIf(d->d.getId().equals(id));
+    public void eliminar(Long id){
+        withTransaction(() -> {
+            Donacion donacion = entityManager().find(Donacion.class, id);
+            if (donacion != null){
+                entityManager().remove(donacion);
+            }
+        });
     }
 
     //Donaciones segmentadas
 
-    public DonacionSegmentada findSegmentadaById(String segmentadaId) {
-        return this.donaciones.stream()
-            .flatMap(d -> d.getDonaciones().stream())
-            .filter(ds -> ds.getId().equals(segmentadaId))
-            .findFirst()
-            .orElse(null);
-    }
+    public DonacionSegmentada findSegmentadaById(Long segmentadaId) {
 
+        return entityManager().find(DonacionSegmentada.class, segmentadaId);
+
+    }
 
     //Para los algoritmos
 
     public List<DonacionSegmentada> findSegmentadasEnDeposito(){
-        return this.donaciones.stream()
-            .flatMap(d->d.getDonaciones().stream())
+
+        return entityManager()
+            .createQuery("from DonacionSegmentada ", DonacionSegmentada.class)
+            .getResultList().stream()
             .filter(DonacionSegmentada::estaAlmacen)
             .toList();
+
+        /*
+        return entityManager()
+            .createQuery("from DonacionSegmentada ds where ds.estadoActual = :estado", DonacionSegmentada.class)
+            .setParameter("estado", new EnDeposito())
+            .getResultList();
+
+         */
     }
 
 }
-
-
-// public  ResultadoBusqueda buscarProducto(String subcategoria, int cantidad){
-//     List<Bien> bienesFiltrrados = donaciones.stream()
-//         .flatMap(d->d.getBienes().stream())
-//         .filter(b->b.getSubcategoria().equals(subcategoria))
-//         .collect(Collectors.toList());
-
-//     List<Bien> bienesAsignados = new ArrayList<>();
-//     int restante = cantidad;
-//     for (Bien bien : bienesFiltrrados) {
-//     if (restante == 0) break;
-//     int aRestar = Math.min(bien.getCantidad(), restante);
-//     bien.copia(aRestar, EstadoDonacion.ASIGNACION_REALIZADA);
-//     bien.setCantidad(bien.getCantidad() - aRestar);
-//     restante -= aRestar;
-//     }
-//     return new ResultadoBusqueda(restante,bienesAsignados);
-// }

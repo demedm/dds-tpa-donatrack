@@ -21,13 +21,19 @@ public class CamionController {
     return camion;
   }
 
-  public List<Camion> showFlota() {
-    return CamionRepositorio.Instance.mostrarTodos();
+  public List<Camion> showFlota(Context ctx) {
+    var camiones = CamionRepositorio.Instance.mostrarTodos();
+    if (camiones != null) {
+      ctx.status(200);
+      return camiones;
+    }
+    ctx.status(404);
+    return null;
   }
 
-  public void buscarPorPatente(Context ctx) {
-    String patente = ctx.pathParam("patente");
-    Camion camion = CamionRepositorio.Instance.buscarPorPatente(patente);
+  public void buscarPorId(Context ctx) {
+    Long id = Long.parseLong(ctx.pathParam("id"));
+    Camion camion = CamionRepositorio.Instance.buscarPorId(id);
 
     if (camion == null) {
       ctx.status(404);

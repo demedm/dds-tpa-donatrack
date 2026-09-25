@@ -11,10 +11,16 @@ import javax.persistence.OneToMany;
 @Entity
 @DiscriminatorValue("EB")
 public class EntidadBeneficiaria extends Usuario {
-  private String contacto;
+  private String razonSocial;
   private String direccion;
 
   public EntidadBeneficiaria() {}
+
+  public EntidadBeneficiaria(String email, String direccion, String razonSocial) {
+    super(email);
+    this.direccion = direccion;
+    this.razonSocial = razonSocial;
+  }
 
   public String getDireccion() {
     return direccion;
@@ -24,12 +30,7 @@ public class EntidadBeneficiaria extends Usuario {
     this.direccion = direccion;
   }
 
-  public String getContacto() {
-    return contacto;
+  public String getRazonSocial() {
+    return razonSocial;
   }
-
-  public void setContacto(String contacto) {
-    this.contacto = contacto;
-  }
-
 }

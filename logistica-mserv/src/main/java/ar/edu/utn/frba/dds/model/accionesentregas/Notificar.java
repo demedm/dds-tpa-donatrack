@@ -3,10 +3,9 @@ package ar.edu.utn.frba.dds.model.accionesentregas;
 import ar.edu.utn.frba.dds.main.ClientDonaciones;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
-
 import java.net.http.HttpClient;
 
-public class Notificar implements AccionesSobreEntregas{
+public class Notificar implements AccionesSobreEntregas {
   private final ClientDonaciones client;
 
   private static String urlDonaciones() {

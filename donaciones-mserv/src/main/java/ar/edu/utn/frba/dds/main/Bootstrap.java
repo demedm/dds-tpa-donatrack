@@ -56,32 +56,30 @@ public class Bootstrap {
 	}
 
 	private static List<Donacion> donaciones() {
-        // Subcategorías asociadas a la categoría ALIMENTOS
-        Subcategoria subcatArroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ");
-        Subcategoria subcatFideos = new Subcategoria(Categoria.ALIMENTOS, "FIDEOS");
+		// Subcategorías asociadas a la categoría ALIMENTOS
+		Subcategoria subcatArroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ");
+		Subcategoria subcatFideos = new Subcategoria(Categoria.ALIMENTOS, "FIDEOS");
 
-        // Bienes asociados
-        Bien arrozBien = new BienPerecedero(subcatArroz, "foto.jpg", "Arroz Paquete 1kg", new Date());
-        Bien fideosBien = new BienPerecedero(subcatFideos, "foto.jpg", "Fideos Matarazzo 500g", new Date());
+		// Bienes asociados
+		Bien arrozBien = new BienPerecedero(subcatArroz, "foto.jpg", "Arroz Paquete 1kg", new Date());
+		Bien fideosBien = new BienPerecedero(subcatFideos, "foto.jpg", "Fideos Matarazzo 500g", new Date());
 
-        List<Bien> bienes = new ArrayList<>(List.of(arrozBien, fideosBien));
-        Donacion donacion = new Donacion("Donación de alimentos varios", bienes, null);
-        donacion.setId("DON-001");
+		List<Bien> bienes = new ArrayList<>(List.of(arrozBien, fideosBien));
+		Donacion donacion = new Donacion("Donación de alimentos varios", bienes, null);
 
-        
-        // Segmentada 1: 10 paquetes de Arroz en depósito
-        DonacionSegmentada segArroz = new DonacionSegmentada(10, subcatArroz, arrozBien);
-        
-        // Segmentada 2: 5 paquetes de Fideos en depósito
-        DonacionSegmentada segFideos = new DonacionSegmentada(5, subcatFideos, fideosBien);
+		// Segmentada 1: 10 paquetes de Arroz en depósito
+		DonacionSegmentada segArroz = new DonacionSegmentada(10, subcatArroz, arrozBien);
 
-        donacion.setDonacionesSegmentadas(List.of(segArroz, segFideos));
+		// Segmentada 2: 5 paquetes de Fideos en depósito
+		DonacionSegmentada segFideos = new DonacionSegmentada(5, subcatFideos, fideosBien);
 
-        DonacionesRepository.Instance.guardar(donacion);
+		donacion.setDonacionesSegmentadas(List.of(segArroz, segFideos));
 
-        System.out.println("Donaciones y Segmentadas inicializadas correctamente.");
+		DonacionesRepository.Instance.guardar(donacion);
 
-        return List.of(donacion);
+		System.out.println("Donaciones y Segmentadas inicializadas correctamente.");
+
+		return List.of(donacion);
 
     // Donacion donacion = new Donacion("Donación de alimentos", bienes, null);
     // DonacionesRepository.Instance.guardar(donacion);
@@ -131,5 +129,5 @@ public class Bootstrap {
 		nec2.agregarPeticion(pet3);
 
 		return List.of(nec1, nec2);
-	}
+    }
 }

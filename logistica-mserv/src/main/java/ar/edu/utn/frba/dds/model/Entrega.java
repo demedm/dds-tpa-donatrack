@@ -1,23 +1,17 @@
 package ar.edu.utn.frba.dds.model;
 
-import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
-import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
-import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
 import ar.edu.utn.frba.dds.model.fallaentrega.EntregaVencida;
 import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
 import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -37,17 +31,15 @@ public class Entrega {
   private String direccion;
   private Long donacionId;
   private LocalDate fechaVencimiento;
-  private boolean entregado = false;
 
   @Transient
   private MotivoFallo motivoFallo;
 
   private String foto;
-  private LocalDateTime fechaHoraEntrega;
-  private String entidadId;
+  private LocalDateTime fechaHoraEntrega = null;
 
   @ManyToOne
-  private Camion camionQueEntrego;
+  private Camion camionQueEntrego = null;
 
   public Entrega(String direccion, Long idDonacion) {
     this.estado = EstadoEntrega.PENDIENTE;
@@ -55,12 +47,9 @@ public class Entrega {
     this.direccion = direccion;
   }
 
-  public Entrega() {}
-
-  public String getEntidadId() { return entidadId;}
-
-  public void setEntidadId(String entidadId) { this.entidadId = entidadId; }
-
+  public Entrega() {
+    this.estado = EstadoEntrega.PENDIENTE;
+  }
 
   public LocalDate getFechaVencimiento() {
     return fechaVencimiento;
@@ -74,16 +63,8 @@ public class Entrega {
     return this.donacionId;
   }
 
-  public void setEntregado(boolean entregado) {
-    this.entregado = entregado;
-  }
-
   public String getDireccion() {
     return this.direccion;
-  }
-
-  public boolean getEntregado() {
-    return this.entregado;
   }
 
   public Long getId() {
@@ -95,13 +76,12 @@ public class Entrega {
   }
 
   public void marcarComoEntregada(Camion camion, LocalDateTime fechaHoraEntrega) {
-    entregado = true;
+    estado = EstadoEntrega.ENTREGADA;
     this.camionQueEntrego = camion;
     this.fechaHoraEntrega = fechaHoraEntrega;
   }
 
-  public void confirmarEntrega(String urlFoto) {
-    estado = EstadoEntrega.ENTREGADA;
+  public void cargarFoto(String urlFoto) {
     setFoto(urlFoto);
   }
 
@@ -116,7 +96,6 @@ public class Entrega {
 
   public void marcarComoNoRecepcionada() {
     estado = EstadoEntrega.NO_RECIBIDA;
-    marcarComoFallida(new NoRecepcionada());
   }
 
   public boolean estaVencida() {
@@ -151,12 +130,19 @@ public class Entrega {
     this.estado = estado;
   }
 
-  public EntidadBeneficiaria getEntidadBeneficiaria() {
-    return entidadBeneficiaria;
-  }
-
   public void setEntidadBeneficiaria(EntidadBeneficiaria entidadBeneficiaria) {
     this.entidadBeneficiaria = entidadBeneficiaria;
   }
 
+  public EntidadBeneficiaria getEntidadBeneficiaria() {
+    return entidadBeneficiaria;
+  }
+
+  public LocalDateTime getFechaHoraEntrega() {
+    return fechaHoraEntrega;
+  }
+
+  public Camion getCamionQueEntrego() {
+    return camionQueEntrego;
+  }
 }

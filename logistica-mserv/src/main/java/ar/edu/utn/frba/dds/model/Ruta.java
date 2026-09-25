@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.model;
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,7 +22,7 @@ public class Ruta {
 
   @OneToMany
   @JoinColumn(name = "ruta_id")
-  private List<Entrega> entregas;
+  private List<Entrega> entregas = new ArrayList<>();
 
   @ManyToOne
   private Camion camion;
@@ -33,13 +33,14 @@ public class Ruta {
   @Enumerated(EnumType.STRING)
   private EstadoRuta estado;
 
-  public Ruta(Chofer chofer, List<Entrega> entregas) {
+  public Ruta(List<Entrega> entregas) {
     this.entregas = entregas;
-    this.chofer = chofer;
     this.estado = EstadoRuta.NO_INICIADA;
   }
 
-  public Ruta() {}
+  public Ruta() {
+    this.estado = EstadoRuta.NO_INICIADA;
+  }
 
   public Long getId() {
     return this.id;
@@ -49,8 +50,11 @@ public class Ruta {
     entregas.add(entrega);
   }
 
-  public void asignarCamion(Camion camion) {
-    this.camion = camion;
+  public void setEntregas(List<Entrega> entregas) {
+    if (this.entregas != null) {
+      this.entregas.clear();
+    }
+    this.entregas.addAll(entregas);
   }
 
   public List<Entrega> getEntregas() {
@@ -63,11 +67,13 @@ public class Ruta {
     entregas.forEach(Entrega::marcarComoIniciada);
   }
 
+  /* Solo la entidad beneficiaria puede marcar a la entrega como entregada
   public void visitarParada(String direccion, LocalDateTime fechaHoraEntrega) {
     entregas.stream().filter(entrega ->
         entrega.getDireccion().equals(direccion))
         .forEach(entrega -> entrega.marcarComoEntregada(camion, fechaHoraEntrega));
   }
+  */
 
   public void indicarImprovistoLogistico() {
     estado = EstadoRuta.CANCELADA;
@@ -79,7 +85,8 @@ public class Ruta {
   public void finalizarRuta() {
     estado = EstadoRuta.FINALIZADA;
     entregas.stream().filter(entrega ->
-            !entrega.getEntregado() && entrega.getMotivoFallo() != null)
+            !entrega.getEstado().equals(EstadoEntrega.ENTREGADA) &&
+                entrega.getMotivoFallo() != null)
         .forEach(Entrega::marcarRegreso);
   }
 
@@ -87,7 +94,8 @@ public class Ruta {
     if (entregas == null || entregas.isEmpty()) {
       return 0.0;
     }
-    long entregadas = entregas.stream().filter(Entrega::getEntregado).count();
+    long entregadas = entregas.stream().filter(entrega ->
+        entrega.getEstado().equals(EstadoEntrega.ENTREGADA)).count();
     return (double) entregadas / entregas.size() * 100.0;
   }
 
@@ -99,7 +107,7 @@ public class Ruta {
     return estado;
   }
 
-  public void setCamion(Camion camion) {
+  public void asignarCamion(Camion camion) {
     this.camion = camion;
     camion.asignarRuta();
   }
@@ -107,4 +115,9 @@ public class Ruta {
   public Camion getCamion() {
     return camion;
   }
+
+  public void asignarChofer(Chofer chofer) {
+    this.chofer = chofer;
+  }
+
 }

@@ -41,7 +41,7 @@ public class EstadoEntregaController {
   }
 
   public void cambiarEstado(Context context) {
-    String segmentadaId = context.pathParam("id");
+    Long segmentadaId = context.pathParamAsClass("id", Long.class).get();
     CambioEstadoDTO cambio = context.bodyAsClass(CambioEstadoDTO.class);
 
     DonacionSegmentada segmentada =
@@ -60,7 +60,7 @@ public class EstadoEntregaController {
 
       case "EN_TRASLADO" -> notificaciones.notificarInicioRuta(
           involucrados,
-          cambio.getRutaId() != null ? cambio.getRutaId() : segmentadaId,
+          cambio.getRutaId() != null ? cambio.getRutaId() : String.valueOf(segmentadaId),
           cambio.getUrlMapa());
 
       case "ENTREGADA" -> notificaciones.notificarEntregaExitosa(

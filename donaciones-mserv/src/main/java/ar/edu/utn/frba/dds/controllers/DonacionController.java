@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.dto.AsignarDonacionDTO;
 import ar.edu.utn.frba.dds.dto.AsignarDonacionNecesidadDTO;
 import ar.edu.utn.frba.dds.dto.DonacionsDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
@@ -10,8 +9,6 @@ import ar.edu.utn.frba.dds.model.Estado.*;
 import ar.edu.utn.frba.dds.model.necesidad.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
@@ -40,7 +37,7 @@ public class DonacionController {
     }
 
     public Donacion mostrarDonacion(Context ctx){
-        String donacionId = ctx.pathParam("id");
+        Long donacionId = ctx.pathParamAsClass("id",Long.class).get();
         Donacion donacion = DonacionesRepository.Instance.findById(donacionId);
 
         if(donacion == null){
@@ -57,7 +54,7 @@ public class DonacionController {
 
     public Donacion actualizar(Context ctx){
 
-        String donacionId = ctx.pathParam("id");
+        Long donacionId = ctx.pathParamAsClass("id",Long.class).get();
         Donacion donacion = DonacionesRepository.Instance.findById(donacionId);
 
         if(donacion == null){
@@ -76,7 +73,7 @@ public class DonacionController {
     }
 
     public Donacion eliminar(Context ctx){
-        String id = ctx.pathParam("id");
+        Long id = ctx.pathParamAsClass("id",Long.class).get();
         Donacion donacion = DonacionesRepository.Instance.findById(id);
 
         if(donacion == null){
@@ -91,10 +88,10 @@ public class DonacionController {
     //PRUEBA ASIGNACION 
 
     public List<java.util.Map<String, Object>> asignarDonacionANecesidad(Context ctx) {
-    AsignarDonacionNecesidadDTO dto = ctx.bodyAsClass(AsignarDonacionNecesidadDTO.class);
+        AsignarDonacionNecesidadDTO dto = ctx.bodyAsClass(AsignarDonacionNecesidadDTO.class);
 
-    String idDonacion = dto.getDonacionId();
-    Long idNecesidad = dto.getNecesidadId();
+        Long idDonacion = dto.getDonacionId();
+        Long idNecesidad = dto.getNecesidadId();
 
         if (idDonacion == null || idNecesidad == null) {
             throw new IllegalArgumentException("Los IDs de donación y necesidad no pueden ser nulos.");
@@ -153,8 +150,7 @@ public class DonacionController {
 
         for (DonacionSegmentada ds : nuevasSegmentadasAsignadas) {//Pruebo mapenado, si no me devolvia bucle infito
             java.util.Map<String, Object> map = new java.util.HashMap<>();
-            map.put("id", ds.getId());
-            map.put("cantidad", ds.getCantidad());
+            map.put("id", ds.getId())            map.put("cantidad", ds.getCantidad());
             map.put("subcategoria", ds.getSubcategoria().getDescripcion());
             map.put("entidadAsignadaId", ds.getEntidadAsignadaId());
             respuestaDTO.add(map);
