@@ -37,7 +37,7 @@ public class EventoNotificacionService {
   // ---------- 2 y 3. Donacion asignada ----------
 
   public Notificacion notificarDonacionAsignadaDonante(Destinatario donante,
-                                                       String donacionId,
+                                                       Long donacionId,
                                                        String nombreEntidad) {
     return enviar(donante, String.format(
         "Hola %s, tu donacion (ID: %s) fue asignada a %s. Gracias por tu generosidad!",
@@ -50,7 +50,7 @@ public class EventoNotificacionService {
    */
   public Notificacion notificarDonacionAsignadaBeneficiario(Destinatario beneficiario,
                                                             String nombreEntidad,
-                                                            String donacionId) {
+                                                            Long donacionId) {
     return enviar(beneficiario, String.format(
         "Estimada/o %s, se les ha asignado una donacion (ID: %s) acorde a sus "
             + "necesidades registradas. Proximamente recibiran informacion sobre la entrega.",
@@ -81,7 +81,7 @@ public class EventoNotificacionService {
 
   /** Comprobante de entrega: fecha, hora y camion responsable. */
   public void notificarEntregaExitosa(List<Destinatario> destinatarios,
-                                      String donacionId,
+                                      Long donacionId,
                                       String fechaHora,
                                       String patenteCamion) {
     String mensaje = String.format(
@@ -104,7 +104,7 @@ public class EventoNotificacionService {
    * Los admins salen del repositorio, no de System.getenv dentro del dominio.
    */
   public void notificarEntregaFallida(List<Destinatario> destinatarios,
-                                      String donacionId,
+                                      Long donacionId,
                                       String motivo,
                                       boolean replanificable) {
     String motivoTexto = (motivo != null && !motivo.isBlank()) ? motivo : "no especificado";

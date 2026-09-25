@@ -64,7 +64,7 @@ class NotificacionTest {
   @Test
   @DisplayName("Al donante se le avisa a que entidad fue su donacion")
   void alDonanteSeLeAvisaLaEntidad() {
-    servicio.notificarDonacionAsignadaDonante(mailDonante, "D-1", "Comedor Los Pinos");
+    servicio.notificarDonacionAsignadaDonante(mailDonante, 1L, "Comedor Los Pinos");
     assertTrue(mensajeEnviadoA(mailDonante).contains("Comedor Los Pinos"));
   }
 
@@ -74,7 +74,7 @@ class NotificacionTest {
     AdministradorRepository.Instance.agregar(mailAdmin);
 
     servicio.notificarEntregaFallida(
-        List.of(mailDonante, mailEntidad), "D-1", "La entidad no pudo recibir", false);
+        List.of(mailDonante, mailEntidad), 1L, "La entidad no pudo recibir", false);
 
     verify(mailDonante).contactar(any(Notificacion.class));
     verify(mailEntidad).contactar(any(Notificacion.class));
