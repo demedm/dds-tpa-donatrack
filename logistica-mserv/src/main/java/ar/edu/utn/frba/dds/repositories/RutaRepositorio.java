@@ -11,12 +11,14 @@ import ar.edu.utn.frba.dds.model.accionesrutas.AsignarCamion;
 import ar.edu.utn.frba.dds.model.accionesrutas.LoggearRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.NotificarSobreRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.ReplanificarRuta;
+import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.scripts.dto.ResponsePlanificacionDto;
 import ar.edu.utn.frba.dds.scripts.dto.RutaDto;
 import ar.edu.utn.frba.dds.scripts.dto.RutaPlanificadaDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RutaRepositorio implements WithSimplePersistenceUnit {
   public static final RutaRepositorio Instance = new RutaRepositorio();
@@ -38,11 +40,17 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     observers.remove(observer);
   }
 
-  public void iniciarRuta(Long idRuta) {
+  public Ruta iniciarRuta(Chofer chofer, Long idRuta) {
+    entityManager().getTransaction().begin();
     Ruta ruta = buscarPorId(idRuta);
+    if (!Objects.equals(chofer.getId(), ruta.getChofer().getId())) {
+      return null;
+    }
     ruta.iniciarRuta(); // cambia estado de Ruta y de cada Entrega
     observers.forEach(observer -> observer.actualizarRuta(ruta, true));
     ruta.getEntregas().forEach(EntregaRepositorio.Instance::notificarInicioDeEntrega);
+    entityManager().getTransaction().commit();
+    return ruta;
   }
 
   public void registrar(Ruta ruta) {

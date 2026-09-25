@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.model.usuarios.Usuario;
+import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.ConfirmacionEntregaDto;
 import io.javalin.http.Context;
@@ -38,6 +39,19 @@ public class UsuarioController {
     var entidad = UsuarioRepositorio.Instance.buscarEntidadBeneficiariaPorId(idUsuario);
     UsuarioRepositorio.Instance.noRecepcionaEntrega(entidad, idEntrega);
     ctx.status(200);
+  }
+
+  public void iniciarRuta(Context ctx) {
+    var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
+    var idRuta = Long.parseLong(ctx.pathParam("id"));
+    var chofer = UsuarioRepositorio.Instance.buscarChoferPorId(idUsuario);
+    var ruta = RutaRepositorio.Instance.iniciarRuta(chofer, idRuta);
+    if (ruta == null) {
+      ctx.status(400);
+    } else {
+      ctx.status(200);
+      ctx.json(ruta);
+    }
   }
 
 }
