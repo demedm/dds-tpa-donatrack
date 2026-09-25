@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.model.notificaciones.Notificacion;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import javax.persistence.*;
 
 /**
  * Envío real de SMS mediante Twilio.
@@ -13,10 +14,13 @@ import com.twilio.type.PhoneNumber;
  *   TWILIO_AUTH_TOKEN
  *   TWILIO_FROM_PHONE  (ej: +15551234567)
  */
+
+@Embeddable
 public class Telefono implements MedioContacto {
+  @Column(name = "nro_telefono")
+  public  String nroTelefono;
 
-  public final String nroTelefono;
-
+  public Telefono(){};
   public Telefono(String telefono) {
     this.nroTelefono = telefono;
   }

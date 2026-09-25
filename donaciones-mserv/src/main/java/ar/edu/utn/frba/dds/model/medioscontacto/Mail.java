@@ -1,4 +1,5 @@
 package ar.edu.utn.frba.dds.model.medioscontacto;
+import javax.persistence.*;
 
 import ar.edu.utn.frba.dds.model.notificaciones.Notificacion;
 import jakarta.mail.Authenticator;
@@ -12,9 +13,13 @@ import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
 
+
+@Embeddable
 public class Mail implements MedioContacto {
+  @Column(name = "direccion_mail")
   private String direccionMail;
 
+  public Mail(){};
   public Mail(String direccionCasilla) {
     if (direccionCasilla == null || !direccionCasilla.contains("@")) {
       throw new IllegalArgumentException("Dirección de correo electrónico inválida o nula.");
