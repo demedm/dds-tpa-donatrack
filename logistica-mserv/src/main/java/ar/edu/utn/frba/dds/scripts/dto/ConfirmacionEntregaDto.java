@@ -12,6 +12,15 @@ public class ConfirmacionEntregaDto {
 
   public ConfirmacionEntregaDto() {}
 
+  public ConfirmacionEntregaDto(Long camionId, int anio, int mes, int dia, int hora, int minutos) {
+    this.camionId = camionId;
+    this.anio = anio;
+    this.mes = mes;
+    this.dia = dia;
+    this.hora = hora;
+    this.minutos = minutos;
+  }
+
   public Long getCamionId() {
     return camionId;
   }

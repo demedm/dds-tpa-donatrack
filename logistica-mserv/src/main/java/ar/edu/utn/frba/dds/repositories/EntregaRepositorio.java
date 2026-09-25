@@ -10,6 +10,8 @@ import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
 import ar.edu.utn.frba.dds.scripts.dto.DestinoDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+
+import javax.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,14 +36,36 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
     return new Entrega(dto.getDireccion(), dto.getDonacionId());
   }
 
+  private boolean iniciarTransaccion() {
+    if (!entityManager().getTransaction().isActive()) {
+      entityManager().getTransaction().begin();
+      return true;
+    }
+    return false;
+  }
+
+  private void commit(boolean transaccionPropia) {
+    if (transaccionPropia) {
+      entityManager().getTransaction().commit();
+    }
+  }
+
   public void registrar(Entrega entrega) {
-    entityManager().getTransaction().begin();
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
     entityManager().persist(entrega);
-    entityManager().getTransaction().commit();
+
+    commit(transaccionPropia);
   }
 
   public void eliminarEntrega(Entrega entrega) {
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
     entityManager().remove(entrega);
+
+    commit(transaccionPropia);
   }
 
   public Entrega actualizar(Entrega entrega) {

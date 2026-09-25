@@ -8,14 +8,27 @@
     <persistence-unit name="simple-persistence-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <class>ar.edu.utn.frba.dds.model.Bienes.Bien</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.BienPerecedero</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.BienDuradero</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.Subcategoria</class>
+        <class>ar.edu.utn.frba.dds.model.Donaciones.Donacion</class>
+        <class>ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada</class>
+        <class>ar.edu.utn.frba.dds.model.necesidad.Necesidad</class>
+        <class>ar.edu.utn.frba.dds.model.necesidad.Peticion</class>
+
         <!-- archivo de configuracion para Hibernate -->
         <properties>
             <property name="hibernate.archive.autodetection" value="class"/>
 
-            <!-- <property name="hibernate.connection.driver_class" value="com.mariabd.jdbc.Driver" />
-            <property name="hibernate.connection.url" value="jdbc:mariadb://localhost:3306/prueba" />
+            <!--
+            <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver" />
+            <property name="hibernate.connection.url"
+                      value="jdbc:mariadb://localhost:3306/prueba"/>
             <property name="hibernate.connection.username" value="root" />
-            <property name="hibernate.connection.password" value="password" /> -->
+            <property name="hibernate.connection.password" value="" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
+            -->
 
             <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
             <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:app-db"/>

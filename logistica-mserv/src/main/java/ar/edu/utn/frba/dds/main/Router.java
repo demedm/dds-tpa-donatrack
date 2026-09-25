@@ -49,6 +49,7 @@ public class Router {
         usuarioController::marcarEntregaComoNoRecepcionada);
     app.post("/usuarios/{idUsuario}/rutas/{id}/iniciar",
         usuarioController::iniciarRuta);
+    app.get("/usuarios/{id}", usuarioController::showUsuario);
 
     // RECEPCION DE DONACIONES
     app.post("/donaciones/{id}", callbackController::recibirDonacion);

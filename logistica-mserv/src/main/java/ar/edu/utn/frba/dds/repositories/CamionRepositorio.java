@@ -6,6 +6,8 @@ import ar.edu.utn.frba.dds.model.EstadoCamion;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.Ubicacion;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+
+import javax.persistence.EntityTransaction;
 import java.util.List;
 
 public class CamionRepositorio implements WithSimplePersistenceUnit {
@@ -21,22 +23,44 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
     }
   }
 
+  private boolean iniciarTransaccion() {
+    if (!entityManager().getTransaction().isActive()) {
+      entityManager().getTransaction().begin();
+      return true;
+    }
+    return false;
+  }
+
+  private void commit(boolean transaccionPropia) {
+    if (transaccionPropia) {
+      entityManager().getTransaction().commit();
+    }
+  }
+
   public void registrar(Camion camion) {
-    entityManager().getTransaction().begin();
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
     entityManager().persist(camion);
-    entityManager().getTransaction().commit();
+
+    commit(transaccionPropia);
   }
 
   public void eliminarCamion(Camion camion) {
-    entityManager().getTransaction().begin();
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
     entityManager().remove(camion);
-    entityManager().getTransaction().commit();
+
+    commit(transaccionPropia);
   }
 
   public Camion actualizar(Camion camion) {
-    entityManager().getTransaction().begin();
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
     Camion actualizado = entityManager().merge(camion);
-    entityManager().getTransaction().commit();
+    commit(transaccionPropia);
     return actualizado;
   }
 
