@@ -15,6 +15,8 @@ public class BienDuradero extends Bien {
   @Column(name = "estado_uso")
   private EstadoUso estado;
 
+  protected BienDuradero() {}
+
   public BienDuradero(Subcategoria subCategoria, String foto, String descripcion, EstadoUso estado) {
     super(subCategoria, foto, descripcion);
     this.estado = estado;

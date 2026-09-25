@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.model.Bienes.Criterio;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class Donacion {
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "donacion_id")
-  private List<DonacionSegmentada> donacionesSegmentadas;
+  private List<DonacionSegmentada> donacionesSegmentadas = new ArrayList<>();
 
   @Transient
   /*
@@ -42,6 +43,7 @@ public class Donacion {
   @JsonIgnore
   private Persona donante;
 
+  protected Donacion() {}
 
   public Donacion(String descripcionGeneral, List<Bien> bienes, Persona donante) {
 
