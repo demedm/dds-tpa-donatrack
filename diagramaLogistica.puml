@@ -1,137 +1,629 @@
 @startuml
 
-' configuracion visual
-skinparam nodesep 45
-skinparam ranksep 70
+skinparam classAttributeIconSize 0
+skinparam shadowing false
 
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+  ArrowColor Black
+}
 
-' clases, interfaces, etc
-together {
-  class Usuario {
-      id : String
-      email : String
-      password : String
+skinparam packageBorderColor transparent
+skinparam packageBackgroundColor transparent
+
+' ============================================================
+' MICROSERVICIO: LOGÍSTICA
+' ============================================================
+package logistica {
+
+  package usuarios {
+    abstract class Usuario {
+      - id : Long
+      - email : String
+      - password : String
+      + Usuario(email : String, password : String)
     }
-  class Administrador
-  class Chofer
-  class EntidadBeneficiaria {
-    id : String
-    contacto : String
-    direccion : String
+
+    class Chofer {
+      - nombre : String
+      - apellido : String
+      + Chofer(nombre : String, apellido : String)
+    }
+
+    class Administrador {
+      + Administrador(email : String, password : String)
+      + confirmarReplanificacion(entrega : Entrega)
+    }
+
+    class EntidadBeneficiaria {
+      - contacto : String
+      - direccion : String
+    }
+
+    Usuario <|-- Chofer
+    Usuario <|-- Administrador
+    Usuario <|-- EntidadBeneficiaria
+  }
+
+  class Camion {
+    - id : Long
+    - patente : String
+    - capacidadVolumen : Double
+    - altura : Double
+    - capacidadCarga : Double
+    - estado : EstadoCamion
+    - ubicacionActual : Ubicacion
+    + Camion(patente : String, capacidadCarga : Double, capacidadVolumen : Double, altura : Double)
+    + improvistoLogistico()
+    + asignarRuta()
+    + iniciarRuta()
+    + regresarDeposito()
+    + actualizarUbicacion(latitud : Double, longitud : Double)
+  }
+
+  class Ubicacion {
+    - latitud : Double
+    - longitud : Double
+    - timestamp : LocalDateTime
+    + Ubicacion(latitud : Double, longitud : Double, timestamp : LocalDateTime)
+  }
+
+  class Ruta {
+    - id : Long
+    - entregas : List<Entrega>
+    - camion : Camion
+    - chofer : usuarios.Chofer
+    - estado : EstadoRuta
+    + Ruta(chofer : usuarios.Chofer, entregas : List<Entrega>)
+    + agregarEntrega(entrega : Entrega)
+    + asignarCamion(camion : Camion)
+    + setCamion(camion : Camion)
+    + iniciarRuta()
+    + visitarParada(direccion : String)
+    + indicarImprovistoLogistico()
+    + finalizarRuta()
+    + calcularPorcentajeAvance() : double
+  }
+
+  class Entrega {
+    - id : Long
+    - entidadBeneficiaria : usuarios.EntidadBeneficiaria
+    - ruta : Ruta
+    - estado : EstadoEntrega
+    - direccion : String
+    - donacionId : Long
+    - fechaVencimiento : LocalDate
+    - entregado : boolean
+    - motivoFallo : fallaentrega.MotivoFallo
+    - foto : String
+    - accionesSobreEntregas : List<accionesentregas.AccionesSobreEntregas>
+    + Entrega(direccion : String, idDonacion : Long)
+    + marcarComoIniciada()
+    + marcarComoEntregada()
+    + confirmarEntrega(urlFoto : String)
+    + marcarComoFallida(motivo : fallaentrega.MotivoFallo)
+    + marcarRegreso()
+    + marcarComoNoRecepcionada()
+    + estaVencida() : boolean
+    + agregarAccionEntregas(accion : accionesentregas.AccionesSobreEntregas)
+  }
+
+  enum EstadoCamion {
+    DISPONIBLE
+    EN_MANTENIMIENTO
+    RUTA_ASIGNADA
+    REALIZANDO_ENTREGAS
+  }
+
+  enum EstadoRuta {
+    NO_INICIADA
+    EN_CURSO
+    CANCELADA
+    FINALIZADA
+  }
+
+  enum EstadoEntrega {
+    PENDIENTE
+    EN_TRASLADO
+    ENTREGADA
+    NO_RECIBIDA
+    FALLIDA
+  }
+
+  package accionesentregas {
+    interface AccionesSobreEntregas {
+      + notificarInicioRuta(entrega : Entrega)
+      + notificarFalloEntrega(entrega : Entrega)
+    }
+
+    class Notificar {
+      + notificarInicioRuta(entrega : Entrega)
+      + notificarFalloEntrega(entrega : Entrega)
+    }
+
+    class NotificarAdmins {
+      + notificarInicioRuta(entrega : Entrega)
+      + notificarFalloEntrega(entrega : Entrega)
+    }
+
+    AccionesSobreEntregas <|.. Notificar
+    AccionesSobreEntregas <|.. NotificarAdmins
+  }
+
+  package accionesrutas {
+    interface AccionesSobreRutas {
+      + actualizarRuta(ruta : Ruta, asignada : boolean)
+    }
+
+    class AsignarCamion {
+      + actualizarRuta(ruta : Ruta, asignada : boolean)
+    }
+
+    class LoggearRuta {
+      + actualizarRuta(ruta : Ruta, asignada : boolean)
+    }
+
+    class NotificarSobreRuta {
+      + actualizarRuta(ruta : Ruta, asignada : boolean)
+    }
+
+    class ReplanificarRuta {
+      - pendientesReasignar : List<Ruta>
+      + actualizarRuta(ruta : Ruta, asignada : boolean)
+    }
+
+    AccionesSobreRutas <|.. AsignarCamion
+    AccionesSobreRutas <|.. LoggearRuta
+    AccionesSobreRutas <|.. NotificarSobreRuta
+    AccionesSobreRutas <|.. ReplanificarRuta
+  }
+
+  package fallaentrega {
+    interface MotivoFallo {
+      + esReplanificable() : boolean
+      + darMotivoFallo() : String
+    }
+
+    class EntregaVencida {
+      + esReplanificable() : boolean
+      + darMotivoFallo() : String
+    }
+
+    class ImprevistoLogistico {
+      + esReplanificable() : boolean
+      + darMotivoFallo() : String
+    }
+
+    class NoRecepcionada {
+      + esReplanificable() : boolean
+      + darMotivoFallo() : String
+    }
+
+    MotivoFallo <|.. EntregaVencida
+    MotivoFallo <|.. ImprevistoLogistico
+    MotivoFallo <|.. NoRecepcionada
+  }
+
+  Camion "1" --> "0..1" Ubicacion : ubicacionActual
+  Camion --> EstadoCamion
+  Ruta "1" o-- "*" Entrega : entregas
+  Ruta --> Camion : camion
+  Ruta --> usuarios.Chofer : chofer
+  Ruta --> EstadoRuta
+  Entrega --> usuarios.EntidadBeneficiaria : entidadBeneficiaria
+  Entrega --> Ruta : ruta
+  Entrega --> EstadoEntrega
+  Entrega --> fallaentrega.MotivoFallo : motivoFallo
+  Entrega "1" --> "*" accionesentregas.AccionesSobreEntregas : accionesSobreEntregas
+}
+
+' ============================================================
+' MICROSERVICIO: DONACIONES
+' ============================================================
+package donaciones {
+
+  package Bienes {
+    abstract class Bien {
+      - descripcion : String
+      - foto : String
+      - subCategoria : Subcategoria
+      + Bien(subCategoria : Subcategoria, foto : String, descripcion : String)
+      # {abstract} getCriterioSegmentacion() : Object
+      + getCriterioDeAgrupacion() : Criterio
+    }
+
+    class BienDuradero {
+      - estado : EstadoUso
+      + BienDuradero(subCategoria : Subcategoria, foto : String, descripcion : String, estado : EstadoUso)
+      # getCriterioSegmentacion() : Object
+    }
+
+    class BienPerecedero {
+      - fechaVencimiento : Date
+      + BienPerecedero(subCategoria : Subcategoria, foto : String, descripcion : String, fechaVencimiento : Date)
+      # getCriterioSegmentacion() : Object
+    }
+
+    class Subcategoria {
+      - categoria : Categoria
+      - descripcion : String
+      + Subcategoria(categoria : Categoria, descripcion : String)
+    }
+
+    enum Categoria
+    enum EstadoUso
+
+    class Criterio << record >> {
+      + subcategoria : Subcategoria
+      + criterio : Object
+    }
+
+    Bien <|-- BienDuradero
+    Bien <|-- BienPerecedero
+    Bien --> Subcategoria : subCategoria
+    BienDuradero --> EstadoUso : estado
+    Subcategoria --> Categoria : categoria
+    Bien ..> Criterio : «crea»
+  }
+
+  package Estado {
+    interface EstadoDonacion {
+      + asignar(donacion : Donaciones.DonacionSegmentada)
+      + planificarRuta(donacion : Donaciones.DonacionSegmentada)
+      + iniciarTraslado(donacion : Donaciones.DonacionSegmentada)
+      + confirmarEntrega(donacion : Donaciones.DonacionSegmentada)
+      + fallarEntrega(donacion : Donaciones.DonacionSegmentada, justificacion : String)
+      + vencer(donacion : Donaciones.DonacionSegmentada)
+      + getNombre() : String
+    }
+
+    class EnDeposito
+    class AsignacionRealizada
+    class ListaParaEntregar
+    class EnTraslado
+    class Entregada
+    class EntregaFallida
+    class Vencida
+
+    class RegistroCambioEstado {
+      - estado : String
+      - fechaHora : LocalDateTime
+      + RegistroCambioEstado(estado : String, fechaHora : LocalDateTime)
+    }
+
+    EstadoDonacion <|.. EnDeposito
+    EstadoDonacion <|.. AsignacionRealizada
+    EstadoDonacion <|.. ListaParaEntregar
+    EstadoDonacion <|.. EnTraslado
+    EstadoDonacion <|.. Entregada
+    EstadoDonacion <|.. EntregaFallida
+    EstadoDonacion <|.. Vencida
+  }
+
+  package Donaciones {
+    class Donacion {
+      - id : String
+      - descripcionGeneral : String
+      - donacionesSegmentadas : List<DonacionSegmentada>
+      - donante : donantes.Persona
+      + Donacion(descripcionGeneral : String, bienes : List<Bienes.Bien>, donante : donantes.Persona)
+      + agregarDonaciones(donacionSegmentada : DonacionSegmentada)
+      - segmentar(bienes : List<Bienes.Bien>) : List<DonacionSegmentada>
+    }
+
+    class DonacionSegmentada {
+      - id : String
+      - cantidad : int
+      - subcategoria : Bienes.Subcategoria
+      - bienFiltrado : Bienes.Bien
+      - estadoActual : Estado.EstadoDonacion
+      - historialEstados : List<Estado.RegistroCambioEstado>
+      - justificacionFallo : String
+      - fechaDeEntrega : LocalDate
+      - medioContactoEntidad : medioscontacto.MedioContacto
+      - donanteEmail : String
+      - entidadAsignadaId : String
+      - donanteId : Integer
+      + DonacionSegmentada(cantidad : Integer, subcategoria : Bienes.Subcategoria, bienFiltrado : Bienes.Bien)
+      + cambiarEstado(nuevoEstado : String)
+      + asignar()
+      + planificarRuta()
+      + iniciarTraslado()
+      + confirmarEntrega()
+      + fallarEntrega(justificacion : String)
+      + vencer()
+      + estaAlmacen() : boolean
+    }
+
+    Donacion "1" o-- "*" DonacionSegmentada : donacionesSegmentadas
+    DonacionSegmentada --> Bienes.Subcategoria : subcategoria
+    DonacionSegmentada --> Bienes.Bien : bienFiltrado
+    DonacionSegmentada --> Estado.EstadoDonacion : estadoActual
+    DonacionSegmentada "1" --> "*" Estado.RegistroCambioEstado : historialEstados
+    DonacionSegmentada --> medioscontacto.MedioContacto : medioContactoEntidad
+  }
+
+  package Asignacion {
+    interface AlgoritmoAsignacion {
+      + obtenerRanking(donacion : Donaciones.DonacionSegmentada, entidades : List<entidad.EntidadBeneficiaria>) : List<entidad.EntidadBeneficiaria>
+    }
+
+    class AlgoritmoDeCompatibilidad {
+      + obtenerRanking(donacion : Donaciones.DonacionSegmentada, entidades : List<entidad.EntidadBeneficiaria>) : List<entidad.EntidadBeneficiaria>
+      - calcularCompatibilidad(entidad : entidad.EntidadBeneficiaria, donacion : Donaciones.DonacionSegmentada) : long
+    }
+
+    class AlgoritmoSubatendidos {
+      + obtenerRanking(donacion : Donaciones.DonacionSegmentada, entidades : List<entidad.EntidadBeneficiaria>) : List<entidad.EntidadBeneficiaria>
+      + cantidadDonaciones(entidad : entidad.EntidadBeneficiaria) : long
+    }
+
+    class Resultados {
+      - coincidencias : List<entidad.EntidadBeneficiaria>
+      - resultadoDeCompatibilidad : List<entidad.EntidadBeneficiaria>
+      - resultadoDeSubAtendidos : List<entidad.EntidadBeneficiaria>
+      - huboCoincidencia : boolean
+      + Resultados(coincidencias : List<entidad.EntidadBeneficiaria>, compat : List<entidad.EntidadBeneficiaria>, sub : List<entidad.EntidadBeneficiaria>, hubo : boolean)
+      + entidadesPropuestas() : List<entidad.EntidadBeneficiaria>
+    }
+
+    class ServicioMatchmaking {
+      - algoritmo1 : AlgoritmoDeCompatibilidad
+      - algoritmo2 : AlgoritmoSubatendidos
+      + ejecutar(donacion : Donaciones.DonacionSegmentada, entidades : List<entidad.EntidadBeneficiaria>) : Resultados
+    }
+
+    AlgoritmoAsignacion <|.. AlgoritmoDeCompatibilidad
+    AlgoritmoAsignacion <|.. AlgoritmoSubatendidos
+    ServicioMatchmaking --> AlgoritmoDeCompatibilidad : algoritmo1
+    ServicioMatchmaking --> AlgoritmoSubatendidos : algoritmo2
+    ServicioMatchmaking ..> Resultados : «crea»
+    Resultados "1" --> "*" entidad.EntidadBeneficiaria
+  }
+
+  package donantes {
+    abstract class Persona {
+      - nombreIdentificador : String
+      - mail : medioscontacto.Mail
+      - telefono : medioscontacto.Telefono
+      - identificacion : Identificacion
+      - tipoPersona : TipoPersona
+      - ultimaActividad : LocalDate
+      + Persona()
+      + actualizarInfo(nuevosDatos : Persona)
+      + actualizarDatosComunes(nombreIdentificador : String, nroDocumento : String, email : String, telefono : String)
+    }
+
+    class PersonaFisica {
+      - apellido : String
+      - edad : int
+      - genero : Genero
+      - direccionActual : String
+      + actualizarInfo(nuevosDatos : Persona)
+    }
+
+    class PersonaJuridica {
+      - rubro : String
+      - tipo : TipoEntidadJuridica
+      - listaContactos : List<medioscontacto.MedioContacto>
+      + PersonaJuridica()
+      + actualizarInfo(nuevosDatos : Persona)
+    }
+
+    class Ong {
+      - pathHistorialDonantes : String
+      + Ong()
+    }
+
+    class Identificacion {
+      + Identificacion(tipo : TipoDocumento, nro : String)
+    }
+
+    class RegistroDonante {
+      - registroDonantes : List<Persona>
+      - notificador : notificaciones.Notificador
+      + RegistroDonante()
+      + registrarDonante(nuevoDonante : Persona)
+      + importarDonantesDesdeCSVFile(filePath : String)
+      + buscarPorEmail(direccionMail : String) : Optional<Persona>
+      + buscarInactivosDesde(fecha : LocalDate) : List<Persona>
+    }
+
+    enum Genero
+    enum TipoDocumento
+    enum TipoEntidadJuridica
+    enum TipoPersona
+
+    Persona <|-- PersonaFisica
+    Persona <|-- PersonaJuridica
+    PersonaJuridica <|-- Ong
+    Persona --> Identificacion : identificacion
+    Persona --> medioscontacto.Mail : mail
+    Persona --> medioscontacto.Telefono : telefono
+    Persona --> TipoPersona : tipoPersona
+    PersonaFisica --> Genero : genero
+    PersonaJuridica --> TipoEntidadJuridica : tipo
+    RegistroDonante "1" --> "*" Persona : registroDonantes
+    RegistroDonante --> notificaciones.Notificador : notificador
+  }
+
+  package entidad {
+    class EntidadBeneficiaria {
+      - id : String
+      - razonSocial : String
+      - direccion : String
+      - tipo : String
+      - mailsContacto : List<medioscontacto.Mail>
+      - telefono : medioscontacto.Telefono
+      - donacionesRecibidas : List<Donaciones.DonacionSegmentada>
+      - necesidades : List<necesidad.Necesidad>
+      + EntidadBeneficiaria(direccion : String, mails : List<medioscontacto.Mail>, razonSocial : String, telefono : medioscontacto.Telefono, tipo : String)
+      + crearNecesidad(gestor : Object) : necesidad.Necesidad
+    }
+
+    EntidadBeneficiaria --> medioscontacto.Telefono : telefono
+    EntidadBeneficiaria "1" --> "*" medioscontacto.Mail : mailsContacto
+    EntidadBeneficiaria "1" --> "*" Donaciones.DonacionSegmentada : donacionesRecibidas
+    EntidadBeneficiaria "1" --> "*" necesidad.Necesidad : necesidades
+  }
+
+  package necesidad {
+    class Necesidad {
+      - id : String
+      - entidadId : String
+      - tipo : TipoNecesidad
+      - estado : String
+      - descripcion : String
+      - diasRecurrencia : Integer
+      - proximoVencimiento : LocalDate
+      - peticiones : List<Peticion>
+      - idDonantesParticipantes : List<String>
+      + Necesidad()
+      + getDiasAvencer() : long
+      + reiniciarPeriodo()
+      + agregarPeticion(peticion : Peticion)
+    }
+
+    enum TipoNecesidad
+
+    class Peticion {
+      - subclase : String
+      - cantidadRequerida : int
+      - cantidadRecibida : int
+      - donacionesAsignados : List<String>
+      + Peticion()
+      + estaCubierta() : boolean
+      + agregarCantidadRecibida(cantidad : Integer, idDonacion : String)
+    }
+
+    class HistorialDonaciones
+
+    interface ObjetoDonacion
+
+    Necesidad --> TipoNecesidad : tipo
+    Necesidad "1" --> "*" Peticion : peticiones
+    HistorialDonaciones ..> Donaciones.Donacion
+  }
+
+  package medioscontacto {
+    interface MedioContacto {
+      + getMedioContacto() : String
+      + contactar(notificacion : notificaciones.Notificacion)
+    }
+
+    class Mail {
+      - direccionMail : String
+      + Mail(direccionCasilla : String)
+      + getMedioContacto() : String
+      + contactar(notificacion : notificaciones.Notificacion)
+      - enviarEmail(destinatario : String, cuerpo : String)
+    }
+
+    class Telefono {
+      + nroTelefono : String
+      + Telefono(telefono : String)
+      + getMedioContacto() : String
+      + contactar(notificacion : notificaciones.Notificacion)
+      - enviarSms(destinatario : String, cuerpo : String)
+    }
+
+    class Mensaje {
+      - nroWhatsApp : String
+      + Mensaje(numeroWhatsApp : String)
+      + getMedioContacto() : String
+      + contactar(notificacion : notificaciones.Notificacion)
+      - enviarWhatsApp(destinatario : String, cuerpo : String)
+    }
+
+    MedioContacto <|.. Mail
+    MedioContacto <|.. Telefono
+    MedioContacto <|.. Mensaje
+  }
+
+  package notificaciones {
+    class Notificacion {
+      - destinatario : String
+      - mensaje : String
+      - fechaHora : LocalDateTime
+      - estado : EstadoNotificacion
+      - tipoEvento : TipoEvento
+      + Notificacion(mensaje : String)
+      + Notificacion(mensaje : String, tipoEvento : TipoEvento)
+      + marcarComoCompletada()
+      + marcarComoFallida()
+    }
+
+    enum EstadoNotificacion
+    enum TipoEvento
+
+    interface EnviadorNotificaciones {
+      + enviarNotificacionA(persona : donantes.Persona, mensajeTexto : String) : Notificacion
+      + enviarNotificacionA(medio : medioscontacto.MedioContacto, mensajeTexto : String) : Notificacion
+    }
+
+    class Notificador {
+      - repositorio : Object
+      + Notificador()
+      + enviarNotificacionA(persona : donantes.Persona, mensajeTexto : String) : Notificacion
+      + enviarNotificacionA(medio : medioscontacto.MedioContacto, mensajeTexto : String) : Notificacion
+    }
+
+    class NotificadorAsincronico {
+      - pool : ExecutorService
+      - repositorio : Object
+      + NotificadorAsincronico(repositorio : Object)
+      + enviarNotificacionA(persona : donantes.Persona, mensajeTexto : String) : Notificacion
+      + enviarNotificacionA(medio : medioscontacto.MedioContacto, mensajeTexto : String) : Notificacion
+    }
+
+    class EventoNotificacionService
+
+    class SchedulerNotificaciones {
+      - {static} Instance : SchedulerNotificaciones
+      - {static} HORA_EJECUCION : int
+      - {static} DIAS_INACTIVIDAD : int
+      + iniciar()
+      - segundosHastaProximaEjecucion() : long
+    }
+
+    EnviadorNotificaciones <|.. Notificador
+    EnviadorNotificaciones <|.. NotificadorAsincronico
+    Notificacion --> EstadoNotificacion : estado
+    Notificacion --> TipoEvento : tipoEvento
+    SchedulerNotificaciones --> EventoNotificacionService : eventoService
+  }
+
+  package importerdonantes {
+    class ImporterDonantes {
+      - parser : ImporterParser
+      - scanner : ImporterScanner
+      + importarDonantes(filePath : String, registroDonantes : donantes.RegistroDonante)
+    }
+
+    class ImporterParser {
+      + parseCSVcontent(filas : List<String[]>) : List<donantes.Persona>
+    }
+
+    class ImporterScanner {
+      + scanCSVFile(filePath : String) : List<String[]>
+    }
+
+    ImporterDonantes --> ImporterParser : parser
+    ImporterDonantes --> ImporterScanner : scanner
   }
 }
 
-together {
-  class Camion {
-      patente : String
-      capacidadVolumen : int
-      altura : int
-      capacidadCarga : int
-    }
-    enum EstadoCamion {
-      DISPONIBLE
-      EN_MANTENIMIENTO
-      RUTA_ASIGNADA
-      REALIZANDO_ENTREGAS
-    }
-    class Ubicacion {
-      latitud : Double
-      longitud : Double
-      timestamp : LocalDateTime
-    }
 
-}
+note as N1
+  Frontera entre microservicios:
+  logistica.Entrega.donacionId (Long) referencia
+  a donaciones.Donaciones.DonacionSegmentada.id
+  solo por valor (integración vía REST),
+  no existe asociación de objetos entre ambos módulos.
+end note
 
-together {
-  class Ruta {
-      id : String
-      patenteAsignada : String
-    }
-
-    class Entrega {
-      id : String
-      direccion : String
-      donacionId : int
-      fechaVencimiento : LocalDate
-      visitado : boolean
-      foto : String
-    }
-    enum EstadoEntrega {
-      PENDIENTE
-      EN_TRASLADO
-      ENTREGADA
-      NO_RECIBIDA
-      FALLIDA
-    }
-
-}
-
-together {
-  interface AccionesSobreEntregas
-  class NotificarAdmins
-  class NotificarDonadorYDonante
-}
-
-together {
-  interface AccionesSobreRutas
-  class ReplanificarRuta
-  class LoggearRuta
-  class NotificarSobreRuta
-  class AsignarCamion
-}
-
-together {
-  interface MotivoFallo
-  class ImprevistoLogistico
-  class NoRecepcionada
-  class EntregaVencida
-}
-
-Administrador --|> Usuario
-Chofer --|> Usuario
-
-NotificarAdmins ..|> AccionesSobreEntregas
-NotificarDonadorYDonante ..|> AccionesSobreEntregas
-
-ReplanificarRuta ..|> AccionesSobreRutas
-LoggearRuta ..|> AccionesSobreRutas
-NotificarSobreRuta ..|> AccionesSobreRutas
-AsignarCamion ..|> AccionesSobreRutas
-
-ImprevistoLogistico ..|> MotivoFallo
-NoRecepcionada ..|> MotivoFallo
-EntregaVencida ..|> MotivoFallo
-
-Camion "1" --> "0..1" Ruta
-Camion "1" --> "1" EstadoCamion
-Camion "1" --> "0..1" Ubicacion
-
-Chofer "1" --> "1" Camion
-
-EntidadBeneficiaria "1" --> "*" Entrega
-
-Ruta "1" --> "*" Entrega
-
-Entrega "1" --> "1" EstadoEntrega
-Entrega "1" --> "0..1" MotivoFallo
-Entrega "1" --> "*" AccionesSobreEntregas
-
-ReplanificarRuta "1" --> "*" Ruta
-
-AccionesSobreEntregas ..> Entrega
-AccionesSobreRutas ..> Ruta
-
-NotificarDonadorYDonante ..> EstadoEntrega
-Administrador ..> Entrega
-
-AsignarCamion ..> Camion
-AsignarCamion ..> EstadoCamion
-
-Ruta ..> ImprevistoLogistico
-
-Entrega ..> NotificarAdmins
-Entrega ..> NotificarDonadorYDonante
-Entrega ..> EntregaVencida
-Entrega ..> NoRecepcionada
+logistica.Entrega .. N1
+N1 .. donaciones.Donaciones.DonacionSegmentada
 
 @enduml
