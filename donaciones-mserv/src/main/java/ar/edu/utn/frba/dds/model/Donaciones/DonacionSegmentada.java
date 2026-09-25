@@ -49,17 +49,27 @@ public class DonacionSegmentada {
   @JsonIgnore
   private Bien bienFiltrado;
 
+  /*
   @Convert(converter = EstadoDonacion.class)
   @Column(name = "estado")
+  */
+
+  @Transient
   @JsonIgnore
   private EstadoDonacion estadoActual;
 
+  /*
   @ElementCollection
   @CollectionTable(name ="historial_estados",
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
+
   @OrderBy("fechaHora")
+   */
+
+  @Transient
   @JsonIgnore
   private List<RegistroCambioEstado> historialEstados = new ArrayList<>();
+
 
   private String justificacionFallo;
   private LocalDate fechaDeEntrega;
@@ -92,6 +102,7 @@ public class DonacionSegmentada {
     this.donanteEmail = donanteEmail;
   }
 
+  protected DonacionSegmentada() {}
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
     this.id = UUID.randomUUID().toString();

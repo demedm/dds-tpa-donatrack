@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.Persistencia;
 
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.BienDuradero;
 import ar.edu.utn.frba.dds.model.Bienes.BienPerecedero;
@@ -10,10 +11,13 @@ import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
+import ar.edu.utn.frba.dds.repositories.EntidadRepository;
+import ar.edu.utn.frba.dds.tareas.ProcesarDonaciones;
 import com.mchange.util.AssertException;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -21,8 +25,14 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
 
@@ -79,6 +89,76 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   }
 
   //bienes
+  @Test
+  void unBienPerecederoVuelveComoPerecedero() {
+    Donacion leida = guardarYReleer(donacionDeArrozYSilla());
+
+    assertInstanceOf(BienPerecedero.class, segmentadaDe(leida,arroz).getBienFiltrado());
+  }
+
+  @Test
+  void unBienDuraderoVuelveComoDuraderoConSuEstado() {
+    Donacion leida = guardarYReleer(donacionDeArrozYSilla());
+
+    Bien bien =segmentadaDe(leida,silla).getBienFiltrado();
+
+    assertInstanceOf(BienDuradero.class, bien);
+    assertEquals(EstadoUso.NUEVO,bien.getCriterioDeAgrupacion().criterio());
+  }
+
+  //matchmaking
+
+  @Test
+  void lasPropuestasDelMatchmakingQuedanGuardadas(){
+
+    Donacion donacion = donacionDeArrozYSilla();
+    String idSegmentada = segmentadaDe(donacion,arroz).getId();
+    repo.guardar(donacion);
+
+    EntidadBeneficiaria comedor = entidad("ENT-TEST-1");
+    AlgoritmoAsignacion algoritmo = mock(AlgoritmoAsignacion.class);
+    when(algoritmo.obtenerRanking(any(),any())).thenReturn(List.of(comedor));
+
+    withTransaction(() ->
+        repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(comedor), List.of(algoritmo)));
+    entityManager().clear();
+
+    assertEquals(List.of("ENT-TEST-1"),repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas());
+
+  }
+  @Test
+  void elCronDejaLasPropuestasEnLaBase(){
+
+    Donacion donacion = donacionDeArrozYSilla();
+    String idSegmentada = segmentadaDe(donacion,arroz).getId();
+    repo.guardar(donacion);
+
+    EntidadBeneficiaria comedor = entidad(null);
+    EntidadRepository.Instance.registrar(comedor);
+
+    ProcesarDonaciones.ejecutar();
+    entityManager().clear();
+
+    assertTrue(repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas().contains(comedor.getId()));
+
+  }
+  @Test
+  @Disabled("Habilitar cuando EstadoDonacion se persista con su converter")
+  void soloTraeLasSegmentadasQueSiSiguenEnDeposito(){
+    Donacion donacion = donacionDeArrozYSilla();
+    DonacionSegmentada asignada = segmentadaDe(donacion,silla);
+
+    asignada.asignar();
+    repo.guardar(donacion);
+    entityManager().clear();
+
+    List<String> enDeposito = repo.findSegmentadasEnDeposito().stream()
+        .map(DonacionSegmentada::getId).toList();
+
+    assertTrue(enDeposito.contains(segmentadaDe(donacion,arroz).getId()));
+    assertFalse(enDeposito.contains(asignada.getId()));
+
+  }
 
 
 
