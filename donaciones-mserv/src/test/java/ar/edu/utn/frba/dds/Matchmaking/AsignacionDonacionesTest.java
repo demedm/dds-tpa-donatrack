@@ -81,7 +81,6 @@ public class AsignacionDonacionesTest {
 
     @Test
     void funcionaConCualquierCantidadDeAlgoritmos() {
-      // Polimorfismo: agregar un algoritmo no requiere tocar buscarCandidatas
       AlgoritmoAsignacion algoritmoC = mock(AlgoritmoAsignacion.class);
       when(algoritmoA.obtenerRanking(any(), any())).thenReturn(List.of(comedor, hogar, club));
       when(algoritmoB.obtenerRanking(any(), any())).thenReturn(List.of(hogar, club));
@@ -122,7 +121,7 @@ public class AsignacionDonacionesTest {
     }
   }
 
-  // ---------- La tarea: todas las donaciones ----------
+  //todas las donaciones
 
   @Nested
   class TareaProcesarDonaciones {
@@ -170,7 +169,7 @@ public class AsignacionDonacionesTest {
       RuntimeException error = assertThrows(RuntimeException.class,
           () -> ProcesarDonaciones.procesar(List.of(rota), entidades, List.of(algoritmoA)));
 
-      assertTrue(error.getMessage().contains(rota.getId()));
+      assertTrue(error.getMessage().contains("1 donacion(es)"));
       assertTrue(error.getMessage().contains("ranking roto"));
     }
   }

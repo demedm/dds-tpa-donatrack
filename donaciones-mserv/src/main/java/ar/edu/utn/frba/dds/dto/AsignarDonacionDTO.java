@@ -3,14 +3,21 @@ package ar.edu.utn.frba.dds.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class AsignarDonacionDTO {
-  private String donacionId;
+
+  private Long donacionId;
   private Long necesidadId;
 
-  public String getDonacionSegmentadaId() {
+  @JsonIgnore
+  private Long donacionSegmentadaId;
+  @JsonIgnore
+  private String entidadBeneficiariaId;
+
+
+  public Long getDonacionSegmentadaId() {
     return donacionSegmentadaId;
   }
 
-  public void setDonacionSegmentadaId(String donacionSegmentadaId) {
+  public void setDonacionSegmentadaId(Long donacionSegmentadaId) {
     this.donacionSegmentadaId = donacionSegmentadaId;
   }
 
@@ -21,12 +28,9 @@ public class AsignarDonacionDTO {
   public void setEntidadBeneficiariaId(String entidadBeneficiariaId) {
     this.entidadBeneficiariaId = entidadBeneficiariaId;
   }
+
   @JsonIgnore
-  private String donacionSegmentadaId;
-  @JsonIgnore
-  private String entidadBeneficiariaId;
-  @JsonIgnore
-  public String getDonacionId() { return donacionId; }
+  public Long getDonacionId() { return donacionId; }
   @JsonIgnore
   public Long getNecesidadId() { return necesidadId; }
 

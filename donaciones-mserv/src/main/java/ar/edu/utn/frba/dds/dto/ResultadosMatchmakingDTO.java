@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ResultadosMatchmakingDTO {
 
-  private String donacionSegmentadId;
+  private Long donacionSegmentadId;
   private String subcategoria;
   private boolean huboCoincidencia;
 

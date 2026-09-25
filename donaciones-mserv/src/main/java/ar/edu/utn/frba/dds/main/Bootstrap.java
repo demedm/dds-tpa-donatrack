@@ -65,8 +65,6 @@ public class Bootstrap {
 
 		List<Bien> bienes = new ArrayList<>(List.of(arrozBien, fideosBien));
 		Donacion donacion = new Donacion("Donación de alimentos varios", bienes, null);
-		donacion.setId("DON-001");
-
 
 		// Segmentada 1: 10 paquetes de Arroz en depósito
 		DonacionSegmentada segArroz = new DonacionSegmentada(10, subcatArroz, arrozBien);

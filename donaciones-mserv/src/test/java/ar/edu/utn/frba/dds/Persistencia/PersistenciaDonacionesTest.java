@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
 
   private final DonacionesRepository repo = DonacionesRepository.Instance;
-  private final List<String> donacionesCreadas = new ArrayList<>();
+  private final List<Long> donacionesCreadas = new ArrayList<>();
 
   private Subcategoria arroz;
   private Subcategoria silla;
@@ -77,7 +77,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   @Test
   void eliminarLaDonacionBorrarTambienSusSegmentadas(){
     Donacion donacion = donacionDeArrozYSilla();
-    String idSegmentada = donacion.getDonaciones().get(0).getId();
+    Long idSegmentada = donacion.getDonaciones().get(0).getId();
     repo.guardar(donacion);
 
     repo.eliminar(donacion.getId());
@@ -112,7 +112,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   void lasPropuestasDelMatchmakingQuedanGuardadas(){
 
     Donacion donacion = donacionDeArrozYSilla();
-    String idSegmentada = segmentadaDe(donacion,arroz).getId();
+    Long idSegmentada = segmentadaDe(donacion,arroz).getId();
     repo.guardar(donacion);
 
     EntidadBeneficiaria comedor = entidad("ENT-TEST-1");
@@ -130,7 +130,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   void elCronDejaLasPropuestasEnLaBase(){
 
     Donacion donacion = donacionDeArrozYSilla();
-    String idSegmentada = segmentadaDe(donacion,arroz).getId();
+    Long idSegmentada = segmentadaDe(donacion,arroz).getId();
     repo.guardar(donacion);
 
     EntidadBeneficiaria comedor = entidad(null);
@@ -143,7 +143,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
 
   }
   @Test
-  @Disabled("Habilitar cuando EstadoDonacion se persista con su converter")
+  @Disabled
   void soloTraeLasSegmentadasQueSiSiguenEnDeposito(){
     Donacion donacion = donacionDeArrozYSilla();
     DonacionSegmentada asignada = segmentadaDe(donacion,silla);
@@ -152,7 +152,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
     repo.guardar(donacion);
     entityManager().clear();
 
-    List<String> enDeposito = repo.findSegmentadasEnDeposito().stream()
+    List<Long> enDeposito = repo.findSegmentadasEnDeposito().stream()
         .map(DonacionSegmentada::getId).toList();
 
     assertTrue(enDeposito.contains(segmentadaDe(donacion,arroz).getId()));
