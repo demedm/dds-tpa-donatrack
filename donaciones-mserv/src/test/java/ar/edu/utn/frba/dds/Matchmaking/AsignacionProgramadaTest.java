@@ -129,7 +129,6 @@ public class AsignacionProgramadaTest {
       Bien paquete = new BienPerecedero(subcatArroz, "foto.jpg", "Arroz 1kg", new Date());
       arroz = new DonacionSegmentada(10, subcatArroz, paquete);
       donacion = new Donacion("Donacion de prueba", new ArrayList<>(List.of(paquete)), null);
-      donacion.setId("TEST-" + UUID.randomUUID());
       donacion.setDonacionesSegmentadas(List.of(arroz));
       DonacionesRepository.Instance.guardar(donacion);
     }

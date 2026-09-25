@@ -50,6 +50,7 @@ public class DonanteRepository {
 
   public List<Persona> buscarInactivosDesde(LocalDate fecha) {
     return registroDonantes.stream()
+        .filter(p -> p.getUltimaActividad() != null)
         .filter(p -> p.getUltimaActividad().isBefore(fecha))
         .toList();
   }

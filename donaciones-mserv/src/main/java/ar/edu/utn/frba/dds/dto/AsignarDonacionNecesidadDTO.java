@@ -1,16 +1,16 @@
 package ar.edu.utn.frba.dds.dto;
 
 public class AsignarDonacionNecesidadDTO {
-  private String donacionId;
+  private Long donacionId;
   private Long necesidadId;
 
   public AsignarDonacionNecesidadDTO() {}
 
-  public String getDonacionId() { 
+  public Long getDonacionId() {
     return donacionId; 
   }
 
-  public void setDonacionId(String donacionId) {
+  public void setDonacionId(Long donacionId) {
     this.donacionId = donacionId;
   }
 

@@ -38,12 +38,11 @@ public class ProcesarDonaciones implements WithSimplePersistenceUnit {
         //se guarda el error para lanzarlo despues del commit
         errores.add(e);
       }
-
-      if(!errores.isEmpty()) {
-        throw errores.get(0);
-      }
-
     });
+
+    if(!errores.isEmpty()) {
+      throw errores.get(0);
+    }
 
   }
 

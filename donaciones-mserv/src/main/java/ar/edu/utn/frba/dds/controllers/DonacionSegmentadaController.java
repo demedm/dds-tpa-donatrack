@@ -6,13 +6,10 @@ import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DonacionSegmentadaController {
 
   public DonacionSegmentada cambiarEstadoDonacion(Context ctx) {
-    String idDonacion = ctx.pathParam("id");
+    Long idDonacion = ctx.pathParamAsClass("id",Long.class).get();
 
     CambioEstadoDTO cambioEstado = ctx.bodyAsClass(CambioEstadoDTO.class);
     DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idDonacion);

@@ -26,6 +26,7 @@ public abstract class Persona implements Destinatario{
   LocalDate ultimaActividad;
 
   public Persona() {
+    this.ultimaActividad = LocalDate.now();
   }
 
   public void setNombreIdentificador(String nombre) {

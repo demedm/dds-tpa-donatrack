@@ -16,7 +16,7 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
 
     public void guardar(Donacion donacion) {
         withTransaction(() -> {
-            if (entityManager().find(Donacion.class, donacion.getId()) == null){
+            if (donacion.getId() == null){
                 entityManager().persist(donacion);
             }else{
                 entityManager().merge(donacion);
@@ -25,7 +25,7 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
 
     }
 
-    public Donacion findById(String id){
+    public Donacion findById(Long id){
         return entityManager().find(Donacion.class, id);
     }
 
@@ -33,7 +33,7 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
         return entityManager().createQuery("from Donacion", Donacion.class).getResultList();
     }
 
-    public void eliminar(String id){
+    public void eliminar(Long id){
         withTransaction(() -> {
             Donacion donacion = entityManager().find(Donacion.class, id);
             if (donacion != null){
@@ -44,7 +44,7 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
 
     //Donaciones segmentadas
 
-    public DonacionSegmentada findSegmentadaById(String segmentadaId) {
+    public DonacionSegmentada findSegmentadaById(Long segmentadaId) {
 
         return entityManager().find(DonacionSegmentada.class, segmentadaId);
 
@@ -53,10 +53,20 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
     //Para los algoritmos
 
     public List<DonacionSegmentada> findSegmentadasEnDeposito(){
+
+        return entityManager()
+            .createQuery("from DonacionSegmentada ", DonacionSegmentada.class)
+            .getResultList().stream()
+            .filter(DonacionSegmentada::estaAlmacen)
+            .toList();
+
+        /*
         return entityManager()
             .createQuery("from DonacionSegmentada ds where ds.estadoActual = :estado", DonacionSegmentada.class)
             .setParameter("estado", new EnDeposito())
             .getResultList();
+
+         */
     }
 
 }

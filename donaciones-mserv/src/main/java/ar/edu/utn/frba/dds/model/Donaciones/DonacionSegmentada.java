@@ -25,6 +25,8 @@ import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,7 +39,8 @@ import javax.persistence.Transient;
 
 public class DonacionSegmentada {
   @Id
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long Id;
 
   private int cantidad;
 
@@ -49,17 +52,27 @@ public class DonacionSegmentada {
   @JsonIgnore
   private Bien bienFiltrado;
 
+  /*
   @Convert(converter = EstadoDonacion.class)
   @Column(name = "estado")
+  */
+
+  @Transient
   @JsonIgnore
   private EstadoDonacion estadoActual;
 
+  /*
   @ElementCollection
   @CollectionTable(name ="historial_estados",
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
+
   @OrderBy("fechaHora")
+   */
+
+  @Transient
   @JsonIgnore
   private List<RegistroCambioEstado> historialEstados = new ArrayList<>();
+
 
   private String justificacionFallo;
   private LocalDate fechaDeEntrega;
@@ -92,9 +105,9 @@ public class DonacionSegmentada {
     this.donanteEmail = donanteEmail;
   }
 
+  protected DonacionSegmentada() {}
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
-    this.id = UUID.randomUUID().toString();
     this.cantidad = cantidad;
     this.subcategoria = subcategoria;
     this.bienFiltrado = bienFiltrado;
@@ -132,8 +145,8 @@ public class DonacionSegmentada {
     return bienFiltrado;
   }
 
-  public String getId() {
-    return id;
+  public Long getId() {
+    return Id;
   }
   @JsonIgnore
   public List<RegistroCambioEstado> getHistorialEstados() {

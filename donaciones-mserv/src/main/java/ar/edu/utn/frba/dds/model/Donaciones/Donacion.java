@@ -14,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -26,7 +28,8 @@ import javax.persistence.Transient;
 public class Donacion {
 
   @Id
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long Id;
 
   private String descripcionGeneral;
 
@@ -53,16 +56,16 @@ public class Donacion {
     this.descripcionGeneral = descripcionGeneral;
     this.donacionesSegmentadas = this.segmentar(bienes);
     this.donante = donante;
-    this.id = UUID.randomUUID().toString();
   }
 
   public void agregarDonaciones(DonacionSegmentada donacionSegmentada){
     donacionesSegmentadas.add(donacionSegmentada);
   }
 
-  public String getId() {
-    return id;
+  public Long getId() {
+    return Id;
   }
+
   @JsonIgnore
   public Persona getDonante(){
     return donante;
@@ -108,8 +111,5 @@ public class Donacion {
     this.descripcionGeneral = descripcionGeneral;
   }
 
-  public void setId(String id){
-    this.id=id;
-  }
 
 }
