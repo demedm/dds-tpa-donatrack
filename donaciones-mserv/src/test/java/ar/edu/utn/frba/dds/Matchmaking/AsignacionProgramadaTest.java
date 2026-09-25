@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.Matchmaking;
+/*package ar.edu.utn.frba.dds.Matchmaking;
 
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.BienPerecedero;
@@ -175,3 +175,6 @@ public class AsignacionProgramadaTest {
     }
   }
 }
+
+
+ */

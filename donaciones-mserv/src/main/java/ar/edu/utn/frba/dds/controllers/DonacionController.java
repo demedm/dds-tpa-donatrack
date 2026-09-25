@@ -134,6 +134,7 @@ public class DonacionController {
                         asignada.setEntidadAsignadaId(necesidad.getEntidadId());
                         //asignada.setEstado(EstadoDonacion.ASIGNADA);
                         asignada.asignar();
+                        donacion.agregarDonaciones(asignada);
 
                         // Guardar la nueva segmentada en memoria
                         nuevasSegmentadasAsignadas.add(asignada);
@@ -150,10 +151,13 @@ public class DonacionController {
 
         for (DonacionSegmentada ds : nuevasSegmentadasAsignadas) {//Pruebo mapenado, si no me devolvia bucle infito
             java.util.Map<String, Object> map = new java.util.HashMap<>();
-            map.put("id", ds.getId())            map.put("cantidad", ds.getCantidad());
+            map.put("id", ds.getId());
+            map.put("cantidad", ds.getCantidad());
             map.put("subcategoria", ds.getSubcategoria().getDescripcion());
             map.put("entidadAsignadaId", ds.getEntidadAsignadaId());
             respuestaDTO.add(map);
-        }return respuestaDTO;
-    }}
+        }
+        return respuestaDTO;
+    }
+}
 

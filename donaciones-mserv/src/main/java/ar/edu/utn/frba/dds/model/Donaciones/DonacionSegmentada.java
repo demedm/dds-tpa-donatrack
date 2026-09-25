@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,7 +23,6 @@ import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -33,7 +31,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -44,7 +41,7 @@ import javax.persistence.Transient;
 public class DonacionSegmentada {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long Id;
+  private Long id;
 
   private int cantidad;
 
@@ -63,7 +60,7 @@ public class DonacionSegmentada {
 
   @Transient
   @JsonIgnore
-  private EstadoDonacion estadoActual;
+  private EstadoDonacion estadoActual = new EnDeposito();
 
   /*
   @ElementCollection
@@ -150,7 +147,7 @@ public class DonacionSegmentada {
   }
 
   public Long getId() {
-    return Id;
+    return id;
   }
   @JsonIgnore
   public List<RegistroCambioEstado> getHistorialEstados() {

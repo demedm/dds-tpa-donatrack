@@ -13,8 +13,6 @@
         <class>ar.edu.utn.frba.dds.model.donantes.Persona</class>
         <class>ar.edu.utn.frba.dds.model.donantes.PersonaFisica</class>
         <class>ar.edu.utn.frba.dds.model.donantes.PersonaJuridica</class>
-
-
         <class>ar.edu.utn.frba.dds.model.Bienes.Bien</class>
         <class>ar.edu.utn.frba.dds.model.Bienes.BienPerecedero</class>
         <class>ar.edu.utn.frba.dds.model.Bienes.BienDuradero</class>
@@ -26,34 +24,22 @@
 
         <!-- archivo de configuracion para Hibernate -->
         <properties>
-            <!-- Conexión a MariaDB -->
-            <property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:mariadb://localhost:3306/donaciones_db" />
-            <property name="javax.persistence.jdbc.user" value="root" />
-            <!-- Cambiá "password" por la contraseña de tu base de datos local -->
-            <property name="javax.persistence.jdbc.password" value="" />
+            <property name="hibernate.archive.autodetection" value="class"/>
 
-            <!-- Dialecto y configuración de Hibernate -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect" />
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.format_sql" value="true" />
-            <property name="hibernate.use_sql_comments" value="true" />
-            <!-- update permite que Hibernate cree y actualice las tablas automáticamente -->
-            <property name="hibernate.hbm2ddl.auto" value="update" />
-            <!--
             <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver" />
             <property name="hibernate.connection.url"
                       value="jdbc:mariadb://localhost:3306/donaciones"/>
             <property name="hibernate.connection.username" value="root" />
             <property name="hibernate.connection.password" value="" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
-            -->
 
-            <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
-            <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:app-db"/>
-            <property name="hibernate.connection.username" value="sa"/>
-            <property name="hibernate.connection.password" value=""/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <!--
+                        <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
+                        <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:app-db"/>
+                        <property name="hibernate.connection.username" value="sa"/>
+                        <property name="hibernate.connection.password" value=""/>
+                        <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            -->
 
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
