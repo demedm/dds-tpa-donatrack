@@ -151,7 +151,8 @@ public class DonacionController {
 
         for (DonacionSegmentada ds : nuevasSegmentadasAsignadas) {//Pruebo mapenado, si no me devolvia bucle infito
             java.util.Map<String, Object> map = new java.util.HashMap<>();
-            map.put("id", ds.getId())            map.put("cantidad", ds.getCantidad());
+            map.put("id", ds.getId());
+            map.put("cantidad", ds.getCantidad());
             map.put("subcategoria", ds.getSubcategoria().getDescripcion());
             map.put("entidadAsignadaId", ds.getEntidadAsignadaId());
             respuestaDTO.add(map);
