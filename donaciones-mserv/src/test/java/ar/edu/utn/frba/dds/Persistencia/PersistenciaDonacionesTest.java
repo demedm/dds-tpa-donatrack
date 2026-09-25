@@ -77,14 +77,14 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   @Test
   void eliminarLaDonacionBorrarTambienSusSegmentadas(){
     Donacion donacion = donacionDeArrozYSilla();
+    guardar(donacion);
     Long idSegmentada = donacion.getDonaciones().get(0).getId();
-    repo.guardar(donacion);
 
     repo.eliminar(donacion.getId());
     entityManager().clear();
 
     assertNull(repo.findById(donacion.getId()));
-    assertNull(repo.findById(idSegmentada));
+    assertNull(repo.findSegmentadaById(idSegmentada));
 
   }
 
@@ -112,15 +112,15 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   void lasPropuestasDelMatchmakingQuedanGuardadas(){
 
     Donacion donacion = donacionDeArrozYSilla();
+    guardar(donacion);
     Long idSegmentada = segmentadaDe(donacion,arroz).getId();
-    repo.guardar(donacion);
 
     EntidadBeneficiaria comedor = entidad("ENT-TEST-1");
     AlgoritmoAsignacion algoritmo = mock(AlgoritmoAsignacion.class);
     when(algoritmo.obtenerRanking(any(),any())).thenReturn(List.of(comedor));
 
     withTransaction(() ->
-        repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(comedor), List.of(algoritmo)));
+            repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(comedor), List.of(algoritmo)));
     entityManager().clear();
 
     assertEquals(List.of("ENT-TEST-1"),repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas());
@@ -130,8 +130,8 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   void elCronDejaLasPropuestasEnLaBase(){
 
     Donacion donacion = donacionDeArrozYSilla();
+    guardar(donacion);
     Long idSegmentada = segmentadaDe(donacion,arroz).getId();
-    repo.guardar(donacion);
 
     EntidadBeneficiaria comedor = entidad(null);
     EntidadRepository.Instance.registrar(comedor);
@@ -143,17 +143,17 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
 
   }
   @Test
-  @Disabled
+  @Disabled("Habilitar cuando EstadoDonacion se persista")
   void soloTraeLasSegmentadasQueSiSiguenEnDeposito(){
     Donacion donacion = donacionDeArrozYSilla();
     DonacionSegmentada asignada = segmentadaDe(donacion,silla);
 
     asignada.asignar();
-    repo.guardar(donacion);
+    guardar(donacion);
     entityManager().clear();
 
     List<Long> enDeposito = repo.findSegmentadasEnDeposito().stream()
-        .map(DonacionSegmentada::getId).toList();
+            .map(DonacionSegmentada::getId).toList();
 
     assertTrue(enDeposito.contains(segmentadaDe(donacion,arroz).getId()));
     assertFalse(enDeposito.contains(asignada.getId()));
@@ -165,32 +165,36 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   private Donacion donacionDeArrozYSilla(){
     Date vencimiento = new Date();
     List<Bien> bienes = new ArrayList<>(List.of(
-        new BienPerecedero(arroz, "arroz.jpg","Arroz 1kg",vencimiento),
-        new BienPerecedero(arroz, "arroz.jp","Arroz 1kg", vencimiento),
-        new BienDuradero(silla,"silla.jpg","Silla de madera", EstadoUso.NUEVO)));
+            new BienPerecedero(arroz, "arroz.jpg","Arroz 1kg",vencimiento),
+            new BienPerecedero(arroz, "arroz.jp","Arroz 1kg", vencimiento),
+            new BienDuradero(silla,"silla.jpg","Silla de madera", EstadoUso.NUEVO)));
 
-    Donacion donacion = new Donacion("Donacino de prueba", bienes, null);
-    donacionesCreadas.add(donacion.getId());
-    return donacion;
+    return new Donacion("Donacino de prueba", bienes, null);
 
   }
 
-  private Donacion guardarYReleer(Donacion donacion){
+  // El id lo genera la base al guardar: recién ahí lo anoto para borrarlo después
+  private void guardar(Donacion donacion){
     repo.guardar(donacion);
+    donacionesCreadas.add(donacion.getId());
+  }
+
+  private Donacion guardarYReleer(Donacion donacion){
+    guardar(donacion);
     entityManager().clear();
     return repo.findById(donacion.getId());
   }
 
   private static DonacionSegmentada segmentadaDe(Donacion donacion, Subcategoria subcategoria){
     return donacion.getDonaciones().stream()
-        .filter(s -> s.getSubcategoria().equals(subcategoria))
-        .findFirst()
-        .orElseThrow(() -> new AssertException("No hay segmentada de " + subcategoria.getDescripcion()));
+            .filter(s -> s.getSubcategoria().equals(subcategoria))
+            .findFirst()
+            .orElseThrow(() -> new AssertException("No hay segmentada de " + subcategoria.getDescripcion()));
   }
 
   private static EntidadBeneficiaria entidad(String id){
     EntidadBeneficiaria entidad =
-        new EntidadBeneficiaria("Calle falsa 123", new ArrayList<>(),"Comedor de prueba", null, "COMEDOR");
+            new EntidadBeneficiaria("Calle falsa 123", new ArrayList<>(),"Comedor de prueba", null, "COMEDOR");
 
     if(id != null) entidad.setId(id);
     return entidad;

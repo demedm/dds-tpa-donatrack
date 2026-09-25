@@ -134,17 +134,18 @@ public class DonacionController {
                         asignada.setEntidadAsignadaId(necesidad.getEntidadId());
                         //asignada.setEstado(EstadoDonacion.ASIGNADA);
                         asignada.asignar();
+                        donacion.agregarDonaciones(asignada);
 
                         // Guardar la nueva segmentada en memoria
-                        DonacionesRepository.Instance.guardar(donacion);
                         nuevasSegmentadasAsignadas.add(asignada);
 
                         peticion.setCantidadRecibida(peticion.getCantidadRecibida() + cantidadAAsignar);
                     }
                 }
             }
+        DonacionesRepository.Instance.guardar(donacion);
 
-            EntityManagerHelper.commit();
+        EntityManagerHelper.commit();
 
             List<java.util.Map<String, Object>> respuestaDTO = new ArrayList<>();
 
@@ -156,10 +157,7 @@ public class DonacionController {
             map.put("entidadAsignadaId", ds.getEntidadAsignadaId());
             respuestaDTO.add(map);
         }
-
-            // Responder con la lista de segmentadas generadas por la asignación
-            return respuestaDTO;
+        return respuestaDTO;
     }
-
-
 }
+
