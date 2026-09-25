@@ -1,0 +1,16 @@
+POST http://localhost:9001/donantes/fisica
+Content-Type: application/json
+
+{
+  "nombreIdentificador": "Antonio Chamorro",
+  "identificacion": {
+    "tipoDocumento": "DNI",
+    "nroDocumento": "12345678"
+  },
+  "mail": {
+    "direccion": "antonio@ejemplo.com"
+  },
+  "telefono": {
+    "numero": "1122334455"
+  }
+}

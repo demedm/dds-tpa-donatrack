@@ -18,13 +18,9 @@ import java.util.Properties;
 
 @Embeddable
 public class Mail implements MedioContacto {
-<<<<<<< HEAD
   @Column(name = "direccion_mail")
   private String direccionMail;
-=======
 
-  private final String direccionMail;
->>>>>>> 13de755f28e7f883e85daf2e2275cafd0e6c49ea
 
   public Mail(){};
   public Mail(String direccionCasilla) {

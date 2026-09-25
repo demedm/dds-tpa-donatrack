@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-<<<<<<< HEAD
+
 import java.util.UUID;
-=======
+
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -40,7 +40,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "donaciones_segmentadas")
 
->>>>>>> 13de755f28e7f883e85daf2e2275cafd0e6c49ea
+
 public class DonacionSegmentada {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
