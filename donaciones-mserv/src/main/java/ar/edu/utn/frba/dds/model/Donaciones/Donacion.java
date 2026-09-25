@@ -7,7 +7,6 @@ import ar.edu.utn.frba.dds.model.donantes.Persona;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,7 +28,7 @@ public class Donacion {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long Id;
+  private Long id;
 
   private String descripcionGeneral;
 
@@ -63,7 +62,7 @@ public class Donacion {
   }
 
   public Long getId() {
-    return Id;
+    return id;
   }
 
   @JsonIgnore
