@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.model.notificaciones;
 
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
+import ar.edu.utn.frba.dds.repositories.EntityManagerHelper;
 import ar.edu.utn.frba.dds.repositories.NotificacionRepository;
 
 import java.util.concurrent.ExecutorService;
@@ -8,13 +9,8 @@ import java.util.concurrent.Executors;
 
 /**
  * Envio en segundo plano, para no bloquear el request HTTP.
- *
- * Antes tenia DOS bloques pool.submit casi identicos (uno por sobrecarga);
- * con Notificable queda uno solo.
- *
  * NO es una cola de mensajes: no persiste los mensajes, no garantiza entrega,
- * no reintenta, y si el proceso se apaga se pierde lo encolado. "Asincronico"
- * aca significa unicamente "no bloquea el request".
+ * aca unicamente "no bloquea el request".
  */
 public class NotificadorAsincronico implements EnviadorNotificaciones {
 
@@ -47,15 +43,26 @@ public class NotificadorAsincronico implements EnviadorNotificaciones {
           System.err.println("[Notificaciones] '" + destinatario.nombreParaMostrar()
               + "' no tiene medio de contacto configurado.");
           return;
+        } else {
+          destino.contactar(notificacion);
         }
-        destino.contactar(notificacion);
       } catch (Exception e) {
         notificacion.marcarComoFallida();
         System.err.println("[Notificaciones] Error al notificar a "
             + destinatario.nombreParaMostrar() + ": " + e.getMessage());
+      } finally {
+        try {
+          repositorio.actualizar(notificacion);
+        } catch (Exception e) {
+          System.err.println("[Notificaciones] No se pudo guardar el estado: " + e.getMessage());
+        }
+        EntityManagerHelper.closeEntityManager();
       }
     });
-
     return notificacion;
+    }
+    public void cerrar() {
+      pool.shutdown();
+    }
   }
-}
+

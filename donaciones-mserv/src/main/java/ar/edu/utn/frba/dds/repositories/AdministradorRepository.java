@@ -46,4 +46,9 @@ public class AdministradorRepository {
   public List<Destinatario> administradores() {
     return List.copyOf(administradores);
   }
+
+  //para test
+  public void limpiar() {
+    administradores.clear();
+  }
 }

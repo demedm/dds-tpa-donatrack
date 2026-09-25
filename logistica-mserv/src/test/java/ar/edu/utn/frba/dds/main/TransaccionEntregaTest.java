@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
+import ar.edu.utn.frba.dds.model.EstadoRuta;
+import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
@@ -21,6 +23,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TransaccionEntregaTest {
   private Javalin app;
@@ -154,5 +157,24 @@ public class TransaccionEntregaTest {
         "/entregas/" + entrega1.getId() + "/no-entregado", " {} ");
     assertEquals(200, response.statusCode());
     assertEquals(EstadoEntrega.NO_RECIBIDA, entregaRepositorio.buscarEstadoPorId(entrega1.getId()));
+  }
+
+  @Test
+  void iniciarRutaCambiaEstadoDeRuta() throws Exception {
+    entregaRepositorio.registrar(entrega1);
+    entregaRepositorio.registrar(entrega2);
+    camionRepositorio.registrar(camion2);
+    usuarioRepositorio.registrar(chofer);
+    Ruta rutaPrueba = new Ruta(List.of(entrega1, entrega2));
+    rutaPrueba.asignarCamion(camion2);
+    rutaPrueba.asignarChofer(chofer);
+    rutaRepositorio.registrar(rutaPrueba);
+
+    HttpResponse<String> response = post("/usuarios/" + chofer.getId() +
+        "/rutas/" + rutaPrueba.getId() + "/iniciar", " {} ");
+    System.out.println(response.body());
+
+    assertEquals(200, response.statusCode());
+    assertEquals(EstadoRuta.EN_CURSO, rutaRepositorio.buscarEstadoPorId(rutaPrueba.getId()));
   }
 }

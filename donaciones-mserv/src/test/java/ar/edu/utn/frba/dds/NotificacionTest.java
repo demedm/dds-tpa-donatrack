@@ -36,7 +36,7 @@ class NotificacionTest {
     mailEntidad = medioMockeado("comedor@mail.com");
     mailAdmin = medioMockeado("admin@donatrack.com");
 
-    //AdministradorRepository.Instance.limpiar();
+    AdministradorRepository.Instance.limpiar();
   }
 
   private MedioContacto medioMockeado(String direccion) {

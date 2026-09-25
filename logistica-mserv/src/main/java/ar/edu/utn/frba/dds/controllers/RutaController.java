@@ -31,11 +31,10 @@ public class RutaController {
     return RutaRepositorio.Instance.mostrarTodos();
   }
 
-  public Ruta postRuta(Context ctx) {
+  public void postRuta(Context ctx) {
     Ruta ruta = validarRuta(ctx);
     RutaRepositorio.Instance.registrar(ruta);
     ctx.status(201);
-    return ruta;
   }
 
   public Ruta postEntrega(Context ctx) {
@@ -60,12 +59,12 @@ public class RutaController {
     return ruta;
   }
 
-  public Ruta patchRuta(Context ctx) {
+  public void patchRuta(Context ctx) {
     Long idRuta = Long.parseLong(ctx.pathParam("id"));
     Ruta ruta = RutaRepositorio.Instance.buscarPorId(idRuta);
     if (ruta == null) {
       ctx.status(404);
-      return null;
+      return;
     }
 
     RutaDto rutaModificada = ctx.bodyAsClass(RutaDto.class);
@@ -73,10 +72,10 @@ public class RutaController {
     var rutaActualizada = RutaRepositorio.Instance.actualizarRuta(ruta, rutaModificada);
     if (rutaActualizada == null) {
       ctx.status(400);
-      return null;
+      return;
     }
     ctx.status(200);
-    return rutaActualizada;
+    ctx.json(rutaActualizada);
   }
 
   public void deleteRuta(Context ctx) {

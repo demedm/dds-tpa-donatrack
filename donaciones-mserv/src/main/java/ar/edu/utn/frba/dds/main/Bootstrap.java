@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.model.Bienes.Categoria;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.donantes.Identificacion;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;

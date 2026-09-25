@@ -26,8 +26,11 @@ public class Notificador implements EnviadorNotificaciones {
     }
 
     Notificacion notificacion = new Notificacion(mensajeTexto);
-    destino.contactar(notificacion);
-    repositorio.registrar(notificacion);
+    try {
+      destino.contactar(notificacion);
+    } finally {
+      repositorio.registrar(notificacion);
+    }
     return notificacion;
   }
 }

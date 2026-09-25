@@ -11,12 +11,16 @@ import ar.edu.utn.frba.dds.model.accionesrutas.AsignarCamion;
 import ar.edu.utn.frba.dds.model.accionesrutas.LoggearRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.NotificarSobreRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.ReplanificarRuta;
+import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.scripts.dto.ResponsePlanificacionDto;
 import ar.edu.utn.frba.dds.scripts.dto.RutaDto;
 import ar.edu.utn.frba.dds.scripts.dto.RutaPlanificadaDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+
+import javax.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RutaRepositorio implements WithSimplePersistenceUnit {
   public static final RutaRepositorio Instance = new RutaRepositorio();
@@ -38,23 +42,50 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     observers.remove(observer);
   }
 
-  public void iniciarRuta(Long idRuta) {
+  private boolean iniciarTransaccion() {
+    if (!entityManager().getTransaction().isActive()) {
+      entityManager().getTransaction().begin();
+      return true;
+    }
+    return false;
+  }
+
+  private void commit(boolean transaccionPropia) {
+    if (transaccionPropia) {
+      entityManager().getTransaction().commit();
+    }
+  }
+
+  public Ruta iniciarRuta(Chofer chofer, Long idRuta) {
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
     Ruta ruta = buscarPorId(idRuta);
+    if (!Objects.equals(chofer.getId(), ruta.getChofer().getId())) {
+      return null;
+    }
     ruta.iniciarRuta(); // cambia estado de Ruta y de cada Entrega
     observers.forEach(observer -> observer.actualizarRuta(ruta, true));
     ruta.getEntregas().forEach(EntregaRepositorio.Instance::notificarInicioDeEntrega);
+    commit(transaccionPropia);
+    return ruta;
   }
 
   public void registrar(Ruta ruta) {
-    entityManager().getTransaction().begin();
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
     entityManager().persist(ruta);
-    entityManager().getTransaction().commit();
+
+    commit(transaccionPropia);
   }
 
   public void eliminarRuta(Ruta ruta) {
-    entityManager().getTransaction().begin();
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
+
     entityManager().remove(ruta);
-    entityManager().getTransaction().commit();
+
+    commit(transaccionPropia);
   }
 
   private void eliminar(Ruta ruta) {
@@ -183,7 +214,8 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public Ruta actualizarRuta(Ruta ruta, RutaDto dto) {
-    entityManager().getTransaction().begin();
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
     if (dto.getChoferId() != null) {
       var chofer = UsuarioRepositorio.Instance.buscarChoferPorId(dto.getChoferId());
       ruta.asignarChofer(chofer);
@@ -201,16 +233,17 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
             "No se permite regresar el estado de una ruta a NO_INICIADA");
       }
     }
-    entityManager().getTransaction().commit();
+    commit(transaccionPropia);
     return ruta;
   }
 
   public void eliminarRutaYEntregas(Ruta ruta) {
-    entityManager().getTransaction().begin();
+    EntityTransaction transaction = entityManager().getTransaction();
+    boolean transaccionPropia = iniciarTransaccion();
     ruta.getCamion().regresarDeposito();
     ruta.getEntregas().forEach(EntregaRepositorio.Instance::eliminarEntrega);
     eliminar(ruta);
-    entityManager().getTransaction().commit();
+    commit(transaccionPropia);
   }
 
 }
