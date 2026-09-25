@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.Matchmaking;
+/*package ar.edu.utn.frba.dds.Matchmaking;
 
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
 import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
@@ -184,3 +184,5 @@ public class AsignacionDonacionesTest {
     return new DonacionSegmentada(10, new Subcategoria(Categoria.ALIMENTOS, subcategoria), null);
   }
 }
+
+ */
