@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.controllers.CamionController;
 import ar.edu.utn.frba.dds.controllers.DashboardController;
 import ar.edu.utn.frba.dds.controllers.MonitoreoController;
 import ar.edu.utn.frba.dds.controllers.RutaController;
+import ar.edu.utn.frba.dds.controllers.UsuarioController;
 import io.javalin.Javalin;
 
 public class Router {
@@ -14,6 +15,7 @@ public class Router {
     RutaController rutaController = new RutaController();
     DashboardController dashboardController = new DashboardController();
     CallbackController callbackController = new CallbackController();
+    UsuarioController usuarioController = new UsuarioController();
 
     // DASHBOARD DE MONITOREO
     app.get("/dashboard/", ctx -> ctx.render("dashboard.hbs"));
@@ -21,12 +23,12 @@ public class Router {
     app.post("/camiones/{patente}/telemetria", monitoreoController::recepcionarTelemetria);
 
     // CRUD CALLBACK
-    // app.post("/callback/planificaciones/", callbackController::recibirPlanificacion);
+    app.post("/callback/planificaciones/", callbackController::recibirPlanificacion);
 
     // CRUD CAMIONES
     app.get("/camiones/random", ctx -> ctx.json(camionController.randomCamion()));
-    app.get("/camiones/", ctx -> ctx.json(camionController.showFlota()));
-    app.get("/camiones/{patente}", camionController::buscarPorPatente);
+    app.get("/camiones/", ctx -> ctx.json(camionController.showFlota(ctx)));
+    app.get("/camiones/{id}", camionController::buscarPorId);
     app.post("/camiones/{patente}", camionController::saveCamion);
 
     // CRUD RUTAS Y ENTREGAS
@@ -36,8 +38,15 @@ public class Router {
         rutaController.showEntrega(ctx)));
     app.get("/rutas/{id}/entregas/", ctx -> ctx.json(
         rutaController.showEntregas(ctx)));
-    // app.post("/rutas/", rutaController::saveRuta);
-    //app.post("/rutas/{idRuta}/entregas/", rutaController::saveEntrega);
+    app.post("/rutas/", rutaController::postRuta);
+    // app.put("/rutas/{id}", ctx -> ctx.json(rutaController.patchRuta(ctx)));
+    app.patch("/rutas/{id}", rutaController::patchRuta);
+    app.delete("/rutas/{id}", rutaController::deleteRuta);
+
+    app.post("/usuarios/{idUsuario}/entregas/{id}/confirmar",
+        usuarioController::confirmarEntrega);
+    app.post("/usuarios/{idUsuario}/entregas/{id}/no-entregado",
+        usuarioController::marcarEntregaComoNoRecepcionada);
 
     // RECEPCION DE DONACIONES
     app.post("/donaciones/{id}", callbackController::recibirDonacion);

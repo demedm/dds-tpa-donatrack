@@ -14,7 +14,7 @@ public class CallbackController {
   List<RequestPlanificacionDto> donacionesAplanificar = new ArrayList<>();
 
   public void recibirDonacion(Context ctx) {
-    Long idDonacion = (long) Integer.parseInt(ctx.pathParam("id"));
+    Long idDonacion = Long.parseLong(ctx.pathParam("id"));
     DonacionDto donacion = ctx.bodyAsClass(DonacionDto.class);
 
     RequestPlanificacionDto replanificar = new RequestPlanificacionDto();
@@ -43,9 +43,6 @@ public class CallbackController {
 
   public void recibirPlanificacion(Context ctx) {
     ResponsePlanificacionDto respuesta = ctx.bodyAsClass(ResponsePlanificacionDto.class);
-
-    // por ahora, esta es la replanificacion, no se esta notificando de que no se realizo la entrega
-    // donacionesAPlanificar.addAll(respuesta.getDonacionesNoPlanificadas());
 
     RutaRepositorio.Instance.recibirRespuestaPlanificacion(respuesta);
     ctx.status(200); // OK

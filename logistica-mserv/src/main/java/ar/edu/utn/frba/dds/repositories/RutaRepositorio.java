@@ -1,5 +1,8 @@
 package ar.edu.utn.frba.dds.repositories;
 
+import ar.edu.utn.frba.dds.exceptions.NoHayChoferesDisponiblesException;
+import ar.edu.utn.frba.dds.exceptions.RutaNotFoundException;
+import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoRuta;
 import ar.edu.utn.frba.dds.model.Ruta;
@@ -9,6 +12,7 @@ import ar.edu.utn.frba.dds.model.accionesrutas.LoggearRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.NotificarSobreRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.ReplanificarRuta;
 import ar.edu.utn.frba.dds.scripts.dto.ResponsePlanificacionDto;
+import ar.edu.utn.frba.dds.scripts.dto.RutaDto;
 import ar.edu.utn.frba.dds.scripts.dto.RutaPlanificadaDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import java.util.ArrayList;
@@ -34,17 +38,6 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     observers.remove(observer);
   }
 
-  /*
-  public void addRutasPlanificadas(List<Ruta> nuevasRutasPlanificadas) {
-    nuevasRutasPlanificadas.forEach(this::addRuta);
-  }
-
-  public void addRuta(Ruta ruta) {
-    allRutas.add(ruta);
-    observers.forEach(observer -> observer.actualizarRuta(ruta, true));
-  }
-  */
-
   public void iniciarRuta(Long idRuta) {
     Ruta ruta = buscarPorId(idRuta);
     ruta.iniciarRuta(); // cambia estado de Ruta y de cada Entrega
@@ -53,10 +46,18 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public void registrar(Ruta ruta) {
+    entityManager().getTransaction().begin();
     entityManager().persist(ruta);
+    entityManager().getTransaction().commit();
   }
 
   public void eliminarRuta(Ruta ruta) {
+    entityManager().getTransaction().begin();
+    entityManager().remove(ruta);
+    entityManager().getTransaction().commit();
+  }
+
+  private void eliminar(Ruta ruta) {
     entityManager().remove(ruta);
   }
 
@@ -67,19 +68,29 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
         .getResultList();
   }
 
+  // devulve una lista de rutas o una lista vacia
   public List<Ruta> mostrarRutasActivasConChoferAsignado() {
-    var rutas = buscarRutasConEstado(EstadoRuta.NO_INICIADA)
-        .stream().filter(ruta -> ruta.getChofer() != null).toList();
-    rutas.addAll(buscarRutasConEstado(EstadoRuta.EN_CURSO));
+    var rutasNoIniciadas = buscarRutasConEstado(EstadoRuta.NO_INICIADA);
+    var rutasEnCurso = buscarRutasConEstado(EstadoRuta.EN_CURSO);
+    List<Ruta> rutas = new ArrayList<>();
+
+    if (!rutasNoIniciadas.isEmpty()) {
+      rutas = rutasNoIniciadas.stream().filter(ruta -> ruta.getChofer() != null).toList();
+    }
+    rutas.addAll(rutasEnCurso);
     return rutas;
   }
 
   @SuppressWarnings("unchecked")
   public Ruta buscarPorId(Long id) {
-    return (Ruta) entityManager()
-        .createQuery("from Ruta where id = :id")
+    var ruta = entityManager()
+        .createQuery("from Ruta where id = :id", Ruta.class)
         .setParameter("id", id)
         .getResultList().stream().findFirst().orElse(null);
+    if (ruta == null) {
+      throw new RutaNotFoundException(id);
+    }
+    return ruta;
   }
 
   @SuppressWarnings("unchecked")
@@ -125,6 +136,13 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
         .getResultList();
   }
 
+  public EstadoRuta buscarEstadoPorId(Long id) {
+    return entityManager()
+        .createQuery("select r.estado from Ruta r where r.id = :id", EstadoRuta.class)
+        .setParameter("id", id)
+        .getSingleResult();
+  }
+
   /*
   public void gestionarRutas(List<Entrega> entregas) {
     int tamanioLote = 100;
@@ -146,21 +164,15 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
         new Entrega(destinoDto.getDireccion(), destinoDto.getDonacionId())).toList();
     // despues de crearse las entregas se persisten
     entregas.forEach(EntregaRepositorio.Instance::registrar);
-
-    Ruta ruta = new Ruta(entregas);
-    ruta.asignarCamion(rutaDto.getCamion());
-    return ruta;
-  }
-
-  public void asignarChoferes(List<Ruta> rutas) {
+    Camion camion = CamionRepositorio.Instance.buscarPorPatente(rutaDto.getCamion().getPatente());
     var choferes = UsuarioRepositorio.Instance.mostrarChoferesNoAsignados();
-    for (int i = 0; i < choferes.size(); i++) {
-      var ruta = rutas.get(i);
-      if (ruta != null) {
-        ruta.asignarChofer(choferes.get(i));
-      }
+    if (choferes.isEmpty()) {
+      throw new NoHayChoferesDisponiblesException();
     }
-    // no contempla el caso en el que rutas.size() > choferes.size()
+    Ruta ruta = new Ruta(entregas);
+    ruta.asignarCamion(camion);
+    ruta.asignarChofer(choferes.get(0));
+    return ruta;
   }
 
   public void recibirRespuestaPlanificacion(ResponsePlanificacionDto respuesta) {
@@ -168,9 +180,37 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     List<Ruta> rutas = rutasPlanificadas.stream().map(this::crearRuta).toList();
     // persisto rutas creadas
     rutas.forEach(this::registrar);
-    // asignar los choferes
-    asignarChoferes(rutas);
-    // replanificar (pendiente)
+  }
+
+  public Ruta actualizarRuta(Ruta ruta, RutaDto dto) {
+    entityManager().getTransaction().begin();
+    if (dto.getChoferId() != null) {
+      var chofer = UsuarioRepositorio.Instance.buscarChoferPorId(dto.getChoferId());
+      ruta.asignarChofer(chofer);
+    } else if (dto.getCamionId() != null) {
+      var camion = CamionRepositorio.Instance.buscarPorId(dto.getCamionId());
+      var camionActual = CamionRepositorio.Instance.buscarPorId(ruta.getCamion().getId());
+      camionActual.regresarDeposito();
+      ruta.asignarCamion(camion);
+    } else if (dto.getEstado() != null) {
+      switch (dto.getEstado()) {
+        case CANCELADA -> ruta.indicarImprovistoLogistico(); // unica razon por la que se cancela
+        case EN_CURSO -> ruta.iniciarRuta();
+        case FINALIZADA -> ruta.finalizarRuta();
+        case NO_INICIADA -> throw new IllegalArgumentException(
+            "No se permite regresar el estado de una ruta a NO_INICIADA");
+      }
+    }
+    entityManager().getTransaction().commit();
+    return ruta;
+  }
+
+  public void eliminarRutaYEntregas(Ruta ruta) {
+    entityManager().getTransaction().begin();
+    ruta.getCamion().regresarDeposito();
+    ruta.getEntregas().forEach(EntregaRepositorio.Instance::eliminarEntrega);
+    eliminar(ruta);
+    entityManager().getTransaction().commit();
   }
 
 }

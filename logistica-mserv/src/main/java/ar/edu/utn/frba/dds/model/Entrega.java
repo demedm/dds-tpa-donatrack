@@ -37,7 +37,6 @@ public class Entrega {
 
   private String foto;
   private LocalDateTime fechaHoraEntrega = null;
-  private String entidadId;
 
   @ManyToOne
   private Camion camionQueEntrego = null;
@@ -48,14 +47,8 @@ public class Entrega {
     this.direccion = direccion;
   }
 
-  public Entrega() {}
-
-  public String getEntidadId() {
-    return entidadId;
-  }
-
-  public void setEntidadId(String entidadId) {
-    this.entidadId = entidadId;
+  public Entrega() {
+    this.estado = EstadoEntrega.PENDIENTE;
   }
 
   public LocalDate getFechaVencimiento() {
@@ -103,7 +96,6 @@ public class Entrega {
 
   public void marcarComoNoRecepcionada() {
     estado = EstadoEntrega.NO_RECIBIDA;
-    marcarComoFallida(new NoRecepcionada());
   }
 
   public boolean estaVencida() {
@@ -144,5 +136,13 @@ public class Entrega {
 
   public EntidadBeneficiaria getEntidadBeneficiaria() {
     return entidadBeneficiaria;
+  }
+
+  public LocalDateTime getFechaHoraEntrega() {
+    return fechaHoraEntrega;
+  }
+
+  public Camion getCamionQueEntrego() {
+    return camionQueEntrego;
   }
 }

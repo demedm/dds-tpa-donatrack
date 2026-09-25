@@ -25,7 +25,9 @@ public class Camion {
   @Column(name = "estado_camion")
   private EstadoCamion estado;
 
-  public Camion() {}
+  public Camion() {
+    estado = EstadoCamion.DISPONIBLE;
+  }
 
   public EstadoCamion getEstado() {
     return estado;

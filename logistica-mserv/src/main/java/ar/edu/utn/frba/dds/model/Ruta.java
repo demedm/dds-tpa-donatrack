@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.model;
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,7 +22,7 @@ public class Ruta {
 
   @OneToMany
   @JoinColumn(name = "ruta_id")
-  private List<Entrega> entregas;
+  private List<Entrega> entregas = new ArrayList<>();
 
   @ManyToOne
   private Camion camion;
@@ -37,7 +38,9 @@ public class Ruta {
     this.estado = EstadoRuta.NO_INICIADA;
   }
 
-  public Ruta() {}
+  public Ruta() {
+    this.estado = EstadoRuta.NO_INICIADA;
+  }
 
   public Long getId() {
     return this.id;
@@ -45,6 +48,13 @@ public class Ruta {
 
   public void agregarEntrega(Entrega entrega) {
     entregas.add(entrega);
+  }
+
+  public void setEntregas(List<Entrega> entregas) {
+    if (this.entregas != null) {
+      this.entregas.clear();
+    }
+    this.entregas.addAll(entregas);
   }
 
   public List<Entrega> getEntregas() {

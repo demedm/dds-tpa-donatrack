@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
-import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.usuarios.Administrador;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
