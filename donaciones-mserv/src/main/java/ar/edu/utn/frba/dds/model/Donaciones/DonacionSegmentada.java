@@ -10,6 +10,7 @@ import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 
+import ar.edu.utn.frba.dds.model.Estado.EstadoDonacionConverter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Convert;
+
 
 @Entity
 @Table(name = "donaciones_segmentadas")
@@ -53,27 +56,16 @@ public class DonacionSegmentada {
   @JsonIgnore
   private Bien bienFiltrado;
 
-  /*
-  @Convert(converter = EstadoDonacion.class)
+  @Convert(converter = EstadoDonacionConverter.class)
   @Column(name = "estado")
-  */
-
-  @Transient
   @JsonIgnore
   private EstadoDonacion estadoActual = new EnDeposito();
 
-  /*
   @ElementCollection
   @CollectionTable(name ="historial_estados",
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
-
-  @OrderBy("fechaHora")
-   */
-
-  @Transient
   @JsonIgnore
   private List<RegistroCambioEstado> historialEstados = new ArrayList<>();
-
 
   private String justificacionFallo;
   private LocalDate fechaDeEntrega;
@@ -106,7 +98,8 @@ public class DonacionSegmentada {
     this.donanteEmail = donanteEmail;
   }
 
-  protected DonacionSegmentada() {}
+  protected DonacionSegmentada() {    this.historialEstados.add(new RegistroCambioEstado(this.estadoActual.getNombre(), LocalDateTime.now()));
+  }
 
   public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
     this.cantidad = cantidad;
@@ -114,7 +107,7 @@ public class DonacionSegmentada {
     this.bienFiltrado = bienFiltrado;
     this.estadoActual = new EnDeposito();
     this.historialEstados = new ArrayList<>();
-
+    this.historialEstados.add(new RegistroCambioEstado(this.estadoActual.getNombre(), LocalDateTime.now()));
   }
 
   public LocalDate getFechaDeEntrega() {
@@ -226,7 +219,7 @@ public class DonacionSegmentada {
     return this.resultadosPropuestos;
   }
 
-
+public EstadoDonacion getEstadoActual(){return  estadoActual;}
 
 
 }
