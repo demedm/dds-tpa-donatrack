@@ -13,6 +13,7 @@ import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
 import ar.edu.utn.frba.dds.tareas.ProcesarDonaciones;
+import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
 import com.mchange.util.AssertException;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import org.junit.jupiter.api.AfterEach;
@@ -33,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
 
@@ -200,5 +203,31 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
     return entidad;
   }
 
+  @Test
+  public void persistirYRecuperarEstadoDeDonacion() {
+    // 1. Creamos la donación (por defecto nace en el estado inicial)
+    DonacionSegmentada donacion = new DonacionSegmentada(50, null, null);
 
+    // 2. Le cambiamos el estado (esto dispara el agregado a la lista historialEstados)
+    donacion.setEstado(new EnTraslado());
+
+    // 3. Persistimos
+    withTransaction(() -> {
+      entityManager().persist(donacion);
+    });
+
+    // 4. Limpiamos el caché para obligar a Hibernate a consultar la BD real
+    entityManager().clear();
+
+    // 5. Recuperamos y afirmamos
+    DonacionSegmentada recuperada = entityManager().find(DonacionSegmentada.class, donacion.getId());
+
+    // El AttributeConverter debe haber instanciado la clase EnTraslado
+    assertEquals("En traslado", recuperada.getEstadoActual().getNombre());
+
+    // El Embeddable debe haber recuperado la lista de la tabla historial_estados
+    assertEquals(2, recuperada.getHistorialEstados().size());
+    assertEquals("En traslado", recuperada.getHistorialEstados().get(1).getEstado());
+  }
 }
+
