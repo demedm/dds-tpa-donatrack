@@ -162,7 +162,9 @@ public class DonacionSegmentada {
   // Traduce el texto que llega por HTTP a la transición correspondiente
   public void cambiarEstado(String nuevoEstado) {
     switch (nuevoEstado) {
-      case "PENDIENTE" -> setEstado(new EnDeposito()); //creo que se debe crear la clase pendiente
+      case "PENDIENTE" -> setEstado(new EnDeposito());
+      case "ASIGNADA" -> asignar();
+      case "PLANIFICADA", "LISTA_PARA_ENTREGAR" -> planificarRuta();
       case "EN_TRASLADO" -> iniciarTraslado();
       case "ENTREGADA" -> confirmarEntrega();
       case "NO_RECIBIDO", "NO_RECIBIDA", "FALLIDA" -> fallarEntrega(justificacionFallo);

@@ -14,7 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class Entrega {
   @Id
@@ -32,6 +32,7 @@ public class Entrega {
   private Long donacionId;
   private LocalDate fechaVencimiento;
 
+  @JsonIgnore
   @Transient
   private MotivoFallo motivoFallo;
 
@@ -87,7 +88,7 @@ public class Entrega {
 
   public void marcarComoFallida(MotivoFallo motivo) {
     estado = EstadoEntrega.FALLIDA;
-    // setMotivoFallo(motivo);
+    setMotivoFallo(motivo);
   }
 
   public void marcarRegreso() {
@@ -96,6 +97,7 @@ public class Entrega {
 
   public void marcarComoNoRecepcionada() {
     estado = EstadoEntrega.NO_RECIBIDA;
+    setMotivoFallo(new NoRecepcionada());
   }
 
   public boolean estaVencida() {
@@ -144,5 +146,17 @@ public class Entrega {
 
   public Camion getCamionQueEntrego() {
     return camionQueEntrego;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public void setDireccion(String direccion) {
+    this.direccion = direccion;
+  }
+
+  public void setDonacionId(Long donacionId) {
+    this.donacionId = donacionId;
   }
 }

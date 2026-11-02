@@ -32,7 +32,11 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
     public List<Donacion> obtenerTodas(){
         return entityManager().createQuery("from Donacion", Donacion.class).getResultList();
     }
-
+    public void actualizarSegmentada(DonacionSegmentada segmentada) {
+        withTransaction(() -> {
+            entityManager().merge(segmentada);
+        });
+    }
     public void eliminar(Long id){
         withTransaction(() -> {
             Donacion donacion = entityManager().find(Donacion.class, id);
@@ -49,7 +53,7 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
         return entityManager().find(DonacionSegmentada.class, segmentadaId);
 
     }
-
+   
     //Para los algoritmos
 
     public List<DonacionSegmentada> findSegmentadasEnDeposito(){

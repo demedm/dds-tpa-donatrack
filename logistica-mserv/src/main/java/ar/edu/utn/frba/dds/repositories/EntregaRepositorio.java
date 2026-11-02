@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.repositories;
 import ar.edu.utn.frba.dds.exceptions.EntregaNotFoundException;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
+
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
@@ -11,6 +12,7 @@ import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class EntregaRepositorio implements WithSimplePersistenceUnit {
   public static final EntregaRepositorio Instance = new EntregaRepositorio();
@@ -48,9 +50,9 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public Entrega actualizar(Entrega entrega) {
-    em.getTransaction().begin();
+    entityManager().getTransaction().begin();
     Entrega actualizada = entityManager().merge(entrega);
-    em.getTransaction().commit();
+    entityManager().getTransaction().commit();
     return actualizada;
   }
 

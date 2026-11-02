@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.model.accionesentregas;
 import ar.edu.utn.frba.dds.main.ClientDonaciones;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
-import java.net.http.HttpClient;
 
 public class Notificar implements AccionesSobreEntregas {
   private final ClientDonaciones client;
@@ -14,13 +13,12 @@ public class Notificar implements AccionesSobreEntregas {
   }
 
   public Notificar() {
-    this.client = new ClientDonaciones(HttpClient.newHttpClient(), urlDonaciones());
+    this.client = new ClientDonaciones();
   }
 
   @Override
   public void notificarInicioRuta(Entrega entrega) {
-    client.notificarCambioEstado(entrega.getDonacionId(),
-        EstadoEntrega.EN_TRASLADO.name());
+    client.notificarCambioEstado(entrega.getDonacionId(), EstadoEntrega.EN_TRASLADO.toString());
   }
 
   @Override

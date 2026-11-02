@@ -52,7 +52,12 @@ public class EstadoEntregaController {
       return;
     }
 
+    // La justificación va antes: fallarEntrega() la usa al cambiar de estado
+    if (cambio.getMotivoFalla() != null) {
+      segmentada.setJustificacionFallo(cambio.getMotivoFalla());
+    }
     segmentada.cambiarEstado(cambio.getNuevoEstado());
+    DonacionesRepository.Instance.actualizarSegmentada(segmentada);
 
     List<Destinatario> involucrados = involucradosEn(segmentada);
 
@@ -70,7 +75,6 @@ public class EstadoEntregaController {
           cambio.getPatenteCamion());
 
       case "FALLIDA", "NO_RECIBIDA" -> {
-        segmentada.setJustificacionFallo(cambio.getMotivoFalla());
         notificaciones.notificarEntregaFallida(
             involucrados,
             segmentadaId,

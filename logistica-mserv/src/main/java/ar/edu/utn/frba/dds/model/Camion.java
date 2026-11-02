@@ -82,4 +82,20 @@ public class Camion {
     estado = EstadoCamion.DISPONIBLE;
   }
 
+  public void setPatente(String patente) {
+    this.patente = patente;
+  }
+
+  public void setAltura(Double altura) {
+    this.altura = altura;
+  }
+
+  public void setCapacidadVolumen(Double capacidadVolumen) {
+    this.capacidadVolumen = capacidadVolumen;
+  }
+
+  public void setCapacidadCarga(Double capacidadCarga) {
+    this.capacidadCarga = capacidadCarga;
+  }
+
 }
