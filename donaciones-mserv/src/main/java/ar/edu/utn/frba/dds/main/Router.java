@@ -10,6 +10,8 @@ import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoSubatendidos;
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
+
 import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
 import io.javalin.Javalin;
 
@@ -111,7 +113,9 @@ public class Router {
     app.delete("/entidades/{id}", entidadController::deleteEntidad);
     app.get("/entidades",ctx -> ctx.json(entidadController.obtenerEntidades()));
 
-    app.put("/donaciones/{id}/estado", estadoEntregaController::cambiarEstado);
+    app.put("/donaciones/{id}/estado", ctx ->
+        ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx))
+    );
 
     app.post("/tareas/notificar-inactivos", ctx -> {
       int dias = ctx.queryParam("dias") != null ? Integer.parseInt(ctx.queryParam("dias")) : 20;

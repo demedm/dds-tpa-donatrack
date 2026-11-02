@@ -6,6 +6,9 @@ import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 
 import java.time.LocalDate;
 import ar.edu.utn.frba.dds.model.notificaciones.Destinatario;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import javax.persistence.*;
 
 
@@ -13,6 +16,15 @@ import javax.persistence.*;
 @Table(name = "persona")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_persona")
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "tipo"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = PersonaFisica.class, name = "fisica"),
+    @JsonSubTypes.Type(value = PersonaJuridica.class, name = "juridica")
+})
 public abstract class Persona implements Destinatario{
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

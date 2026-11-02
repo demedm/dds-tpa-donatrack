@@ -7,7 +7,6 @@ import javax.persistence.Enumerated;
 import java.util.Objects;
 
 @Embeddable
-
 public class Subcategoria {
 
   @Enumerated(EnumType.STRING)
@@ -24,19 +23,32 @@ public class Subcategoria {
     this.descripcion = descripcion;
   }
 
+  public Categoria getCategoria() {
+    return categoria;
+  }
+
+  public void setCategoria(Categoria categoria) {
+    this.categoria = categoria;
+  }
+
+  public String getDescripcion() {
+    return this.descripcion;
+  }
+
+  public void setDescripcion(String descripcion) {
+    this.descripcion = descripcion;
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof Subcategoria subCategoriaO)) return false;
     return Objects.equals(categoria, subCategoriaO.categoria) &&
-            Objects.equals(descripcion, subCategoriaO.descripcion);
+        Objects.equals(descripcion, subCategoriaO.descripcion);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(categoria, descripcion);
-  }
-
-  public String getDescripcion() {
-    return this.descripcion;
   }
 }

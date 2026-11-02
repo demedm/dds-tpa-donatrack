@@ -9,7 +9,6 @@ import java.util.Date;
 
 @Entity
 @DiscriminatorValue("PERECEDERO")
-
 public class BienPerecedero extends Bien {
 
   @Temporal(TemporalType.DATE)
@@ -20,6 +19,14 @@ public class BienPerecedero extends Bien {
 
   public BienPerecedero(Subcategoria subCategoria, String foto, String descripcion, Date fechaVencimiento) {
     super(subCategoria, foto, descripcion);
+    this.fechaVencimiento = fechaVencimiento;
+  }
+
+  public Date getFechaVencimiento() {
+    return fechaVencimiento;
+  }
+
+  public void setFechaVencimiento(Date fechaVencimiento) {
     this.fechaVencimiento = fechaVencimiento;
   }
 

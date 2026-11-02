@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.model.Bienes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
@@ -16,8 +18,16 @@ import javax.persistence.Table;
 @Table(name ="bienes")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_bien")
-
-public abstract class  Bien {
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "tipo"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = BienPerecedero.class, name = "perecedero"),
+    @JsonSubTypes.Type(value = BienDuradero.class, name = "duradero")
+})
+public abstract class Bien {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -26,7 +36,6 @@ public abstract class  Bien {
   private String foto;
 
   @Embedded
-  @JsonIgnore
   private Subcategoria subCategoria;
 
   protected Bien() {}
@@ -37,6 +46,34 @@ public abstract class  Bien {
     this.descripcion = descripcion;
   }
 
+  public Long getId() {
+    return id;
+  }
+
+  public String getDescripcion() {
+    return descripcion;
+  }
+
+  public void setDescripcion(String descripcion) {
+    this.descripcion = descripcion;
+  }
+
+  public String getFoto() {
+    return foto;
+  }
+
+  public void setFoto(String foto) {
+    this.foto = foto;
+  }
+
+  public Subcategoria getSubCategoria() {
+    return subCategoria;
+  }
+
+  public void setSubCategoria(Subcategoria subCategoria) {
+    this.subCategoria = subCategoria;
+  }
+
   @JsonIgnore
   protected abstract Object getCriterioSegmentacion();
 
@@ -44,8 +81,6 @@ public abstract class  Bien {
   public Criterio getCriterioDeAgrupacion() {
     return new Criterio(this.subCategoria, this.getCriterioSegmentacion());
   }
-
 }
-
 
 

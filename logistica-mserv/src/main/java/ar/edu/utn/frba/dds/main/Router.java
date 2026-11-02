@@ -18,27 +18,27 @@ public class Router {
     UsuarioController usuarioController = new UsuarioController();
 
     // DASHBOARD DE MONITOREO
-    app.get("/dashboard/", ctx -> ctx.render("dashboard.hbs"));
-    app.get("/dashboard/camiones/", dashboardController::listarCamiones);
+    app.get("/dashboard", ctx -> ctx.render("dashboard.hbs"));
+    app.get("/dashboard/camiones", dashboardController::listarCamiones);
     app.post("/camiones/{patente}/telemetria", monitoreoController::recepcionarTelemetria);
 
     // CRUD CALLBACK
-    app.post("/callback/planificaciones/", callbackController::recibirPlanificacion);
+    app.post("/callback/planificaciones", callbackController::recibirPlanificacion);
 
     // CRUD CAMIONES
     app.get("/camiones/random", ctx -> ctx.json(camionController.randomCamion()));
-    app.get("/camiones/", ctx -> ctx.json(camionController.showFlota(ctx)));
+    app.get("/camiones", ctx -> ctx.json(camionController.showFlota(ctx)));
     app.get("/camiones/{id}", camionController::buscarPorId);
     app.post("/camiones/{patente}", camionController::saveCamion);
 
     // CRUD RUTAS Y ENTREGAS
-    app.get("/rutas/", ctx -> ctx.json(rutaController.showAllRutas()));
+    app.get("/rutas", ctx -> ctx.json(rutaController.showAllRutas()));
     app.get("/rutas/{id}", ctx -> ctx.json(rutaController.showRuta(ctx)));
     app.get("/rutas/{idRuta}/entregas/{idEntrega}", ctx -> ctx.json(
         rutaController.showEntrega(ctx)));
-    app.get("/rutas/{id}/entregas/", ctx -> ctx.json(
+    app.get("/rutas/{id}/entregas", ctx -> ctx.json(
         rutaController.showEntregas(ctx)));
-    app.post("/rutas/", rutaController::postRuta);
+    app.post("/rutas", rutaController::postRuta);
     // app.put("/rutas/{id}", ctx -> ctx.json(rutaController.patchRuta(ctx)));
     app.patch("/rutas/{id}", rutaController::patchRuta);
     app.delete("/rutas/{id}", rutaController::deleteRuta);
@@ -53,6 +53,10 @@ public class Router {
 
     // RECEPCION DE DONACIONES
     app.post("/donaciones/{id}", callbackController::recibirDonacion);
+// RECEPCION MASIVA DE DONACIONES PARA PLANIFICAR
+    app.post("/planificaciones/lotes", callbackController::recibirLotePlanificacion);
 
+    app.patch("/entregas/{idEntrega}/recepcionar", rutaController::recepcionarEntrega);
+    app.patch("/entregas/{idEntrega}/rechazar", rutaController::rechazarEntrega);
   }
 }

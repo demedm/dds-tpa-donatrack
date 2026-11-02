@@ -9,7 +9,9 @@ public class Identificacion {
 
   @Column(name = "nro_documento")
   private String nroDocumento;
+
   public Identificacion() {}
+
   public Identificacion(TipoDocumento tipo, String nro) {
     this.tipo = tipo;
     this.nroDocumento = nro;
@@ -19,11 +21,15 @@ public class Identificacion {
     return nroDocumento;
   }
 
+  public void setNroDocumento(String nroDocumento) {
+    this.nroDocumento = nroDocumento;
+  }
+
   public TipoDocumento getTipo() {
     return tipo;
   }
 
-  public void setNroDocumento(String nroDocumento) {
-    this.nroDocumento = nroDocumento;
+  public void setTipo(TipoDocumento tipo) {
+    this.tipo = tipo;
   }
 }

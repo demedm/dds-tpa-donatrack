@@ -8,7 +8,6 @@ import javax.persistence.Enumerated;
 
 @Entity
 @DiscriminatorValue("DURADERO")
-
 public class BienDuradero extends Bien {
 
   @Enumerated(EnumType.STRING)
@@ -22,9 +21,16 @@ public class BienDuradero extends Bien {
     this.estado = estado;
   }
 
+  public EstadoUso getEstado() {
+    return estado;
+  }
+
+  public void setEstado(EstadoUso estado) {
+    this.estado = estado;
+  }
+
   @Override
   protected Object getCriterioSegmentacion() {
     return this.estado;
   }
-
 }

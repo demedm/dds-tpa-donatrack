@@ -13,11 +13,9 @@ import static org.mockito.Mockito.verify;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
-import ar.edu.utn.frba.dds.model.EstadoEntrega;
 import ar.edu.utn.frba.dds.model.EstadoRuta;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
-import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
@@ -84,8 +82,8 @@ class CamionRutaEntregaTest implements SimplePersistenceTest {
     ruta.iniciarRuta();
 
     assertEquals(EstadoCamion.REALIZANDO_ENTREGAS, camion.getEstado());
-    assertEquals(EstadoEntrega.EN_TRASLADO, entregaA.getEstado());
-    assertEquals(EstadoEntrega.EN_TRASLADO, entregaB.getEstado());
+    assertEquals(EstadoEntrega.EstadoEntrega.EN_TRASLADO, entregaA.getEstado());
+    assertEquals(EstadoEntrega.EstadoEntrega.EN_TRASLADO, entregaB.getEstado());
   }
 
   /*
@@ -107,7 +105,7 @@ class CamionRutaEntregaTest implements SimplePersistenceTest {
     camion.regresarDeposito();
     assertEquals(EstadoCamion.DISPONIBLE, camion.getEstado());
     // B regresa a deposito => vuelve a PENDIENTE
-    assertEquals(EstadoEntrega.PENDIENTE, entregaB.getEstado());
+    assertEquals(EstadoEntrega.EstadoEntrega.PENDIENTE, entregaB.getEstado());
   }
 /*
   @Test
@@ -141,7 +139,7 @@ class CamionRutaEntregaTest implements SimplePersistenceTest {
     boolean resultado = entregaA.estaVencida();
 
     assertTrue(resultado);
-    assertEquals(EstadoEntrega.FALLIDA, entregaA.getEstado());
+    assertEquals(EstadoEntrega.EstadoEntrega.FALLIDA, entregaA.getEstado());
     /* assertInstanceOf(
         ar.edu.utn.frba.dds.model.fallaentrega.EntregaVencida.class,
         entregaA.getMotivoFallo()
