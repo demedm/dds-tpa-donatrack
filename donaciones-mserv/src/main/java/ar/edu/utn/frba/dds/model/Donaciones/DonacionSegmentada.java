@@ -7,6 +7,7 @@ import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
+import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 
@@ -14,8 +15,10 @@ import ar.edu.utn.frba.dds.model.Estado.EstadoDonacionConverter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.UUID;
@@ -32,6 +35,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Convert;
@@ -40,22 +44,24 @@ import javax.persistence.Convert;
 @Entity
 @Table(name = "donaciones_segmentadas")
 
-
 public class DonacionSegmentada {
+
+  // ======================= ATRIBUTOS =======================
+
+  // Identidad y de qué está hecha: la donación de la que sale y sus bienes
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private int cantidad;
+  @ManyToOne
+  @JoinColumn(name = "donacion_id")
+  private Donacion donacion;
 
-  @Embedded
-  private Subcategoria subcategoria;
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "segmentada_id")
+  private List<Bien> bienes = new ArrayList<>();
 
-  @ManyToOne(cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "bien_id")
-  @JsonIgnore
-  private Bien bienFiltrado;
-
+  // Estados (patrón State) e historial de cambios
   @Convert(converter = EstadoDonacionConverter.class)
   @Column(name = "estado")
   @JsonIgnore
@@ -67,94 +73,93 @@ public class DonacionSegmentada {
   @JsonIgnore
   private List<RegistroCambioEstado> historialEstados = new ArrayList<>();
 
+  // Traslado y entrega
   private String justificacionFallo;
   private LocalDate fechaDeEntrega;
-  private String donanteEmail;
-  private String entidadAsignadaId;
-  private Integer donanteId;
 
-  @Transient
-  private Resultados resultadosPropuestos;
+  // Asignación a una entidad beneficiaria
+  private String entidadAsignadaId;
 
   @Transient
   private MedioContacto medioContactoEntidad;
 
+  // Algoritmos de asignación (matchmaking): entidades propuestas
+  @Transient
+  private Resultados resultadosPropuestos;
+
   @ElementCollection
   @CollectionTable(name = "propuestas_asignacion",
-    joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
+      joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
   @Column(name ="entidad_id")
   @JsonIgnore
   private List<String> idsEntidadesPropuestas = new ArrayList<>();
 
-  public List<String> getIdsEntidadesPropuestas() {
-    return idsEntidadesPropuestas;
-  }
 
-  public String getDonanteEmail() {
-    return donanteEmail;
-  }
+  // ======================= CONSTRUCTORES =======================
 
-  public void setDonanteEmail(String donanteEmail) {
-    this.donanteEmail = donanteEmail;
-  }
-
+  // Constructor vacío que usa Hibernate para leer de la base
   protected DonacionSegmentada() {    this.historialEstados.add(new RegistroCambioEstado(this.estadoActual.getNombre(), LocalDateTime.now()));
   }
 
-  public DonacionSegmentada(Integer cantidad, Subcategoria subcategoria, Bien bienFiltrado) {
-    this.cantidad = cantidad;
-    this.subcategoria = subcategoria;
-    this.bienFiltrado = bienFiltrado;
+  // Constructor que usa Donacion al segmentar
+  public DonacionSegmentada(Donacion donacion, List<Bien> bienes) {
+    if (bienes == null || bienes.isEmpty()) {
+      throw new IllegalArgumentException("Una donación segmentada necesita al menos un bien");
+    }
+    this.donacion = donacion;
+    this.bienes = new ArrayList<>(bienes);
     this.estadoActual = new EnDeposito();
     this.historialEstados = new ArrayList<>();
     this.historialEstados.add(new RegistroCambioEstado(this.estadoActual.getNombre(), LocalDateTime.now()));
   }
 
-  public LocalDate getFechaDeEntrega() {
-    return this.fechaDeEntrega;
+
+  // ======================= DATOS DE LA SEGMENTADA =======================
+  // Se calculan a partir de los bienes y de la donación
+
+  public Long getId() {
+    return id;
   }
+
+  public List<Bien> getBienes() {
+    return Collections.unmodifiableList(bienes);
+  }
+
+  public Integer getCantidad(){
+    return bienes.stream().mapToInt(Bien::getCantidad).sum();
+  }
+
+  @JsonIgnore
+  public Subcategoria getSubcategoria() {
+    return bienes.get(0).getSubcategoria();
+  }
+
+  public Persona getDonante() {
+    return donacion.getDonante();
+  }
+
+
+  // ======================= ESTADOS =======================
+  // Cambio de estado, historial y consultas sobre el estado actual
 
   public void setEstado(EstadoDonacion nuevoEstado) {
     this.estadoActual = nuevoEstado;
     this.historialEstados.add(new RegistroCambioEstado(nuevoEstado.getNombre(), LocalDateTime.now()));
   }
-  @JsonIgnore
-  public boolean estaAlmacen(){
-    return estadoActual == null ||estadoActual instanceof EnDeposito;
-  }
 
-  public void setJustificacionFallo(String justificacion) {
-    this.justificacionFallo = justificacion;
-  }
+  public EstadoDonacion getEstadoActual(){return  estadoActual;}
 
-  public Integer getCantidad(){
-    return cantidad;
-  }
-
-  public void setCantidad(Integer nuevaCantidad){
-    cantidad = nuevaCantidad;
-  }
-  @JsonIgnore
-  public Bien getBienFiltrado(){
-    return bienFiltrado;
-  }
-
-  public Long getId() {
-    return id;
-  }
   @JsonIgnore
   public List<RegistroCambioEstado> getHistorialEstados() {
     return historialEstados;
   }
 
-  public String getEntidadAsignadaId() {
-    return entidadAsignadaId;
+  @JsonIgnore
+  public boolean estaAlmacen(){
+    return estadoActual == null ||estadoActual instanceof EnDeposito;
   }
 
-  public void setEntidadAsignadaId(String entidadAsignadaId) {
-    this.entidadAsignadaId = entidadAsignadaId;
-  }
-
+  // Traduce el texto que llega por HTTP a la transición correspondiente
   public void cambiarEstado(String nuevoEstado) {
     switch (nuevoEstado) {
       case "PENDIENTE" -> setEstado(new EnDeposito()); //creo que se debe crear la clase pendiente
@@ -165,6 +170,7 @@ public class DonacionSegmentada {
     }
   }
 
+  // Transiciones: cada una la resuelve el estado actual
   public void asignar() {
     estadoActual.asignar(this);
   }
@@ -184,12 +190,43 @@ public class DonacionSegmentada {
   public void vencer() {
     estadoActual.vencer(this);
   }
-  @JsonIgnore
-  public Subcategoria getSubcategoria() {
-    return subcategoria;
+
+
+  // ======================= TRASLADO Y ENTREGA =======================
+
+  public void setJustificacionFallo(String justificacion) {
+    this.justificacionFallo = justificacion;
   }
 
-  //algoritmo de asignación
+  public LocalDate getFechaDeEntrega() {
+    return this.fechaDeEntrega;
+  }
+
+
+  // ======================= ASIGNACIÓN A UNA ENTIDAD =======================
+
+  public String getEntidadAsignadaId() {
+    return entidadAsignadaId;
+  }
+
+  public void setEntidadAsignadaId(String entidadAsignadaId) {
+    this.entidadAsignadaId = entidadAsignadaId;
+  }
+
+  public void asignarA(String entidadId) {
+    asignar();
+    this.entidadAsignadaId = entidadId;
+  }
+
+  public boolean puedeCubrir(Peticion peticion) {
+    return estaAlmacen()
+        && peticion.getSubclase().equalsIgnoreCase(getSubcategoria().getDescripcion())
+        && peticion.getCantidadRecibida() < peticion.getCantidadRequerida();
+  }
+
+
+  // ======================= ALGORITMOS DE ASIGNACIÓN (MATCHMAKING) =======================
+  // Busca entidades candidatas y guarda las propuestas
 
   public Resultados buscarCandidatas(List<EntidadBeneficiaria> entidades, List<AlgoritmoAsignacion> algoritmos) {
     if (!this.estaAlmacen()) {
@@ -219,7 +256,9 @@ public class DonacionSegmentada {
     return this.resultadosPropuestos;
   }
 
-public EstadoDonacion getEstadoActual(){return  estadoActual;}
+  public List<String> getIdsEntidadesPropuestas() {
+    return idsEntidadesPropuestas;
+  }
 
 
 }

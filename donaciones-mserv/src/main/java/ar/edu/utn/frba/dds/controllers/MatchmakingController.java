@@ -11,103 +11,67 @@ import java.util.List;
 import java.util.Map;
 
 import ar.edu.utn.frba.dds.tareas.ProcesarDonaciones;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import io.javalin.http.UnauthorizedResponse;
 
-public class MatchmakingController {
+public class MatchmakingController implements WithSimplePersistenceUnit {
 
-  private final List<AlgoritmoAsignacion> algoritmos;
+  public List<EntidadBeneficiaria> obtenerRanking(Context ctx) {
+    Long idSegmentada = ctx.pathParamAsClass("idSegmentada", Long.class).get();
+    DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
 
-  public MatchmakingController(List<AlgoritmoAsignacion> algoritmos) {
-    this.algoritmos = algoritmos;
-  }
-
-  public Resultados obtenerRanking(Context ctx){
-    Long idSegmentada = ctx.pathParamAsClass("id", Long.class).get();
-    DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
-
-    if(donacion == null){
+    if (segmentada == null) {
       throw new NotFoundResponse("DonacionSegmentada no encontrada");
     }
-
-    if(!donacion.estaAlmacen()){
-      throw new NotFoundResponse("La donación no se encuentra EN_DEPOSITO");
+    if (!segmentada.estaAlmacen()) {
+      throw new BadRequestResponse("La donación no se encuentra EN_DEPOSITO");
     }
 
-    List<EntidadBeneficiaria> entidades = EntidadRepository.Instance.obtenerEntidades();
-
-    try{
-      return donacion.buscarCandidatas(entidades , algoritmos);
-
-    }catch(IllegalStateException e){
-      throw  new NotFoundResponse(e.getMessage());
-    }
-
+    return segmentada.getIdsEntidadesPropuestas().stream()
+        .map(EntidadRepository.Instance::obtenerPorId)
+        .filter(entidad -> entidad != null)
+        .toList();
   }
 
-
+  // El administrador elige la entidad final
   public DonacionSegmentada asignarDonacion(Context ctx) {
-
     AsignarDonacionDTO dto = ctx.bodyAsClass(AsignarDonacionDTO.class);
 
-    Long idDonacion = dto.getDonacionSegmentadaId();
-    String idEntidad = dto.getEntidadBeneficiariaId();
-
-    DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(idDonacion);
-
-    if(segmentada == null){
-      throw new NotFoundResponse("No se encontro el donacion segmentada con ese ID");
+    DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(dto.getDonacionSegmentadaId());
+    if (segmentada == null) {
+      throw new NotFoundResponse("No se encontró la donación segmentada con ese ID");
+    }
+    if (!segmentada.estaAlmacen()) {
+      throw new BadRequestResponse("Solo se pueden asignar donaciones en estado EN_DEPOSITO");
     }
 
-    if(!segmentada.estaAlmacen()){
-      throw new NotFoundResponse("Solo se puede asignar donaciones en estado EN_DEPOSITO");
+    EntidadBeneficiaria entidad = EntidadRepository.Instance.obtenerPorId(dto.getEntidadBeneficiariaId());
+    if (entidad == null) {
+      throw new NotFoundResponse("No se encontró la entidad con ese ID");
     }
 
-    EntidadBeneficiaria entidad = EntidadRepository.Instance.obtenerPorId(idEntidad);
-    if(entidad == null){
-      throw new NotFoundResponse("No se encontro el entidad con ese ID");
-    }
-
-    segmentada.asignar();
-    segmentada.setEntidadAsignadaId(idEntidad);
+    withTransaction(() -> {
+      segmentada.asignarA(entidad.getId());
+      // acá va lo de sumarle la cantidad a la petición (ver abajo)
+    });
 
     return segmentada;
-
   }
 
-  public Map<String, Object> procesarPendientes(Context ctx){
-    ProcesarDonaciones.ejecutar();
-    return Map.of("resultado","ok");
-
-    /*
-    List<DonacionSegmentada> enDeposito = DonacionesRepository.Instance.findSegmentadasEnDeposito();
-
-    List<EntidadBeneficiaria> entidades = EntidadRepository.Instance.obtenerEntidades();
-
-    int procesadas = 0;
-
-    for(DonacionSegmentada donacion : enDeposito){
-      try{
-        donacion.buscarCandidatas(entidades , algoritmos);
-        procesadas++;
-      } catch (Exception e) {
-        System.err.println(e.getMessage());
-      }
-    }
-
-    return Map.of("Procesadas",procesadas,"total",enDeposito.size());
-    */
+  // Ejecución a demanda: valida el token y lanza el matchmaking en otro hilo
+  public Map<String, Object> procesarPendientes(Context ctx) {
+    validarTokenDeJob(ctx);
+    new Thread(ProcesarDonaciones::ejecutar).start();
+    return Map.of("resultado", "matchmaking iniciado");
   }
 
-  private void validarTokenDeJob(Context ctx){
-    String tokenEsperado = System.getenv().getOrDefault("MATCHMAKING_JOB_TOKEN","dev_secret_local");
-    String tokenRecibido = ctx.header("X-Job-Token");
-
-    if(!tokenEsperado.equals(tokenRecibido)){
-      throw  new BadRequestResponse("No autorizado");
+  private void validarTokenDeJob(Context ctx) {
+    String tokenEsperado = System.getenv().getOrDefault("MATCHMAKING_JOB_TOKEN", "dev_secret_local");
+    if (!tokenEsperado.equals(ctx.header("X-Job-Token"))) {
+      throw new UnauthorizedResponse("No autorizado");
     }
   }
-
-
 }

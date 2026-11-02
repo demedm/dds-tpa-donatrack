@@ -23,7 +23,8 @@ public class AlgoritmoSubatendidos implements AlgoritmoAsignacion {
   public long cantidadDonaciones(EntidadBeneficiaria entidad) {
     LocalDate tresMesesAtras = LocalDate.now().minusMonths(3);
     return entidad.getDonacionesRecibidas().stream()
-        .filter(don -> don.getFechaDeEntrega().isAfter(tresMesesAtras))
+        .filter(don -> don.getFechaDeEntrega() != null
+            && don.getFechaDeEntrega().isAfter(tresMesesAtras))
         .count();
   }
 

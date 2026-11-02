@@ -21,4 +21,5 @@ public class AsignarDonacionNecesidadDTO {
   public void setNecesidadId(Long necesidadId) {
     this.necesidadId = necesidadId;
   }
+
 }

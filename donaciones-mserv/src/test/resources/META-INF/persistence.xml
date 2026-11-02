@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+    <!-- Unidad para los tests (HSQLDB en memoria).
+         Tiene el mismo nombre que la de src/main: Maven pone src/test/resources
+         primero en el classpath, asi que en los tests gana esta y no hace falta MariaDB. -->
+    <persistence-unit name="simple-persistence-unit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Las clases se listan a mano: este archivo no esta en target/classes,
+             asi que la autodeteccion no encontraria las entidades. -->
+        <class>ar.edu.utn.frba.dds.model.donantes.Persona</class>
+        <class>ar.edu.utn.frba.dds.model.donantes.PersonaFisica</class>
+        <class>ar.edu.utn.frba.dds.model.donantes.PersonaJuridica</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.Bien</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.a.BienPerecedero</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.a.BienDuradero</class>
+        <class>ar.edu.utn.frba.dds.model.Donaciones.Donacion</class>
+        <class>ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada</class>
+        <class>ar.edu.utn.frba.dds.model.necesidad.Necesidad</class>
+        <class>ar.edu.utn.frba.dds.model.necesidad.Peticion</class>
+        <class>ar.edu.utn.frba.dds.model.notificaciones.Notificacion</class>
+
+        <properties>
+            <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
+            <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:donaciones_test"/>
+            <property name="hibernate.connection.username" value="sa"/>
+            <property name="hibernate.connection.password" value=""/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>

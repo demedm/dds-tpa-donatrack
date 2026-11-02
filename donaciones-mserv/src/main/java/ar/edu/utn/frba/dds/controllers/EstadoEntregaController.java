@@ -93,9 +93,10 @@ public class EstadoEntregaController {
   private List<Destinatario> involucradosEn(DonacionSegmentada segmentada) {
     List<Destinatario> involucrados = new ArrayList<>();
 
-    Optional<Persona> donante =
-        DonanteRepository.Instance.buscarPorEmail(segmentada.getDonanteEmail());
-    donante.ifPresent(involucrados::add);
+    Persona donante = segmentada.getDonante();
+    if (donante != null) {
+      involucrados.add(donante);
+    }
 
     String entidadId = segmentada.getEntidadAsignadaId();
     if (entidadId != null) {
