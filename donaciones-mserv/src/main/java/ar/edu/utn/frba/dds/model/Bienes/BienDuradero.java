@@ -1,8 +1,6 @@
-package ar.edu.utn.frba.dds.model.Bienes.a;
-
-import ar.edu.utn.frba.dds.model.Bienes.Bien;
-import ar.edu.utn.frba.dds.model.Bienes.EstadoUso;
-import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
+// Reemplazado por PorEstado / PorVencimiento (Strategy de CriterioSegmentacion). Se deja comentado como referencia.
+/*
+package ar.edu.utn.frba.dds.model.Bienes;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -38,3 +36,4 @@ public class BienDuradero extends Bien {
     return this.estado;
   }
 }
+*/
