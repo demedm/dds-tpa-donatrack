@@ -1,3 +1,5 @@
+// Reemplazado por PorEstado / PorVencimiento (Strategy de CriterioSegmentacion). Se deja comentado como referencia.
+/*
 package ar.edu.utn.frba.dds.model.Bienes;
 
 import javax.persistence.Column;
@@ -34,3 +36,4 @@ public class BienDuradero extends Bien {
     return this.estado;
   }
 }
+*/
