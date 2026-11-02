@@ -7,9 +7,6 @@ import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
 import ar.edu.utn.frba.dds.controllers.EstadoEntregaController;
 import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoSubatendidos;
 import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
 import io.javalin.Javalin;
 
@@ -110,6 +107,7 @@ public class Router {
     app.delete("/entidades/{id}", entidadController::deleteEntidad);
     app.get("/entidades",ctx -> ctx.json(entidadController.obtenerEntidades()));
 
+    // Logística avisa acá cada cambio de estado: se guarda y se notifica al donante y a la entidad
     app.put("/donaciones/{id}/estado", estadoEntregaController::cambiarEstado);
 
     app.post("/tareas/notificar-inactivos", ctx -> {

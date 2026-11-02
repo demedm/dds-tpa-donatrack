@@ -11,8 +11,10 @@ public class EnTraslado implements EstadoDonacion {
 
   @Override
   public void fallarEntrega(DonacionSegmentada donacion, String justificacion) {
-    donacion.setJustificacionFallo(justificacion);
-    donacion.setEstado(new EnDeposito());
+    // 1. Pasa a estado fallido (se registra en el historial)
+    donacion.setEstado(new EntregaFallida());
+    // 2. Delega en EntregaFallida para guardar la justificación y volver al depósito
+    donacion.fallarEntrega(justificacion);
   }
 
   @Override

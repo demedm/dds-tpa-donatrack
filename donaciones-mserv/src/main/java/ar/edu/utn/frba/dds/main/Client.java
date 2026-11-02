@@ -61,18 +61,4 @@ public class Client {
     }
   }
 
-  public void enviarDonacionALogistica(int idDonacion, int idEntidadAsignada,
-                                       String direccionEntidadAsignada) {
-    try {
-      DonacionSegmentadaDTO donacion = new DonacionSegmentadaDTO();
-      donacion.setDireccionEntidad(direccionEntidadAsignada);
-      donacion.setIdEntidadAsignada(idEntidadAsignada);
-      post("/donaciones/" + idDonacion, donacion, String.class); //<-muestra el json solamente
-    } catch (InterruptedException | IOException | RuntimeException e) {
-      System.err.println("Error al intentar enviar donacion " +
-          idDonacion + " a logistica: " + e.getMessage());
-    }
-
-  }
-
 }

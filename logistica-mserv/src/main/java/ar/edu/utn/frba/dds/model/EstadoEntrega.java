@@ -5,5 +5,6 @@ public enum EstadoEntrega {
   EN_TRASLADO,
   ENTREGADA,
   NO_RECIBIDA,
-  FALLIDA
+  FALLIDA;
+
 }

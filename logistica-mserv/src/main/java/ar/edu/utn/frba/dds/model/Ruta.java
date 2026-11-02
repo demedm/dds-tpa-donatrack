@@ -2,9 +2,9 @@ package ar.edu.utn.frba.dds.model;
 
 import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
-
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -53,8 +53,12 @@ public class Ruta {
   public void setEntregas(List<Entrega> entregas) {
     if (this.entregas != null) {
       this.entregas.clear();
+    } else {
+      this.entregas = new ArrayList<>();
     }
-    this.entregas.addAll(entregas);
+    if (entregas != null) {
+      this.entregas.addAll(entregas);
+    }
   }
 
   public List<Entrega> getEntregas() {
@@ -63,21 +67,17 @@ public class Ruta {
 
   public void iniciarRuta() {
     estado = EstadoRuta.EN_CURSO;
-    camion.iniciarRuta();
+    if (camion != null) {
+      camion.iniciarRuta();
+    }
     entregas.forEach(Entrega::marcarComoIniciada);
   }
 
-  /* Solo la entidad beneficiaria puede marcar a la entrega como entregada
-  public void visitarParada(String direccion, LocalDateTime fechaHoraEntrega) {
-    entregas.stream().filter(entrega ->
-        entrega.getDireccion().equals(direccion))
-        .forEach(entrega -> entrega.marcarComoEntregada(camion, fechaHoraEntrega));
-  }
-  */
-
   public void indicarImprovistoLogistico() {
     estado = EstadoRuta.CANCELADA;
-    camion.improvistoLogistico();
+    if (camion != null) {
+      camion.improvistoLogistico();
+    }
     entregas.forEach(entrega -> entrega
         .marcarComoFallida(new ImprevistoLogistico()));
   }
@@ -103,13 +103,27 @@ public class Ruta {
     return chofer;
   }
 
+  public void setChofer(Chofer chofer) {
+    this.chofer = chofer;
+  }
+
   public EstadoRuta getEstado() {
     return estado;
   }
 
+  public void setEstado(EstadoRuta estado) {
+    this.estado = estado;
+  }
+
   public void asignarCamion(Camion camion) {
     this.camion = camion;
-    camion.asignarRuta();
+    if (camion != null) {
+      camion.asignarRuta();
+    }
+  }
+
+  public void setCamion(Camion camion) {
+    asignarCamion(camion);
   }
 
   public Camion getCamion() {
@@ -119,5 +133,4 @@ public class Ruta {
   public void asignarChofer(Chofer chofer) {
     this.chofer = chofer;
   }
-
 }

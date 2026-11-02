@@ -22,13 +22,17 @@ class ClientTest {
   private HttpClient httpClientMock;
   @Mock
   private HttpResponse<String> httpResponseMock;
-  Client client;
+
+  // Cambiamos el tipo a ClientLogistica
+  ClientLogistica client;
 
   @BeforeEach
   void setUp() {
     httpClientMock = mock(HttpClient.class);
     httpResponseMock = mock(HttpResponse.class);
-    client = new Client(httpClientMock);
+
+    // Instanciamos la clase hija
+    client = new ClientLogistica(httpClientMock);
   }
 
   @Test
@@ -46,13 +50,12 @@ class ClientTest {
 
   @Test
   void manejaCorrectamenteExcepciones() throws IOException, InterruptedException {
-      when(httpResponseMock.statusCode()).thenReturn(404);
-      when(httpResponseMock.body()).thenReturn("Donación no encontrada");
-      when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
-          .thenReturn(httpResponseMock);
+    when(httpResponseMock.statusCode()).thenReturn(404);
+    when(httpResponseMock.body()).thenReturn("Donación no encontrada");
+    when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+        .thenReturn(httpResponseMock);
 
-      assertDoesNotThrow(() -> client.enviarDonacionALogistica(
-          12, 45, "Av Libertador 3470"));
+    assertDoesNotThrow(() -> client.enviarDonacionALogistica(
+        12, 45, "Av Libertador 3470"));
   }
-
 }

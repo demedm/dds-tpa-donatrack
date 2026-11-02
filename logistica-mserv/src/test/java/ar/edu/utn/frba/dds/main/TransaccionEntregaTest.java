@@ -2,29 +2,6 @@ package ar.edu.utn.frba.dds.main;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import ar.edu.utn.frba.dds.model.Camion;
-import ar.edu.utn.frba.dds.model.Entrega;
-import ar.edu.utn.frba.dds.model.EstadoEntrega;
-import ar.edu.utn.frba.dds.model.EstadoRuta;
-import ar.edu.utn.frba.dds.model.Ruta;
-import ar.edu.utn.frba.dds.model.usuarios.Chofer;
-import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
-import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
-import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
-import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
-import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
-import io.javalin.Javalin;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.LocalDateTime;
-import java.util.List;
-
 public class TransaccionEntregaTest {
   /*
   private Javalin app;

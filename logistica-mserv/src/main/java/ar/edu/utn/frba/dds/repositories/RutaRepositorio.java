@@ -58,10 +58,50 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     return ruta;
   }
 
-  public void registrar(Ruta ruta) {
-    em.getTransaction().begin();
-    em.persist(ruta);
-    em.getTransaction().commit();
+  public Ruta registrar(Ruta ruta) {
+    boolean transaccionIniciada = false;
+    if (!entityManager().getTransaction().isActive()) {
+      entityManager().getTransaction().begin();
+      transaccionIniciada = true;
+    }
+
+    // Persistimos o mergeamos camion y chofer
+    if (ruta.getCamion() != null) {
+      if (ruta.getCamion().getId() == null) {
+        entityManager().persist(ruta.getCamion());
+      } else {
+        ruta.setCamion(entityManager().merge(ruta.getCamion()));
+      }
+    }
+
+    if (ruta.getChofer() != null) {
+      if (ruta.getChofer().getId() == null) {
+        entityManager().persist(ruta.getChofer());
+      } else {
+        ruta.setChofer(entityManager().merge(ruta.getChofer()));
+      }
+    }
+
+    // Persistimos o mergeamos las entregas
+    if (ruta.getEntregas() != null) {
+      for (int i = 0; i < ruta.getEntregas().size(); i++) {
+        Entrega e = ruta.getEntregas().get(i);
+        if (e.getId() == null) {
+          entityManager().persist(e);
+        } else {
+          ruta.getEntregas().set(i, entityManager().merge(e));
+        }
+      }
+    }
+
+    // Guardamos la referencia gestionada que devuelve merge
+    Ruta rutaPersistida = entityManager().merge(ruta);
+
+    if (transaccionIniciada && entityManager().getTransaction().isActive()) {
+      entityManager().getTransaction().commit();
+    }
+
+    return rutaPersistida;
   }
 
   public void eliminarRuta(Ruta ruta) {

@@ -7,27 +7,43 @@ import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
 public class DonacionSegmentadaController {
-
   public DonacionSegmentada cambiarEstadoDonacion(Context ctx) {
     Long idDonacion = ctx.pathParamAsClass("id",Long.class).get();
-
     CambioEstadoDTO cambioEstado = ctx.bodyAsClass(CambioEstadoDTO.class);
-    DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idDonacion);
 
-    if(donacion == null){
-      throw new NotFoundResponse("DonacionSegmentada no encontrada");
-    }
+    // 1. ABRIMOS TRANSACCIÓN DESDE EL INICIO
+    ar.edu.utn.frba.dds.repositories.EntityManagerHelper.beginTransaction();
 
-    if(cambioEstado.getMotivoFalla() == null) {
-      donacion.cambiarEstado(cambioEstado.getNuevoEstado());
-    } else {
-      donacion.cambiarEstado(cambioEstado.getNuevoEstado());
-      donacion.setJustificacionFallo(cambioEstado.getMotivoFalla());
+    try {
+      DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idDonacion);
+
+      if(donacion == null){
+        throw new NotFoundResponse("DonacionSegmentada no encontrada");
+      }
+
+      // 2. MODIFICAMOS EL ESTADO (Hibernate ya está vigilando el historial)
+      if(cambioEstado.getMotivoFalla() == null) {
+        donacion.cambiarEstado(cambioEstado.getNuevoEstado());
+      } else {
+        // Primero seteamos la justificación para que cambiarEstado() la tenga disponible
+        donacion.setJustificacionFallo(cambioEstado.getMotivoFalla());
+        donacion.cambiarEstado(cambioEstado.getNuevoEstado());
+      }
+
+      // 3. PERSISTIMOS
+      DonacionesRepository.Instance.actualizarSegmentada(donacion);
+
+      ar.edu.utn.frba.dds.repositories.EntityManagerHelper.commit();
+      return donacion;
+
+    } catch (Exception e) {
+      // SI ALGO FALLA (ej. IllegalStateException de tu patrón State),
+      // HACEMOS ROLLBACK Y LO IMPRIMIMOS PARA NO VOLVERNOS LOCOS
+      ar.edu.utn.frba.dds.repositories.EntityManagerHelper.rollback();
+      System.err.println("ERROR al cambiar estado: " + e.getMessage());
+      throw e;
     }
-    return donacion;
   }
-
-
 //
 //  public DonacionSegmentada asignarDonacion(Context ctx) {
 //    String idDonacion = ctx.pathParam("id");
