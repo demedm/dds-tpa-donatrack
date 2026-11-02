@@ -16,7 +16,6 @@ import io.javalin.http.NotFoundResponse;
 
 public class DonacionController {
 
-
     public Donacion crearDonacion(Context ctx) {
 
         DonacionsDTO donacion = ctx.bodyValidator(DonacionsDTO.class)
@@ -86,7 +85,7 @@ public class DonacionController {
     }
 
     //PRUEBA ASIGNACION 
-
+/*
     public List<java.util.Map<String, Object>> asignarDonacionANecesidad(Context ctx) {
         AsignarDonacionNecesidadDTO dto = ctx.bodyAsClass(AsignarDonacionNecesidadDTO.class);
 
@@ -159,5 +158,8 @@ public class DonacionController {
         }
         return respuestaDTO;
     }
+ */
+
+
 }
 

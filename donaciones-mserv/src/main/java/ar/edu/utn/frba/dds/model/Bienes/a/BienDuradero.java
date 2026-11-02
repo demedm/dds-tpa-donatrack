@@ -1,4 +1,8 @@
-package ar.edu.utn.frba.dds.model.Bienes;
+package ar.edu.utn.frba.dds.model.Bienes.a;
+
+import ar.edu.utn.frba.dds.model.Bienes.Bien;
+import ar.edu.utn.frba.dds.model.Bienes.EstadoUso;
+import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;

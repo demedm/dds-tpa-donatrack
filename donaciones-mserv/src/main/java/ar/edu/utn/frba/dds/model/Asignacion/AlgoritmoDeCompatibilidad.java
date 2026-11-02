@@ -14,6 +14,7 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
   public List<EntidadBeneficiaria> obtenerRanking(DonacionSegmentada donacion, List<EntidadBeneficiaria> entidades) {
 
     return entidades.stream()
+        .filter(entidad -> this.calcularCompatibilidad(entidad,donacion) > 0)
         .sorted(Comparator.comparingLong(
                 (EntidadBeneficiaria entidad) -> this.calcularCompatibilidad(entidad, donacion)).reversed())
         .limit(maxEntidades)
@@ -24,8 +25,8 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
 
     return entidad.getNecesidades().stream()
         .flatMap(n -> n.getPeticiones().stream())
-        .filter(p -> p.getSubclase().equals(donacion.getSubcategoria().getDescripcion())
-            && p.getCantidadRequerida()<= donacion.getCantidad())
+        .filter(p -> p.getSubclase().equalsIgnoreCase(donacion.getSubcategoria().getDescripcion())
+            && p.getCantidadRecibida() < p.getCantidadRequerida())
         .count();
   }
 }
