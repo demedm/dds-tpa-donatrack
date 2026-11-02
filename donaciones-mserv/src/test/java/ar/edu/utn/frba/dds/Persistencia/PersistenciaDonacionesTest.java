@@ -52,6 +52,10 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   // son catálogo y datos que ya existen, así que se persisten antes
   @BeforeEach
   void setUp() {
+    // El EntityManager es uno por hilo y lo comparten todos los tests: se limpia para que
+    // no queden objetos de un test anterior con el mismo id que los que se crean acá
+    entityManager().clear();
+
     arroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ", UnidadMedida.UNIDADES);
     silla = new Subcategoria(Categoria.MOBILIARIO, "SILLA", UnidadMedida.UNIDADES);
     donante = new PersonaFisica();
@@ -68,6 +72,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   void borrarLoCreado() {
     donacionesCreadas.forEach(repo::eliminar);
     entidadesCreadas.forEach(EntidadRepository.Instance::eliminarPorId);
+    entityManager().clear();
   }
 
   // ---------- Donación y segmentadas ----------

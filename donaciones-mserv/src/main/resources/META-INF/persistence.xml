@@ -14,8 +14,9 @@
         <class>ar.edu.utn.frba.dds.model.donantes.PersonaFisica</class>
         <class>ar.edu.utn.frba.dds.model.donantes.PersonaJuridica</class>
         <class>ar.edu.utn.frba.dds.model.Bienes.Bien</class>
-        <class>ar.edu.utn.frba.dds.model.Bienes.a.BienPerecedero</class>
-        <class>ar.edu.utn.frba.dds.model.Bienes.a.BienDuradero</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.CriterioSegmentacion</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.PorVencimiento</class>
+        <class>ar.edu.utn.frba.dds.model.Bienes.PorEstado</class>
         <class>ar.edu.utn.frba.dds.model.Bienes.Subcategoria</class>
         <class>ar.edu.utn.frba.dds.model.Donaciones.Donacion</class>
         <class>ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada</class>

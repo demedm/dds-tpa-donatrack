@@ -1,15 +1,21 @@
-/*package ar.edu.utn.frba.dds.Matchmaking;
+package ar.edu.utn.frba.dds.Matchmaking;
 
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
-import ar.edu.utn.frba.dds.model.Bienes.BienPerecedero;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
+import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
+import ar.edu.utn.frba.dds.model.Bienes.UnidadMedida;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
+import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
+import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
 import ar.edu.utn.frba.dds.utils.AsignacionCronScheduler;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -23,6 +29,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.KeyMatcher;
 import org.quartz.listeners.JobListenerSupport;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class AsignacionProgramadaTest {
+public class AsignacionProgramadaTest implements WithSimplePersistenceUnit {
 
   private Scheduler scheduler;
 
@@ -122,14 +129,24 @@ public class AsignacionProgramadaTest {
 
     @BeforeEach
     void cargarDatos() {
+      // el comedor necesita arroz, así el algoritmo de compatibilidad lo propone
       comedor = new EntidadBeneficiaria("Av. Medrano 951", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
+      Necesidad necesidad = new Necesidad();
+      necesidad.agregarPeticion(new Peticion("ARROZ", 100));
+      comedor.getNecesidades().add(necesidad);
       EntidadRepository.Instance.registrar(comedor);
 
-      Subcategoria subcatArroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ");
-      Bien paquete = new BienPerecedero(subcatArroz, "foto.jpg", "Arroz 1kg", new Date());
-      arroz = new DonacionSegmentada(10, subcatArroz, paquete);
-      donacion = new Donacion("Donacion de prueba", new ArrayList<>(List.of(paquete)), null);
-      donacion.setDonacionesSegmentadas(List.of(arroz));
+      // Subcategoria y donante no se guardan en cascada: van antes que la donación
+      Subcategoria subcatArroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ", UnidadMedida.UNIDADES);
+      Persona donante = new PersonaFisica();
+      withTransaction(() -> {
+        entityManager().persist(subcatArroz);
+        entityManager().persist(donante);
+      });
+
+      Bien paquete = new Bien(subcatArroz, "foto.jpg", "Arroz 1kg", 10, new PorVencimiento(LocalDate.now().plusMonths(6)));
+      donacion = new Donacion("Donacion de prueba", new ArrayList<>(List.of(paquete)), donante);
+      arroz = donacion.getSegmentadas().get(0);
       DonacionesRepository.Instance.guardar(donacion);
     }
 
@@ -138,6 +155,7 @@ public class AsignacionProgramadaTest {
       // Los repositorios son compartidos entre tests: dejamos todo como estaba
       DonacionesRepository.Instance.eliminar(donacion.getId());
       EntidadRepository.Instance.eliminarPorId(comedor.getId());
+      entityManager().clear();   // que no le queden objetos de este test al siguiente
     }
 
     @Test
@@ -154,8 +172,11 @@ public class AsignacionProgramadaTest {
       scheduler.triggerJob(AsignacionCronScheduler.JOB_KEY);   // "hacer como que son las 3"
 
       assertTrue(termino.await(5, TimeUnit.SECONDS), "El job no corrio");
-      assertNotNull(arroz.getResultadosPropuestos(), "El matchmaking no dejo efecto");
-      assertTrue(arroz.getResultadosPropuestos().entidadesPropuestas().contains(comedor));
+
+      // el job corre en otro hilo con su propia sesión: el resultado se lee de la base
+      entityManager().clear();
+      DonacionSegmentada leida = DonacionesRepository.Instance.findSegmentadaById(arroz.getId());
+      assertTrue(leida.getIdsEntidadesPropuestas().contains(comedor.getId()), "El matchmaking no dejo efecto");
     }
 
     private CountDownLatch avisarCuandoTermine() throws Exception {
@@ -175,6 +196,3 @@ public class AsignacionProgramadaTest {
     }
   }
 }
-
-
- */
