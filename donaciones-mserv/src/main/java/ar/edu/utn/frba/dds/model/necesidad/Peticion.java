@@ -9,30 +9,33 @@ import javax.persistence.*;
 @Table(name = "peticiones")
 
 public class Peticion {
-  @Id //La insatncio como primary key
-  @GeneratedValue(strategy = GenerationType.IDENTITY) //Hace autoincremento
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String subclase;
   private int cantidadRequerida;
   private int cantidadRecibida = 0;
 
-  @ElementCollection //De momento habria un mcuhos a muchos, porque una peticion peude ser cubierta por muchas encesidades. Despues cambiar a un many-many, por ahroa mapea string siomple de id. 
-    @CollectionTable(
-        name = "peticion_donaciones", 
-        joinColumns = @JoinColumn(name = "peticion_id")
-    )
-    @Column(name = "donacion_id")
+  @ManyToOne
+  @JoinColumn(name = "necesidad_id")
+  private Necesidad necesidad;
 
+  @ElementCollection
+  @CollectionTable(
+      name = "peticion_donaciones",
+      joinColumns = @JoinColumn(name = "peticion_id")
+  )
+  @Column(name = "donacion_id")
   private List<String> donacionesAsignados = new ArrayList<>();
 
-  public Peticion(){}; //JPA necesiota un constructor vacio
+  public Peticion(){};
 
   public Peticion(String subclase, int cantidadRequerida) {
     this.cantidadRequerida=cantidadRequerida;
     this.subclase=subclase;
   }
 
-    public void setSubclase(String subclase) {
+  public void setSubclase(String subclase) {
     this.subclase = subclase;
   }
 
@@ -60,7 +63,7 @@ public class Peticion {
     return this.donacionesAsignados;
   }
 
-    public Integer getCantidadRequerida(){
+  public Integer getCantidadRequerida(){
     return cantidadRequerida;
   }
 
@@ -77,5 +80,13 @@ public class Peticion {
   public void agregarCantidadRecibida (Integer cantidad, String idDonacion){
     this.cantidadRecibida += cantidad;
     this.donacionesAsignados.add(idDonacion);
+  }
+
+  public Necesidad getNecesidad() {
+    return necesidad;
+  }
+
+  public void setNecesidad(Necesidad necesidad) {
+    this.necesidad = necesidad;
   }
 }

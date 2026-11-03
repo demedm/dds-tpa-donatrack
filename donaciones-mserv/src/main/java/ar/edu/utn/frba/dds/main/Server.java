@@ -20,6 +20,7 @@ public class Server {
     // Bootstrap.init();
 
     var app = Javalin.create(config -> {
+      config.staticFiles.add("/public");
       config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);

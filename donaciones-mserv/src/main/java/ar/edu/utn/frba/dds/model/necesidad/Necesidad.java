@@ -44,7 +44,7 @@ public class Necesidad {
     this.diasRecurrencia=diasRecurrencia;
     this.proximoVencimiento= this.reiniciarPeriodo();
     this.peticiones = peticiones;
-    }
+  }
 
   public Necesidad crearSiguienteRecurrencia(){
     List <Peticion> peticionesReiniciadas = new ArrayList<>();
@@ -55,12 +55,12 @@ public class Necesidad {
     }
 
     return new Necesidad(
-      this.entidadId,
-      this.tipo,
-      "en_preparacion",
-      this.descripcion,
-      this.diasRecurrencia,
-      peticionesReiniciadas
+        this.entidadId,
+        this.tipo,
+        "en_preparacion",
+        this.descripcion,
+        this.diasRecurrencia,
+        peticionesReiniciadas
     );
   }
 
@@ -95,7 +95,7 @@ public class Necesidad {
 
   public long getDiasAvencer() {
     if (this.proximoVencimiento == null) {
-        return 0;
+      return 0;
     }
     return ChronoUnit.DAYS.between(LocalDate.now(), proximoVencimiento);
   }
@@ -110,6 +110,7 @@ public class Necesidad {
 
   public void agregarPeticion(Peticion peticion){
     this.peticiones.add(peticion);
+    peticion.setNecesidad(this);
   }
 
   public void setEntidadId(String entidadId) {
@@ -133,7 +134,7 @@ public class Necesidad {
   }
 
   public Long getId() { return id; }
-  
+
   public void setId(Long id) { this.id = id; }
 
   public List<Peticion> getPeticiones() {return this.peticiones;}

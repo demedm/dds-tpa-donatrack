@@ -8,13 +8,14 @@ import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import ar.edu.utn.frba.dds.repositories.EntityManagerHelper;
 import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
+import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NecesidadTest {
+public class NecesidadTest implements SimplePersistenceTest{
 
     private Necesidad necesidadNormal;
     private Necesidad necesidadRecurrente;
@@ -31,14 +32,6 @@ public class NecesidadTest {
         necesidadRecurrente.setDescripcion("Leche mensual");
         necesidadRecurrente.setTipo(Necesidad.TipoNecesidad.RECURRENTE);
         necesidadRecurrente.setDiasRecurrencia(30);
-    }
-
-    @AfterEach
-    void terminarTransaccion() {
-        // Si la transacción quedó activa al finalizar el test
-        if (EntityManagerHelper.getEntityManager().getTransaction().isActive()) {
-            EntityManagerHelper.rollback();
-        }
     }
 
     @Test
@@ -71,10 +64,10 @@ public class NecesidadTest {
     void validarPeticionInvalida() {
         Peticion peticionInvalida = new Peticion("", -10);
 
-        boolean esValida = peticionInvalida.getSubclase() != null 
-                && !peticionInvalida.getSubclase().trim().isEmpty() 
-                && peticionInvalida.getCantidadRequerida() != null 
-                && peticionInvalida.getCantidadRequerida() > 0;
+        boolean esValida = peticionInvalida.getSubclase() != null
+            && !peticionInvalida.getSubclase().trim().isEmpty()
+            && peticionInvalida.getCantidadRequerida() != null
+            && peticionInvalida.getCantidadRequerida() > 0;
 
         assertFalse(esValida, "La petición no debe ser válida si falta la subclase o la cantidad es negativa");
     }
@@ -93,15 +86,14 @@ public class NecesidadTest {
         necesidadNormal.agregarPeticion(peticion);
 
         NecesidadRepository.getInstance().guardar(necesidadNormal);
-        EntityManagerHelper.commit();
 
-        EntityManagerHelper.getEntityManager().clear();
+        entityManager().clear();
 
         Necesidad recuperada = NecesidadRepository.getInstance().findById(necesidadNormal.getId());
 
         assertNotNull(recuperada, "La necesidad debe existir en la BD");
         assertEquals("ENT-001", recuperada.getEntidadId());
-        assertEquals(1, recuperada.getPeticiones().size(), "Debe guardar la petición en cascada");
+        assertEquals(1, recuperada.getPeticiones().size());
         assertEquals("CAMPERAS", recuperada.getPeticiones().get(0).getSubclase());
     }
 
@@ -110,18 +102,16 @@ public class NecesidadTest {
         necesidadRecurrente.setProximoVencimiento(LocalDate.now().minusDays(7));
 
         NecesidadRepository.getInstance().guardar(necesidadRecurrente);
-        
-        NecesidadRepository.getInstance().guardar(necesidadNormal);
-        
-        EntityManagerHelper.commit();
 
-        EntityManagerHelper.getEntityManager().clear();
+        NecesidadRepository.getInstance().guardar(necesidadNormal);
+
+        entityManager().clear();
 
         List<Necesidad> vencidasEnBD = NecesidadRepository.getInstance().findAllRecurrentesActivasVencidas();
 
         assertTrue(vencidasEnBD.stream().anyMatch(n -> n.getEntidadId().equals("ENT-002")),
-                "Debe encontrar la necesidad recurrente vencida");
+            "Debe encontrar la necesidad recurrente vencida");
         assertFalse(vencidasEnBD.stream().anyMatch(n -> n.getEntidadId().equals("ENT-001")),
-                "No debe incluir la necesidad normal");
+            "No debe incluir la necesidad normal");
     }
 }
