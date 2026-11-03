@@ -45,8 +45,7 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public Ruta iniciarRuta(Chofer chofer, Long idRuta) {
-    EntityTransaction transaction = entityManager().getTransaction();
-    em.getTransaction().begin();
+    entityManager().getTransaction().begin();
     Ruta ruta = buscarPorId(idRuta);
     if (!Objects.equals(chofer.getId(), ruta.getChofer().getId())) {
       return null;
@@ -54,7 +53,7 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     ruta.iniciarRuta(); // cambia estado de Ruta y de cada Entrega
     observers.forEach(observer -> observer.actualizarRuta(ruta, true));
     ruta.getEntregas().forEach(EntregaRepositorio.Instance::notificarInicioDeEntrega);
-    em.getTransaction().commit();
+    entityManager().getTransaction().commit();
     return ruta;
   }
 
@@ -105,13 +104,13 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public void eliminarRuta(Ruta ruta) {
-    em.getTransaction().begin();
-    em.remove(ruta);
-    em.getTransaction().commit();
+    entityManager().getTransaction().begin();
+    entityManager().remove(ruta);
+    entityManager().getTransaction().commit();
   }
 
   private void eliminar(Ruta ruta) {
-    em.remove(ruta);
+    entityManager().remove(ruta);
   }
 
   @SuppressWarnings("unchecked")
@@ -237,7 +236,7 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public Ruta actualizarRuta(Ruta ruta, RutaDto dto) {
-    em.getTransaction().begin();
+    entityManager().getTransaction().begin();
     if (dto.getChoferId() != null) {
       var chofer = UsuarioRepositorio.Instance.buscarChoferPorId(dto.getChoferId());
       ruta.asignarChofer(chofer);
@@ -248,23 +247,23 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
       ruta.asignarCamion(camion);
     } else if (dto.getEstado() != null) {
       switch (dto.getEstado()) {
-        case CANCELADA -> ruta.indicarImprovistoLogistico(); // unica razon por la que se cancela
+        case CANCELADA -> ruta.indicarImprevistoLogistico(); // unica razon por la que se cancela
         case EN_CURSO -> ruta.iniciarRuta();
         case FINALIZADA -> ruta.finalizarRuta();
         case NO_INICIADA -> throw new IllegalArgumentException(
             "No se permite regresar el estado de una ruta a NO_INICIADA");
       }
     }
-    em.getTransaction().commit();
+    entityManager().getTransaction().commit();
     return ruta;
   }
 
   public void eliminarRutaYEntregas(Ruta ruta) {
-    em.getTransaction().begin();
+    entityManager().getTransaction().begin();
     ruta.getCamion().regresarDeposito();
     ruta.getEntregas().forEach(EntregaRepositorio.Instance::eliminarEntrega);
     eliminar(ruta);
-    em.getTransaction().commit();
+    entityManager().getTransaction().commit();
   }
 
 }

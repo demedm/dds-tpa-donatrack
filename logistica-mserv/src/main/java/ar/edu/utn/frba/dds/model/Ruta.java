@@ -1,10 +1,9 @@
 package ar.edu.utn.frba.dds.model;
 
-import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
+import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -73,13 +72,11 @@ public class Ruta {
     entregas.forEach(Entrega::marcarComoIniciada);
   }
 
-  public void indicarImprovistoLogistico() {
+  public void indicarImprevistoLogistico() {
     estado = EstadoRuta.CANCELADA;
-    if (camion != null) {
-      camion.improvistoLogistico();
-    }
-    entregas.forEach(entrega -> entrega
-        .marcarComoFallida(new ImprevistoLogistico()));
+    entregas.stream()
+        .filter(e -> e.getEstado() != EstadoEntrega.ENTREGADA)
+        .forEach(e -> e.marcarComoFallida(MotivoFallo.IMPREVISTO_LOGISTICO));
   }
 
   public void finalizarRuta() {

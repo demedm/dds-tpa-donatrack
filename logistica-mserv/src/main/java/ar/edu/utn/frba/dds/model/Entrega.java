@@ -1,8 +1,6 @@
 package ar.edu.utn.frba.dds.model;
 
-import ar.edu.utn.frba.dds.model.fallaentrega.EntregaVencida;
 import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
-import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,8 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Entrega {
   @Id
@@ -32,8 +29,7 @@ public class Entrega {
   private Long donacionId;
   private LocalDate fechaVencimiento;
 
-  @JsonIgnore
-  @Transient
+  @Enumerated(EnumType.STRING)
   private MotivoFallo motivoFallo;
 
   private String foto;
@@ -97,12 +93,12 @@ public class Entrega {
 
   public void marcarComoNoRecepcionada() {
     estado = EstadoEntrega.NO_RECIBIDA;
-    setMotivoFallo(new NoRecepcionada());
+    setMotivoFallo(MotivoFallo.NO_RECEPCIONADA);
   }
 
   public boolean estaVencida() {
     if (fechaVencimiento != null && fechaVencimiento.isBefore(LocalDate.now())) {
-      marcarComoFallida(new EntregaVencida());
+      marcarComoFallida(MotivoFallo.ENTREGA_VENCIDA);
       return true;
     }
     return false;

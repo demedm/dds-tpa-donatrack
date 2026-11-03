@@ -30,6 +30,7 @@ public class Router {
     app.get("/camiones", ctx -> ctx.json(camionController.showFlota(ctx)));
     app.get("/camiones/{id}", camionController::buscarPorId);
     app.post("/camiones/{patente}", camionController::saveCamion);
+    app.post("/camiones/{id}/imprevisto-logistico", camionController::reportarImprevisto);
 
     // CRUD RUTAS Y ENTREGAS
     app.get("/rutas", ctx -> ctx.json(rutaController.showAllRutas()));
@@ -39,7 +40,6 @@ public class Router {
     app.get("/rutas/{id}/entregas", ctx -> ctx.json(
         rutaController.showEntregas(ctx)));
     app.post("/rutas", rutaController::postRuta);
-    // app.put("/rutas/{id}", ctx -> ctx.json(rutaController.patchRuta(ctx)));
     app.patch("/rutas/{id}", rutaController::patchRuta);
     app.delete("/rutas/{id}", rutaController::deleteRuta);
 

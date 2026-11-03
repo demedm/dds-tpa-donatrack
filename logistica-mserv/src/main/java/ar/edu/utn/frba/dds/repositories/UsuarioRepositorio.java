@@ -50,9 +50,9 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   }
 
   public void eliminarUsuario(Usuario usuario) {
-    em.getTransaction().begin();
-    em.remove(usuario);
-    em.getTransaction().commit();
+    entityManager().getTransaction().begin();
+    entityManager().remove(usuario);
+    entityManager().getTransaction().commit();
   }
 
   @SuppressWarnings("unchecked")
@@ -100,21 +100,21 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
 
   /* Entidad Beneficiaria */
   public Entrega noRecepcionaEntrega(EntidadBeneficiaria entidadBeneficiaria, Long idEntrega) {
-    em.getTransaction().begin();
+    entityManager().getTransaction().begin();
     var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
     if (entrega.getEntidadBeneficiaria().getId().equals(entidadBeneficiaria.getId())
       && !entrega.estaVencida()) {
       entrega.marcarComoNoRecepcionada();
       // EntregaRepositorio.Instance.notificarFalloDeEntrega(entrega);
     }
-    em.getTransaction().commit();
+    entityManager().getTransaction().commit();
     return entrega;
   }
 
   public Entrega confirmarEntrega(EntidadBeneficiaria entidadBeneficiaria,
                                Long idEntrega,
                                ConfirmacionEntregaDto dto) {
-    em.getTransaction().begin();
+    entityManager().getTransaction().begin();
     var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
     var camion = CamionRepositorio.Instance.buscarPorId(dto.getCamionId());
     if (entrega.getEntidadBeneficiaria().getId().equals(entidadBeneficiaria.getId())
@@ -122,7 +122,7 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
       entrega.marcarComoEntregada(camion, LocalDateTime.of(
           dto.getAnio(), dto.getMes(), dto.getDia(), dto.getHora(), dto.getMinutos()));
     }
-    em.getTransaction().commit();
+    entityManager().getTransaction().commit();
     return entrega;
   }
 
