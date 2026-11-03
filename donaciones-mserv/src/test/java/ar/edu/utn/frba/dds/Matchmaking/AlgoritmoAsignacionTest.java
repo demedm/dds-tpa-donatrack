@@ -1,10 +1,15 @@
-/*package ar.edu.utn.frba.dds.Matchmaking;
+package ar.edu.utn.frba.dds.Matchmaking;
 
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoSubatendidos;
+import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
+import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
+import ar.edu.utn.frba.dds.model.Bienes.UnidadMedida;
+import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
@@ -23,8 +28,7 @@ import static org.mockito.Mockito.when;
 
 public class AlgoritmoAsignacionTest {
 
-  private final DonacionSegmentada donacionDeArroz =
-      new DonacionSegmentada(10, new Subcategoria(Categoria.ALIMENTOS, "ARROZ"),null);
+  private final DonacionSegmentada donacionDeArroz = segmentadaDe("ARROZ", 10);
 
   //Algoritmo
 
@@ -41,8 +45,25 @@ public class AlgoritmoAsignacionTest {
       List<EntidadBeneficiaria> ranking = algoritmo.obtenerRanking(
           donacionDeArroz, List.of(sinNecesidades,unaPeticion,dosPeticiones));
 
-      assertEquals(List.of(dosPeticiones,unaPeticion,sinNecesidades),ranking);
+      // la que no necesita arroz queda afuera: compatibilidad 0
+      assertEquals(List.of(dosPeticiones,unaPeticion),ranking);
 
+    }
+
+    @Test
+    void lasEntidadesQueNoNecesitanLoDonadoNoSeProponen(){
+      EntidadBeneficiaria quiereFideos = entidadQueNecesita("Quiere fideos", "FIDEOS");
+
+      assertTrue(algoritmo.obtenerRanking(donacionDeArroz, List.of(quiereFideos)).isEmpty());
+    }
+
+    @Test
+    void unaPeticionYaCubiertaNoSumaCompatibilidad(){
+      EntidadBeneficiaria cubierta = entidadQueNecesita("Ya tiene arroz", "ARROZ");
+      Peticion peticion = cubierta.getNecesidades().get(0).getPeticiones().get(0);
+      peticion.setCantidadRecibida(peticion.getCantidadRequerida());
+
+      assertTrue(algoritmo.obtenerRanking(donacionDeArroz, List.of(cubierta)).isEmpty());
     }
 
     @Test
@@ -60,7 +81,7 @@ public class AlgoritmoAsignacionTest {
     @Test
     void proponeComoMaximoDiezEntidades(){
       List<EntidadBeneficiaria> doce = IntStream.range(0,12)
-          .mapToObj(i -> entidadQueNecesita("Entidad " + i)).toList();
+          .mapToObj(i -> entidadQueNecesita("Entidad " + i, "ARROZ")).toList();
 
       assertEquals(10, algoritmo.obtenerRanking(donacionDeArroz, doce).size());
     }
@@ -114,6 +135,13 @@ public class AlgoritmoAsignacionTest {
 
   //ayuda
 
+  // La segmentada la arma la donación al segmentar sus bienes
+  private static DonacionSegmentada segmentadaDe(String subcategoria, int cantidad){
+    Subcategoria sub = new Subcategoria(Categoria.ALIMENTOS, subcategoria, UnidadMedida.UNIDADES);
+    Bien bien = new Bien(sub, null, subcategoria, cantidad, new PorVencimiento(LocalDate.now().plusMonths(6)));
+    return new Donacion("Donación de prueba", List.of(bien), new PersonaFisica()).getSegmentadas().get(0);
+  }
+
   private static EntidadBeneficiaria entidad(String nombre){
     return new EntidadBeneficiaria("Calle falsa 123", new ArrayList<>(), nombre, null, "COMEDOR");
   }
@@ -141,5 +169,3 @@ public class AlgoritmoAsignacionTest {
   }
 
 }
-
- */

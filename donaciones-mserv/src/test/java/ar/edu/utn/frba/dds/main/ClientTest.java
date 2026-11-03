@@ -11,10 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import ar.edu.utn.frba.dds.dto.DonacionSegmentadaDTO;
+
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 class ClientTest {
 
@@ -38,10 +41,13 @@ class ClientTest {
   @Test
   void enviaCorrectamenteDonacionALogistica() throws IOException, InterruptedException {
     when(httpResponseMock.statusCode()).thenReturn(200);
+    when(httpResponseMock.body()).thenReturn("{}");
     when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
         .thenReturn(httpResponseMock);
 
-    client.enviarDonacionALogistica(12, 33, "Calle Hola 1243");
+    // enviarDonacionALogistica(id, entidad, direccion) ya no existe: en refactor1 se reemplazó
+    // por enviarDonacionesEnLotes, que manda de a 100. Un lote de una donación equivale al envío de antes.
+    client.enviarDonacionesEnLotes(unLoteDe(12, 33, "Calle Hola 1243"));
 
     // Verificamos que efectivamente se haya intentado mandar el request
     verify(httpClientMock, times(1))
@@ -55,7 +61,14 @@ class ClientTest {
     when(httpClientMock.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
         .thenReturn(httpResponseMock);
 
-    assertDoesNotThrow(() -> client.enviarDonacionALogistica(
-        12, 45, "Av Libertador 3470"));
+    assertDoesNotThrow(() -> client.enviarDonacionesEnLotes(unLoteDe(12, 45, "Av Libertador 3470")));
+  }
+
+  private static List<DonacionSegmentadaDTO> unLoteDe(int idDonacion, int idEntidad, String direccion) {
+    DonacionSegmentadaDTO dto = new DonacionSegmentadaDTO();
+    dto.setIdDonacion(idDonacion);
+    dto.setIdEntidadAsignada(idEntidad);
+    dto.setDireccionEntidad(direccion);
+    return List.of(dto);
   }
 }

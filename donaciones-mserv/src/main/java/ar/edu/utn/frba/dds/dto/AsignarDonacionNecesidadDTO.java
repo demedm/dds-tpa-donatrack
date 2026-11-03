@@ -1,3 +1,5 @@
+// Era el DTO de la prueba de asignación (/donaciones/asignar). La reemplaza /matchmaking/asignar.
+/*
 package ar.edu.utn.frba.dds.dto;
 
 public class AsignarDonacionNecesidadDTO {
@@ -21,4 +23,6 @@ public class AsignarDonacionNecesidadDTO {
   public void setNecesidadId(Long necesidadId) {
     this.necesidadId = necesidadId;
   }
+
 }
+*/

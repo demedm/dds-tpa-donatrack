@@ -1,12 +1,11 @@
 package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
-import ar.edu.utn.frba.dds.model.Bienes.BienPerecedero;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
+import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
+import ar.edu.utn.frba.dds.model.Bienes.UnidadMedida;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
-import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
-import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.donantes.Identificacion;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
@@ -16,11 +15,11 @@ import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
-import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
+import ar.edu.utn.frba.dds.repositories.DonanteRepository;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
-import java.util.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,15 +27,6 @@ import java.util.List;
 
 public class Bootstrap {
 	public static void init() {
-		// List<Persona> donadores = donadores();
-		// donadores.forEach((usuario) -> {
-		// 	try {
-		// 		DonanteRepository.Instance.registrarDonante(usuario);
-		// 	} catch (Exception e) {
-		// 		System.out.println("No se pudo notificar a " + usuario.getNombreIdentificador());
-		// 	}
-		// });
-
 		List<Necesidad> necesidades = crearNecesidades(); //Cargo las necesidades para probar 
 			necesidades.forEach(n -> {
 				try {
@@ -48,44 +38,40 @@ public class Bootstrap {
 				}
 			});
 
-		List<Donacion> donaciones = donaciones();
-		donaciones();
-		// Persona gaston = donadores.get(0);
-		// // donaciones.stream().limit(4).forEach((donacion) -> gaston.capturar(pokemon));
+		// La donación necesita un donante ya guardado: lo registro y lo vuelvo a leer de la base
+		donadores().forEach(DonanteRepository.Instance::registrarDonante);
+		Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
+
+		donaciones(maria);
 
 	}
 
-	private static List<Donacion> donaciones() {
-		// Subcategorías asociadas a la categoría ALIMENTOS
-		Subcategoria subcatArroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ");
-		Subcategoria subcatFideos = new Subcategoria(Categoria.ALIMENTOS, "FIDEOS");
+	private static List<Donacion> donaciones(Persona donante) {
+		// Subcategorías del catálogo: Bien no las guarda en cascada, así que se persisten antes
+		Subcategoria subcatArroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ", UnidadMedida.UNIDADES);
+		Subcategoria subcatFideos = new Subcategoria(Categoria.ALIMENTOS, "FIDEOS", UnidadMedida.UNIDADES);
 
-		// Bienes asociados
-		Bien arrozBien = new BienPerecedero(subcatArroz, "foto.jpg", "Arroz Paquete 1kg", new Date());
-		Bien fideosBien = new BienPerecedero(subcatFideos, "foto.jpg", "Fideos Matarazzo 500g", new Date());
+		WithSimplePersistenceUnit persistencia = new WithSimplePersistenceUnit() {};
+		persistencia.withTransaction(() -> {
+			persistencia.entityManager().persist(subcatArroz);
+			persistencia.entityManager().persist(subcatFideos);
+		});
 
+		// Bienes: la cantidad está en cada bien y la segmentada la suma
+		LocalDate vencimiento = LocalDate.now().plusMonths(6);
+		Bien arrozBien = new Bien(subcatArroz, "foto.jpg", "Arroz Paquete 1kg", 10, new PorVencimiento(vencimiento));
+		Bien fideosBien = new Bien(subcatFideos, "foto.jpg", "Fideos Matarazzo 500g", 5, new PorVencimiento(vencimiento));
+
+		// Las segmentadas las arma la donación al crearse (una de arroz y una de fideos)
 		List<Bien> bienes = new ArrayList<>(List.of(arrozBien, fideosBien));
-		Donacion donacion = new Donacion("Donación de alimentos varios", bienes, null);
-
-		// Segmentada 1: 10 paquetes de Arroz en depósito
-		DonacionSegmentada segArroz = new DonacionSegmentada(10, subcatArroz, arrozBien);
-
-		// Segmentada 2: 5 paquetes de Fideos en depósito
-		DonacionSegmentada segFideos = new DonacionSegmentada(5, subcatFideos, fideosBien);
-
-		donacion.setDonacionesSegmentadas(List.of(segArroz, segFideos));
+		Donacion donacion = new Donacion("Donación de alimentos varios", bienes, donante);
 
 		DonacionesRepository.Instance.guardar(donacion);
 
 		System.out.println("Donaciones y Segmentadas inicializadas correctamente.");
 
 		return List.of(donacion);
-
-    // Donacion donacion = new Donacion("Donación de alimentos", bienes, null);
-    // DonacionesRepository.Instance.guardar(donacion);
-
-    // return List.of(donacion);
-}
+	}
 
 	private static List<Persona> donadores() {
 		PersonaFisica maria = new PersonaFisica();

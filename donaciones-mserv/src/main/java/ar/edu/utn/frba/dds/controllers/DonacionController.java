@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.dto.AsignarDonacionNecesidadDTO;
+//import ar.edu.utn.frba.dds.dto.AsignarDonacionNecesidadDTO;
 import ar.edu.utn.frba.dds.dto.DonacionsDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
@@ -15,7 +15,6 @@ import io.javalin.http.NotFoundResponse;
 
 
 public class DonacionController {
-
 
     public Donacion crearDonacion(Context ctx) {
 
@@ -86,7 +85,7 @@ public class DonacionController {
     }
 
     //PRUEBA ASIGNACION 
-
+/*
     public List<java.util.Map<String, Object>> asignarDonacionANecesidad(Context ctx) {
         AsignarDonacionNecesidadDTO dto = ctx.bodyAsClass(AsignarDonacionNecesidadDTO.class);
 
@@ -159,5 +158,8 @@ public class DonacionController {
         }
         return respuestaDTO;
     }
+ */
+
+
 }
 

@@ -7,11 +7,6 @@ import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
 import ar.edu.utn.frba.dds.controllers.EstadoEntregaController;
 import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoSubatendidos;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
-
 import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
 import io.javalin.Javalin;
 
@@ -27,9 +22,7 @@ public class Router {
     EntidadBeneficiariaController entidadController = new EntidadBeneficiariaController();
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
 
-    List<AlgoritmoAsignacion> algoritmos = List.of(new AlgoritmoDeCompatibilidad(),new AlgoritmoSubatendidos());
-
-    MatchmakingController MatchmakingController = new MatchmakingController(algoritmos);
+    MatchmakingController matchmakingController = new MatchmakingController();
 
     EstadoEntregaController estadoEntregaController = new EstadoEntregaController();
 
@@ -57,28 +50,29 @@ public class Router {
     );
 
 
-    //PRUEBA DE ASIGNACION
+    /*PRUEBA DE ASIGNACION
     app.post("/donaciones/asignar", ctx ->
         {
           List<Map<String, Object>> resultado = donacionController.asignarDonacionANecesidad(ctx);
     ctx.json(resultado);});
+    */
 
   //matchmaking
 
-  /*
+
     app.get("/matchmaking/ranking/{idSegmentada}", ctx -> {
-      ctx.status(200).json(MatchmakingController.obtenerRanking(ctx));
+      ctx.status(200).json(matchmakingController.obtenerRanking(ctx));
     });
 
     // Asignar donacionsementadaid y entidadbeneficiariaId
     app.post("/matchmaking/asignar",ctx->{
-      ctx.status(201).json(MatchmakingController.asignarDonacion(ctx));
+      ctx.status(200).json(matchmakingController.asignarDonacion(ctx));
     });
 
     app.post("/matchmaking/procesar-pendientes", ctx ->
-        ctx.status(201).json(MatchmakingController.procesarPendientes(ctx)));
+        ctx.status(202).json(matchmakingController.procesarPendientes(ctx)));
 
-  */
+
     //Necesidades
 
     app.post("/necesidades/",ctx ->
@@ -113,9 +107,8 @@ public class Router {
     app.delete("/entidades/{id}", entidadController::deleteEntidad);
     app.get("/entidades",ctx -> ctx.json(entidadController.obtenerEntidades()));
 
-    app.put("/donaciones/{id}/estado", ctx ->
-        ctx.status(200).json(donacionSegmentadaController.cambiarEstadoDonacion(ctx))
-    );
+    // Logística avisa acá cada cambio de estado: se guarda y se notifica al donante y a la entidad
+    app.put("/donaciones/{id}/estado", estadoEntregaController::cambiarEstado);
 
     app.post("/tareas/notificar-inactivos", ctx -> {
       int dias = ctx.queryParam("dias") != null ? Integer.parseInt(ctx.queryParam("dias")) : 20;

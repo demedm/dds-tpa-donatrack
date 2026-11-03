@@ -1,16 +1,22 @@
-/*package ar.edu.utn.frba.dds.Matchmaking;
+package ar.edu.utn.frba.dds.Matchmaking;
 
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
 import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
+import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
+import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
+import ar.edu.utn.frba.dds.model.Bienes.UnidadMedida;
+import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.tareas.ProcesarDonaciones;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,9 +186,10 @@ public class AsignacionDonacionesTest {
     return new EntidadBeneficiaria("Calle falsa 123", new ArrayList<>(), nombre, null, "COMEDOR");
   }
 
+  // La segmentada la arma la donación al segmentar sus bienes, y nace En depósito
   private static DonacionSegmentada donacionEnDeposito(String subcategoria) {
-    return new DonacionSegmentada(10, new Subcategoria(Categoria.ALIMENTOS, subcategoria), null);
+    Subcategoria sub = new Subcategoria(Categoria.ALIMENTOS, subcategoria, UnidadMedida.UNIDADES);
+    Bien bien = new Bien(sub, null, subcategoria, 10, new PorVencimiento(LocalDate.now().plusMonths(6)));
+    return new Donacion("Donación de prueba", List.of(bien), new PersonaFisica()).getSegmentadas().get(0);
   }
 }
-
- */
