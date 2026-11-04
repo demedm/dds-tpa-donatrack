@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
 import ar.edu.utn.frba.dds.main.templates.JavalinRenderer;
+import ar.edu.utn.frba.dds.rutas.Routes;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -17,7 +18,6 @@ import java.io.IOException;
 
 public class Server {
   public void start() throws IOException, InterruptedException {
-    // Tus compañeros lo comentaron porque seguramente ya se está llamando desde App.main()
     // Bootstrap.init();
     java.nio.file.Files.createDirectories(java.nio.file.Path.of("public/uploads"));
     var app = Javalin.create(config -> {
@@ -30,6 +30,9 @@ public class Server {
 
       initializeTemplating(config);
       initializeStaticFiles(config);
+
+      config.router.apiBuilder(() -> new Routes().configure());
+      
     });
 
     new Router().configure(app);

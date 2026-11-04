@@ -34,6 +34,8 @@ public class EntidadRepository implements WithSimplePersistenceUnit {
       entidadExistente.setDireccion(camposActualizar.getDireccion());
       entidadExistente.setTelefono(camposActualizar.getTelefono());
       entidadExistente.setMailsContacto(camposActualizar.getMailsContacto());
+      entidadExistente.setRazonSocial(camposActualizar.getRazonSocial());
+      entidadExistente.setTipo(camposActualizar.getTipoEntidad());
 
     });
     return entidadExistente;
