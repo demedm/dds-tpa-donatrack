@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tareas</title>
+    <link rel="stylesheet" href="/css/estilo-minimal.css">
+</head>
+<body>
+<div class="container">
+    <h1>{{titulo}}</h1>
+    <table class="necesidades-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Detalle</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each necesidades}}
+            <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.descripcion}}</td>
+                <td><span class="tag">{{this.estado}}</span></td>
+                <td class="detalle">
+                    <a class="link-detalle" href="/necesidades/{{this.id}}">Ver</a>
+                </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -27,7 +27,7 @@ public class Necesidad {
   private Integer diasRecurrencia;
   private LocalDate proximoVencimiento;
 
-  @OneToMany(cascade = CascadeType.ALL) //Con cascada puedo ahcer que caundo guardo o modifico la nencesidad, guardo todas las peticioens que le agregue
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //Con cascada puedo ahcer que caundo guardo o modifico la nencesidad, guardo todas las peticioens que le agregue
   @JoinColumn(name = "necesidad_id") //El campo que vinculo a la necesidad. 
 
   public List<Peticion> peticiones = new ArrayList<>();
@@ -110,6 +110,10 @@ public class Necesidad {
   public void agregarPeticion(Peticion peticion){
     this.peticiones.add(peticion);
     peticion.setNecesidad(this);
+  }
+
+  public Boolean esRecurrente(){
+    return  this.tipo == TipoNecesidad.RECURRENTE;
   }
 
   public void setEntidadId(Long entidadId) {

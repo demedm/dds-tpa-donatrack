@@ -3,7 +3,10 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.model.necesidad.*;
 import ar.edu.utn.frba.dds.repositories.*;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
@@ -53,13 +56,23 @@ public class NecesidadController implements WithSimplePersistenceUnit{
         return necesidad;
     }
 
-    public Necesidad showNecesidad(Context ctx){
-        Long necesidadId = Long.parseLong(ctx.pathParam("id"));
+    public void showNecesidad(Context ctx){
+        String rawId = ctx.pathParam("id");
+        Long necesidadId = Long.parseLong(rawId);
         Necesidad necesidad = NecesidadRepository.getInstance().findById(necesidadId);
         if(necesidad == null){
             throw new NotFoundResponse("Necesidad no encontrada");
         }
-        return necesidad;
+        String accept =ctx.header("Accept");
+        if (accept !=null && accept.contains("text/html")){
+            Map<String, Object> model = new HashMap<>();
+            model.put("necesidad",necesidad);
+
+            ctx.render("necesidadDetalle.hbs",model);
+        }else{
+            ctx.json(necesidad);
+        }
+
     }
 
     public void actualizarVencidas() {
@@ -79,8 +92,25 @@ public class NecesidadController implements WithSimplePersistenceUnit{
     }
 
 
-    public List<Necesidad> showNecesidades(){
-        return NecesidadRepository.getInstance().findAll();
+    public void showNecesidades(Context ctx){
+        // ?entidadId=1 filtra por entidad; sin el parámetro se muestran todas
+        Long entidadId = ctx.queryParamAsClass("entidadId", Long.class).allowNullable().get();
+        List <Necesidad> necesidades;
+        if (entidadId != null){
+            necesidades = NecesidadRepository.getInstance().findByEntidadId(entidadId);
+        }else{
+            necesidades = NecesidadRepository.getInstance().findAll();
+        }
+        String accept =ctx.header("Accept");
+        if (accept !=null && accept.contains("text/html")){
+            Map<String, Object> model = new HashMap<>();
+            model.put("necesidades",necesidades);
+            model.put("entidadId",entidadId);
+
+            ctx.render("necesidades.hbs",model);
+        }else{
+            ctx.json(necesidades);
+        }
     }
 
     public List<Necesidad> showNecesidadesRecurrentes(){

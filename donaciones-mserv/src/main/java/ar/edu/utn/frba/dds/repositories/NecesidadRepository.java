@@ -45,6 +45,16 @@ public class NecesidadRepository implements WithSimplePersistenceUnit {
         .setParameter("tipo", TipoNecesidad.RECURRENTE)
         .getResultList();
   }
+
+  public List<Necesidad> findByEntidadId(Long entidadId) {
+    List<Necesidad> lista = entityManager()
+            .createQuery("FROM Necesidad n WHERE n.entidadId = :entidadId", Necesidad.class)
+            .setParameter("entidadId", entidadId)
+            .getResultList();
+
+    System.out.println(">>> [DEBUG DB] Cantidad de necesidades encontradas en MariaDB: " + lista.size());
+    return lista;
+  }
   // public List<Necesidad> findAllVencidas() {
   //   return em.createQuery(
   //       "FROM Necesidad n WHERE n.tipo = :tipo && n.estaVencida()",

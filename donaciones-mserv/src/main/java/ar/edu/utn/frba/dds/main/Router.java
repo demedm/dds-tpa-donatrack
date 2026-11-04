@@ -89,10 +89,8 @@ public class Router {
 
     app.get("/necesidades/recurrentes", ctx ->
         ctx.json(necesidadController.showNecesidadesRecurrentes()));
-    app.get("/necesidades/", ctx ->
-        ctx.status(201).json(necesidadController.showNecesidades()));
-    app.get("/necesidades/{id}",ctx ->
-        ctx.json(necesidadController.showNecesidad(ctx)));
+      app.get("/necesidades", necesidadController::showNecesidades);
+      app.get("/necesidades/{id}",necesidadController :: showNecesidad);
       app.get("/test-cron", ctx -> {
     NecesidadController controller = new NecesidadController();
     controller.actualizarVencidas();

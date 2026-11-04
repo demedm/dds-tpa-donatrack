@@ -34,11 +34,6 @@ public class Server {
 
     new Router().configure(app);
 
-    // CRÍTICO PARA JPA-EXTRAS: Libera la conexión a la base de datos al finalizar cada petición
-    app.after(ctx -> {
-      EntityManagerHelper.closeEntityManager();
-    });
-
     app.start(9001);
   }
 
