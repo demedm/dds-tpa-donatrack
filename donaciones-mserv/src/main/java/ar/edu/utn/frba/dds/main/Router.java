@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.controllers.HomeController;
 import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.Javalin;
 
 import java.io.IOException;
@@ -17,6 +18,9 @@ import java.util.Map;
 
 public class Router {
   public void configure(Javalin app) throws IOException, InterruptedException {
+      WithSimplePersistenceUnit persistencia = new WithSimplePersistenceUnit() {};
+      app.after("/necesidades", ctx -> persistencia.entityManager().clear());
+      app.after("/necesidades/*", ctx -> persistencia.entityManager().clear());
     NecesidadController necesidadController = new NecesidadController();
     DonacionController donacionController = new DonacionController();
     DonanteController donanteController = new DonanteController();
@@ -82,10 +86,9 @@ public class Router {
 
     //Necesidades
 
-    app.post("/necesidades/",ctx ->
-        ctx.status(201).json(necesidadController.crear(ctx)));
-    app.post("/necesidades/{id}/peticiones/",ctx ->
-        ctx.status(201).json(necesidadController.agregarPeticion(ctx)));
+    app.post("/necesidades/",necesidadController::crear);
+    app.post("/necesidades/{id}/peticiones/",necesidadController::agregarPeticion);
+    app.post("/necesidades/{id}/adjuntos", necesidadController::subirAdjunto);
 
     app.get("/necesidades/recurrentes", ctx ->
         ctx.json(necesidadController.showNecesidadesRecurrentes()));

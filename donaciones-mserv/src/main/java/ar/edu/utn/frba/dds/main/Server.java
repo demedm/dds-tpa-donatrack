@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
+import io.javalin.http.staticfiles.Location;
 import io.javalin.json.JavalinJackson;
 
 // IMPORT CRÍTICO NUESTRO PARA LA BASE DE DATOS
@@ -18,7 +19,7 @@ public class Server {
   public void start() throws IOException, InterruptedException {
     // Tus compañeros lo comentaron porque seguramente ya se está llamando desde App.main()
     // Bootstrap.init();
-
+    java.nio.file.Files.createDirectories(java.nio.file.Path.of("public/uploads"));
     var app = Javalin.create(config -> {
       config.staticFiles.add("/public");
       config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
@@ -27,7 +28,6 @@ public class Server {
         mapper.registerModule(new Jdk8Module());
       }));
 
-      // Habilitamos las vistas que trajeron tus compañeros
       initializeTemplating(config);
       initializeStaticFiles(config);
     });
@@ -48,6 +48,12 @@ public class Server {
       // Usamos la carpeta public que creamos recién para que no crashee
       staticFileConfig.hostedPath = "/public";
       staticFileConfig.directory = "/public";
+    });
+
+    config.staticFiles.add(staticFileConfig -> {
+      staticFileConfig.hostedPath = "/uploads";
+      staticFileConfig.directory = "public/uploads";
+      staticFileConfig.location = Location.EXTERNAL;
     });
   }
 }

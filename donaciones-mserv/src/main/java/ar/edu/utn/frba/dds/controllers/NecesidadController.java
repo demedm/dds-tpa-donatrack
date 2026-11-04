@@ -2,58 +2,102 @@ package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.model.necesidad.*;
 import ar.edu.utn.frba.dds.repositories.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+import io.javalin.http.UploadedFile;
 
 
 public class NecesidadController implements WithSimplePersistenceUnit{
 
-    public Necesidad crear(Context ctx){
-        Necesidad necesidad = ctx.bodyValidator(Necesidad.class) //Mapea a una clase
-            //valido el body de la necesidad
-            .check(n ->n.getEntidadId() !=null, "el id de la entidad es obligatorio")
-            // .check(n ->  EntidadRepositorio.findById(n.getEntidadId()), "la entidad ingresada no existe")
-            .check(n -> n.getDescripcion() !=null, "una breve descripcion es necesaria")
-            .check(n-> {
-                if (n.getTipo() == Necesidad.TipoNecesidad.RECURRENTE) {
-                    return n.getDiasRecurrencia() != null && n.getDiasRecurrencia() >0;
-                }
-                return true;
-            },"las necesidades recurrentes requieren los dias de recurrencia y mayores a 0")
-            .get();
+    public void crear(Context ctx) {
+        Necesidad necesidad;
+        String accept = ctx.header("Accept");
 
-        if (necesidad.getTipo() == Necesidad.TipoNecesidad.RECURRENTE) {
+        if (accept !=null && accept.contains("text/html")) {
+            necesidad = new Necesidad();
+            String rawEntidadId = ctx.formParam("entidadId");
+            Long entidadId = Long.parseLong(rawEntidadId);
+            necesidad.setEntidadId(entidadId);
+            necesidad.setDescripcion(ctx.formParam("descripcion"));
+
+            String tipoStr = ctx.formParam("tipo");
+            if (tipoStr != null) {
+                necesidad.setTipo(Necesidad.TipoNecesidad.valueOf(tipoStr));
+            }
+            String diasStr = ctx.formParam("diasRecurrencia");
+            if (diasStr != null && !diasStr.isBlank()) {
+                necesidad.setDiasRecurrencia(Integer.parseInt(diasStr));
+            }
+        } else {
+            necesidad = ctx.bodyValidator(Necesidad.class)
+                    .check(n -> n.getEntidadId() != null, "El ID de la entidad es obligatorio")
+                    .check(n -> n.getDescripcion() != null, "Una breve descripción es necesaria")
+                    .check(n -> {
+                        if (n.getTipo() == Necesidad.TipoNecesidad.RECURRENTE) {
+                            return n.getDiasRecurrencia() != null && n.getDiasRecurrencia() > 0;
+                        }
+                        return true;
+                    }, "Las necesidades recurrentes requieren días de recurrencia mayores a 0")
+                    .get();
+        }
+        if (necesidad.getTipo() == Necesidad.TipoNecesidad.RECURRENTE && necesidad.getDiasRecurrencia() != null) {
             necesidad.setProximoVencimiento(LocalDate.now().plusDays(necesidad.getDiasRecurrencia()));
         }
-        withTransaction(()->{
+        withTransaction(() -> {
             NecesidadRepository.getInstance().guardar(necesidad);
         });
-        return necesidad;
+        if (accept !=null && accept.contains("text/html")) {
+            ctx.redirect("/necesidades/" + necesidad.getId());
+        } else {
+            ctx.status(201).json(necesidad);
+        }
     }
 
-    public Necesidad agregarPeticion(Context ctx){
+    public void agregarPeticion(Context ctx){
         Long necesidadId = Long.parseLong(ctx.pathParam("id"));
         Necesidad necesidad = NecesidadRepository.getInstance().findById(necesidadId);
+        String accept = ctx.header("Accept");
+
         if (necesidad == null) {
             throw new NotFoundResponse("Necesidad no encontrada");
         }
-        Peticion peticion = ctx.bodyValidator(Peticion.class)
-            .check(p -> p.getSubclase() !=null,"es necesario agregar la subclase de donacion requerida")
-            .check(p -> p.getCantidadRequerida() >0, "la cantidad solicitada es obligatoria y debe ser mayor a 0" )
-            .get();
-
-        necesidad.agregarPeticion(peticion);
+        if (accept !=null && accept.contains("text/html")) {
+            String subclase = ctx.formParam("subclase");
+            String cantidadString =ctx.formParam("cantidadRequerida");
+            if (subclase != null && cantidadString != null && !cantidadString.isBlank()) {
+                Integer cantidadRequerida = Integer.parseInt(cantidadString);
+                Peticion nuevaPeticion = new Peticion(subclase, cantidadRequerida);
+                necesidad.agregarPeticion(nuevaPeticion);
+            }
+        } else {
+            Peticion peticion = ctx.bodyValidator(Peticion.class)
+                    .check(p -> p.getSubclase() !=null,"es necesario agregar la subclase de donacion requerida")
+                    .check(p -> p.getCantidadRequerida() >0, "la cantidad solicitada es obligatoria y debe ser mayor a 0" )
+                    .get();
+            necesidad.agregarPeticion(peticion);
+        }
 
         withTransaction(()->{
             NecesidadRepository.getInstance().actualizar(necesidad);
         });
-        return necesidad;
+        if (accept !=null && accept.contains("text/html")) {
+            ctx.redirect("/necesidades/" + necesidad.getId());
+        } else {
+            ctx.status(201).json(necesidad);
+        }
     }
 
     public void showNecesidad(Context ctx){
@@ -72,7 +116,6 @@ public class NecesidadController implements WithSimplePersistenceUnit{
         }else{
             ctx.json(necesidad);
         }
-
     }
 
     public void actualizarVencidas() {
@@ -115,5 +158,34 @@ public class NecesidadController implements WithSimplePersistenceUnit{
 
     public List<Necesidad> showNecesidadesRecurrentes(){
         return NecesidadRepository.getInstance().findAllRecurrentes();
+    }
+
+    public void subirAdjunto(Context ctx) {
+        Long necesidadId = Long.parseLong(ctx.pathParam("id"));
+        UploadedFile file = ctx.uploadedFile("foto");
+
+        if (file == null) {
+            throw new BadRequestResponse("No se seleccionó ningún archivo");
+        }
+        String nombreArchivo = System.currentTimeMillis() + "_" + file.filename();
+        String rutaDestino = "public/uploads/" + nombreArchivo;
+
+        try (InputStream input = file.content()) {
+            File targetFile = new File(rutaDestino);
+            targetFile.getParentFile().mkdirs();
+            Files.copy(input, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar la imagen en disco", e);
+        }
+        String rutaWeb = "/uploads/" + nombreArchivo;
+
+        withTransaction(() -> {
+            Necesidad necesidad = NecesidadRepository.getInstance().findById(necesidadId);
+            if (necesidad != null) {
+                necesidad.agregarAdjunto(rutaWeb);
+                NecesidadRepository.getInstance().actualizar(necesidad);
+            }
+        });
+        ctx.redirect("/necesidades/" + necesidadId);
     }
 }
