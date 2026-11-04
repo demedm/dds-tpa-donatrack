@@ -1,27 +1,16 @@
 package ar.edu.utn.frba.dds.dto;
 
-import ar.edu.utn.frba.dds.model.Bienes.Bien;
-import ar.edu.utn.frba.dds.model.donantes.Persona;
 
 import java.util.List;
 
 public class DonacionsDTO {
 
   private String descripcionGeneral;
-  private Persona donante;
-  private List<Bien> bienes;
-  private Integer id;
+  private Long donanteId;            // antes: Persona donante
+  private List<BienDTO> bienes;      // antes: List<Bien> bienes
 
   public DonacionsDTO() {
 
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
   }
 
   public String getDescripcionGeneral() {
@@ -32,19 +21,19 @@ public class DonacionsDTO {
     this.descripcionGeneral = descripcionGeneral;
   }
 
-  public Persona getDonante() {
-    return donante;
-  }
-
-  public void setDonante(Persona donante) {
-    this.donante = donante;
-  }
-
-  public List<Bien> getBienes() {
+  public List<BienDTO> getBienes() {
     return bienes;
   }
 
-  public void setBienes(List<Bien> bienes) {
+  public void setBienes(List<BienDTO> bienes) {
     this.bienes = bienes;
+  }
+
+  public Long getDonanteId() {
+    return donanteId;
+  }
+
+  public void setDonanteId(Long donanteId) {
+    this.donanteId = donanteId;
   }
 }

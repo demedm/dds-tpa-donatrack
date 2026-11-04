@@ -11,11 +11,12 @@ import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 import ar.edu.utn.frba.dds.model.donantes.PersonaJuridica;
 import ar.edu.utn.frba.dds.model.donantes.TipoDocumento;
+import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
-import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
+import ar.edu.utn.frba.dds.repositories.EntidadRepository;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
@@ -27,16 +28,7 @@ import java.util.List;
 
 public class Bootstrap {
 	public static void init() {
-		List<Necesidad> necesidades = crearNecesidades(); //Cargo las necesidades para probar 
-			necesidades.forEach(n -> {
-				try {
-					NecesidadRepository.getInstance().guardar(n);
-					System.out.println("Necesidad guardada: " + n.getDescripcion());
-				} catch (Exception e) {
-					System.out.println("Error guardando necesidad: " + e.getMessage());
-					e.printStackTrace();
-				}
-			});
+		crearNecesidadesConNecesidades();
 
 		// La donación necesita un donante ya guardado: lo registro y lo vuelvo a leer de la base
 		donadores().forEach(DonanteRepository.Instance::registrarDonante);
@@ -93,9 +85,13 @@ public class Bootstrap {
 		return Arrays.asList(maria, org);
 	}
 
-	private static List<Necesidad> crearNecesidades() {
+	private static void crearNecesidadesConNecesidades() {
+
+		EntidadBeneficiaria comedor = new EntidadBeneficiaria(
+				"Av. Medrano 951", new ArrayList<>(), "Comedor Los Pibes", null, "COMEDOR"
+		);
+
 		Necesidad nec1 = new Necesidad();
-		nec1.setEntidadId("ent-001");
 		nec1.setDescripcion("Comida para invierno");
 		nec1.setTipo(Necesidad.TipoNecesidad.NORMAL);
 
@@ -103,17 +99,21 @@ public class Bootstrap {
 		Peticion pet2 = new Peticion("FIDEOS", 50);
 		nec1.agregarPeticion(pet1);
 		nec1.agregarPeticion(pet2);
+		comedor.agregarNecesidad(nec1);
+		EntidadRepository.Instance.registrar(comedor);
+
+		EntidadBeneficiaria hogar = new EntidadBeneficiaria(
+				"Mozart 2300", new ArrayList<>(), "Hogar San José", null, "HOGAR");
 
 		Necesidad nec2 = new Necesidad();
-		nec2.setEntidadId("ent-002");
 		nec2.setDescripcion("Medicinas semanales");
 		nec2.setTipo(Necesidad.TipoNecesidad.RECURRENTE);
 		nec2.setDiasRecurrencia(7);
 		nec2.setProximoVencimiento(LocalDate.now().minusDays(7));
-
 		Peticion pet3 = new Peticion("IBUPROFENO", 30);
 		nec2.agregarPeticion(pet3);
+		hogar.agregarNecesidad(nec2);
+		EntidadRepository.Instance.registrar(hogar);
 
-		return List.of(nec1, nec2);
     }
 }

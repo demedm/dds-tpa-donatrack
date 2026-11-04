@@ -42,7 +42,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
 
   private final DonacionesRepository repo = DonacionesRepository.Instance;
   private final List<Long> donacionesCreadas = new ArrayList<>();
-  private final List<String> entidadesCreadas = new ArrayList<>();
+  private final List<Long> entidadesCreadas = new ArrayList<>();
 
   private Subcategoria arroz;
   private Subcategoria silla;
@@ -182,7 +182,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
     guardar(donacion);
     Long idSegmentada = segmentadaDe(donacion, arroz).getId();
 
-    EntidadBeneficiaria comedor = entidad("ENT-TEST-1");
+    EntidadBeneficiaria comedor = entidad(1000L);
     AlgoritmoAsignacion algoritmo = mock(AlgoritmoAsignacion.class);
     when(algoritmo.obtenerRanking(any(), any())).thenReturn(List.of(comedor));
 
@@ -190,7 +190,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
         repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(comedor), List.of(algoritmo)));
     entityManager().clear();
 
-    assertEquals(List.of("ENT-TEST-1"), repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas());
+    assertEquals(List.of(1000L), repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas());
   }
 
   @Test
@@ -203,7 +203,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
     EntidadBeneficiaria comedor = entidad(null);
     Necesidad necesidad = new Necesidad();
     necesidad.agregarPeticion(new Peticion("ARROZ", 100));
-    comedor.getNecesidades().add(necesidad);
+    comedor.agregarNecesidad(necesidad);
     EntidadRepository.Instance.registrar(comedor);
     entidadesCreadas.add(comedor.getId());
 
@@ -248,7 +248,7 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
         .orElseThrow(() -> new AssertionError("No hay segmentada de " + subcategoria.getDescripcion()));
   }
 
-  private static EntidadBeneficiaria entidad(String id) {
+  private static EntidadBeneficiaria entidad(Long id) {
     EntidadBeneficiaria entidad =
         new EntidadBeneficiaria("Calle falsa 123", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
 

@@ -21,14 +21,12 @@ import java.util.List;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.UUID;
 
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -78,7 +76,7 @@ public class DonacionSegmentada {
   private LocalDate fechaDeEntrega;
 
   // Asignación a una entidad beneficiaria
-  private String entidadAsignadaId;
+  private Long entidadAsignadaId;
 
   @Transient
   private MedioContacto medioContactoEntidad;
@@ -92,7 +90,7 @@ public class DonacionSegmentada {
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
   @Column(name ="entidad_id")
   @JsonIgnore
-  private List<String> idsEntidadesPropuestas = new ArrayList<>();
+  private List<Long> idsEntidadesPropuestas = new ArrayList<>();
 
 
   // ======================= CONSTRUCTORES =======================
@@ -207,15 +205,15 @@ public class DonacionSegmentada {
 
   // ======================= ASIGNACIÓN A UNA ENTIDAD =======================
 
-  public String getEntidadAsignadaId() {
+  public Long getEntidadAsignadaId() {
     return entidadAsignadaId;
   }
 
-  public void setEntidadAsignadaId(String entidadAsignadaId) {
+  public void setEntidadAsignadaId(Long entidadAsignadaId) {
     this.entidadAsignadaId = entidadAsignadaId;
   }
 
-  public void asignarA(String entidadId) {
+  public void asignarA(Long entidadId) {
     asignar();
     this.entidadAsignadaId = entidadId;
   }
@@ -258,7 +256,7 @@ public class DonacionSegmentada {
     return this.resultadosPropuestos;
   }
 
-  public List<String> getIdsEntidadesPropuestas() {
+  public List<Long> getIdsEntidadesPropuestas() {
     return idsEntidadesPropuestas;
   }
 

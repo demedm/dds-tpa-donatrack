@@ -4,12 +4,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import ar.edu.utn.frba.dds.repositories.EntityManagerHelper;
 import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,16 +20,26 @@ public class NecesidadTest {
 
     private Necesidad necesidadNormal;
     private Necesidad necesidadRecurrente;
+    private EntidadBeneficiaria comedor;
+    private EntidadBeneficiaria hogar;
 
     @BeforeEach
     void setUp() {
+        // La necesidad tiene clave foránea a la entidad: las entidades tienen que existir en la base
+        comedor = new EntidadBeneficiaria("Av. Medrano 951", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
+        hogar = new EntidadBeneficiaria("Mozart 2300", new ArrayList<>(), "Hogar de prueba", null, "HOGAR");
+        EntityManagerHelper.beginTransaction();
+        EntityManagerHelper.getEntityManager().persist(comedor);
+        EntityManagerHelper.getEntityManager().persist(hogar);
+        EntityManagerHelper.commit();
+
         necesidadNormal = new Necesidad();
-        necesidadNormal.setEntidadId("ENT-001");
+        necesidadNormal.setEntidadId(comedor.getId());
         necesidadNormal.setDescripcion("Ropa de abrigo");
         necesidadNormal.setTipo(Necesidad.TipoNecesidad.NORMAL);
 
         necesidadRecurrente = new Necesidad();
-        necesidadRecurrente.setEntidadId("ENT-002");
+        necesidadRecurrente.setEntidadId(hogar.getId());
         necesidadRecurrente.setDescripcion("Leche mensual");
         necesidadRecurrente.setTipo(Necesidad.TipoNecesidad.RECURRENTE);
         necesidadRecurrente.setDiasRecurrencia(30);
@@ -100,7 +112,7 @@ public class NecesidadTest {
         Necesidad recuperada = NecesidadRepository.getInstance().findById(necesidadNormal.getId());
 
         assertNotNull(recuperada, "La necesidad debe existir en la BD");
-        assertEquals("ENT-001", recuperada.getEntidadId());
+        assertEquals(comedor.getId(), recuperada.getEntidadId());
         assertEquals(1, recuperada.getPeticiones().size(), "Debe guardar la petición en cascada");
         assertEquals("CAMPERAS", recuperada.getPeticiones().get(0).getSubclase());
     }
@@ -119,9 +131,9 @@ public class NecesidadTest {
 
         List<Necesidad> vencidasEnBD = NecesidadRepository.getInstance().findAllRecurrentesActivasVencidas();
 
-        assertTrue(vencidasEnBD.stream().anyMatch(n -> n.getEntidadId().equals("ENT-002")),
+        assertTrue(vencidasEnBD.stream().anyMatch(n -> n.getEntidadId().equals(hogar.getId())),
                 "Debe encontrar la necesidad recurrente vencida");
-        assertFalse(vencidasEnBD.stream().anyMatch(n -> n.getEntidadId().equals("ENT-001")),
+        assertFalse(vencidasEnBD.stream().anyMatch(n -> n.getEntidadId().equals(comedor.getId())),
                 "No debe incluir la necesidad normal");
     }
 }

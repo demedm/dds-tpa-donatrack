@@ -6,19 +6,48 @@ import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.model.notificaciones.Destinatario;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "entidades_beneficiarias")
+
 public class EntidadBeneficiaria implements Destinatario{
-  private String id;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
   private String razonSocial;
   private String direccion;
   private String tipo;
+
+  @ElementCollection
+  @CollectionTable(name = "entidad_mails", joinColumns =
+  @JoinColumn(name = "entidad_id"))
   private List<Mail> mailsContacto = new ArrayList<>();
+
+  @Embedded
   private Telefono telefono;
+
+  @OneToMany
+  @JoinColumn(name = "entidadAsignadaId", insertable = false, updatable = false)
   private List<DonacionSegmentada> donacionesRecibidas = new ArrayList<>();
 
+  @OneToMany(cascade = CascadeType.ALL)
+  @JoinColumn(name = "entidadId", insertable = false, updatable = false)
   private List<Necesidad> necesidades = new ArrayList<>();
 
   public EntidadBeneficiaria() {}
@@ -32,11 +61,11 @@ public class EntidadBeneficiaria implements Destinatario{
 
   }
 
-  public String getId() {
+  public Long getId() {
     return this.id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
   public void setRazonSocial(String razonSocial) {
@@ -106,4 +135,12 @@ public class EntidadBeneficiaria implements Destinatario{
   public String nombreParaMostrar() {
     return razonSocial;
   }
+
+  // Toda necesidad nueva queda apuntando a esta entidad
+  public void agregarNecesidad(Necesidad necesidad) {
+    necesidad.setEntidadId(this.id);
+    this.necesidades.add(necesidad);
+  }
+
+
 }

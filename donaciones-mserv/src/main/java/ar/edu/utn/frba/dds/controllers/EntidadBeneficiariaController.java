@@ -21,7 +21,7 @@ public class EntidadBeneficiariaController {
   }
 
   public EntidadBeneficiaria obtenerEntidad(Context ctx) {
-    var id = ctx.pathParam("id");
+    Long id = ctx.pathParamAsClass("id",Long.class).get();
     EntidadBeneficiaria entidad = entidadRepository.obtenerPorId(id);
     if (entidad == null) {
       throw new NotFoundResponse("No existe una entidad con id " + id);
@@ -30,7 +30,7 @@ public class EntidadBeneficiariaController {
   }
 
   public EntidadBeneficiaria actualizarEntidad(Context ctx) {
-    var id = ctx.pathParam("id");
+    Long id = ctx.pathParamAsClass("id",Long.class).get();
     EntidadBeneficiaria entidadExistente = entidadRepository.obtenerPorId(id);
     if (entidadExistente == null) {
       throw new NotFoundResponse("No existe una entidad con id " + id);
@@ -42,9 +42,9 @@ public class EntidadBeneficiariaController {
   }
 
   public void deleteEntidad(Context ctx) {
-    var id = ctx.pathParam("id");
+    Long id = ctx.pathParamAsClass("id",Long.class).get();
     EntidadBeneficiaria entidadExistente = entidadRepository.obtenerPorId(id);
-    if (entidadExistente != null) {
+    if (entidadExistente == null) {
       throw new NotFoundResponse("No existe una entidad con ese id " + id);
     }
     boolean eliminado = entidadRepository.eliminarPorId(id);

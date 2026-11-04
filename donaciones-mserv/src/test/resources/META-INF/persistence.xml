@@ -24,6 +24,7 @@
         <class>ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada</class>
         <class>ar.edu.utn.frba.dds.model.necesidad.Necesidad</class>
         <class>ar.edu.utn.frba.dds.model.necesidad.Peticion</class>
+        <class>ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria</class>
         <class>ar.edu.utn.frba.dds.model.notificaciones.Notificacion</class>
 
         <properties>
