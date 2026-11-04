@@ -65,6 +65,10 @@ public class EntidadBeneficiaria implements Destinatario{
     return this.id;
   }
 
+  public String getRazonSocial() {
+    return this.razonSocial;
+  }
+
   public void setId(Long id) {
     this.id = id;
   }

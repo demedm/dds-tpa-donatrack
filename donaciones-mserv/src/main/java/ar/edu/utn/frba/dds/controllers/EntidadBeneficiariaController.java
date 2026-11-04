@@ -17,19 +17,19 @@ public class EntidadBeneficiariaController {
     EntidadBeneficiaria entidadBeneficiaria = dto.Entidad();
 
     entidadRepository.registrar(entidadBeneficiaria);
-    ctx.status(201).json(entidadBeneficiaria);
+    ctx.status(201).json(EntidadDTO.desde(entidadBeneficiaria));
   }
 
-  public EntidadBeneficiaria obtenerEntidad(Context ctx) {
+  public EntidadDTO obtenerEntidad(Context ctx) {
     Long id = ctx.pathParamAsClass("id",Long.class).get();
     EntidadBeneficiaria entidad = entidadRepository.obtenerPorId(id);
     if (entidad == null) {
       throw new NotFoundResponse("No existe una entidad con id " + id);
     }
-    return entidad;
+    return EntidadDTO.desde(entidad);
   }
 
-  public EntidadBeneficiaria actualizarEntidad(Context ctx) {
+  public EntidadDTO actualizarEntidad(Context ctx) {
     Long id = ctx.pathParamAsClass("id",Long.class).get();
     EntidadBeneficiaria entidadExistente = entidadRepository.obtenerPorId(id);
     if (entidadExistente == null) {
@@ -38,7 +38,8 @@ public class EntidadBeneficiariaController {
 
     EntidadDTO dto = ctx.bodyAsClass(EntidadDTO.class);
     EntidadBeneficiaria entidadBeneficiaria = dto.Entidad();
-    return entidadRepository.actualizarEntidad(entidadExistente, entidadBeneficiaria);
+    return EntidadDTO.desde(entidadRepository.actualizarEntidad(entidadExistente, entidadBeneficiaria));
+
   }
 
   public void deleteEntidad(Context ctx) {
@@ -51,8 +52,8 @@ public class EntidadBeneficiariaController {
     ctx.status(eliminado ? 204 : 404);
   }
 
-  public List<EntidadBeneficiaria> obtenerEntidades(){
-    return entidadRepository.obtenerEntidades();
+  public List<EntidadDTO> obtenerEntidades(){
+    return entidadRepository.obtenerEntidades().stream().map(EntidadDTO::desde).toList();
   }
 }
 
