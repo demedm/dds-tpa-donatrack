@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Necesidad - {{necesidad.descripcion}}</title>
+    <link rel="stylesheet" href="/css/estilo-minimal.css">
+</head>
+<body>
+<div class="container">
+    <a class="link-volver" href="/necesidades">&larr; Volver a mis necesidades</a>
+
+    <h1>{{necesidad.descripcion}}</h1>
+
+    <div class="detalle-necesidad">
+        <span class="tag">{{necesidad.tipo}}</span>
+        {{#if necesidad.esRecurrente}}
+            <span class="badge badge-info">Proximo vencimiento el {{necesidad.proximoVencimiento}}</span>
+            {{#if necesidad.estaVencida}}
+                <span class="badge badge-pending">Vencida</span>
+            {{else}}
+                <span class="badge badge-done">Activa</span>
+            {{/if}}
+        {{/if}}
+    </div>
+
+    <section class="detalle-seccion">
+        <h2>Peticiones de la necesidad</h2>
+        <table class="peticiones-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Pedido</th>
+                <th>Cantidad solicitada</th>
+                <th>Cantidad recibida</th>
+                <th>Cubierta</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each necesidad.peticiones}}
+                <tr>
+                    <td>{{this.id}}</td>
+                    <td>{{this.subclase}}</td>
+                    <td>{{this.cantidadRequerida}}</td>
+                    <td>{{this.cantidadRecibida}}</td>
+                    <td>
+                        <!-- Usamos el getter estaCubierta de la clase Peticion -->
+                        {{#if this.estaCubierta}}
+                            <span class="badge badge-done">Sí</span>
+                        {{else}}
+                            <span class="badge badge-pending">No</span>
+                        {{/if}}
+                    </td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </section>
+</div>
+</body>
+</html>

@@ -10,7 +10,7 @@ public class App_Donaciones {
 
   public static void main(String[] args) throws IOException, InterruptedException {
     Bootstrap.init();
-    LimpiezaCronScheduler.iniciar();
+    // LimpiezaCronScheduler.iniciar();
     AsignacionCronScheduler.iniciar();
     new Server().start();
   }

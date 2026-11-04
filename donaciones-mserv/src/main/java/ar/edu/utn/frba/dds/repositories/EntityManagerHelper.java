@@ -8,7 +8,7 @@ import javax.persistence.Persistence;
 public class EntityManagerHelper {
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("simple-persistence-unit");
     private static final ThreadLocal<EntityManager> threadLocal = new ThreadLocal<>();
-    
+
     public static EntityManager getEntityManager() {
         EntityManager em = threadLocal.get();
         if (em == null || !em.isOpen()) {
@@ -25,21 +25,21 @@ public class EntityManagerHelper {
         }
     }
 
-    public static void commit() { //Confirma los cambios, toma las ehechas en memoria y hace las ordenes sql necesarias. 
+    public static void commit() { //Confirma los cambios, toma las ehechas en memoria y hace las ordenes sql necesarias.
         EntityTransaction tx = getEntityManager().getTransaction();
         if (tx.isActive()) {
             tx.commit();
         }
     }
 
-    public static void rollback() { //Si hay un error ahce que no se hagan lso cambniso para que noq uede abierrta. 
+    public static void rollback() { //Si hay un error ahce que no se hagan lso cambniso para que noq uede abierrta.
         EntityTransaction tx = getEntityManager().getTransaction();
         if (tx.isActive()) {
             tx.rollback();
         }
     }
 
-    public static void closeEntityManager() { //Permite que todas las clases y repositorios, compartan la misma conexión dentro del mismo hilo, evitando consultas concurrentes 
+    public static void closeEntityManager() { //Permite que todas las clases y repositorios, compartan la misma conexión dentro del mismo hilo, evitando consultas concurrentes
         EntityManager em = threadLocal.get();
         if (em != null && em.isOpen()) {
             em.close();
