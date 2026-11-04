@@ -27,6 +27,11 @@ public class Necesidad {
   private Integer diasRecurrencia;
   private LocalDate proximoVencimiento;
 
+  @ElementCollection
+  @CollectionTable(name = "necesidad_adjuntos", joinColumns = @JoinColumn(name = "necesidad_id"))
+  @Column(name = "ruta_adjunto")
+  private List<String> adjuntos = new ArrayList<>();
+
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //Con cascada puedo ahcer que caundo guardo o modifico la nencesidad, guardo todas las peticioens que le agregue
   @JoinColumn(name = "necesidad_id") //El campo que vinculo a la necesidad. 
 
@@ -108,6 +113,9 @@ public class Necesidad {
   }
 
   public void agregarPeticion(Peticion peticion){
+    if (this.peticiones == null) {
+      this.peticiones = new ArrayList<>();
+    }
     this.peticiones.add(peticion);
     peticion.setNecesidad(this);
   }
@@ -144,5 +152,17 @@ public class Necesidad {
 
   public void setPeticiones(List <Peticion> peticiones){
     this.peticiones = peticiones;
+  }
+
+  public List<String> getAdjuntos() {
+    return adjuntos;
+  }
+
+  public void agregarAdjunto(String ruta) {
+    this.adjuntos.add(ruta);
+  }
+
+  public boolean isTieneAdjuntos() {
+    return !adjuntos.isEmpty();
   }
 }

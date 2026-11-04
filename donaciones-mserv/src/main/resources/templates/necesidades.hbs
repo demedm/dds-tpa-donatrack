@@ -8,6 +8,25 @@
 <body>
 <div class="container">
     <h1>{{titulo}}</h1>
+    <form action="/necesidades" method="post" class="nueva-necesidad-post">
+        <label>Entidad ID (por ahora MOCK):</label>
+        <input type="text" name="entidadId" value="001" required>
+
+        <label>Descripcion: </label>
+        <input type="text" name="descripcion" placeholder="Ej:Bebidas para comedor">
+
+        <label>Tipo de necesidad: </label>
+        <select name="tipo">
+            <option value="NORMAL">Normal</option>
+            <option value="RECURRENTE">Recurrente</option>
+        </select>
+
+        <label>Dias de recurrencia: </label>
+        <input type="number" name="diasRecurrencia" placeholder="Ej: 7">
+
+        <button type="submit">Crear necesidad y agregar peticiones</button>
+    </form>
+
     <table class="necesidades-table">
         <thead>
         <tr>
