@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.dto;
+package ar.edu.utn.frba.dds.dto.entrada;
 
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;

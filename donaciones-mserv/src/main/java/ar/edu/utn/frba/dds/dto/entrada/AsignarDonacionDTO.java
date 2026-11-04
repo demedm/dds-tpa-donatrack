@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.dto;
+package ar.edu.utn.frba.dds.dto.entrada;
 
 public class AsignarDonacionDTO {
 
