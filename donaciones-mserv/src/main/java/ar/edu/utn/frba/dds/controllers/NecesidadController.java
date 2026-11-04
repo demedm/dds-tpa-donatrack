@@ -10,7 +10,6 @@ import java.util.Map;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
-import org.apache.commons.collections.map.HashedMap;
 
 
 public class NecesidadController implements WithSimplePersistenceUnit{
@@ -94,12 +93,13 @@ public class NecesidadController implements WithSimplePersistenceUnit{
 
 
     public void showNecesidades(Context ctx){
-        String entidadId = ctx.queryParam("entidadId");
+        // ?entidadId=1 filtra por entidad; sin el parámetro se muestran todas
+        Long entidadId = ctx.queryParamAsClass("entidadId", Long.class).allowNullable().get();
         List <Necesidad> necesidades;
-        if (entidadId !=null && !entidadId.isBlank()){
+        if (entidadId != null){
             necesidades = NecesidadRepository.getInstance().findByEntidadId(entidadId);
-        }else{ //GUARDO PARA MOCK
-            necesidades =  NecesidadRepository.getInstance().findByEntidadId("ent-001");
+        }else{
+            necesidades = NecesidadRepository.getInstance().findAll();
         }
         String accept =ctx.header("Accept");
         if (accept !=null && accept.contains("text/html")){

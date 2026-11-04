@@ -21,14 +21,12 @@ import java.util.List;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.UUID;
 
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -64,13 +62,13 @@ public class DonacionSegmentada {
   // Estados (patrón State) e historial de cambios
   @Convert(converter = EstadoDonacionConverter.class)
   @Column(name = "estado")
-  @Transient
+  @JsonIgnore
   private EstadoDonacion estadoActual = new EnDeposito();
 
   @ElementCollection
   @CollectionTable(name ="historial_estados",
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
-  @Transient
+  @JsonIgnore
   private List<RegistroCambioEstado> historialEstados = new ArrayList<>();
 
   // Traslado y entrega
@@ -78,7 +76,7 @@ public class DonacionSegmentada {
   private LocalDate fechaDeEntrega;
 
   // Asignación a una entidad beneficiaria
-  private String entidadAsignadaId;
+  private Long entidadAsignadaId;
 
   @Transient
   private MedioContacto medioContactoEntidad;
@@ -91,8 +89,8 @@ public class DonacionSegmentada {
   @CollectionTable(name = "propuestas_asignacion",
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
   @Column(name ="entidad_id")
-  @Transient
-  private List<String> idsEntidadesPropuestas = new ArrayList<>();
+  @JsonIgnore
+  private List<Long> idsEntidadesPropuestas = new ArrayList<>();
 
 
   // ======================= CONSTRUCTORES =======================
@@ -124,12 +122,12 @@ public class DonacionSegmentada {
   public List<Bien> getBienes() {
     return Collections.unmodifiableList(bienes);
   }
-  @Transient
+
   public Integer getCantidad(){
     return bienes.stream().mapToInt(Bien::getCantidad).sum();
   }
 
-  @Transient
+  @JsonIgnore
   public Subcategoria getSubcategoria() {
     return bienes.get(0).getSubcategoria();
   }
@@ -149,12 +147,12 @@ public class DonacionSegmentada {
 
   public EstadoDonacion getEstadoActual(){return  estadoActual;}
 
-  @Transient
+  @JsonIgnore
   public List<RegistroCambioEstado> getHistorialEstados() {
     return historialEstados;
   }
 
-  @Transient
+  @JsonIgnore
   public boolean estaAlmacen(){
     return estadoActual == null ||estadoActual instanceof EnDeposito;
   }
@@ -207,15 +205,15 @@ public class DonacionSegmentada {
 
   // ======================= ASIGNACIÓN A UNA ENTIDAD =======================
 
-  public String getEntidadAsignadaId() {
+  public Long getEntidadAsignadaId() {
     return entidadAsignadaId;
   }
 
-  public void setEntidadAsignadaId(String entidadAsignadaId) {
+  public void setEntidadAsignadaId(Long entidadAsignadaId) {
     this.entidadAsignadaId = entidadAsignadaId;
   }
 
-  public void asignarA(String entidadId) {
+  public void asignarA(Long entidadId) {
     asignar();
     this.entidadAsignadaId = entidadId;
   }
@@ -258,7 +256,7 @@ public class DonacionSegmentada {
     return this.resultadosPropuestos;
   }
 
-  public List<String> getIdsEntidadesPropuestas() {
+  public List<Long> getIdsEntidadesPropuestas() {
     return idsEntidadesPropuestas;
   }
 

@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -18,7 +17,7 @@ public class Necesidad {
   @GeneratedValue(strategy = GenerationType.IDENTITY) //Hace autoincremento
 
   private Long id;
-  private String entidadId;
+  private Long entidadId;
 
   @Enumerated(EnumType.STRING) //Guarda el enum como texto
   private TipoNecesidad tipo;
@@ -36,7 +35,7 @@ public class Necesidad {
 
   public Necesidad() {}
 
-  public Necesidad(String entidadId, TipoNecesidad tipo, String estado, String descripcion, Integer diasRecurrencia,List <Peticion> peticiones){
+  public Necesidad(Long entidadId, TipoNecesidad tipo, String estado, String descripcion, Integer diasRecurrencia,List <Peticion> peticiones){
     this.entidadId = entidadId;
     this.tipo=tipo;
     this.estado = estado;
@@ -64,7 +63,7 @@ public class Necesidad {
     );
   }
 
-  public String getEntidadId(){
+  public Long getEntidadId(){
     return this.entidadId;
   }
 
@@ -117,7 +116,7 @@ public class Necesidad {
     return  this.tipo == TipoNecesidad.RECURRENTE;
   }
 
-  public void setEntidadId(String entidadId) {
+  public void setEntidadId(Long entidadId) {
     this.entidadId = entidadId;
   }
 

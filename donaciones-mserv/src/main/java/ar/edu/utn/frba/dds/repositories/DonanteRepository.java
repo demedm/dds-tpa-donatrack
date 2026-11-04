@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.repositories;
 
 import ar.edu.utn.frba.dds.model.donantes.Persona;
-import ar.edu.utn.frba.dds.model.importerdonantes.ImporterDonantes;
 import ar.edu.utn.frba.dds.model.notificaciones.Notificador;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
@@ -67,4 +66,9 @@ public class DonanteRepository implements WithSimplePersistenceUnit {
         .createQuery("SELECT p FROM Persona p", Persona.class)
         .getResultList();
   }
+
+  public Persona buscarPorId(Long id) {
+    return entityManager().find(Persona.class, id);
+  }
+
 }

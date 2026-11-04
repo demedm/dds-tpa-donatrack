@@ -11,7 +11,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,15 +57,20 @@ public class EntidadTest {
 
   @Test
   public void obtenerEntidadInexistente() {
-    assertNull(repository.obtenerPorId("333111"));
+    assertNull(repository.obtenerPorId(333111L));
   }
 
   @Test
   public void ObtenerTodasLasEntidades() {
-    repository.registrar(entidad());
-    repository.registrar(entidad());
+    EntidadBeneficiaria una = entidad();
+    EntidadBeneficiaria otra = entidad();
+    repository.registrar(una);
+    repository.registrar(otra);
 
-    assertEquals(2, repository.obtenerEntidades().size());
+    // Otros tests también registran entidades: se verifica que estén estas dos, no el total
+    List<Long> ids = repository.obtenerEntidades().stream().map(EntidadBeneficiaria::getId).toList();
+
+    assertTrue(ids.containsAll(List.of(una.getId(), otra.getId())));
   }
 
   @Test
@@ -82,7 +86,7 @@ public class EntidadTest {
 
   @Test
   public void eliminarEntidadInexistente() {
-    assertFalse(repository.eliminarPorId("999999"));
+    assertFalse(repository.eliminarPorId(999999L));
   }
 
   @Test

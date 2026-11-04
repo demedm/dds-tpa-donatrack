@@ -133,7 +133,7 @@ public class AsignacionProgramadaTest implements WithSimplePersistenceUnit {
       comedor = new EntidadBeneficiaria("Av. Medrano 951", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
       Necesidad necesidad = new Necesidad();
       necesidad.agregarPeticion(new Peticion("ARROZ", 100));
-      comedor.getNecesidades().add(necesidad);
+      comedor.agregarNecesidad(necesidad);
       EntidadRepository.Instance.registrar(comedor);
 
       // Subcategoria y donante no se guardan en cascada: van antes que la donación

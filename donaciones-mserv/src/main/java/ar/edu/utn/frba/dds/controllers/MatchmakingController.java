@@ -1,8 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.dto.AsignarDonacionDTO;
-import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
-import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.*;
@@ -54,8 +52,13 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
     }
 
     withTransaction(() -> {
+      entidad.getNecesidades().stream()
+          .flatMap(necesidad -> necesidad.getPeticiones().stream())
+          .filter(segmentada::puedeCubrir)
+          .findFirst()
+          .ifPresent(peticion ->
+              peticion.agregarCantidadRecibida(segmentada.getCantidad(), String.valueOf(segmentada.getId())));
       segmentada.asignarA(entidad.getId());
-      // acá va lo de sumarle la cantidad a la petición (ver abajo)
     });
 
     return segmentada;

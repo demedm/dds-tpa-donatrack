@@ -1,9 +1,12 @@
 package ar.edu.utn.frba.dds.controllers;
 
 //import ar.edu.utn.frba.dds.dto.AsignarDonacionNecesidadDTO;
+import ar.edu.utn.frba.dds.dto.BienDTO;
 import ar.edu.utn.frba.dds.dto.DonacionsDTO;
+import ar.edu.utn.frba.dds.model.Bienes.Bien;
+import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
-import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.repositories.*;
 import ar.edu.utn.frba.dds.model.Estado.*;
 import ar.edu.utn.frba.dds.model.necesidad.*;
@@ -18,21 +21,34 @@ public class DonacionController {
 
     public Donacion crearDonacion(Context ctx) {
 
-        DonacionsDTO donacion = ctx.bodyValidator(DonacionsDTO.class)
-            .check(d -> d.getDonante() !=null,
+        DonacionsDTO dto = ctx.bodyValidator(DonacionsDTO.class)
+            .check(d -> d.getDonanteId() !=null,
                 "Debe haber un donante")
             .check(d -> d.getBienes() !=null && !d.getBienes().isEmpty(),
                 "Debe existir al menos una donación segementada")
             .get();
 
-        Donacion d = new Donacion(
-            donacion.getDescripcionGeneral(),
-            donacion.getBienes(),
-            donacion.getDonante()
-        );
+        //el donanten tiene que existir
+        Persona donante = DonanteRepository.Instance.buscarPorId(dto.getDonanteId());
+        if (donante == null) {
+            throw new NotFoundResponse("No existe el donante" + dto.getDonanteId());
+        }
 
-        DonacionesRepository.Instance.guardar(d);
-        return d;
+        //BienDTO pasa a bien con su subcategoria
+        List<Bien> bienes = new ArrayList<Bien>();
+        for(BienDTO bienDTO : dto.getBienes()) {
+            Subcategoria sub = SubcategoriaRepository.Instance.buscarOCrear(
+                bienDTO.getCategoria(), bienDTO.getSubcategoria(),
+                bienDTO.getUnidad());
+
+            bienes.add(bienDTO.aBien(sub));
+        }
+
+        //la donacion se segmenta sola al crearse
+        Donacion donacion = new Donacion(dto.getDescripcionGeneral(), bienes, donante);
+        DonacionesRepository.Instance.guardar(donacion);
+
+        return donacion;
     }
 
     public Donacion mostrarDonacion(Context ctx){

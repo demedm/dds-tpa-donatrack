@@ -46,7 +46,7 @@ public class NecesidadRepository implements WithSimplePersistenceUnit {
         .getResultList();
   }
 
-  public List<Necesidad> findByEntidadId(String entidadId) {
+  public List<Necesidad> findByEntidadId(Long entidadId) {
     List<Necesidad> lista = entityManager()
             .createQuery("FROM Necesidad n WHERE n.entidadId = :entidadId", Necesidad.class)
             .setParameter("entidadId", entidadId)

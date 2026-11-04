@@ -8,13 +8,11 @@ import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.model.notificaciones.Destinatario;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
-import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
 import io.javalin.http.Context;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Recibe los cambios de estado que informa el microservicio de logistica y
@@ -102,7 +100,7 @@ public class EstadoEntregaController {
       involucrados.add(donante);
     }
 
-    String entidadId = segmentada.getEntidadAsignadaId();
+    Long entidadId = segmentada.getEntidadAsignadaId();
     if (entidadId != null) {
       EntidadBeneficiaria entidad = EntidadRepository.Instance.obtenerPorId(entidadId);
       if (entidad != null) {
