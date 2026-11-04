@@ -38,15 +38,15 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public void registrar(Entrega entrega) {
-    em.getTransaction().begin();
-    em.persist(entrega);
-    em.getTransaction().commit();
+    entityManager().getTransaction().begin();
+    entityManager().persist(entrega);
+    entityManager().getTransaction().commit();
   }
 
   public void eliminarEntrega(Entrega entrega) {
-    em.getTransaction().begin();
-    em.remove(entrega);
-    em.getTransaction().commit();
+    entityManager().getTransaction().begin();
+    entityManager().remove(entrega);
+    entityManager().getTransaction().commit();
   }
 
   public Entrega actualizar(Entrega entrega) {

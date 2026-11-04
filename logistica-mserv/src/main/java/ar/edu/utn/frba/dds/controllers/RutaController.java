@@ -5,9 +5,7 @@ import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
 import ar.edu.utn.frba.dds.model.EstadoRuta;
 import ar.edu.utn.frba.dds.model.Ruta;
-import ar.edu.utn.frba.dds.model.fallaentrega.ImprevistoLogistico;
 import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
-import ar.edu.utn.frba.dds.model.fallaentrega.NoRecepcionada;
 import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.RutaDto;
@@ -96,7 +94,7 @@ public class RutaController{
           });
         }
         case CANCELADA -> {
-          MotivoFallo imprevisto = new ImprevistoLogistico();
+          MotivoFallo imprevisto = MotivoFallo.IMPREVISTO_LOGISTICO;
           rutaActualizada.getEntregas().stream()
               .filter(e -> !e.getEstado().name().equals("ENTREGADA"))
               .forEach(e -> {
@@ -104,7 +102,7 @@ public class RutaController{
                 EntregaRepositorio.Instance.actualizar(e);
                 cliente.notificarFallaDeEntrega(
                     e.getDonacionId(),
-                    imprevisto.darMotivoFallo(),
+                    imprevisto.getDescripcionMotivo(),
                     imprevisto.esReplanificable()
                 );
               });
@@ -165,37 +163,6 @@ public class RutaController{
     }
 
     ctx.status(200).result("Ruta iniciada. Notificaciones despachadas a Donaciones.");
-  }
-
-  public void cancelarRutaPorImprevisto(Context ctx) {
-    Long idRuta = Long.parseLong(ctx.pathParam("id"));
-    Ruta ruta = RutaRepositorio.Instance.buscarPorId(idRuta);
-
-    if (ruta == null) {
-      ctx.status(404).result("Ruta no encontrada");
-      return;
-    }
-
-    RutaDto dto = new RutaDto();
-    dto.setEstado(EstadoRuta.CANCELADA);
-
-    RutaRepositorio.Instance.actualizarRuta(ruta, dto);
-
-    MotivoFallo imprevisto = new ImprevistoLogistico();
-    ClientDonaciones cliente = new ClientDonaciones();
-    if (ruta.getEntregas() != null) {
-      for (Entrega entrega : ruta.getEntregas()) {
-        entrega.marcarComoFallida(imprevisto);
-        EntregaRepositorio.Instance.actualizar(entrega);
-        cliente.notificarFallaDeEntrega(
-            entrega.getDonacionId(),
-            imprevisto.darMotivoFallo(),
-            imprevisto.esReplanificable()
-        );
-      }
-    }
-
-    ctx.status(200).result("Ruta cancelada por imprevisto. Donaciones avisadas.");
   }
 
   public void finalizarRuta(Context ctx) {
@@ -266,12 +233,12 @@ public class RutaController{
     }
 
     entrega.marcarComoNoRecepcionada();
-    MotivoFallo motivo = new NoRecepcionada();
+    MotivoFallo motivo = MotivoFallo.NO_RECEPCIONADA;
 
     String motivoExtra = ctx.formParam("motivo");
     String textoMotivo = (motivoExtra != null && !motivoExtra.isBlank())
         ? motivoExtra
-        : motivo.darMotivoFallo();
+        : motivo.getDescripcionMotivo();
 
     EntregaRepositorio.Instance.actualizar(entrega);
 

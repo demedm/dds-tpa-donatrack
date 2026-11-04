@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.controllers.DonacionSegmentadaController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.EntidadBeneficiariaController;
 import ar.edu.utn.frba.dds.controllers.EstadoEntregaController;
+import ar.edu.utn.frba.dds.controllers.HomeController;
 import ar.edu.utn.frba.dds.controllers.MatchmakingController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
@@ -23,8 +24,14 @@ public class Router {
     DonacionSegmentadaController donacionSegmentadaController = new DonacionSegmentadaController();
 
     MatchmakingController matchmakingController = new MatchmakingController();
-
+    HomeController homeController = new HomeController();
     EstadoEntregaController estadoEntregaController = new EstadoEntregaController();
+
+    //Vistas
+
+    app.get("/home", homeController::index);
+
+    app.get("/", ctx -> ctx.redirect("/home"));
 
     //Donaciones
 
@@ -115,4 +122,6 @@ public class Router {
       ctx.json(NotificarInactivos.ejecutar(dias));
     });
   }
+
+
 }

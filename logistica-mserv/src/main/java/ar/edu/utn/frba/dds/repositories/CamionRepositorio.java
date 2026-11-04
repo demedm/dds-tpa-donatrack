@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.repositories;
 import ar.edu.utn.frba.dds.exceptions.CamionNotFoundException;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
+import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.model.Ubicacion;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
@@ -17,14 +18,16 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
     this.em = EntityManagerHelper.getEntityManager();
   }
 
-  public void reportarImprevisto(Long id) {
+  public Ruta reportarImprevisto(Long id) {
+    entityManager().getTransaction().begin();
     Camion camion = buscarPorId(id);
     camion.improvistoLogistico();
-    var rutaEnCurso = RutaRepositorio.Instance.buscarRutaEnCursoDeCamion(id);
-    if (rutaEnCurso != null) {
-      rutaEnCurso.indicarImprovistoLogistico();
-      // rutaEnCurso.getEntregas().forEach(EntregaRepositorio.Instance::notificarFalloDeEntrega);
+    Ruta ruta = RutaRepositorio.Instance.buscarRutaEnCursoDeCamion(id);
+    if (ruta != null) {
+      ruta.indicarImprevistoLogistico();
     }
+    entityManager().getTransaction().commit();
+    return ruta;
   }
 
   public void registrar(Camion camion) {

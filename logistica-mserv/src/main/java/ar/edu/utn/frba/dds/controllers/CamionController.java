@@ -1,7 +1,10 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.main.ClientDonaciones;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
+import ar.edu.utn.frba.dds.model.EstadoEntrega;
+import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import io.javalin.http.Context;
 import java.util.List;
@@ -53,6 +56,7 @@ public class CamionController {
       ctx.status(404);
       return null;
     }
+    ctx.status(200);
     return camion;
   }
 
@@ -70,6 +74,23 @@ public class CamionController {
     CamionRepositorio.Instance.registrar(camion);
     ctx.status(201); // CREATED
     ctx.json(camion);
+  }
+
+  public void reportarImprevisto(Context ctx) {
+    Long idCamion = Long.parseLong(ctx.pathParam("id"));
+    Ruta ruta = CamionRepositorio.Instance.reportarImprevisto(idCamion);
+    /*
+    if (ruta != null) {
+      var cliente = new ClientDonaciones();
+      ruta.getEntregas().stream()
+          .filter(e -> e.getEstado() == EstadoEntrega.FALLIDA)
+          .forEach(e -> cliente.notificarFallaDeEntrega(
+              e.getDonacionId(),
+              e.getMotivoFallo().getDescripcionMotivo(),
+              e.getMotivoFallo().esReplanificable()));
+    }
+    */
+    ctx.status(200).json(CamionRepositorio.Instance.buscarPorId(idCamion));
   }
 
 }

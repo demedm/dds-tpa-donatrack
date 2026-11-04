@@ -26,7 +26,7 @@ public class Notificar implements AccionesSobreEntregas {
     var fallo = entrega.getMotivoFallo();
 
     client.notificarFallaDeEntrega(entrega.getDonacionId(),
-        fallo.darMotivoFallo(), fallo.esReplanificable());
+        fallo.getDescripcionMotivo(), fallo.esReplanificable());
   }
 
 }

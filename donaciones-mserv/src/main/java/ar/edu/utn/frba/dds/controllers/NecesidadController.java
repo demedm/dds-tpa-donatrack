@@ -6,8 +6,10 @@ import java.time.LocalDate;
 import java.util.List;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
-public class NecesidadController {
+
+public class NecesidadController implements WithSimplePersistenceUnit{
 
     public Necesidad crear(Context ctx){
         Necesidad necesidad = ctx.bodyValidator(Necesidad.class) //Mapea a una clase
@@ -17,16 +19,18 @@ public class NecesidadController {
             .check(n -> n.getDescripcion() !=null, "una breve descripcion es necesaria")
             .check(n-> {
                 if (n.getTipo() == Necesidad.TipoNecesidad.RECURRENTE) {
-                        return n.getDiasRecurrencia() != null && n.getDiasRecurrencia() >0;
+                    return n.getDiasRecurrencia() != null && n.getDiasRecurrencia() >0;
                 }
                 return true;
             },"las necesidades recurrentes requieren los dias de recurrencia y mayores a 0")
             .get();
-        
+
         if (necesidad.getTipo() == Necesidad.TipoNecesidad.RECURRENTE) {
             necesidad.setProximoVencimiento(LocalDate.now().plusDays(necesidad.getDiasRecurrencia()));
-        }    
-        NecesidadRepository.getInstance().guardar(necesidad);
+        }
+        withTransaction(()->{
+            NecesidadRepository.getInstance().guardar(necesidad);
+        });
         return necesidad;
     }
 
@@ -37,13 +41,15 @@ public class NecesidadController {
             throw new NotFoundResponse("Necesidad no encontrada");
         }
         Peticion peticion = ctx.bodyValidator(Peticion.class)
-        .check(p -> p.getSubclase() !=null,"es necesario agregar la subclase de donacion requerida")
-        .check(p -> p.getCantidadRequerida() >0, "la cantidad solicitada es obligatoria y debe ser mayor a 0" )
-        .get();
+            .check(p -> p.getSubclase() !=null,"es necesario agregar la subclase de donacion requerida")
+            .check(p -> p.getCantidadRequerida() >0, "la cantidad solicitada es obligatoria y debe ser mayor a 0" )
+            .get();
 
         necesidad.agregarPeticion(peticion);
 
-        NecesidadRepository.getInstance().actualizar(necesidad);
+        withTransaction(()->{
+            NecesidadRepository.getInstance().actualizar(necesidad);
+        });
         return necesidad;
     }
 
@@ -57,18 +63,20 @@ public class NecesidadController {
     }
 
     public void actualizarVencidas() {
-    try {
-        List<Necesidad> necesidades = NecesidadRepository.getInstance().findAllRecurrentesActivasVencidas();
-        for (Necesidad n : necesidades) {
-            n.setEstado("vencida");
-            NecesidadRepository.getInstance().actualizar(n);
-            Necesidad nuevaRecurrencia = n.crearSiguienteRecurrencia();
-            NecesidadRepository.getInstance().guardar(nuevaRecurrencia);
+        try {
+            withTransaction(()-> {
+                List<Necesidad> necesidades = NecesidadRepository.getInstance().findAllRecurrentesActivasVencidas();
+                for (Necesidad n : necesidades) {
+                    n.setEstado("vencida");
+                    NecesidadRepository.getInstance().actualizar(n);
+                    Necesidad nuevaRecurrencia = n.crearSiguienteRecurrencia();
+                    NecesidadRepository.getInstance().guardar(nuevaRecurrencia);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-}
 
 
     public List<Necesidad> showNecesidades(){
