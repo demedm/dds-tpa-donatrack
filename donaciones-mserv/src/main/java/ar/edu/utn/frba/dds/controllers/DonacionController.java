@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.controllers;
 //import ar.edu.utn.frba.dds.dto.AsignarDonacionNecesidadDTO;
 import ar.edu.utn.frba.dds.dto.entrada.BienDTO;
 import ar.edu.utn.frba.dds.dto.entrada.DonacionsDTO;
+import ar.edu.utn.frba.dds.dto.salida.DonacionSalidaDTO;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
@@ -18,7 +19,8 @@ import io.javalin.http.NotFoundResponse;
 
 public class DonacionController {
 
-    public Donacion crearDonacion(Context ctx) {
+    //crear donacion
+    public DonacionSalidaDTO crearDonacion(Context ctx) {
 
         DonacionsDTO dto = ctx.bodyValidator(DonacionsDTO.class)
             .check(d -> d.getDonanteId() !=null,
@@ -47,32 +49,35 @@ public class DonacionController {
         Donacion donacion = new Donacion(dto.getDescripcionGeneral(), bienes, donante);
         DonacionesRepository.Instance.guardar(donacion);
 
-        return donacion;
+        return DonacionSalidaDTO.desde(donacion);
     }
 
-    public Donacion mostrarDonacion(Context ctx){
+    //mostrar donacion
+    public DonacionSalidaDTO mostrarDonacion(Context ctx){
         Long donacionId = ctx.pathParamAsClass("id",Long.class).get();
         Donacion donacion = DonacionesRepository.Instance.findById(donacionId);
 
         if(donacion == null){
             throw new NotFoundResponse("Donacion no encontrada");
         }
-        return donacion;
+        return DonacionSalidaDTO.desde(donacion);
     }
 
-    public List<Donacion> mostrarDonaciones(){
+    //mostra donaciones
+    public List<DonacionSalidaDTO> mostrarDonaciones(){
 
-        return  DonacionesRepository.Instance.obtenerTodas();
-
+        return  DonacionesRepository.Instance.obtenerTodas().stream()
+            .map(DonacionSalidaDTO::desde)
+            .toList();
     }
 
-    public Donacion actualizar(Context ctx){
+    public DonacionSalidaDTO actualizar(Context ctx){
 
         Long donacionId = ctx.pathParamAsClass("id",Long.class).get();
         Donacion donacion = DonacionesRepository.Instance.findById(donacionId);
 
         if(donacion == null){
-            throw new IllegalArgumentException("Donacion no encontrada");
+            throw new NotFoundResponse("Donacion no encontrada");
         }
 
         DonacionsDTO donacionDTO = ctx.bodyAsClass(DonacionsDTO.class);
@@ -83,10 +88,10 @@ public class DonacionController {
 
         DonacionesRepository.Instance.guardar(donacion);
 
-        return donacion;
+        return DonacionSalidaDTO.desde(donacion);
     }
 
-    public Donacion eliminar(Context ctx){
+    public void eliminar(Context ctx){
         Long id = ctx.pathParamAsClass("id",Long.class).get();
         Donacion donacion = DonacionesRepository.Instance.findById(id);
 
@@ -95,8 +100,6 @@ public class DonacionController {
         }
 
         DonacionesRepository.Instance.eliminar(id);
-
-        return donacion;
     }
 
     //PRUEBA ASIGNACION 

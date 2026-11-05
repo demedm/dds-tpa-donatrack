@@ -146,7 +146,7 @@ public class AsignacionDonacionesTest {
       ProcesarDonaciones.procesar(List.of(arroz, fideos), entidades, List.of(algoritmoA));
 
       assertEquals(List.of(hogar.getId()), arroz.getIdsEntidadesPropuestas());
-      assertEquals(List.of(hogar), fideos.getIdsEntidadesPropuestas());
+      assertEquals(List.of(hogar.getId()), fideos.getIdsEntidadesPropuestas());
     }
 
     @Test
@@ -165,7 +165,7 @@ public class AsignacionDonacionesTest {
       assertThrows(RuntimeException.class,
           () -> ProcesarDonaciones.procesar(List.of(rota, sana), entidades, List.of(algoritmoA)));
 
-      assertFalse(sana.getEntidadAsignadaId().describeConstable().isEmpty());
+      assertEquals(List.of(hogar.getId()), sana.getIdsEntidadesPropuestas());
     }
 
     @Test

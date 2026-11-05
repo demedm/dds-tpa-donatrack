@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.model.notificaciones;
 
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
-import ar.edu.utn.frba.dds.repositories.EntityManagerHelper;
 import ar.edu.utn.frba.dds.repositories.NotificacionRepository;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,7 +56,7 @@ public class NotificadorAsincronico implements EnviadorNotificaciones {
         } catch (Exception e) {
           System.err.println("[Notificaciones] No se pudo guardar el estado: " + e.getMessage());
         }
-        EntityManagerHelper.closeEntityManager();
+        WithSimplePersistenceUnit.dispose();
       }
     });
     return notificacion;

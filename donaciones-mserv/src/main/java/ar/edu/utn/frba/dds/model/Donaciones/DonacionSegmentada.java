@@ -158,6 +158,7 @@ public class DonacionSegmentada {
       case "EN_TRASLADO" -> iniciarTraslado();
       case "ENTREGADA" -> confirmarEntrega();
       case "NO_RECIBIDO", "NO_RECIBIDA", "FALLIDA" -> fallarEntrega(justificacionFallo);
+      case "VENCIDA" -> vencer();
       default -> throw new IllegalArgumentException("Estado desconocido: " + nuevoEstado);
     }
   }

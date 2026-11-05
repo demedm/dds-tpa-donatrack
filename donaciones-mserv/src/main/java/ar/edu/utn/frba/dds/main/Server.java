@@ -11,8 +11,6 @@ import io.javalin.config.JavalinConfig;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.json.JavalinJackson;
 
-// IMPORT CRÍTICO NUESTRO PARA LA BASE DE DATOS
-import ar.edu.utn.frba.dds.repositories.EntityManagerHelper;
 
 import java.io.IOException;
 
