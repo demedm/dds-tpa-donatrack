@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -114,7 +115,7 @@ public class AsignacionDonacionesTest {
 
       Resultados resultados = donacion.buscarCandidatas(entidades, List.of(algoritmoA));
 
-      assertSame(resultados, donacion.getResultadosPropuestos());
+      assertEquals(List.of(hogar.getId()), donacion.getIdsEntidadesPropuestas());
     }
 
     @Test
@@ -144,8 +145,8 @@ public class AsignacionDonacionesTest {
 
       ProcesarDonaciones.procesar(List.of(arroz, fideos), entidades, List.of(algoritmoA));
 
-      assertEquals(List.of(hogar), arroz.getResultadosPropuestos().entidadesPropuestas());
-      assertEquals(List.of(hogar), fideos.getResultadosPropuestos().entidadesPropuestas());
+      assertEquals(List.of(hogar.getId()), arroz.getIdsEntidadesPropuestas());
+      assertEquals(List.of(hogar), fideos.getIdsEntidadesPropuestas());
     }
 
     @Test
@@ -164,7 +165,7 @@ public class AsignacionDonacionesTest {
       assertThrows(RuntimeException.class,
           () -> ProcesarDonaciones.procesar(List.of(rota, sana), entidades, List.of(algoritmoA)));
 
-      assertNotNull(sana.getResultadosPropuestos());
+      assertFalse(sana.getEntidadAsignadaId().describeConstable().isEmpty());
     }
 
     @Test
@@ -182,8 +183,12 @@ public class AsignacionDonacionesTest {
 
   // ---------- helpers ----------
 
+  private static long proximoId = 1;
+
   private static EntidadBeneficiaria entidad(String nombre) {
-    return new EntidadBeneficiaria("Calle falsa 123", new ArrayList<>(), nombre, null, "COMEDOR");
+    EntidadBeneficiaria entidad = new EntidadBeneficiaria("Calle falsa 123", new ArrayList<>(), nombre, null, "COMEDOR");
+    entidad.setId(proximoId++);
+    return entidad;
   }
 
   // La segmentada la arma la donación al segmentar sus bienes, y nace En depósito
