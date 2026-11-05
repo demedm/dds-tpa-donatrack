@@ -24,7 +24,7 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
     DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
 
     if (segmentada == null) {
-      throw new NotFoundResponse("DonacionSegmentada"+ idSegmentada + "no encontrada");
+      throw new NotFoundResponse("DonacionSegmentada"+ idSegmentada + " no se encuentra EN_DEPOSITO ");
     }
     if (!segmentada.estaAlmacen()) {
       throw new BadRequestResponse("La donación" + idSegmentada + "no se encuentra EN_DEPOSITO");

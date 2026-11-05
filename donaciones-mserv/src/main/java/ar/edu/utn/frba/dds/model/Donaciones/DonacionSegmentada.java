@@ -60,14 +60,12 @@ public class DonacionSegmentada {
   // Estados (patrón State) e historial de cambios
   @Convert(converter = EstadoDonacionConverter.class)
   @Column(name = "estado")
-  @JsonIgnore
   private EstadoDonacion estadoActual = new EnDeposito();
 
   @ElementCollection
   @CollectionTable(name ="historial_estados",
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
 
-  @JsonIgnore
   private List<RegistroCambioEstado> historialEstados = new ArrayList<>();
 
   // Traslado y entrega
@@ -81,7 +79,6 @@ public class DonacionSegmentada {
   @CollectionTable(name = "propuestas_asignacion",
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
   @Column(name ="entidad_id")
-  @JsonIgnore
   private List<Long> idsEntidadesPropuestas = new ArrayList<>();
 
 
@@ -119,7 +116,6 @@ public class DonacionSegmentada {
     return bienes.stream().mapToInt(Bien::getCantidad).sum();
   }
 
-  @JsonIgnore
   public Subcategoria getSubcategoria() {
     return bienes.get(0).getSubcategoria();
   }
@@ -139,12 +135,10 @@ public class DonacionSegmentada {
 
   public EstadoDonacion getEstadoActual(){return  estadoActual;}
 
-  @JsonIgnore
   public List<RegistroCambioEstado> getHistorialEstados() {
     return historialEstados;
   }
 
-  @JsonIgnore
   public boolean estaAlmacen(){
     return estadoActual == null ||estadoActual instanceof EnDeposito;
   }
