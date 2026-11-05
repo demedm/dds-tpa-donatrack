@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.repositories;
 
 import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.model.notificaciones.Notificador;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
@@ -11,7 +12,11 @@ import java.util.Optional;
 public class DonanteRepository implements WithSimplePersistenceUnit {
   public static DonanteRepository Instance = new DonanteRepository();
 
-  private final Notificador notificador = new Notificador();
+  private EventoNotificacionService notificaciones = EventoNotificacionService.Instance;
+
+  public void setNotificaciones(EventoNotificacionService notificaciones) {
+    this.notificaciones = notificaciones;
+  }
 
   public void registrarDonante(Persona nuevoDonante) {
 
@@ -31,6 +36,16 @@ public class DonanteRepository implements WithSimplePersistenceUnit {
       //  notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
       }
     });
+
+    if (existente.isEmpty()) {
+      try {
+        notificaciones.notificarBienvenida(nuevoDonante);
+      } catch (Exception e) {
+        // El alta ya esta confirmada: que falle el mail no la invalida.
+        System.err.println("[Bienvenida] No se pudo notificar a "
+            + nuevoDonante.getNombreIdentificador() + ": " + e.getMessage());
+      }
+    }
   }
 
   public Optional<Persona> buscarPorEmail(String direccionMail) {
