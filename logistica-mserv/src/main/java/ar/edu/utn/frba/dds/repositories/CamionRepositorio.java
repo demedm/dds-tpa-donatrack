@@ -12,92 +12,79 @@ import java.util.List;
 
 public class CamionRepositorio implements WithSimplePersistenceUnit {
   public static final CamionRepositorio Instance = new CamionRepositorio();
-  private EntityManager em;
-
-  public CamionRepositorio() {
-    this.em = EntityManagerHelper.getEntityManager();
-  }
 
   public Ruta reportarImprevisto(Long id) {
-    entityManager().getTransaction().begin();
-    Camion camion = buscarPorId(id);
-    camion.improvistoLogistico();
-    Ruta ruta = RutaRepositorio.Instance.buscarRutaEnCursoDeCamion(id);
-    if (ruta != null) {
-      ruta.indicarImprevistoLogistico();
-    }
-    entityManager().getTransaction().commit();
-    return ruta;
+    return withTransaction(() -> {
+      Camion camion = buscarPorId(id);
+      camion.improvistoLogistico();
+      Ruta ruta = RutaRepositorio.Instance.buscarRutaEnCursoDeCamion(id);
+      if (ruta != null) {
+        ruta.indicarImprevistoLogistico();
+      }
+      return ruta;
+    });
   }
 
   public void registrar(Camion camion) {
-    em.getTransaction().begin();
-    em.persist(camion);
-    em.getTransaction().commit();
+    withTransaction(()->entityManager().persist(camion));
   }
 
   public void eliminarCamion(Camion camion) {
-    em.getTransaction().begin();
-    em.remove(camion);
-    em.getTransaction().commit();
+    withTransaction(()->entityManager().remove(camion));
   }
 
   public Camion actualizar(Camion camion) {
-    em.getTransaction().begin();
-    Camion actualizado = entityManager().merge(camion);
-    em.getTransaction().commit();
-    return actualizado;
+    return withTransaction(()->entityManager().merge(camion));
   }
 
   @SuppressWarnings("unchecked")
   public List<Camion> mostrarTodos() {
     return entityManager()
-        .createQuery("from Camion")
+        .createQuery("from Camion",Camion.class)
         .getResultList();
   }
 
   public Camion buscarPorId(Long id) {
-    var camion = entityManager()
-        .createQuery("from Camion c where c.id = :id", Camion.class)
-        .setParameter("id", id)
-        .getResultList().stream().findFirst().orElse(null);
-    if (camion == null) {
+    Camion camion = entityManager().find(Camion.class,id);
+    if (camion==null){
       throw new CamionNotFoundException(id);
     }
     return camion;
   }
 
   public Camion buscarPorPatente(String patente) {
-    var camion = entityManager()
-        .createQuery("from Camion c where c.patente = :patente", Camion.class)
-        .setParameter("patente", patente)
-        .getResultList().stream().findFirst().orElse(null);
-    if (camion == null) {
+    List <Camion> resultados = entityManager()
+            .createQuery("from Camion c where c.patente = :patente",Camion.class)
+            .setParameter("patente",patente)
+            .getResultList();
+    if (resultados.isEmpty()){
       throw new CamionNotFoundException(patente);
     }
-    return camion;
+    return resultados.get(0);
   }
 
   @SuppressWarnings("unchecked")
   public List<Camion> mostrarCamionesDisponibles() {
     return entityManager()
-        .createQuery("from Camion c where c.estado = :estado")
-        .setParameter("estado", EstadoCamion.DISPONIBLE)
-        .getResultList();
+            .createQuery("from Camion c where c.estado = :estado", Camion.class)
+            .setParameter("estado", EstadoCamion.DISPONIBLE)
+            .getResultList();
   }
 
   public Ubicacion verUbicacionDeCamion(Camion camion) {
-    return entityManager()
-        .createQuery("from Ubicacion u where u.id = :id", Ubicacion.class)
-        .setParameter("id", camion.getId())
-        .getResultList().stream().findFirst().orElse(null);
+    List<Ubicacion> resultados = entityManager()
+            .createQuery("from Ubicacion u where u.camion.id = :id", Ubicacion.class)
+            .setParameter("id", camion.getId())
+            .getResultList();
+
+    return resultados.isEmpty() ? null : resultados.get(0);
   }
 
   public EstadoCamion buscarEstadoPorId(Long id) {
     return entityManager()
-        .createQuery("select c.estado from Camion c where c.id = :id", EstadoCamion.class)
-        .setParameter("id", id)
-        .getSingleResult();
+            .createQuery("select c.estado from Camion c where c.id = :id", EstadoCamion.class)
+            .setParameter("id", id)
+            .getSingleResult();
   }
 
   public EstadoCamion buscarPatentePorId(Long id) {

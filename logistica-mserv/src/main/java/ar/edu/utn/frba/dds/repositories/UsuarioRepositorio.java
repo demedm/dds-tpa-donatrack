@@ -9,80 +9,53 @@ import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import ar.edu.utn.frba.dds.scripts.dto.ConfirmacionEntregaDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   public static final UsuarioRepositorio Instance = new UsuarioRepositorio();
-  private EntityManager em;
-
-  public UsuarioRepositorio() {
-    em = this.em = EntityManagerHelper.getEntityManager();
-  }
 
   public void registrar(Usuario usuario) {
-    em.getTransaction().begin();
-    em.persist(usuario);
-    em.getTransaction().commit();
+    withTransaction(() -> entityManager().persist(usuario));
   }
 
-  @SuppressWarnings("unchecked")
   public List<Usuario> mostrarTodos() {
     return entityManager()
-        .createQuery("from Usuario")
-        .getResultList();
+            .createQuery("from Usuario", Usuario.class)
+            .getResultList();
   }
 
-  @SuppressWarnings("unchecked")
   public List<Chofer> mostrarTodosLosChoferes() {
     return entityManager()
-        .createQuery("from Chofer")
-        .getResultList();
+            .createQuery("from Chofer", Chofer.class)
+            .getResultList();
   }
 
-  @SuppressWarnings("unchecked")
-  public List<Chofer> mostrarTodasLasEntidadesBeneficiarias() {
+  public List<EntidadBeneficiaria> mostrarTodasLasEntidadesBeneficiarias() {
     return entityManager()
-        .createQuery("from EntidadBeneficiaria ")
-        .getResultList();
+            .createQuery("from EntidadBeneficiaria", EntidadBeneficiaria.class)
+            .getResultList();
   }
 
   public void eliminarUsuario(Usuario usuario) {
-    entityManager().getTransaction().begin();
-    entityManager().remove(usuario);
-    entityManager().getTransaction().commit();
+    withTransaction(() -> entityManager().remove(usuario));
   }
 
-  @SuppressWarnings("unchecked")
   public Usuario buscarPorId(Long id) {
-    return entityManager()
-        .createQuery("from Usuario where id = :id", Usuario.class)
-        .setParameter("id", id)
-        .getResultList().stream().findFirst().orElse(null);
+    return entityManager().find(Usuario.class, id);
   }
 
   public Chofer buscarChoferPorId(Long id) {
-    return entityManager()
-        .createQuery("from Chofer u where u.id = :id", Chofer.class)
-        .setParameter("id", id)
-        .getResultList().stream().findFirst().orElse(null);
+    return entityManager().find(Chofer.class, id);
   }
 
   public EntidadBeneficiaria buscarEntidadBeneficiariaPorId(Long id) {
-    var beneficiaria = entityManager()
-        .createQuery("from EntidadBeneficiaria u where u.id = :id",
-            EntidadBeneficiaria.class)
-        .setParameter("id", id)
-        .getResultList().stream().findFirst().orElse(null);
+    EntidadBeneficiaria beneficiaria = entityManager().find(EntidadBeneficiaria.class, id);
     if (beneficiaria == null) {
       throw new UsuarioNotFoundException(id);
     }
     return beneficiaria;
   }
-
-
 
   public List<Chofer> mostrarChoferesNoAsignados() {
     var choferes = mostrarTodosLosChoferes();
@@ -94,36 +67,39 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
 
     List<Chofer> choferesNoDisponibles = rutasConChofer.stream().map(Ruta::getChofer).toList();
 
-    return choferes.stream().filter(chofer ->
-        !choferesNoDisponibles.contains(chofer)).toList();
+    return choferes.stream()
+            .filter(chofer -> !choferesNoDisponibles.contains(chofer))
+            .toList();
   }
 
   /* Entidad Beneficiaria */
   public Entrega noRecepcionaEntrega(EntidadBeneficiaria entidadBeneficiaria, Long idEntrega) {
-    entityManager().getTransaction().begin();
-    var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
-    if (entrega.getEntidadBeneficiaria().getId().equals(entidadBeneficiaria.getId())
-      && !entrega.estaVencida()) {
-      entrega.marcarComoNoRecepcionada();
-      // EntregaRepositorio.Instance.notificarFalloDeEntrega(entrega);
-    }
-    entityManager().getTransaction().commit();
-    return entrega;
+    return withTransaction(() -> {
+      var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
+      if (entrega != null
+              && entrega.getEntidadBeneficiaria() != null
+              && entrega.getEntidadBeneficiaria().getId().equals(entidadBeneficiaria.getId())
+              && !entrega.estaVencida()) {
+        entrega.marcarComoNoRecepcionada();
+      }
+      return entrega;
+    });
   }
 
   public Entrega confirmarEntrega(EntidadBeneficiaria entidadBeneficiaria,
-                               Long idEntrega,
-                               ConfirmacionEntregaDto dto) {
-    entityManager().getTransaction().begin();
-    var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
-    var camion = CamionRepositorio.Instance.buscarPorId(dto.getCamionId());
-    if (entrega.getEntidadBeneficiaria().getId().equals(entidadBeneficiaria.getId())
-      && !entrega.estaVencida()) {
-      entrega.marcarComoEntregada(camion, LocalDateTime.of(
-          dto.getAnio(), dto.getMes(), dto.getDia(), dto.getHora(), dto.getMinutos()));
-    }
-    entityManager().getTransaction().commit();
-    return entrega;
+                                  Long idEntrega,
+                                  ConfirmacionEntregaDto dto) {
+    return withTransaction(() -> {
+      var entrega = EntregaRepositorio.Instance.buscarPorId(idEntrega);
+      var camion = CamionRepositorio.Instance.buscarPorId(dto.getCamionId());
+      if (entrega != null
+              && entrega.getEntidadBeneficiaria() != null
+              && entrega.getEntidadBeneficiaria().getId().equals(entidadBeneficiaria.getId())
+              && !entrega.estaVencida()) {
+        entrega.marcarComoEntregada(camion, LocalDateTime.of(
+                dto.getAnio(), dto.getMes(), dto.getDia(), dto.getHora(), dto.getMinutos()));
+      }
+      return entrega;
+    });
   }
-
 }

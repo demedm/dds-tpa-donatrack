@@ -17,12 +17,10 @@ import java.util.List;
 public class EntregaRepositorio implements WithSimplePersistenceUnit {
   public static final EntregaRepositorio Instance = new EntregaRepositorio();
   private final List<AccionesSobreEntregas> observers = new ArrayList<>();
-  private EntityManager em;
 
   public EntregaRepositorio() {
     observers.add(new NotificarAdmins());
     observers.add(new Notificar());
-    this.em = EntityManagerHelper.getEntityManager();
   }
 
   public void notificarInicioDeEntrega(Entrega entrega) {
@@ -38,36 +36,26 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
   }
 
   public void registrar(Entrega entrega) {
-    entityManager().getTransaction().begin();
-    entityManager().persist(entrega);
-    entityManager().getTransaction().commit();
+    withTransaction(() -> entityManager().persist(entrega));
   }
 
   public void eliminarEntrega(Entrega entrega) {
-    entityManager().getTransaction().begin();
-    entityManager().remove(entrega);
-    entityManager().getTransaction().commit();
+    withTransaction(() -> entityManager().remove(entrega));
   }
 
   public Entrega actualizar(Entrega entrega) {
-    entityManager().getTransaction().begin();
-    Entrega actualizada = entityManager().merge(entrega);
-    entityManager().getTransaction().commit();
-    return actualizada;
+    return withTransaction(() -> entityManager().merge(entrega));
   }
 
   @SuppressWarnings("unchecked")
   public List<Entrega> mostrarTodos() {
     return entityManager()
-        .createQuery("from Entrega")
-        .getResultList();
+            .createQuery("from Entrega", Entrega.class)
+            .getResultList();
   }
 
   public Entrega buscarPorId(Long id) {
-    var entrega = entityManager()
-        .createQuery("from Entrega e where e.id = :id", Entrega.class)
-        .setParameter("id", id)
-        .getResultList().stream().findFirst().orElse(null);
+    Entrega entrega = entityManager().find(Entrega.class, id);
     if (entrega == null) {
       throw new EntregaNotFoundException(id);
     }
@@ -77,17 +65,17 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
   @SuppressWarnings("unchecked")
   public List<Entrega> buscarEntregasDeEntidadBeneficiaria(Long idEntidad) {
     return entityManager()
-        .createQuery("from Entrega e where e.entidadBeneficiaria.id = :id")
-        .setParameter("id", idEntidad)
-        .getResultList();
+            .createQuery("from Entrega e where e.entidadBeneficiaria.id = :id", Entrega.class)
+            .setParameter("id", idEntidad)
+            .getResultList();
   }
 
   @SuppressWarnings("unchecked")
   public List<Entrega> buscarEntregasConEstado(EstadoEntrega estado) {
     return entityManager()
-        .createQuery("from Entrega e where e.estado = :estado")
-        .setParameter("estado", estado)
-        .getResultList();
+            .createQuery("from Entrega e where e.estado = :estado", Entrega.class)
+            .setParameter("estado", estado)
+            .getResultList();
   }
 
   @SuppressWarnings("unchecked")
