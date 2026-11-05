@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.dto.EntidadDTO;
 import ar.edu.utn.frba.dds.dto.entrada.AsignarDonacionDTO;
+import ar.edu.utn.frba.dds.dto.salida.DonacionSegmentadaSalidaDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.*;
@@ -17,38 +19,39 @@ import io.javalin.http.UnauthorizedResponse;
 
 public class MatchmakingController implements WithSimplePersistenceUnit {
 
-  public List<EntidadBeneficiaria> obtenerRanking(Context ctx) {
-    Long idSegmentada = ctx.pathParamAsClass("idSegmentada", Long.class).get();
+  public List<EntidadDTO> obtenerRanking(Context ctx) {
+    Long idSegmentada = ctx.queryParamAsClass("donacionSegmentadaId", Long.class).get();
     DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
 
     if (segmentada == null) {
-      throw new NotFoundResponse("DonacionSegmentada no encontrada");
+      throw new NotFoundResponse("DonacionSegmentada"+ idSegmentada + "no encontrada");
     }
     if (!segmentada.estaAlmacen()) {
-      throw new BadRequestResponse("La donación no se encuentra EN_DEPOSITO");
+      throw new BadRequestResponse("La donación" + idSegmentada + "no se encuentra EN_DEPOSITO");
     }
 
     return segmentada.getIdsEntidadesPropuestas().stream()
         .map(EntidadRepository.Instance::obtenerPorId)
         .filter(entidad -> entidad != null)
+        .map(EntidadDTO::desde)
         .toList();
   }
 
   // El administrador elige la entidad final
-  public DonacionSegmentada asignarDonacion(Context ctx) {
+  public DonacionSegmentadaSalidaDTO asignarDonacion(Context ctx) {
     AsignarDonacionDTO dto = ctx.bodyAsClass(AsignarDonacionDTO.class);
 
     DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(dto.getDonacionSegmentadaId());
     if (segmentada == null) {
-      throw new NotFoundResponse("No se encontró la donación segmentada con ese ID");
+      throw new NotFoundResponse("No se encontró la donación segmentada " + dto.getDonacionSegmentadaId());
     }
     if (!segmentada.estaAlmacen()) {
-      throw new BadRequestResponse("Solo se pueden asignar donaciones en estado EN_DEPOSITO");
+      throw new BadRequestResponse("Solo se pueden asignar donaciones EN_DEPOSITO (donación " + dto.getDonacionSegmentadaId() + ")");
     }
 
     EntidadBeneficiaria entidad = EntidadRepository.Instance.obtenerPorId(dto.getEntidadBeneficiariaId());
     if (entidad == null) {
-      throw new NotFoundResponse("No se encontró la entidad con ese ID");
+      throw new NotFoundResponse("No se encontró la entidad " + dto.getEntidadBeneficiariaId());
     }
 
     withTransaction(() -> {
@@ -61,7 +64,7 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
       segmentada.asignarA(entidad.getId());
     });
 
-    return segmentada;
+    return DonacionSegmentadaSalidaDTO.desde(segmentada);
   }
 
   // Ejecución a demanda: valida el token y lanza el matchmaking en otro hilo

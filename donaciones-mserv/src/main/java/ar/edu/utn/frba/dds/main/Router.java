@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.main;
 import ar.edu.utn.frba.dds.controllers.HomeController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
-import ar.edu.utn.frba.dds.controllers.EstadoEntregaController;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.Javalin;
 
@@ -18,7 +17,6 @@ public class Router {
 
     HomeController homeController = new HomeController();
 
-    EstadoEntregaController estadoEntregaController = new EstadoEntregaController();
     //Vistas
 
     app.get("/home", homeController::index);
@@ -47,8 +45,6 @@ public class Router {
     controller.actualizarVencidas();
     ctx.result("Cron ejecutado manualmente");
 });
-
-    app.put("/donaciones/{id}/estado", estadoEntregaController::cambiarEstado);
 
     app.post("/tareas/notificar-inactivos", ctx -> {
       int dias = ctx.queryParam("dias") != null ? Integer.parseInt(ctx.queryParam("dias")) : 20;
