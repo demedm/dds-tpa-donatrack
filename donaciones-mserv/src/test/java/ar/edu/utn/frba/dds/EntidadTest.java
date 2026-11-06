@@ -4,6 +4,8 @@ import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
+import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
+import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,14 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EntidadTest {
+public class EntidadTest implements SimplePersistenceTest {
 
   private EntidadRepository repository;
 
   @BeforeEach
   public void setup() {
-
-    repository = new EntidadRepository();
+    repository = EntidadRepository.Instance;
   }
 
   private EntidadBeneficiaria entidad() {
@@ -74,7 +75,7 @@ public class EntidadTest {
   }
 
   @Test
-  public void eliminarIDValidarExistncia() {
+  public void eliminarIDValidarExistncia()  {
     EntidadBeneficiaria entidad = entidad();
     repository.registrar(entidad);
 

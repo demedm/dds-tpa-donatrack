@@ -28,16 +28,15 @@ import java.util.List;
 
 public class Bootstrap {
 	public static void init() {
-		crearNecesidadesConNecesidades();
-
-		// La donación necesita un donante ya guardado: lo registro y lo vuelvo a leer de la base
 		WithSimplePersistenceUnit persistence = new WithSimplePersistenceUnit() {};
 
+		persistence.withTransaction(Bootstrap::crearNecesidadesConNecesidades);
+
+		// La donación necesita un donante ya guardado: lo registro y lo vuelvo a leer de la base
 		persistence.withTransaction( () ->
+			donadores().forEach(DonanteRepository.Instance::registrarDonante));
 
-		donadores().forEach(DonanteRepository.Instance::registrarDonante));
-
-		Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
+			Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
 
 		donaciones(maria);
 
