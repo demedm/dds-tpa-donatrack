@@ -26,6 +26,8 @@ import java.util.Map;
 
 public class AuthController {
 
+  private final EventoNotificacionService notificaciones = EventoNotificacionService.Instance;
+
   public void buscar(Context ctx) {
 
   }
@@ -59,18 +61,18 @@ public class AuthController {
       if (request.getRol().equals(Rol.DONANTE.name())) {
         Persona donante = nuevaPersona(request);
         UsuariosRepositorio.Instance.registrarUsuarioDeDonante(usuario, donante);
+
+       try {
+        notificaciones.notificarBienvenida(donante);
+       } catch (Exception e) {
+        System.err.println("[Bienvenida] No se pudo notificar a "
+            + usuario.getEmail() + ": " + e.getMessage());
+       }
       } else if (request.getRol().equals(Rol.BENEFICIARIO.name())) {
         EntidadBeneficiaria beneficiaria = nuevaEntidad(request);
         UsuariosRepositorio.Instance.registrarUsuarioDeBeneficiario(usuario, beneficiaria, request);
       } else {
         UsuariosRepositorio.Instance.registrarUsuarioDeAdmin(usuario);
-      }
-      UsuariosRepositorio.Instance.registrar(usuario);
-      try {
-        EventoNotificacionService.Instance.notificarBienvenida(new Mail(usuario.getEmail()));
-      } catch (Exception e) {
-        System.err.println("[Bienvenida] No se pudo notificar a "
-            + usuario.getEmail() + ": " + e.getMessage());
       }
       ctx.status(201);
     } catch (MailAlreadyRegisteredException e) {
