@@ -4,7 +4,7 @@ import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.model.notificaciones.Notificacion;
 import ar.edu.utn.frba.dds.model.notificaciones.Notificador;
-import ar.edu.utn.frba.dds.repositories.AdministradorRepository;
+import ar.edu.utn.frba.dds.repositories.usuarios.AdministradorRepository;
 import ar.edu.utn.frba.dds.repositories.NotificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

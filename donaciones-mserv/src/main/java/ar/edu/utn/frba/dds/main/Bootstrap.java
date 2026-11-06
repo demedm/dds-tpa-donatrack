@@ -16,9 +16,12 @@ import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
+import ar.edu.utn.frba.dds.model.usuarios.Rol;
+import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.DonanteRepository;
+import ar.edu.utn.frba.dds.repositories.usuarios.UsuariosRepositorio;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
 import java.time.LocalDate;
@@ -28,6 +31,10 @@ import java.util.List;
 
 public class Bootstrap {
 	public static void init() {
+
+		// registro de algunos usuarios de prueba
+		usuarios().forEach(UsuariosRepositorio.Instance::registrar);
+
 		crearNecesidadesConNecesidades();
 
 		// La donación necesita un donante ya guardado: lo registro y lo vuelvo a leer de la base
@@ -36,6 +43,17 @@ public class Bootstrap {
 
 		donaciones(maria);
 
+	}
+
+	private static List<Usuario> usuarios(){
+		Usuario usuario1 = new Usuario(Rol.ADMIN,
+				"neme@email.com", "nemesito");
+		Usuario usuario2 = new Usuario(Rol.DONANTE,
+				"mariamendoza@email.com", "gatos123");
+		Usuario usuario3 = new Usuario(Rol.BENEFICIARIO,
+				"patitasfelices@email.com", "#patitas12");
+
+		return List.of(usuario1, usuario2, usuario3);
 	}
 
 	private static List<Donacion> donaciones(Persona donante) {

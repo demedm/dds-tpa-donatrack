@@ -23,6 +23,7 @@
         <class>ar.edu.utn.frba.dds.model.necesidad.Necesidad</class>
         <class>ar.edu.utn.frba.dds.model.necesidad.Peticion</class>
         <class>ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria</class>
+        <class>ar.edu.utn.frba.dds.model.usuarios.Usuario</class>
 
         <!-- archivo de configuracion para Hibernate -->
         <properties>
@@ -32,7 +33,7 @@
             <property name="hibernate.connection.url"
                       value="jdbc:mariadb://localhost:3306/donaciones_db"/>
             <property name="hibernate.connection.username" value="root" />
-            <property name="hibernate.connection.password" value="root" />
+            <property name="hibernate.connection.password" value="NicoPASS127" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
 
             <!--

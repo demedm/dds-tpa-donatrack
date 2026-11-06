@@ -1,0 +1,37 @@
+<html>
+<head>
+    <!-- Importar archivos javascript -->
+    <!-- Importar archivos css -->
+    <!-- Escribir css -->
+    <link rel="stylesheet" href="/assets/css/estilo-minimal.css">
+</head>
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Demo</title>
+</head>
+<body>
+<main>
+    <nav>
+        <div>
+            <a href="/">Home</a>
+            <a href="/donaciones">Donaciones</a>
+            <a href="/legal">Legal</a>
+            <a href="/registro">Registro</a>
+            {{#if sesionIniciada }}
+            <a href="/logout">Cerrar sesión</a>
+            {{else}}
+            <a href="/login">Iniciar sesión</a>
+            {{/if}}
+        </div>
+    </nav>
+    <div class="container">
+        {{#block "contenido"}}
+        {{/block}}
+    </div>
+</main>
+</body>
+</html>

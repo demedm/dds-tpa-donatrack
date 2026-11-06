@@ -1,0 +1,20 @@
+{{#partial "contenido-header"}}
+    <a href="/login">Iniciar sesión</a>
+    <a href="/registro">Registro</a>
+    <a href="/donaciones">Donaciones</a>
+    <a href="/legal">Legal</a>
+{{/partial}}
+
+{{#partial "contenido"}}
+    <form method="POST" action="/login">
+        <label>Email</label><input name="email">
+        <label>Password</label><input name="password">
+        <label>
+            <input type="checkbox" name="recordarme" {{#if nombreRecordado}}checked{{/if}}> Recordarme
+        </label>
+        <button>Ingresar</button>
+    </form>
+    {{error}}
+{{/partial}}
+
+{{>templates/layout}}

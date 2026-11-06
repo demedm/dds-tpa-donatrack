@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.controllers.HomeController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
+import ar.edu.utn.frba.dds.controllers.autenticacion.AuthController;
 import ar.edu.utn.frba.dds.tareas.NotificarInactivos;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.Javalin;
@@ -13,9 +14,13 @@ public class Router {
       WithSimplePersistenceUnit persistencia = new WithSimplePersistenceUnit() {};
       app.after("/necesidades", ctx -> persistencia.entityManager().clear());
       app.after("/necesidades/*", ctx -> persistencia.entityManager().clear());
-    NecesidadController necesidadController = new NecesidadController();
 
-    HomeController homeController = new HomeController();
+      NecesidadController necesidadController = new NecesidadController();
+      HomeController homeController = new HomeController();
+      AuthController authController = new AuthController();
+
+    app.post("/auth/login", authController::login);
+    app.post("/auth/registro", authController::registro);
 
     //Vistas
 

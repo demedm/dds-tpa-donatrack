@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.notificaciones;
 
-import ar.edu.utn.frba.dds.repositories.AdministradorRepository;
+import ar.edu.utn.frba.dds.repositories.usuarios.AdministradorRepository;
 import java.util.List;
 
 /**
