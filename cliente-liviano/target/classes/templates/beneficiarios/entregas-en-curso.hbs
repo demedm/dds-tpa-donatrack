@@ -42,20 +42,15 @@
     const mapa = L.map('mapa').setView([-34.6037, -58.3816], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa);
 
-    fetch('/usuarios/{{idUsuario}}/entregas-en-curso', {
-        headers: { 'Accept': 'application/json' }
-    })
-            .then(res => res.json())
-            .then(entregas => {
-                entregas.forEach(entrega => {
-                    // Verificamos si vinieron la latitud y longitud del camión
-                    if (entrega.latitudCamion && entrega.longitudCamion) {
-                        L.marker([entrega.latitudCamion, entrega.longitudCamion])
-                                .addTo(mapa)
-                                .bindPopup(`🚚 <b>Camión en camino</b><br>Entrega #${entrega.id}<br>Donación #${entrega.donacionId}<br>Destino: ${entrega.direccion}`);
-                    }
-                });
-            });
+    const entregas = {{{ puntosJson }}};
+
+    entregas.forEach(entrega => {
+        if (entrega.latitudCamion && entrega.longitudCamion) {
+            L.marker([entrega.latitudCamion, entrega.longitudCamion])
+                .addTo(mapa)
+                .bindPopup(`<b>Camión en camino</b><br>Entrega #${entrega.id}<br>Donación #${entrega.donacionId}<br>Destino: ${entrega.direccion}`);
+        }
+    });
 </script>
 </body>
 </html>
