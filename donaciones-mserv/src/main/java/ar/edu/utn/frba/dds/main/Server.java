@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceDonacionImplementation;
+import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceUsuarioImplementation;
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
 import ar.edu.utn.frba.dds.main.templates.JavalinRenderer;
 import ar.edu.utn.frba.dds.rutas.Routes;
@@ -38,6 +39,7 @@ public class Server {
     io.grpc.Server grpcServer = io.grpc.ServerBuilder
             .forPort(grpcPort)
             .addService(new GrpcServiceDonacionImplementation())
+            .addService(new GrpcServiceUsuarioImplementation())
             .build()
             .start();
 

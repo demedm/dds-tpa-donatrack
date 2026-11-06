@@ -19,6 +19,17 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
     withTransaction(() -> entityManager().persist(usuario));
   }
 
+  public Usuario buscarXidDonaciones(Long idDonaciones) {
+    return entityManager()
+        .createQuery(
+            "SELECT u FROM Usuario u WHERE u.idDonaciones = :id", Usuario.class
+        )
+        .setParameter("id", idDonaciones)
+        .getResultStream()
+        .findFirst()
+        .orElse(null);
+  }
+
   public List<Usuario> mostrarTodos() {
     return entityManager()
             .createQuery("from Usuario", Usuario.class)

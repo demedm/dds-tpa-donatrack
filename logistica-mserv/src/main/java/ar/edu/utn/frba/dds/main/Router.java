@@ -31,6 +31,8 @@ public class Router {
     app.get("/camiones/{id}", camionController::buscarPorId);
     app.post("/camiones/{patente}", camionController::saveCamion);
     app.post("/camiones/{id}/imprevisto-logistico", camionController::reportarImprevisto);
+    app.put("/camiones/{patente}", camionController::modificarCamion);
+    //app.post("/camiones", camionController::registrarCamion);
 
     // CRUD RUTAS Y ENTREGAS
     app.get("/rutas", ctx -> ctx.json(rutaController.showAllRutas()));

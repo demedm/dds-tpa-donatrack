@@ -1,11 +1,42 @@
 {{#partial "contenido-header"}}{{/partial}}
 
 {{#partial "contenido"}}
-    <h>
-        El sistema debe mostrar las donaciones ya entregadas a entidades beneficiarias en un mapa interactivo y permitir ver sus detalles al hacer clic en cada marcador.
-    </h>
+    <section class="camiones">
+        <h1>Listado de camiones</h1>
 
+        <div class="acciones">
+            <button href="/camiones/nuevo" class="boton">
+                Registrar camión
+            </button>
+        </div>
 
+        {{#if camiones}}
+            <div class="tabla-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Patente</th>
+                        <th>Capacidad de carga (kg)</th>
+                        <th>Capacidad de volumen (m³)</th>
+                        <th>Altura (m)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each camiones}}
+                        <tr>
+                            <td>{{patente}}</td>
+                            <td>{{capacidadCarga}}</td>
+                            <td>{{capacidadVolumen}}</td>
+                            <td>{{altura}}</td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        {{else}}
+            <p class="mensaje-info">Todavía no hay camiones registrados.</p>
+        {{/if}}
+    </section>
 {{/partial}}
 
 {{>templates/layout}}

@@ -7,6 +7,8 @@ import ar.edu.utn.frba.dds.model.EstadoEntrega;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import io.javalin.http.Context;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class CamionController {
@@ -60,6 +62,10 @@ public class CamionController {
     return camion;
   }
 
+  public void registrarCamion(@NotNull Context ctx) {
+
+  }
+
   public void saveCamion(Context ctx) {
     Camion camion = ctx.bodyValidator(Camion.class)
         .check(c -> c.getPatente() != null && !c.getPatente().isBlank(),
@@ -93,4 +99,7 @@ public class CamionController {
     ctx.status(200).json(CamionRepositorio.Instance.buscarPorId(idCamion));
   }
 
+
+  public void modificarCamion(@NotNull Context context) {
+  }
 }

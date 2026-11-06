@@ -34,29 +34,24 @@ public class Bootstrap {
 		WithSimplePersistenceUnit persistence = new WithSimplePersistenceUnit() {};
 		persistence.withTransaction(Bootstrap::crearNecesidadesConNecesidades);
 
-		// registro de algunos usuarios de prueba
-		usuarios().forEach(UsuariosRepositorio.Instance::registrar);
-
-
 		// La donación necesita un donante ya guardado: lo registro y lo vuelvo a leer de la base
 		persistence.withTransaction( () ->
 			donadores().forEach(DonanteRepository.Instance::registrarDonante));
 
-			Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
-
+		Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
 		donaciones(maria);
-
+		// registro de algunos usuarios de prueba
+		UsuariosRepositorio.Instance.registrarUsuarioDeDonante(usuarios().get(1), donadores().get(0));
+		UsuariosRepositorio.Instance.registrarUsuarioDeAdmin(usuarios().get(0));
 	}
 
 	private static List<Usuario> usuarios(){
 		Usuario usuario1 = new Usuario(Rol.ADMIN,
 				"neme@email.com", "nemesito");
 		Usuario usuario2 = new Usuario(Rol.DONANTE,
-				"mariamendoza@email.com", "gatos123");
-		Usuario usuario3 = new Usuario(Rol.BENEFICIARIO,
-				"patitasfelices@email.com", "#patitas12");
+				"mariaa@gmail.com", "gatos123");
 
-		return List.of(usuario1, usuario2, usuario3);
+		return List.of(usuario1, usuario2);
 	}
 
 	private static List<Donacion> donaciones(Persona donante) {
@@ -106,9 +101,11 @@ public class Bootstrap {
 
 	private static void crearNecesidadesConNecesidades() {
 
+		// EntidadBeneficiaria comedor = new EntidadBeneficiaria(
+		//		"Av. Medrano 951", new ArrayList<>(), "Comedor Los Pibes", null, "COMEDOR");
 		EntidadBeneficiaria comedor = new EntidadBeneficiaria(
-				"Av. Medrano 951", new ArrayList<>(), "Comedor Los Pibes", null, "COMEDOR"
-		);
+				"Av. Medrano 951", new ArrayList<>(), "Comedor Los Pibes", null);
+		comedor.setTipo("COMEDOR");
 
 		Necesidad nec1 = new Necesidad();
 		nec1.setDescripcion("Comida para invierno");
@@ -122,7 +119,8 @@ public class Bootstrap {
 		EntidadRepository.Instance.registrar(comedor);
 
 		EntidadBeneficiaria hogar = new EntidadBeneficiaria(
-				"Mozart 2300", new ArrayList<>(), "Hogar San José", null, "HOGAR");
+				"Mozart 2300", new ArrayList<>(), "Hogar San José", null);
+		hogar.setTipo("HOGAR");
 
 		Necesidad nec2 = new Necesidad();
 		nec2.setDescripcion("Medicinas semanales");

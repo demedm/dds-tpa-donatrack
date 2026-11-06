@@ -25,6 +25,11 @@ public class JwtRepositorio {
   }
 
   public String generarToken(Usuario usuario) {
+    if (usuario.getDominioId() == null) {
+      throw new IllegalStateException(
+          "El usuario " + usuario.getEmail() + " no tiene un dominioId asignado.");
+    }
+
     Instant expiracionToken = Instant.now().plus(expiracion);
 
     return Jwts.builder()

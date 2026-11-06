@@ -1,3 +1,4 @@
+
 {{#partial "contenido-header"}}{{/partial}}
 
 {{#partial "contenido"}}
@@ -18,11 +19,13 @@
 
     <form action="/registro" method="POST">
 
+        <h3>Datos de la cuenta</h3>
+
         <label for="email">Email</label>
         <input type="email" id="email" name="email" required>
 
         <label for="nombre">Nombre</label>
-        <input type="nombre" id="nombre" name="nombre" required>
+        <input type="text" id="nombre" name="nombre" required>
 
         <label for="password">Contraseña</label>
         <input type="password" id="password" name="password" required>
@@ -37,10 +40,106 @@
             {{/if}}
         </select>
 
+
+
+        <!-- DATOS DEL DONANTE -->
+        <fieldset id="datos-donante" hidden disabled>
+
+            <legend>Datos del donante</legend>
+
+            <label for="tipoPersona">Tipo de persona</label>
+            <select id="tipoPersona" name="tipoPersona">
+                <option value="" selected disabled>— Elegir —</option>
+                <option value="FISICA">Persona física</option>
+                <option value="JURIDICA">Persona jurídica</option>
+            </select>
+
+            <label for="nombreIdentificador">Nombre identificador</label>
+            <input type="text" id="nombreIdentificador"
+                   name="nombreIdentificador">
+
+            <label for="mailDonante">Email de contacto</label>
+            <input type="email" id="mailDonante" name="mailDonante">
+
+            <label for="telefonoDonante">Teléfono</label>
+            <input type="text" id="telefonoDonante"
+                   name="telefonoDonante">
+
+            <label for="medioPreferido">Medio preferido de contacto</label>
+            <select id="medioPreferido" name="medioPreferido">
+                <option value="" selected disabled>— Elegir —</option>
+                <option value="EMAIL">Email</option>
+                <option value="TELEFONO">Teléfono</option>
+            </select>
+
+        </fieldset>
+
+        <!-- DATOS DE LA ENTIDAD BENEFICIARIA -->
+        <fieldset id="datos-beneficiario" hidden disabled>
+
+            <legend>Datos de la entidad beneficiaria</legend>
+
+            <label for="razonSocial">Razón social</label>
+            <input type="text" id="razonSocial" name="razonSocial">
+
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" name="direccion">
+
+            <label for="mailContacto">Email de contacto</label>
+            <input type="email" id="mailContacto"
+                   name="mailContacto">
+
+            <label for="telefonoBeneficiario">Teléfono</label>
+            <input type="text" id="telefonoBeneficiario"
+                   name="telefonoBeneficiario">
+
+        </fieldset>
+
         <button type="submit">Registro</button>
 
     </form>
 
+    <script>
+        const rolSelect = document.getElementById("rol");
+        const tipoPersonaSelect = document.getElementById("tipoPersona");
+
+        const datosDonante = document.getElementById("datos-donante");
+        const datosBeneficiario = document.getElementById("datos-beneficiario");
+
+        const datosFisica = document.getElementById("datos-fisica");
+        const datosJuridica = document.getElementById("datos-juridica");
+
+        function mostrarSeccion(seccion, mostrar) {
+            seccion.hidden = !mostrar;
+            seccion.disabled = !mostrar;
+        }
+
+        function actualizarFormulario() {
+
+            const rol = rolSelect.value;
+
+            mostrarSeccion(datosDonante, rol === "DONANTE");
+            mostrarSeccion(datosBeneficiario, rol === "BENEFICIARIO");
+
+            actualizarTipoPersona();
+        }
+
+        function actualizarTipoPersona() {
+
+            const esDonante = rolSelect.value === "DONANTE";
+
+            const tipo = tipoPersonaSelect.value;
+
+            mostrarSeccion(datosFisica, esDonante && tipo === "FISICA");
+            mostrarSeccion(datosJuridica, esDonante && tipo === "JURIDICA");
+        }
+
+        rolSelect.addEventListener("change", actualizarFormulario);
+
+        tipoPersonaSelect.addEventListener("change", actualizarTipoPersona);
+
+        actualizarFormulario();
+    </script>
 
 {{/partial}}
 

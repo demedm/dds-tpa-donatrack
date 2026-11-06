@@ -12,7 +12,8 @@ message UsuarioRequest {
   int64 id = 1;
   string email = 2;
   string rol = 3;
-  string direccion = 4;
+  string razon_social = 4;
+  string direccion = 5;
 }
 
 message RegistroUsuarioResponse {
