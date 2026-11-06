@@ -3,7 +3,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY donaciones-mserv donaciones-mserv
 COPY logistica-mserv/pom.xml logistica-mserv/pom.xml
-RUN mvn -q -pl donaciones-mserv -am -DskipTests package dependency:copy-dependencies -DincludeScope=runtime
+RUN mvn -q -pl donaciones-mserv -am -Dmaven.test.skip=true package dependency:copy-dependencies -DincludeScope=runtime
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
