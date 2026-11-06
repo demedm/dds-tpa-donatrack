@@ -13,6 +13,8 @@ public abstract class Usuario {
   @GeneratedValue
   private Long id;
 
+  private Long idDonaciones;
+
   private String email;
 
   protected Usuario() {}
@@ -33,4 +35,7 @@ public abstract class Usuario {
     this.email = email;
   }
 
+  protected void setIdDonaciones(Long idDonaciones) {
+    this.idDonaciones = idDonaciones;
+  }
 }

@@ -53,6 +53,7 @@ public class Router {
     app.get("/admin/donaciones", donacionController::mostrarDonaciones);
     app.post("/admin/donaciones", donacionController::registrarDonacion);
     app.post("/admin/donantes", adminController::registrarDonante);
+    app.post("/admin/donantes/importar", adminController::importarDonantesDesdeCsv);
 
   }
 

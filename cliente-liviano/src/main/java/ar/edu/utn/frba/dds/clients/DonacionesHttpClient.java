@@ -5,13 +5,17 @@ import ar.edu.utn.frba.dds.dto.LoginRequest;
 import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.javalin.http.UploadedFile;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 
 public class DonacionesHttpClient {
   private final java.net.http.HttpClient client;
@@ -60,10 +64,10 @@ public class DonacionesHttpClient {
     }
   }
 
-  private List<DonacionDto> listarDonaciones(String path, String token) {
+  private List<DonacionDto> listarDonaciones(String token) {
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(baseUrl + path))
+          .uri(URI.create(baseUrl + "/donaciones"))
           .timeout(Duration.ofSeconds(5))
           .header("Authorization", "Bearer " + token)
           .GET() //operacion
@@ -72,13 +76,50 @@ public class DonacionesHttpClient {
       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
       if (response.statusCode() >= 400) {
-        System.err.println("-> ¡ERROR! Donaciones respondió " + response.statusCode() + " en " + path);
+        System.err.println("[ERROR] Donaciones respondió " + response.statusCode());
         return List.of();
       }
       return objectMapper.readValue(response.body(), new TypeReference<List<DonacionDto>>() {});
     } catch (Exception e) {
-      System.err.println("Error consultando Donaciones (" + path + "): " + e.getMessage());
+      System.err.println("Error consultando Donaciones: " + e.getMessage());
       return List.of();
+    }
+  }
+
+  public HttpResponse<String> importarDonantes(UploadedFile archivo) {
+    try {
+      byte[] contenido = archivo.content().readAllBytes();
+      String nombreArchivo = archivo.filename();
+
+      String boundary = "----DonaTrack" + UUID.randomUUID();
+
+      ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+      output.write(("--" + boundary + "\r\n").getBytes(StandardCharsets.UTF_8));
+
+      output.write((
+          "Content-Disposition: form-data; name=\"archivo\"; filename=\""
+              + nombreArchivo + "\"\r\n"
+      ).getBytes(StandardCharsets.UTF_8));
+
+      output.write("Content-Type: text/csv\r\n\r\n"
+          .getBytes(StandardCharsets.UTF_8));
+
+      output.write(contenido);
+
+      output.write(("\r\n--" + boundary + "--\r\n")
+          .getBytes(StandardCharsets.UTF_8));
+
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create(baseUrl + "/donantes/importar"))
+          .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+          .timeout(Duration.ofSeconds(30))
+          .POST(HttpRequest.BodyPublishers.ofByteArray(output.toByteArray()))
+          .build();
+
+      return client.send(request, HttpResponse.BodyHandlers.ofString());
+    } catch (Exception e) {
+      throw new RuntimeException("Error al enviar el CSV a Donaciones", e);
     }
   }
 }

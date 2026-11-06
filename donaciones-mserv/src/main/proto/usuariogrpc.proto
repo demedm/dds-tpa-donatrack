@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "ar.edu.utn.frba.dds.grpc";
+
+service UsuarioService {
+  rpc RegistrarUsuario (UsuarioRequest)
+      returns (RegistroUsuarioResponse);
+}
+
+message UsuarioRequest {
+  int64 id = 1;
+  string email = 2;
+  string rol = 3;
+  string direccion = 4;
+}
+
+message RegistroUsuarioResponse {
+  bool exito = 1;
+  string mensaje = 2;
+}

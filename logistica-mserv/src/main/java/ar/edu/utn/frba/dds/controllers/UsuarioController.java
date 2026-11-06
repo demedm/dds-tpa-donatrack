@@ -8,10 +8,12 @@ import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.ConfirmacionEntregaDto;
 import io.javalin.http.Context;
+import org.jetbrains.annotations.NotNull;
 
 public class UsuarioController {
   private final GrpcClientDonacionesImplementation clienteDonaciones =
           new GrpcClientDonacionesImplementation();
+
   public void showUsuario(Context ctx) {
     var idUsuario = Long.parseLong(ctx.pathParam("id"));
     if (idUsuario != 0) {
@@ -26,6 +28,7 @@ public class UsuarioController {
     ctx.status(200);
     ctx.json(usuario);
   }
+
 
   public void confirmarEntrega(Context ctx) {
     var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
@@ -84,4 +87,7 @@ public class UsuarioController {
     ctx.json(ruta);
   }
 
+  public void guardarUsuario(@NotNull Context ctx) {
+
+  }
 }

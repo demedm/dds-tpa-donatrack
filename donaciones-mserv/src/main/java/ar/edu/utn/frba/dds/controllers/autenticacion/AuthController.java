@@ -6,6 +6,11 @@ import ar.edu.utn.frba.dds.dto.autenticacion.RegistroRequest;
 import ar.edu.utn.frba.dds.exceptions.CredencialesInvalidasException;
 import ar.edu.utn.frba.dds.exceptions.MailAlreadyRegisteredException;
 import ar.edu.utn.frba.dds.exceptions.UsuarioNotFoundException;
+import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
+import ar.edu.utn.frba.dds.model.donantes.TipoPersona;
+import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
+import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import ar.edu.utn.frba.dds.repositories.autenticacion.AutenticacionRepositorio;
 import ar.edu.utn.frba.dds.repositories.usuarios.UsuariosRepositorio;
@@ -44,14 +49,30 @@ public class AuthController {
       RegistroRequest request = ctx.bodyAsClass(RegistroRequest.class);
 
       Usuario usuario = AutenticacionRepositorio.Instance.validarDatos(request);
-      UsuariosRepositorio.Instance.registrar(usuario);
+      Persona donante = new Persona()
+      UsuariosRepositorio.Instance.registrar(usuario, );
+
+
       ctx.status(201);
     } catch (MailAlreadyRegisteredException e) {
       ctx.status(409);
     } catch (Exception e) {
+      e.printStackTrace(); // debugueo :o
       ctx.status(400);
     }
 
+  }
+
+  private Persona nuevaPersona(RegistroRequest request) {
+    if (request.getRol().equals(Rol.DONANTE.name())) {
+      if (request.getTipoPersona().equals(TipoPersona.FISICA.name())) {
+        PersonaFisica persona = new PersonaFisica();
+        persona.setMail(new Mail(request.getEmail()));
+        persona.setNombreIdentificador(request.getNombreIdentificador());
+        persona.setTelefono(new Telefono(request.getTelefonoDonante()));
+        persona.set
+      }
+    }
   }
 
 }

@@ -12,7 +12,10 @@ import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import io.javalin.http.UploadedFile;
+import org.jetbrains.annotations.NotNull;
 
+import java.net.http.HttpResponse;
 import java.util.List;
 
 public class DonanteController implements WithSimplePersistenceUnit {
@@ -84,5 +87,22 @@ public class DonanteController implements WithSimplePersistenceUnit {
     var email = ctx.pathParam("email");
     boolean eliminado = registroDonante.eliminarPorEmail(email);
     ctx.status(eliminado ? 204 : 404);
+  }
+
+  public void importarDonantesDesdeCsv(Context ctx) {
+    try {
+      UploadedFile archivo = ctx.uploadedFile("archivo");
+
+      if (archivo == null) {
+        ctx.status(400);
+        return;
+      }
+
+      DonanteRepository.Instance.importarDonantes(archivo);
+      ctx.status(200);
+
+    } catch (Exception e) {
+      ctx.status(400);
+    }
   }
 }

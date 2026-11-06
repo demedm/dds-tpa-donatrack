@@ -110,6 +110,26 @@ public class SessionController {
     Map<String, Object> modelo = new HashMap<>();
 
     RegistroRequest request = new RegistroRequest(nombre, mail, password, rol);
+
+    // datos adicionales según el rol
+    if ("DONANTE".equals(rol)) {
+
+      request.setTipoPersona(ctx.formParam("tipoPersona"));
+      request.setNombreIdentificador(ctx.formParam("nombreIdentificador"));
+      request.setMailDonante(ctx.formParam("mailDonante"));
+      request.setTelefonoDonante(ctx.formParam("telefonoDonante"));
+      request.setMedioPreferido(ctx.formParam("medioPreferido"));
+
+    } else if ("BENEFICIARIO".equals(rol)) {
+
+      request.setRazonSocial(ctx.formParam("razonSocial"));
+      request.setDireccion(ctx.formParam("direccion"));
+      request.setMailContacto(ctx.formParam("mailContacto"));
+      request.setTelefonoBeneficiario(
+          ctx.formParam("telefonoBeneficiario")
+      );
+    }
+
     try {
       HttpResponse<String> response = new DonacionesHttpClient()
           .registrarUsuario(request);

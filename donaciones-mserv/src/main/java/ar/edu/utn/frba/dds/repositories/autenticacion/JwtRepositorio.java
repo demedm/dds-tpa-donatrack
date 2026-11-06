@@ -28,7 +28,7 @@ public class JwtRepositorio {
     Instant expiracionToken = Instant.now().plus(expiracion);
 
     return Jwts.builder()
-        .subject(usuario.getId().toString())
+        .subject(usuario.getDominioId().toString())
         .claim("rol", usuario.getRol().toString())
         .issuedAt(Date.from(Instant.now()))
         .expiration(Date.from(expiracionToken))

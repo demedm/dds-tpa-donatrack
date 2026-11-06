@@ -102,4 +102,15 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
       return entrega;
     });
   }
+
+  public Usuario buscarXmail(String email) {
+    var usuario = entityManager().createQuery(
+            "from Usuario u where u.email = :email", Usuario.class)
+        .setParameter("email", email)
+        .getResultList().stream().findFirst().orElse(null);
+    if (usuario == null) {
+      throw new UsuarioNotFoundException(email);
+    }
+    return usuario;
+  }
 }

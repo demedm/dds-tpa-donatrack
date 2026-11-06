@@ -1,22 +1,34 @@
 package ar.edu.utn.frba.dds.repositories;
 
 import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.donantes.RegistroDonante;
+import ar.edu.utn.frba.dds.model.importerdonantes.ImporterDonantes;
 import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.model.notificaciones.Notificador;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+import io.javalin.http.UploadedFile;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public class DonanteRepository implements WithSimplePersistenceUnit {
-
   public static DonanteRepository Instance = new DonanteRepository();
-
   private EventoNotificacionService notificaciones = EventoNotificacionService.Instance;
+  private final ImporterDonantes importerDonantes;
+  private final RegistroDonante registroDonantes;
+
+  public DonanteRepository() {
+    this.importerDonantes = new ImporterDonantes();
+    this.registroDonantes = new RegistroDonante();
+  }
 
   public void setNotificaciones(EventoNotificacionService notificaciones) {
     this.notificaciones = notificaciones;
+  }
+
+  public void importarDonantes(UploadedFile archivo) {
+    importerDonantes.importarDonantes(archivo.content(), registroDonantes);
   }
 
   public boolean registrarDonante(Persona nuevoDonante) {
@@ -71,5 +83,7 @@ public class DonanteRepository implements WithSimplePersistenceUnit {
   public Persona buscarPorId(Long id) {
     return entityManager().find(Persona.class, id);
   }
+
+
 
 }
