@@ -11,8 +11,10 @@ public class UsuarioLogueado {
     this.rol = Rol.strTo(rol.toUpperCase());
   }
 
-  public void setRol(Rol rol) {
-    this.rol = rol;
+  public UsuarioLogueado() {}
+
+  public Rol getRol() {
+    return this.rol;
   }
 
   public Long getId() {

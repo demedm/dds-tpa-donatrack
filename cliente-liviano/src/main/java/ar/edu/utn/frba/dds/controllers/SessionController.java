@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.clients.DonacionesHttpClient;
 import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
+import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
@@ -69,6 +70,9 @@ public class SessionController {
         // setteo del token jwt para la sesion
         ctx.header("Set-Cookie", "session=" + token +
             "; Path=/; HttpOnly; SameSite=Lax; Secure");
+
+        UsuarioLogueado usuario = JwtRepositorio.Instance.obtenerUsuario(token);
+        ctx.attribute("usuarioLogueado", usuario);
         ctx.status(200);
 
       } else if (response.statusCode() == 401) {
@@ -118,6 +122,29 @@ public class SessionController {
       modelo.put("error", "No fue posible comunicarse con el servidor.");
     }
     ctx.render("public/registro.hbs", modelo);
+  }
+
+  public void validarAutenticacion(@NotNull Context ctx) {
+    String token = ctx.cookie("session");
+    if (token == null || token.isBlank()) {
+      ctx.redirect("/login");
+      return;
+    }
+
+    try {
+      UsuarioLogueado usuario = JwtRepositorio.Instance.obtenerUsuario(token);
+      ctx.attribute("usuarioLogueado", usuario);
+    } catch (Exception e) { // si es invalido o expiro, elimina la cookie y redirige al login
+      ctx.header(
+          "Set-Cookie",
+          "session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax"
+      );
+
+      ctx.redirect("/login");
+    }
+  }
+
+  public void mostrarUsuarios(@NotNull Context ctx) {
   }
 }
 

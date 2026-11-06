@@ -4,6 +4,12 @@
 
     <h1>Iniciar Sesión</h1>
 
+    {{#if error}}
+        <div class="mensaje error">
+            {{error}}
+        </div>
+    {{/if}}
+
     {{#if exito}}
         <div class="mensaje exito">
             {{exito}}
@@ -12,13 +18,12 @@
 
     <form method="POST" action="/login">
         <label>Email</label><input name="email">
-        <label>Password</label><input name="password">
+        <label>Password</label><input type="password" id="password" name="password" required>
         <label>
             <input type="checkbox" name="recordarme" {{#if nombreRecordado}}checked{{/if}}> Recordarme
         </label>
         <button>Ingresar</button>
     </form>
-    {{error}}
 {{/partial}}
 
 {{>templates/layout}}
