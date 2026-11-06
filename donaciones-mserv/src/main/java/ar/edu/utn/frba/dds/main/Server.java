@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.main;
 
+import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceDonacionImplementation;
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
 import ar.edu.utn.frba.dds.main.templates.JavalinRenderer;
 import ar.edu.utn.frba.dds.rutas.Routes;
@@ -33,6 +34,14 @@ public class Server {
       
     });
 
+    int grpcPort = 9090;
+    io.grpc.Server grpcServer = io.grpc.ServerBuilder
+            .forPort(grpcPort)
+            .addService(new GrpcServiceDonacionImplementation())
+            .build()
+            .start();
+
+    System.out.println("🚀 Servidor gRPC de Donaciones escuchando en el puerto " + grpcPort);
     new Router().configure(app);
 
     app.start(9001);

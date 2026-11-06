@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.main.ClientDonaciones;
-import ar.edu.utn.frba.dds.model.Entrega;
+import ar.edu.utn.frba.dds.GrpcClientDonaciones.GrpcClientDonacionesImplementation;import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
 import ar.edu.utn.frba.dds.model.EstadoRuta;
 import ar.edu.utn.frba.dds.model.Ruta;
@@ -13,6 +12,8 @@ import io.javalin.http.Context;
 import java.util.List;
 
 public class RutaController{
+  private final GrpcClientDonacionesImplementation cliente =
+          new GrpcClientDonacionesImplementation();
 
   public Ruta showRuta(Context ctx) {
     var id = Long.parseLong(ctx.pathParam("id"));
@@ -37,7 +38,6 @@ public class RutaController{
     Ruta ruta = validarRuta(ctx);
     Ruta rutaGuardada = RutaRepositorio.Instance.registrar(ruta);
 
-    ClientDonaciones cliente = new ClientDonaciones();
     if (rutaGuardada.getEntregas() != null) {
       for (Entrega entrega : rutaGuardada.getEntregas()) {
         cliente.notificarCambioEstado(entrega.getDonacionId(), "PLANIFICADA");
@@ -84,7 +84,6 @@ public class RutaController{
     }
 
     if (rutaModificada.getEstado() != null) {
-      ClientDonaciones cliente = new ClientDonaciones();
       switch (rutaModificada.getEstado()) {
         case EN_CURSO -> {
           rutaActualizada.getEntregas().forEach(e -> {
@@ -155,7 +154,6 @@ public class RutaController{
       return;
     }
     ruta.iniciarRuta();
-    ClientDonaciones cliente = new ClientDonaciones();
     if (ruta.getEntregas() != null) {
       for (Entrega entrega : ruta.getEntregas()) {
         cliente.notificarCambioEstado(entrega.getDonacionId(), "EN_TRASLADO");
@@ -180,7 +178,6 @@ public class RutaController{
     dto.setEstado(EstadoRuta.FINALIZADA);
     RutaRepositorio.Instance.actualizarRuta(ruta, dto);
 
-    ClientDonaciones cliente = new ClientDonaciones();
     if (ruta.getEntregas() != null) {
       for (Entrega entrega : ruta.getEntregas()) {
         if (entrega.getEstado().name().equals("PENDIENTE")) {
@@ -208,7 +205,6 @@ public class RutaController{
 
     EntregaRepositorio.Instance.actualizar(entrega);
 
-    ClientDonaciones cliente = new ClientDonaciones();
     boolean notificacionExitosa = cliente.notificarCambioEstado(entrega.getDonacionId(), "ENTREGADA");
 
     if (notificacionExitosa) {
@@ -242,7 +238,6 @@ public class RutaController{
 
     EntregaRepositorio.Instance.actualizar(entrega);
 
-    ClientDonaciones cliente = new ClientDonaciones();
     boolean notificacionExitosa = cliente.notificarFallaDeEntrega(
         entrega.getDonacionId(),
         textoMotivo,

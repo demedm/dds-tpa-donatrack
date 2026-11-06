@@ -26,7 +26,7 @@ class ClientTest {
   @Mock
   private HttpResponse<String> httpResponseMock;
 
-  // Cambiamos el tipo a ClientLogistica
+  // Cambiamos el tipo a GrpcClientLogisticaImplementation
   ClientLogistica client;
 
   @BeforeEach
