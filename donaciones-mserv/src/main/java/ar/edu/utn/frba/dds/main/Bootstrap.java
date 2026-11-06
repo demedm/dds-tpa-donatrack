@@ -31,7 +31,12 @@ public class Bootstrap {
 		crearNecesidadesConNecesidades();
 
 		// La donación necesita un donante ya guardado: lo registro y lo vuelvo a leer de la base
-		donadores().forEach(DonanteRepository.Instance::registrarDonante);
+		WithSimplePersistenceUnit persistence = new WithSimplePersistenceUnit() {};
+
+		persistence.withTransaction( () ->
+
+		donadores().forEach(DonanteRepository.Instance::registrarDonante));
+
 		Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
 
 		donaciones(maria);
