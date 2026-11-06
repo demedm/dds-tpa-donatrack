@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.main;
 
+import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceLogisticaImplementation;
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
 import ar.edu.utn.frba.dds.main.templates.JavalinRenderer;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -9,8 +10,10 @@ import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.json.JavalinJackson;
 
+import java.io.IOException;
+
 public class Server {
-  public void start() {
+  public void start() throws IOException {
     Bootstrap.init();
     var app = Javalin.create(config -> {
       config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
@@ -21,7 +24,17 @@ public class Server {
       initializeTemplating(config);
       initializeStaticFiles(config);
     });
+
+    int grpcPort = 9091;
+    io.grpc.Server grpcServer = io.grpc.ServerBuilder
+            .forPort(grpcPort)
+            .addService(new GrpcServiceLogisticaImplementation())
+            .build()
+            .start();
+
+    System.out.println("🚀 Servidor gRPC de Logística escuchando en el puerto " + grpcPort);
     new Router().configure(app);
+
     app.start(9002);
   }
 

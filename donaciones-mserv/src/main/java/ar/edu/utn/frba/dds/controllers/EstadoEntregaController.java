@@ -52,7 +52,6 @@ public class EstadoEntregaController implements WithSimplePersistenceUnit {
     }
 
     withTransaction( () -> {
-      // La justificación va antes: fallarEntrega() la usa al cambiar de estado
       if (cambio.getMotivoFalla() != null) {
         segmentada.setJustificacionFallo(cambio.getMotivoFalla());
       }

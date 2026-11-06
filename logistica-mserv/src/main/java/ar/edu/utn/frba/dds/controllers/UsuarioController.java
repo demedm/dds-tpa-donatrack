@@ -1,12 +1,17 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.model.usuarios.Usuario;
+import ar.edu.utn.frba.dds.GrpcClientDonaciones.GrpcClientDonacionesImplementation;
+import ar.edu.utn.frba.dds.model.Entrega;
+import ar.edu.utn.frba.dds.model.EstadoEntrega;
+import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.ConfirmacionEntregaDto;
 import io.javalin.http.Context;
 
 public class UsuarioController {
+  private final GrpcClientDonacionesImplementation clienteDonaciones =
+          new GrpcClientDonacionesImplementation();
   public void showUsuario(Context ctx) {
     var idUsuario = Long.parseLong(ctx.pathParam("id"));
     if (idUsuario != 0) {
@@ -28,8 +33,13 @@ public class UsuarioController {
     var confirmacion = ctx.bodyAsClass(ConfirmacionEntregaDto.class);
 
     var entidad = UsuarioRepositorio.Instance.buscarEntidadBeneficiariaPorId(idUsuario);
-
     var entrega = UsuarioRepositorio.Instance.confirmarEntrega(entidad, idEntrega, confirmacion);
+
+
+    if (entrega.getEstado() == EstadoEntrega.ENTREGADA) {
+      clienteDonaciones.notificarCambioEstado(entrega.getDonacionId(), "ENTREGADA");
+    }
+
     ctx.status(200);
     ctx.json(entrega);
   }
@@ -39,6 +49,16 @@ public class UsuarioController {
     var idEntrega = Long.parseLong(ctx.pathParam("id"));
     var entidad = UsuarioRepositorio.Instance.buscarEntidadBeneficiariaPorId(idUsuario);
     var entrega = UsuarioRepositorio.Instance.noRecepcionaEntrega(entidad, idEntrega);
+
+    if (entrega.getEstado() == EstadoEntrega.NO_RECIBIDA) {
+      MotivoFallo motivo = MotivoFallo.NO_RECEPCIONADA;
+      clienteDonaciones.notificarFallaDeEntrega(
+              entrega.getDonacionId(),
+              motivo.getDescripcionMotivo(),
+              motivo.esReplanificable()
+      );
+    }
+
     ctx.status(200);
     ctx.json(entrega);
   }
@@ -48,12 +68,20 @@ public class UsuarioController {
     var idRuta = Long.parseLong(ctx.pathParam("id"));
     var chofer = UsuarioRepositorio.Instance.buscarChoferPorId(idUsuario);
     var ruta = RutaRepositorio.Instance.iniciarRuta(chofer, idRuta);
+
     if (ruta == null) {
       ctx.status(400);
-    } else {
-      ctx.status(200);
-      ctx.json(ruta);
+      return;
     }
+
+    if (ruta.getEntregas() != null) {
+      for (Entrega entrega : ruta.getEntregas()) {
+        clienteDonaciones.notificarCambioEstado(entrega.getDonacionId(), "EN_TRASLADO");
+      }
+    }
+
+    ctx.status(200);
+    ctx.json(ruta);
   }
 
 }

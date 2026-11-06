@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option  java_multiple_files = true;
+option java_package = "com.donacionesServicegrpc.grpc";
+
+service donacionesService{
+  rpc ActualizarEstadoDonacion (ActualizacionEstadoRequest)
+      returns (ActualizacionEstadoResponse);
+      }
+
+      message ActualizacionEstadoRequest {
+      int64 donacion_id = 1;
+      string nuevo_estado = 2;
+      string motivo = 3;
+      }
+
+      message ActualizacionEstadoResponse {
+      bool exito = 1;
+      string mensaje = 2;
+}
