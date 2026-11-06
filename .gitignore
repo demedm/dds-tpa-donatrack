@@ -4,6 +4,9 @@
 # Log file
 *.log
 
+# Secretos de Docker
+.env
+
 # BlueJ files
 *.ctxt
 

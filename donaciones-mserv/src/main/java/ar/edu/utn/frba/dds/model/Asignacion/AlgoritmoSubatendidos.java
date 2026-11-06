@@ -12,6 +12,11 @@ public class AlgoritmoSubatendidos implements AlgoritmoAsignacion {
   int maximo_resultado=10;
 
   @Override
+  public String nombre() {
+    return "SUBATENDIDOS";
+  }
+
+  @Override
   public List<EntidadBeneficiaria> obtenerRanking(DonacionSegmentada donacion, List<EntidadBeneficiaria> entidades) {
 
     return entidades.stream()

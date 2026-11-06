@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.Matchmaking;
 
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
-import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
 import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +50,8 @@ public class AsignacionDonacionesTest {
     entidades = List.of(comedor, hogar, club);
     algoritmoA = mock(AlgoritmoAsignacion.class);
     algoritmoB = mock(AlgoritmoAsignacion.class);
+    when(algoritmoA.nombre()).thenReturn("A");
+    when(algoritmoB.nombre()).thenReturn("B");
   }
 
   // ---------- Una donacion: combinar los rankings ----------
@@ -69,9 +71,9 @@ public class AsignacionDonacionesTest {
       when(algoritmoA.obtenerRanking(any(), any())).thenReturn(List.of(comedor, hogar));
       when(algoritmoB.obtenerRanking(any(), any())).thenReturn(List.of(hogar, club));
 
-      Resultados resultados = donacion.buscarCandidatas(entidades, List.of(algoritmoA, algoritmoB));
+      donacion.buscarCandidatas(entidades, List.of(algoritmoA, algoritmoB));
 
-      assertEquals(List.of(hogar), resultados.entidadesPropuestas());
+      assertEquals(List.of(hogar.getId()), donacion.getIdsEntidadesPropuestas());
     }
 
     @Test
@@ -79,11 +81,10 @@ public class AsignacionDonacionesTest {
       when(algoritmoA.obtenerRanking(any(), any())).thenReturn(List.of(comedor));
       when(algoritmoB.obtenerRanking(any(), any())).thenReturn(List.of(club));
 
-      List<EntidadBeneficiaria> propuestas =
-          donacion.buscarCandidatas(entidades, List.of(algoritmoA, algoritmoB)).entidadesPropuestas();
+      donacion.buscarCandidatas(entidades, List.of(algoritmoA, algoritmoB));
 
-      assertEquals(2, propuestas.size());
-      assertTrue(propuestas.containsAll(List.of(comedor, club)));
+      assertFalse(donacion.huboCoincidencias());
+      assertEquals(List.of(comedor.getId(), club.getId()), donacion.getIdsEntidadesPropuestas());
     }
 
     @Test
@@ -93,9 +94,10 @@ public class AsignacionDonacionesTest {
       when(algoritmoB.obtenerRanking(any(), any())).thenReturn(List.of(hogar, club));
       when(algoritmoC.obtenerRanking(any(), any())).thenReturn(List.of(club));
 
-      Resultados resultados = donacion.buscarCandidatas(entidades, List.of(algoritmoA, algoritmoB, algoritmoC));
+      donacion.buscarCandidatas(entidades, List.of(algoritmoA, algoritmoB, algoritmoC));
 
-      assertEquals(List.of(club), resultados.entidadesPropuestas());
+      assertEquals(List.of(club.getId()), donacion.getIdsEntidadesPropuestas());
+      assertEquals(3, donacion.getEjecuciones().size());
     }
 
     @Test
@@ -113,9 +115,34 @@ public class AsignacionDonacionesTest {
     void dejaElResultadoGuardadoEnLaDonacion() {
       when(algoritmoA.obtenerRanking(any(), any())).thenReturn(List.of(hogar));
 
-      Resultados resultados = donacion.buscarCandidatas(entidades, List.of(algoritmoA));
+      donacion.buscarCandidatas(entidades, List.of(algoritmoA));
 
       assertEquals(List.of(hogar.getId()), donacion.getIdsEntidadesPropuestas());
+    }
+
+    @Test
+    void guardaElRankingDeCadaAlgoritmoEnOrden() {
+      when(algoritmoA.obtenerRanking(any(), any())).thenReturn(List.of(club, comedor));
+      when(algoritmoB.obtenerRanking(any(), any())).thenReturn(List.of(hogar));
+
+      donacion.buscarCandidatas(entidades, List.of(algoritmoA, algoritmoB));
+
+      assertEquals("A", donacion.getEjecuciones().get(0).getAlgoritmo());
+      assertEquals(List.of(club.getId(), comedor.getId()), donacion.getEjecuciones().get(0).getIdsEntidades());
+      assertEquals("B", donacion.getEjecuciones().get(1).getAlgoritmo());
+      assertEquals(List.of(hogar.getId()), donacion.getEjecuciones().get(1).getIdsEntidades());
+    }
+
+    @Test
+    void volverACorrerElMatchmakingReemplazaLasEjecucionesAnteriores() {
+      when(algoritmoA.obtenerRanking(any(), any())).thenReturn(List.of(comedor));
+      donacion.buscarCandidatas(entidades, List.of(algoritmoA, algoritmoB));
+
+      when(algoritmoA.obtenerRanking(any(), any())).thenReturn(List.of(club));
+      donacion.buscarCandidatas(entidades, List.of(algoritmoA));
+
+      assertEquals(1, donacion.getEjecuciones().size());
+      assertEquals(List.of(club.getId()), donacion.getIdsEntidadesPropuestas());
     }
 
     @Test
@@ -194,7 +221,6 @@ public class AsignacionDonacionesTest {
   // La segmentada la arma la donación al segmentar sus bienes, y nace En depósito
   private static DonacionSegmentada donacionEnDeposito(String subcategoria) {
     Subcategoria sub = new Subcategoria(Categoria.ALIMENTOS, subcategoria, UnidadMedida.UNIDADES);
-    Bien bien = new Bien(sub, null, subcategoria, 10, new PorVencimiento(LocalDate.now().plusMonths(6)));
-    return new Donacion("Donación de prueba", List.of(bien), new PersonaFisica()).getSegmentadas().get(0);
+    Bien bien = new Bien(sub, null, subcategoria, new BigDecimal("10"), new PorVencimiento(LocalDate.now().plusMonths(6)));    return new Donacion("Donación de prueba", List.of(bien), new PersonaFisica()).getSegmentadas().get(0);
   }
 }

@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import ar.edu.utn.frba.dds.repositories.NecesidadRepository;
 import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ public class NecesidadTest implements SimplePersistenceTest{
 
     @Test
     void agregarPeticion() {
-        Peticion peticion = new Peticion("ARROZ", 50);
+        Peticion peticion = new Peticion("ARROZ", new BigDecimal("50"));
         necesidadNormal.agregarPeticion(peticion);
 
         assertEquals(1, necesidadNormal.getPeticiones().size());
@@ -70,12 +71,12 @@ public class NecesidadTest implements SimplePersistenceTest{
 
     @Test
     void validarPeticionInvalida() {
-        Peticion peticionInvalida = new Peticion("", -10);
+        Peticion peticionInvalida = new Peticion("", new BigDecimal("-10"));
 
         boolean esValida = peticionInvalida.getSubclase() != null
             && !peticionInvalida.getSubclase().trim().isEmpty()
             && peticionInvalida.getCantidadRequerida() != null
-            && peticionInvalida.getCantidadRequerida() > 0;
+            && peticionInvalida.getCantidadRequerida().compareTo(BigDecimal.ZERO) > 0;
 
         assertFalse(esValida, "La petición no debe ser válida si falta la subclase o la cantidad es negativa");
     }
@@ -90,7 +91,7 @@ public class NecesidadTest implements SimplePersistenceTest{
 
     @Test
     void testPersistirYBuscarNecesidadNormal() {
-        Peticion peticion = new Peticion("CAMPERAS", 20);
+        Peticion peticion = new Peticion("CAMPERAS", new BigDecimal("20"));
         necesidadNormal.agregarPeticion(peticion);
 
         NecesidadRepository.getInstance().guardar(necesidadNormal);

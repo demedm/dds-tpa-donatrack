@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.model.Bienes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name ="bienes")
@@ -32,7 +34,8 @@ public class Bien {
   @JoinColumn(name = "subcategoria_id")
   private Subcategoria subcategoria;
 
-  private int cantidad;
+  @Column (precision = 10,scale = 3)
+  private BigDecimal cantidad;
 
   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "criterio_id")
@@ -41,11 +44,11 @@ public class Bien {
   protected Bien() {}
 
   public Bien(Subcategoria subcategoria, String foto, String descripcion,
-              int cantidad, CriterioSegmentacion criterio) {
+              BigDecimal cantidad, CriterioSegmentacion criterio) {
     if (subcategoria == null) {
       throw new IllegalArgumentException("Un bien necesita una subcategoría");
     }
-    if (cantidad <= 0) {
+    if (cantidad.compareTo(BigDecimal.ZERO) <= 0 ) {
       throw new IllegalArgumentException("La cantidad de un bien debe ser mayor a cero");
     }
     if (criterio == null) {
@@ -74,7 +77,7 @@ public class Bien {
     return subcategoria;
   }
 
-  public int getCantidad() {
+  public BigDecimal getCantidad() {
     return cantidad;
   }
 

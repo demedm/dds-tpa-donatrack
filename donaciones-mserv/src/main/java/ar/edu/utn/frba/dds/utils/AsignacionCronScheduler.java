@@ -23,7 +23,15 @@ public class AsignacionCronScheduler {
       scheduler.start();
 
     }catch(Exception e){
-      throw new RuntimeException("No se pudo programar el matmacking", e);
+      throw new RuntimeException("No se pudo programar el matchmaking", e);
+    }
+  }
+
+  public static void ejecutarAhora(){
+    try {
+      StdSchedulerFactory.getDefaultScheduler().triggerJob(JOB_KEY);
+    } catch (SchedulerException e) {
+      throw new RuntimeException("No se pudo ejecutar el matchmaking", e);
     }
   }
 

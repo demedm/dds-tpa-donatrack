@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.repositories.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
@@ -78,14 +79,22 @@ public class NecesidadController implements WithSimplePersistenceUnit{
             String subclase = ctx.formParam("subclase");
             String cantidadString =ctx.formParam("cantidadRequerida");
             if (subclase != null && cantidadString != null && !cantidadString.isBlank()) {
-                Integer cantidadRequerida = Integer.parseInt(cantidadString);
+                BigDecimal cantidadRequerida;
+                try {
+                    cantidadRequerida = new BigDecimal(cantidadString.replace(',', '.'));
+                } catch (NumberFormatException e) {
+                    throw new BadRequestResponse("La cantidad '" + cantidadString + "' no es un número válido");
+                }
+                if (cantidadRequerida.compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new BadRequestResponse("La cantidad solicitada debe ser mayor a 0");
+                }
                 Peticion nuevaPeticion = new Peticion(subclase, cantidadRequerida);
                 necesidad.agregarPeticion(nuevaPeticion);
             }
         } else {
             Peticion peticion = ctx.bodyValidator(Peticion.class)
                     .check(p -> p.getSubclase() !=null,"es necesario agregar la subclase de donacion requerida")
-                    .check(p -> p.getCantidadRequerida() >0, "la cantidad solicitada es obligatoria y debe ser mayor a 0" )
+                    .check(p -> p.getCantidadRequerida() != null && p.getCantidadRequerida().compareTo(BigDecimal.ZERO) > 0, "la cantidad solicitada es obligatoria y debe ser mayor a 0" )
                     .get();
             necesidad.agregarPeticion(peticion);
         }
