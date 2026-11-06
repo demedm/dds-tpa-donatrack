@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.dto.EntidadDTO;
 import ar.edu.utn.frba.dds.dto.entrada.AsignarDonacionDTO;
 import ar.edu.utn.frba.dds.dto.salida.DonacionSegmentadaSalidaDTO;
+import ar.edu.utn.frba.dds.dto.salida.PropuestasSalidaDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.*;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import ar.edu.utn.frba.dds.tareas.ProcesarDonaciones;
+import ar.edu.utn.frba.dds.utils.AsignacionCronScheduler;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
@@ -19,7 +21,7 @@ import io.javalin.http.UnauthorizedResponse;
 
 public class MatchmakingController implements WithSimplePersistenceUnit {
 
-  public List<EntidadDTO> obtenerRanking(Context ctx) {
+  public PropuestasSalidaDTO obtenerRanking(Context ctx) {
     Long idSegmentada = ctx.queryParamAsClass("donacionSegmentadaId", Long.class).get();
     DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(idSegmentada);
 
@@ -30,11 +32,10 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
       throw new BadRequestResponse("La donación" + idSegmentada + "no se encuentra EN_DEPOSITO");
     }
 
-    return segmentada.getIdsEntidadesPropuestas().stream()
-        .map(EntidadRepository.Instance::obtenerPorId)
-        .filter(entidad -> entidad != null)
-        .map(EntidadDTO::desde)
-        .toList();
+    return PropuestasSalidaDTO.desde(segmentada, id -> {
+      EntidadBeneficiaria entidad = EntidadRepository.Instance.obtenerPorId(id);
+      return entidad == null ? null : EntidadDTO.desde(entidad);
+    });
   }
 
   // El administrador elige la entidad final
@@ -70,13 +71,13 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
   // Ejecución a demanda: valida el token y lanza el matchmaking en otro hilo
   public Map<String, Object> procesarPendientes(Context ctx) {
     validarTokenDeJob(ctx);
-    new Thread(ProcesarDonaciones::ejecutar).start();
+    AsignacionCronScheduler.ejecutarAhora();
     return Map.of("resultado", "matchmaking iniciado");
   }
 
   private void validarTokenDeJob(Context ctx) {
-    String tokenEsperado = System.getenv().getOrDefault("MATCHMAKING_JOB_TOKEN", "dev_secret_local");
-    if (!tokenEsperado.equals(ctx.header("X-Job-Token"))) {
+    String tokenEsperado = System.getenv("MATCHMAKING_JOB_TOKEN");
+    if (tokenEsperado == null || !tokenEsperado.equals(ctx.header("X-Job-Token"))) {
       throw new UnauthorizedResponse("No autorizado");
     }
   }

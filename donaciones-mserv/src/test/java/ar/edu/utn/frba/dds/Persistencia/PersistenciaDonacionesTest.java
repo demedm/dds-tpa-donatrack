@@ -25,6 +25,7 @@ import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
 
     assertEquals(arroz, segmentadaArroz.getSubcategoria());
     assertEquals(2, segmentadaArroz.getBienes().size());
-    assertEquals(15, segmentadaArroz.getCantidad());
+    assertEquals(0, new BigDecimal("15").compareTo(segmentadaArroz.getCantidad()));
   }
 
   @Test
@@ -180,6 +181,57 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
   }
 
   @Test
+  void lasEjecucionesDeCadaAlgoritmoVuelvenDeLaBaseEnOrden() {
+    Donacion donacion = donacionDeArrozYSilla();
+    repo.guardar(donacion);
+    Long idSegmentada = segmentadaDe(donacion, arroz).getId();
+
+    AlgoritmoAsignacion compatibilidad = mock(AlgoritmoAsignacion.class);
+    AlgoritmoAsignacion subatendidos = mock(AlgoritmoAsignacion.class);
+    when(compatibilidad.nombre()).thenReturn("COMPATIBILIDAD");
+    when(subatendidos.nombre()).thenReturn("SUBATENDIDOS");
+    when(compatibilidad.obtenerRanking(any(), any())).thenReturn(List.of(entidad(3000L), entidad(1000L), entidad(2000L)));
+    when(subatendidos.obtenerRanking(any(), any())).thenReturn(List.of(entidad(2000L), entidad(4000L)));
+
+    repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(), List.of(compatibilidad, subatendidos));
+    sincronizarYLimpiar();
+
+    DonacionSegmentada leida = repo.findSegmentadaById(idSegmentada);
+    assertEquals(2, leida.getEjecuciones().size());
+    assertEquals("COMPATIBILIDAD", leida.getEjecuciones().get(0).getAlgoritmo());
+    assertEquals(List.of(3000L, 1000L, 2000L), leida.getEjecuciones().get(0).getIdsEntidades());
+    assertEquals("SUBATENDIDOS", leida.getEjecuciones().get(1).getAlgoritmo());
+    assertEquals(List.of(2000L, 4000L), leida.getEjecuciones().get(1).getIdsEntidades());
+    assertEquals(List.of(2000L), leida.getCoincidencias());
+  }
+
+  @Test
+  void volverACorrerElMatchmakingBorraLasEjecucionesViejasDeLaBase() {
+    Donacion donacion = donacionDeArrozYSilla();
+    repo.guardar(donacion);
+    Long idSegmentada = segmentadaDe(donacion, arroz).getId();
+
+    AlgoritmoAsignacion algoritmo = mock(AlgoritmoAsignacion.class);
+    when(algoritmo.nombre()).thenReturn("COMPATIBILIDAD");
+    when(algoritmo.obtenerRanking(any(), any())).thenReturn(List.of(entidad(1000L)));
+    repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(), List.of(algoritmo, algoritmo));
+    sincronizarYLimpiar();
+
+    when(algoritmo.obtenerRanking(any(), any())).thenReturn(List.of(entidad(2000L)));
+    repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(), List.of(algoritmo));
+    sincronizarYLimpiar();
+
+    assertEquals(1, repo.findSegmentadaById(idSegmentada).getEjecuciones().size());
+    assertEquals(List.of(2000L), repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas());
+    // contando solo las de esta segmentada (otros tests pueden dejar datos commiteados)
+    Number filas = (Number) entityManager()
+        .createNativeQuery("select count(*) from ejecuciones_algoritmo where donacion_segmentada_id = ?1")
+        .setParameter(1, idSegmentada)
+        .getSingleResult();
+    assertEquals(1, filas.intValue(), "Las ejecuciones viejas tienen que borrarse (orphanRemoval)");
+  }
+
+  @Test
   void elProcesoDeMatchmakingDejaLasPropuestasEnLaBase() {
     Donacion donacion = donacionDeArrozYSilla();
     repo.guardar(donacion);
@@ -188,7 +240,7 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
     // el comedor necesita arroz, así los dos algoritmos lo proponen
     EntidadBeneficiaria comedor = entidad(null);
     Necesidad necesidad = new Necesidad();
-    necesidad.agregarPeticion(new Peticion("ARROZ", 100));
+    necesidad.agregarPeticion(new Peticion("ARROZ", new BigDecimal("100")));
     comedor.agregarNecesidad(necesidad);
     entityManager().persist(comedor);
     comedor.getNecesidades().forEach(n -> n.setEntidadId(comedor.getId()));
@@ -209,9 +261,9 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
   // 2 bienes de arroz con el mismo vencimiento (una segmentada) y una silla (otra segmentada)
   private Donacion donacionDeArrozYSilla() {
     List<Bien> bienes = new ArrayList<>(List.of(
-        new Bien(arroz, "arroz.jpg", "Arroz 1kg", 10, new PorVencimiento(vencimiento())),
-        new Bien(arroz, "arroz.jpg", "Arroz 1kg", 5, new PorVencimiento(vencimiento())),
-        new Bien(silla, "silla.jpg", "Silla de madera", 1, new PorEstado(EstadoUso.NUEVO))));
+        new Bien(arroz, "arroz.jpg", "Arroz 1kg", new BigDecimal("10"), new PorVencimiento(vencimiento())),
+        new Bien(arroz, "arroz.jpg", "Arroz 1kg", new BigDecimal("5"), new PorVencimiento(vencimiento())),
+        new Bien(silla, "silla.jpg", "Silla de madera", BigDecimal.ONE, new PorEstado(EstadoUso.NUEVO))));
 
     return new Donacion("Donación de prueba", bienes, donante);
   }

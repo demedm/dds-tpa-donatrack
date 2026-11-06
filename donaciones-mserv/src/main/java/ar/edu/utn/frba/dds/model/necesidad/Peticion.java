@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.model.necesidad;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
@@ -13,8 +14,12 @@ public class Peticion {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String subclase;
-  private int cantidadRequerida;
-  private int cantidadRecibida = 0;
+
+  @Column (precision = 10, scale = 3)
+  private BigDecimal cantidadRequerida;
+
+  @Column (precision = 10, scale = 3)
+  private BigDecimal cantidadRecibida = BigDecimal.ZERO;
 
   @ManyToOne
   @JoinColumn(name = "necesidad_id")
@@ -30,7 +35,7 @@ public class Peticion {
 
   public Peticion(){};
 
-  public Peticion(String subclase, int cantidadRequerida) {
+  public Peticion(String subclase, BigDecimal cantidadRequerida) {
     this.cantidadRequerida=cantidadRequerida;
     this.subclase=subclase;
   }
@@ -39,11 +44,11 @@ public class Peticion {
     this.subclase = subclase;
   }
 
-  public void setCantidadRequerida(int cantidadRequerida) {
+  public void setCantidadRequerida(BigDecimal cantidadRequerida) {
     this.cantidadRequerida = cantidadRequerida;
   }
 
-  public void setCantidadRecibida(int cantidadRecibida) {
+  public void setCantidadRecibida(BigDecimal cantidadRecibida) {
     this.cantidadRecibida = cantidadRecibida;
   }
 
@@ -51,7 +56,7 @@ public class Peticion {
     this.donacionesAsignados.addAll(donacionesAsignados);
   }
 
-  public int getCantidadRecibida() {
+  public BigDecimal getCantidadRecibida() {
     return cantidadRecibida;
   }
 
@@ -63,22 +68,20 @@ public class Peticion {
     return this.donacionesAsignados;
   }
 
-  public Integer getCantidadRequerida(){
+  public BigDecimal getCantidadRequerida(){
     return cantidadRequerida;
   }
 
   public boolean estaCubierta(){
-    if (cantidadRequerida == 0) {
-      return true;
-    }else return false;
+    return cantidadRecibida.compareTo(cantidadRequerida) >= 0;
   }
 
   public String getSubclase(){
     return subclase;
   }
 
-  public void agregarCantidadRecibida (Integer cantidad, String idDonacion){
-    this.cantidadRecibida += cantidad;
+  public void agregarCantidadRecibida (BigDecimal cantidad, String idDonacion){
+    this.cantidadRecibida = this.cantidadRecibida.add(cantidad);
     this.donacionesAsignados.add(idDonacion);
   }
 

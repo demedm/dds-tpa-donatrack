@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Bienes.UnidadMedida;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 // Lo que llega por el body para cada bien: datos planos que Jackson sí puede armar
@@ -18,7 +19,7 @@ public class BienDTO {
   private UnidadMedida unidad;
   private String descripcion;
   private String foto;
-  private int cantidad;
+  private BigDecimal cantidad;
   private LocalDate fechaVencimiento;   // si es perecedero
   private EstadoUso estadoUso;          // si es duradero
 
@@ -49,8 +50,8 @@ public class BienDTO {
   public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
   public String getFoto() { return foto; }
   public void setFoto(String foto) { this.foto = foto; }
-  public int getCantidad() { return cantidad; }
-  public void setCantidad(int cantidad) { this.cantidad = cantidad; }
+  public BigDecimal getCantidad() { return cantidad; }
+  public void setCantidad(BigDecimal cantidad) { this.cantidad = cantidad; }
   public LocalDate getFechaVencimiento() { return fechaVencimiento; }
   public void setFechaVencimiento(LocalDate fechaVencimiento) { this.fechaVencimiento = fechaVencimiento; }
   public EstadoUso getEstadoUso() { return estadoUso; }

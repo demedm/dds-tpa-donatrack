@@ -2,6 +2,8 @@ package ar.edu.utn.frba.dds.dto.salida;
 
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -11,7 +13,7 @@ public class DonacionSegmentadaSalidaDTO {
   private String estado;
   private String categoria;
   private String subcategoria;
-  private int cantidad;
+  private BigDecimal cantidad;
   private String unidad;
   private Long entidadAsignadaId;
   private LocalDate fechaDeEntrega;
@@ -41,7 +43,7 @@ public class DonacionSegmentadaSalidaDTO {
   public String getEstado() { return estado; }
   public String getCategoria() { return categoria; }
   public String getSubcategoria() { return subcategoria; }
-  public int getCantidad() { return cantidad; }
+  public BigDecimal getCantidad() { return cantidad; }
   public String getUnidad() { return unidad; }
   public Long getEntidadAsignadaId() { return entidadAsignadaId; }
   public LocalDate getFechaDeEntrega() { return fechaDeEntrega; }

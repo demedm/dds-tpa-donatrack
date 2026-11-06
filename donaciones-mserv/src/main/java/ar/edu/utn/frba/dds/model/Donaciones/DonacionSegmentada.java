@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.model.Donaciones;
 
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
-import ar.edu.utn.frba.dds.model.Asignacion.Resultados;
+import ar.edu.utn.frba.dds.model.Asignacion.EjecucionAlgoritmo;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Estado.EnDeposito;
@@ -11,6 +11,8 @@ import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacionConverter;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,8 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 
 
 import javax.persistence.CascadeType;
@@ -33,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Convert;
 
@@ -75,12 +76,10 @@ public class DonacionSegmentada {
   // Asignación a una entidad beneficiaria
   private Long entidadAsignadaId;
 
-  @ElementCollection
-  @CollectionTable(name = "propuestas_asignacion",
-      joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
-  @Column(name ="entidad_id")
-  private List<Long> idsEntidadesPropuestas = new ArrayList<>();
-
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "donacion_segmentada_id")
+  @OrderColumn(name = "orden")
+  private List<EjecucionAlgoritmo> ejecuciones = new ArrayList<>();
 
   // ======================= CONSTRUCTORES =======================
 
@@ -112,8 +111,8 @@ public class DonacionSegmentada {
     return Collections.unmodifiableList(bienes);
   }
 
-  public Integer getCantidad(){
-    return bienes.stream().mapToInt(Bien::getCantidad).sum();
+  public BigDecimal getCantidad(){
+    return bienes.stream().map(Bien::getCantidad).reduce(BigDecimal.ZERO,BigDecimal::add);
   }
 
   public Subcategoria getSubcategoria() {
@@ -208,41 +207,56 @@ public class DonacionSegmentada {
   public boolean puedeCubrir(Peticion peticion) {
     return estaAlmacen()
         && peticion.getSubclase().equalsIgnoreCase(getSubcategoria().getDescripcion())
-        && peticion.getCantidadRecibida() < peticion.getCantidadRequerida();
+        && peticion.getCantidadRecibida().compareTo(peticion.getCantidadRequerida()) < 0;
   }
 
 
   // ======================= ALGORITMOS DE ASIGNACIÓN (MATCHMAKING) =======================
   // Busca entidades candidatas y guarda las propuestas
 
-  public Resultados buscarCandidatas(List<EntidadBeneficiaria> entidades, List<AlgoritmoAsignacion> algoritmos) {
+  public void buscarCandidatas(List<EntidadBeneficiaria> entidades, List<AlgoritmoAsignacion> algoritmos) {
     if (!this.estaAlmacen()) {
       throw new IllegalStateException("Solo se puede asignar donaciones en estado EN_DEPOSITO");
     }
 
-    List<List<EntidadBeneficiaria>> rankings = algoritmos.stream()
-        .map(algoritmo -> algoritmo.obtenerRanking(this, entidades))
-        .toList();
-
-    List<EntidadBeneficiaria> coincidencias = rankings.get(0).stream()
-        .filter(entidad -> rankings.stream().allMatch(ranking -> ranking.contains(entidad)))
-        .toList();
-
-
-    Resultados resultados = new Resultados(coincidencias, rankings);
-    this.idsEntidadesPropuestas.clear();
-    this.idsEntidadesPropuestas.addAll(
-        resultados.entidadesPropuestas().stream()
-            .map(EntidadBeneficiaria::getId)
-            .toList());
-
-    return resultados;
+    this.ejecuciones.clear();
+    for(AlgoritmoAsignacion algoritmo : algoritmos) {
+      List<Long> ranking = algoritmo.obtenerRanking(this,entidades).stream()
+          .map(EntidadBeneficiaria::getId)
+          .toList();
+      this.ejecuciones.add(new EjecucionAlgoritmo(algoritmo.nombre(), ranking));
+    }
 
   }
 
 
+  public List<EjecucionAlgoritmo> getEjecuciones() {
+    return Collections.unmodifiableList(this.ejecuciones);
+  }
+
+  public List<Long> getCoincidencias(){
+    if(ejecuciones.isEmpty()){
+      return List.of();
+    }
+    return ejecuciones.get(0).getIdsEntidades().stream()
+        .filter(entidadId -> ejecuciones.stream().allMatch(ejecucion ->
+            ejecucion.propone(entidadId)))
+        .toList();
+  }
+
+  public boolean huboCoincidencias() {
+    return !getCoincidencias().isEmpty();
+  }
+
+  // Si hubo coincidencias, esas; si no, todas las entidades de todas las ejecuciones (sin repetir)
   public List<Long> getIdsEntidadesPropuestas() {
-    return idsEntidadesPropuestas;
+    if (huboCoincidencias()) {
+      return getCoincidencias();
+    }
+    return ejecuciones.stream()
+        .flatMap(ejecucion -> ejecucion.getIdsEntidades().stream())
+        .distinct()
+        .toList();
   }
 
 

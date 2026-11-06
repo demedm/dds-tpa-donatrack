@@ -24,6 +24,7 @@ import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 import ar.edu.utn.frba.dds.repositories.usuarios.UsuariosRepositorio;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,8 +73,8 @@ public class Bootstrap {
 
 			// Bienes: la cantidad está en cada bien y la segmentada la suma
 			LocalDate vencimiento = LocalDate.now().plusMonths(6);
-			Bien arrozBien = new Bien(subcatArroz, "foto.jpg", "Arroz Paquete 1kg", 10, new PorVencimiento(vencimiento));
-			Bien fideosBien = new Bien(subcatFideos, "foto.jpg", "Fideos Matarazzo 500g", 5, new PorVencimiento(vencimiento));
+			Bien arrozBien = new Bien(subcatArroz, "foto.jpg", "Arroz Paquete 1kg", new BigDecimal("10"), new PorVencimiento(vencimiento));
+			Bien fideosBien = new Bien(subcatFideos, "foto.jpg", "Fideos Matarazzo 500g", new BigDecimal("5"), new PorVencimiento(vencimiento));
 
 			// Las segmentadas las arma la donación al crearse (una de arroz y una de fideos)
 			List<Bien> bienes = new ArrayList<>(List.of(arrozBien, fideosBien));
@@ -114,8 +115,8 @@ public class Bootstrap {
 		nec1.setDescripcion("Comida para invierno");
 		nec1.setTipo(Necesidad.TipoNecesidad.NORMAL);
 
-		Peticion pet1 = new Peticion("ARROZ", 100);
-		Peticion pet2 = new Peticion("FIDEOS", 50);
+		Peticion pet1 = new Peticion("ARROZ", new BigDecimal("100"));
+		Peticion pet2 = new Peticion("FIDEOS", new BigDecimal("50"));
 		nec1.agregarPeticion(pet1);
 		nec1.agregarPeticion(pet2);
 		comedor.agregarNecesidad(nec1);
@@ -129,7 +130,7 @@ public class Bootstrap {
 		nec2.setTipo(Necesidad.TipoNecesidad.RECURRENTE);
 		nec2.setDiasRecurrencia(7);
 		nec2.setProximoVencimiento(LocalDate.now().minusDays(7));
-		Peticion pet3 = new Peticion("IBUPROFENO", 30);
+		Peticion pet3 = new Peticion("IBUPROFENO", new BigDecimal("30"));
 		nec2.agregarPeticion(pet3);
 		hogar.agregarNecesidad(nec2);
 		EntidadRepository.Instance.registrar(hogar);

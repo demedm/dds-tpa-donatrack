@@ -11,6 +11,12 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
   int maxEntidades = 10;
 
   @Override
+  public String nombre() {
+    return "COMPATIBILIDAD";
+  }
+
+
+  @Override
   public List<EntidadBeneficiaria> obtenerRanking(DonacionSegmentada donacion, List<EntidadBeneficiaria> entidades) {
 
     return entidades.stream()
@@ -26,7 +32,7 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
     return entidad.getNecesidades().stream()
         .flatMap(n -> n.getPeticiones().stream())
         .filter(p -> p.getSubclase().equalsIgnoreCase(donacion.getSubcategoria().getDescripcion())
-            && p.getCantidadRecibida() < p.getCantidadRequerida())
+            && p.getCantidadRecibida().compareTo(p.getCantidadRequerida()) < 0)
         .count();
   }
 }
