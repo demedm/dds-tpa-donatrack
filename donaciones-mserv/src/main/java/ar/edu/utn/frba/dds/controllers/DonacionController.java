@@ -8,20 +8,21 @@ import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.repositories.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
 
-public class DonacionController {
+public class DonacionController implements WithSimplePersistenceUnit {
 
     //crear donacion
     public DonacionSalidaDTO crearDonacion(Context ctx) {
-
         DonacionsDTO dto = ctx.bodyValidator(DonacionsDTO.class)
             .check(d -> d.getDonanteId() !=null,
                 "Debe haber un donante")
@@ -35,19 +36,23 @@ public class DonacionController {
             throw new NotFoundResponse("No existe el donante" + dto.getDonanteId());
         }
 
-        //BienDTO pasa a bien con su subcategoria
-        List<Bien> bienes = new ArrayList<Bien>();
-        for(BienDTO bienDTO : dto.getBienes()) {
-            Subcategoria sub = SubcategoriaRepository.Instance.buscarOCrear(
-                bienDTO.getCategoria(), bienDTO.getSubcategoria(),
-                bienDTO.getUnidad());
+        Donacion donacion = withTransaction(() -> {
+            //BienDTO pasa a bien con su subcategoria
+            List<Bien> bienes = new ArrayList<>();
 
-            bienes.add(bienDTO.aBien(sub));
-        }
+            for(BienDTO bienDTO : dto.getBienes()) {
+                Subcategoria sub = SubcategoriaRepository.Instance.buscarOCrear(
+                    bienDTO.getCategoria(), bienDTO.getSubcategoria(),
+                    bienDTO.getUnidad());
 
-        //la donacion se segmenta sola al crearse
-        Donacion donacion = new Donacion(dto.getDescripcionGeneral(), bienes, donante);
-        DonacionesRepository.Instance.guardar(donacion);
+                bienes.add(bienDTO.aBien(sub));
+            }
+
+            //la donacion se segmenta sola al crearse
+            Donacion nueva = new Donacion(dto.getDescripcionGeneral(), bienes, donante);
+            DonacionesRepository.Instance.guardar(nueva);
+            return nueva;
+        });
 
         return DonacionSalidaDTO.desde(donacion);
     }
@@ -82,11 +87,13 @@ public class DonacionController {
 
         DonacionsDTO donacionDTO = ctx.bodyAsClass(DonacionsDTO.class);
 
-        if(donacionDTO.getDescripcionGeneral() != null){
-            donacion.setDescripcionGeneral(donacionDTO.getDescripcionGeneral());
-        }
+        withTransaction(() -> {
+            if(donacionDTO.getDescripcionGeneral() != null){
+                donacion.setDescripcionGeneral(donacionDTO.getDescripcionGeneral());
+            }
 
-        DonacionesRepository.Instance.guardar(donacion);
+            DonacionesRepository.Instance.guardar(donacion);
+        });
 
         return DonacionSalidaDTO.desde(donacion);
     }
@@ -99,7 +106,7 @@ public class DonacionController {
             throw new NotFoundResponse("Donacion no encontrada");
         }
 
-        DonacionesRepository.Instance.eliminar(id);
+        withTransaction( () -> DonacionesRepository.Instance.eliminar(id));
     }
 
     //PRUEBA ASIGNACION 

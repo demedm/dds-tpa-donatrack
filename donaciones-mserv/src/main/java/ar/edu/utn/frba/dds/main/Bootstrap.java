@@ -28,11 +28,15 @@ import java.util.List;
 
 public class Bootstrap {
 	public static void init() {
-		crearNecesidadesConNecesidades();
+		WithSimplePersistenceUnit persistence = new WithSimplePersistenceUnit() {};
+
+		persistence.withTransaction(Bootstrap::crearNecesidadesConNecesidades);
 
 		// La donación necesita un donante ya guardado: lo registro y lo vuelvo a leer de la base
-		donadores().forEach(DonanteRepository.Instance::registrarDonante);
-		Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
+		persistence.withTransaction( () ->
+			donadores().forEach(DonanteRepository.Instance::registrarDonante));
+
+			Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
 
 		donaciones(maria);
 
@@ -44,21 +48,23 @@ public class Bootstrap {
 		Subcategoria subcatFideos = new Subcategoria(Categoria.ALIMENTOS, "FIDEOS", UnidadMedida.UNIDADES);
 
 		WithSimplePersistenceUnit persistencia = new WithSimplePersistenceUnit() {};
-		persistencia.withTransaction(() -> {
+
+		Donacion donacion = persistencia.withTransaction(() -> {
 			persistencia.entityManager().persist(subcatArroz);
 			persistencia.entityManager().persist(subcatFideos);
+
+			// Bienes: la cantidad está en cada bien y la segmentada la suma
+			LocalDate vencimiento = LocalDate.now().plusMonths(6);
+			Bien arrozBien = new Bien(subcatArroz, "foto.jpg", "Arroz Paquete 1kg", 10, new PorVencimiento(vencimiento));
+			Bien fideosBien = new Bien(subcatFideos, "foto.jpg", "Fideos Matarazzo 500g", 5, new PorVencimiento(vencimiento));
+
+			// Las segmentadas las arma la donación al crearse (una de arroz y una de fideos)
+			List<Bien> bienes = new ArrayList<>(List.of(arrozBien, fideosBien));
+			Donacion nueva = new Donacion("Donación de alimentos varios", bienes, donante);
+
+			DonacionesRepository.Instance.guardar(nueva);
+			return nueva;
 		});
-
-		// Bienes: la cantidad está en cada bien y la segmentada la suma
-		LocalDate vencimiento = LocalDate.now().plusMonths(6);
-		Bien arrozBien = new Bien(subcatArroz, "foto.jpg", "Arroz Paquete 1kg", 10, new PorVencimiento(vencimiento));
-		Bien fideosBien = new Bien(subcatFideos, "foto.jpg", "Fideos Matarazzo 500g", 5, new PorVencimiento(vencimiento));
-
-		// Las segmentadas las arma la donación al crearse (una de arroz y una de fideos)
-		List<Bien> bienes = new ArrayList<>(List.of(arrozBien, fideosBien));
-		Donacion donacion = new Donacion("Donación de alimentos varios", bienes, donante);
-
-		DonacionesRepository.Instance.guardar(donacion);
 
 		System.out.println("Donaciones y Segmentadas inicializadas correctamente.");
 

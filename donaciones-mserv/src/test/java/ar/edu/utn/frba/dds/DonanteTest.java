@@ -11,6 +11,8 @@ import ar.edu.utn.frba.dds.model.donantes.TipoEntidadJuridica;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
 import ar.edu.utn.frba.dds.repositories.DonanteRepository;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,14 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DonanteTest {
+public class DonanteTest implements SimplePersistenceTest {
 
   private DonanteRepository repository;
 
   @BeforeEach
   public void setup() {
-
-    repository = new DonanteRepository();
+    repository = DonanteRepository.Instance;
   }
 
   private PersonaFisica personaFisica(String email) {
@@ -56,20 +57,18 @@ public class DonanteTest {
   }
 
   private void registrar(Persona persona) {
-    try {
-      repository.registrarDonante(persona);
-    } catch (RuntimeException e) {
-
-    }
+    repository.registrarDonante(persona);
   }
-/*
+
   @Test
   public void registrarNuevoDonanteLoAgregaAlRegistro() {
+    int antes = repository.getRegistroDonantes().size();
+
     registrar(personaFisica("ana@mail.com"));
 
-    assertEquals(1, repository.getRegistroDonantes().size());
+    assertEquals(antes + 1, repository.getRegistroDonantes().size());
   }
-*/
+
   @Test
   public void buscarPorEmailEncuentraAlDonanteRegistrado() {
     registrar(personaFisica("analosada@mail.com"));

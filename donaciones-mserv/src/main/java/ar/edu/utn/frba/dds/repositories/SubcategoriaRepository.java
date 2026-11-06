@@ -18,7 +18,7 @@ public class SubcategoriaRepository implements WithSimplePersistenceUnit {
         .findFirst()
         .orElseGet(() -> {
           Subcategoria nueva = new Subcategoria(categoria,descripcion,unidad);
-          withTransaction(() -> entityManager().persist(nueva));
+          entityManager().persist(nueva);
           return nueva;
         });
 

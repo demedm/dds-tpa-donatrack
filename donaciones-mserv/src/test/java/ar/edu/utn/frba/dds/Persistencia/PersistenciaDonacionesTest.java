@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.Persistencia;
 
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
+import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoSubatendidos;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
 import ar.edu.utn.frba.dds.model.Bienes.EstadoUso;
@@ -10,6 +12,7 @@ import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Bienes.UnidadMedida;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
+import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
@@ -18,9 +21,7 @@ import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
 import ar.edu.utn.frba.dds.tareas.ProcesarDonaciones;
-import ar.edu.utn.frba.dds.model.Estado.EnTraslado;
-import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
-import org.junit.jupiter.api.AfterEach;
+import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,11 +39,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
+// Cada test corre dentro de una transacción que SimplePersistenceTest deshace al terminar:
+// no hace falta borrar nada a mano y los tests no se pisan entre sí
+public class PersistenciaDonacionesTest implements SimplePersistenceTest {
 
   private final DonacionesRepository repo = DonacionesRepository.Instance;
-  private final List<Long> donacionesCreadas = new ArrayList<>();
-  private final List<Long> entidadesCreadas = new ArrayList<>();
 
   private Subcategoria arroz;
   private Subcategoria silla;
@@ -52,27 +53,14 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   // son catálogo y datos que ya existen, así que se persisten antes
   @BeforeEach
   void setUp() {
-    // El EntityManager es uno por hilo y lo comparten todos los tests: se limpia para que
-    // no queden objetos de un test anterior con el mismo id que los que se crean acá
-    entityManager().clear();
-
     arroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ", UnidadMedida.UNIDADES);
     silla = new Subcategoria(Categoria.MOBILIARIO, "SILLA", UnidadMedida.UNIDADES);
     donante = new PersonaFisica();
     donante.setNombreIdentificador("Donante de prueba");
 
-    withTransaction(() -> {
-      entityManager().persist(arroz);
-      entityManager().persist(silla);
-      entityManager().persist(donante);
-    });
-  }
-
-  @AfterEach
-  void borrarLoCreado() {
-    donacionesCreadas.forEach(repo::eliminar);
-    entidadesCreadas.forEach(EntidadRepository.Instance::eliminarPorId);
-    entityManager().clear();
+    entityManager().persist(arroz);
+    entityManager().persist(silla);
+    entityManager().persist(donante);
   }
 
   // ---------- Donación y segmentadas ----------
@@ -106,12 +94,11 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   @Test
   void eliminarLaDonacionBorraTambienSusSegmentadas() {
     Donacion donacion = donacionDeArrozYSilla();
-    guardar(donacion);
+    repo.guardar(donacion);
     Long idSegmentada = donacion.getSegmentadas().get(0).getId();
 
     repo.eliminar(donacion.getId());
-    donacionesCreadas.remove(donacion.getId());
-    entityManager().clear();
+    sincronizarYLimpiar();
 
     assertNull(repo.findById(donacion.getId()));
     assertNull(repo.findSegmentadaById(idSegmentada));
@@ -148,8 +135,8 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
 
     // nace En depósito y al pasar a En traslado se agrega al historial
     segmentada.setEstado(new EnTraslado());
-    guardar(donacion);
-    entityManager().clear();
+    repo.guardar(donacion);
+    sincronizarYLimpiar();
 
     DonacionSegmentada recuperada = repo.findSegmentadaById(segmentada.getId());
 
@@ -164,8 +151,8 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
     DonacionSegmentada asignada = segmentadaDe(donacion, silla);
 
     asignada.asignar();
-    guardar(donacion);
-    entityManager().clear();
+    repo.guardar(donacion);
+    sincronizarYLimpiar();
 
     List<Long> enDeposito = repo.findSegmentadasEnDeposito().stream()
         .map(DonacionSegmentada::getId).toList();
@@ -179,24 +166,23 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
   @Test
   void lasPropuestasDelMatchmakingQuedanGuardadas() {
     Donacion donacion = donacionDeArrozYSilla();
-    guardar(donacion);
+    repo.guardar(donacion);
     Long idSegmentada = segmentadaDe(donacion, arroz).getId();
 
     EntidadBeneficiaria comedor = entidad(1000L);
     AlgoritmoAsignacion algoritmo = mock(AlgoritmoAsignacion.class);
     when(algoritmo.obtenerRanking(any(), any())).thenReturn(List.of(comedor));
 
-    withTransaction(() ->
-        repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(comedor), List.of(algoritmo)));
-    entityManager().clear();
+    repo.findSegmentadaById(idSegmentada).buscarCandidatas(List.of(comedor), List.of(algoritmo));
+    sincronizarYLimpiar();
 
     assertEquals(List.of(1000L), repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas());
   }
 
   @Test
-  void elCronDejaLasPropuestasEnLaBase() {
+  void elProcesoDeMatchmakingDejaLasPropuestasEnLaBase() {
     Donacion donacion = donacionDeArrozYSilla();
-    guardar(donacion);
+    repo.guardar(donacion);
     Long idSegmentada = segmentadaDe(donacion, arroz).getId();
 
     // el comedor necesita arroz, así los dos algoritmos lo proponen
@@ -204,11 +190,16 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
     Necesidad necesidad = new Necesidad();
     necesidad.agregarPeticion(new Peticion("ARROZ", 100));
     comedor.agregarNecesidad(necesidad);
-    EntidadRepository.Instance.registrar(comedor);
-    entidadesCreadas.add(comedor.getId());
+    entityManager().persist(comedor);
+    comedor.getNecesidades().forEach(n -> n.setEntidadId(comedor.getId()));
 
-    ProcesarDonaciones.ejecutar();
-    entityManager().clear();
+    // Se usa procesar() y no ejecutar(): ejecutar() abre su propia transacción y haría
+    // commit de la del test. La tarea completa (con Quartz) se prueba en AsignacionProgramadaTest
+    ProcesarDonaciones.procesar(
+        repo.findSegmentadasEnDeposito(),
+        EntidadRepository.Instance.obtenerEntidades(),
+        List.of(new AlgoritmoDeCompatibilidad(), new AlgoritmoSubatendidos()));
+    sincronizarYLimpiar();
 
     assertTrue(repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas().contains(comedor.getId()));
   }
@@ -229,16 +220,17 @@ public class PersistenciaDonacionesTest implements WithSimplePersistenceUnit {
     return LocalDate.of(2027, 1, 1);
   }
 
-  // El id lo genera la base al guardar: recién ahí lo anoto para borrarlo después
-  private void guardar(Donacion donacion) {
+  private Donacion guardarYReleer(Donacion donacion) {
     repo.guardar(donacion);
-    donacionesCreadas.add(donacion.getId());
+    sincronizarYLimpiar();
+    return repo.findById(donacion.getId());
   }
 
-  private Donacion guardarYReleer(Donacion donacion) {
-    guardar(donacion);
+  // flush: manda a la base lo pendiente (dentro de la transacción del test)
+  // clear: olvida los objetos en memoria, para que lo siguiente se lea DE LA BASE
+  private void sincronizarYLimpiar() {
+    entityManager().flush();
     entityManager().clear();
-    return repo.findById(donacion.getId());
   }
 
   private static DonacionSegmentada segmentadaDe(Donacion donacion, Subcategoria subcategoria) {

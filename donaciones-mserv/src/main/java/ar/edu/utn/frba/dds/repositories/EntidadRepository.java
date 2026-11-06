@@ -8,13 +8,11 @@ import java.util.List;
 public class EntidadRepository implements WithSimplePersistenceUnit {
   public static EntidadRepository Instance = new EntidadRepository();
 
-
   public void registrar(EntidadBeneficiaria entidad) {
-    withTransaction(() -> {
-        entityManager().persist(entidad);
-        entidad.getNecesidades().forEach(necesidad ->
-            necesidad.setEntidadId(entidad.getId()));
-    });
+    entityManager().persist(entidad);
+    // las necesidades nacen antes de que la entidad tenga id: se lo asigno ahora
+    entidad.getNecesidades().forEach(necesidad ->
+        necesidad.setEntidadId(entidad.getId()));
   }
 
   public EntidadBeneficiaria obtenerPorId(Long id) {
@@ -29,15 +27,12 @@ public class EntidadRepository implements WithSimplePersistenceUnit {
   }
 
   public EntidadBeneficiaria actualizarEntidad(EntidadBeneficiaria entidadExistente, EntidadBeneficiaria camposActualizar) {
-    withTransaction(() -> {
+    entidadExistente.setDireccion(camposActualizar.getDireccion());
+    entidadExistente.setTelefono(camposActualizar.getTelefono());
+    entidadExistente.setMailsContacto(camposActualizar.getMailsContacto());
+    entidadExistente.setRazonSocial(camposActualizar.getRazonSocial());
+    entidadExistente.setTipo(camposActualizar.getTipoEntidad());
 
-      entidadExistente.setDireccion(camposActualizar.getDireccion());
-      entidadExistente.setTelefono(camposActualizar.getTelefono());
-      entidadExistente.setMailsContacto(camposActualizar.getMailsContacto());
-      entidadExistente.setRazonSocial(camposActualizar.getRazonSocial());
-      entidadExistente.setTipo(camposActualizar.getTipoEntidad());
-
-    });
     return entidadExistente;
   }
 
@@ -47,7 +42,7 @@ public class EntidadRepository implements WithSimplePersistenceUnit {
       return false;
     }
 
-    withTransaction(() -> entityManager().remove(entidad));
+    entityManager().remove(entidad);
     return true;
   }
 }
