@@ -265,7 +265,7 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
     Long idSegmentada = segmentadaDe(donacion, arroz).getId();   // 2 bienes: 10 + 5
     Peticion peticion = peticionPersistida("ARROZ", "100");
 
-    repo.findSegmentadaById(idSegmentada).asignarA(entidadPersistidaId(), peticion);
+    asignarConPropuesta(repo.findSegmentadaById(idSegmentada), peticion);
     sincronizarYLimpiar();
 
     DonacionSegmentada leida = repo.findSegmentadaById(idSegmentada);
@@ -283,7 +283,7 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
     Peticion peticion = peticionPersistida("ARROZ", "100");
 
     DonacionSegmentada segmentada = repo.findSegmentadaById(idSegmentada);
-    segmentada.asignarA(entidadPersistidaId(), peticion);
+    asignarConPropuesta(segmentada, peticion);
     segmentada.planificarRuta();
     segmentada.iniciarTraslado();
     sincronizarYLimpiar();
@@ -305,7 +305,7 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
     Peticion peticion = peticionPersistida("ARROZ", "100");
 
     DonacionSegmentada segmentada = repo.findSegmentadaById(idSegmentada);
-    segmentada.asignarA(entidadPersistidaId(), peticion);
+    asignarConPropuesta(segmentada, peticion);
     segmentada.planificarRuta();
     segmentada.iniciarTraslado();
     sincronizarYLimpiar();
@@ -348,11 +348,14 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
 
   // flush: manda a la base lo pendiente (dentro de la transacción del test)
   // clear: olvida los objetos en memoria, para que lo siguiente se lea DE LA BASE
-  // entidadAsignadaId tiene FK a entidades_beneficiarias: la entidad tiene que existir
-  private Long entidadPersistidaId() {
+  // La entidad tiene que existir (FK de entidadAsignadaId) y estar propuesta (validación de asignarA)
+  private void asignarConPropuesta(DonacionSegmentada segmentada, Peticion peticion) {
     EntidadBeneficiaria comedor = entidad(null);
     entityManager().persist(comedor);
-    return comedor.getId();
+    AlgoritmoAsignacion algoritmo = mock(AlgoritmoAsignacion.class);
+    when(algoritmo.obtenerRanking(any(), any())).thenReturn(List.of(comedor));
+    segmentada.buscarCandidatas(List.of(comedor), List.of(algoritmo));
+    segmentada.asignarA(comedor.getId(), peticion);
   }
 
   private Peticion peticionPersistida(String subclase, String cantidad) {

@@ -216,6 +216,11 @@ public class DonacionSegmentada {
   }
 
   public void asignarA(Long entidadId, Peticion peticion) {
+    if (!getIdsEntidadesPropuestas().contains(entidadId)) {
+      throw new IllegalArgumentException("La entidad " + entidadId
+          + " no está entre las propuestas de la donación " + id);
+    }
+
     asignar();
     this.entidadAsignadaId = entidadId;
     this.peticionCubierta = peticion;

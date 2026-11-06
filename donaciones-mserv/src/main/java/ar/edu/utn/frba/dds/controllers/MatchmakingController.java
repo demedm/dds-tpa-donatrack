@@ -56,6 +56,11 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
       throw new NotFoundResponse("No se encontró la entidad " + dto.getEntidadBeneficiariaId());
     }
 
+    if (!segmentada.getIdsEntidadesPropuestas().contains(entidad.getId())) {
+      throw new BadRequestResponse("La entidad " + entidad.getId()
+          + " no está entre las propuestas de la donación " + segmentada.getId());
+    }
+
     // La primera petición de la entidad que esta donación puede cubrir (o ninguna)
     Peticion peticion = entidad.getNecesidades().stream()
         .flatMap(necesidad -> necesidad.getPeticiones().stream())
