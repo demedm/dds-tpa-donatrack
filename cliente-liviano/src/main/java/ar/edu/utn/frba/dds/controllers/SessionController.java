@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.clients.DonacionesHttpClient;
+import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,11 +32,15 @@ public class SessionController {
   }
 
   public void login(Context ctx) {
+    Map<String, Object> modelo = new HashMap<>();
+    if ("exitoso".equals(ctx.queryParam("registro"))) {
+      modelo.put("exito", "Tu cuenta fue creada correctamente. Ya podés iniciar sesión.");
+    }
+
     if (ctx.sessionAttribute("user_id") != null) {
       ctx.redirect("/");
       return;
     }
-    Map<String, Object> modelo = new HashMap<>();
 
     String nombreRecordado = ctx.cookie("recordarNombre");
     if (nombreRecordado != null) {
@@ -43,7 +48,7 @@ public class SessionController {
     }
 
     modelo.put("sesionIniciada", ctx.sessionAttribute("user_id") != null);
-    ctx.render("login.hbs");
+    ctx.render("login.hbs", modelo);
   }
 
   public void create(Context ctx) {
@@ -84,16 +89,35 @@ public class SessionController {
     }
   }
 
-  public void mostrarDonaciones(Context ctx) {
-
-  }
-
   public void mostrarRegistro(Context ctx) {
     ctx.render("public/registro.hbs");
   }
 
-  public void registrarUsuario(@NotNull Context context) {
+  public void registrarUsuario(Context ctx) {
+    String mail = ctx.formParam("email");
+    String password = ctx.formParam("password");
+    String rol = ctx.formParam("rol");
+    String nombre = ctx.formParam("nombre");
 
+    Map<String, Object> modelo = new HashMap<>();
+
+    RegistroRequest request = new RegistroRequest(nombre, mail, password, rol);
+    try {
+      HttpResponse<String> response = new DonacionesHttpClient()
+          .registrarUsuario(request);
+
+      if (response.statusCode() == 201) {
+        ctx.redirect("/login?registro=exitoso");
+        return;
+      } else if (response.statusCode() == 409) {
+        modelo.put("error", "Ya existe un usuario registrado con ese email.");
+      } else {
+        modelo.put("error", "No se pudo completar el registro.");
+      }
+    } catch (Exception e) {
+      modelo.put("error", "No fue posible comunicarse con el servidor.");
+    }
+    ctx.render("public/registro.hbs", modelo);
   }
 }
 

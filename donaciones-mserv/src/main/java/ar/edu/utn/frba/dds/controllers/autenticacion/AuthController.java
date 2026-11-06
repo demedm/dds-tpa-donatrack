@@ -1,8 +1,14 @@
 package ar.edu.utn.frba.dds.controllers.autenticacion;
 
+import ar.edu.utn.frba.dds.dto.autenticacion.LoginRequest;
+import ar.edu.utn.frba.dds.dto.autenticacion.LoginResponse;
+import ar.edu.utn.frba.dds.dto.autenticacion.RegistroRequest;
 import ar.edu.utn.frba.dds.exceptions.CredencialesInvalidasException;
+import ar.edu.utn.frba.dds.exceptions.MailAlreadyRegisteredException;
 import ar.edu.utn.frba.dds.exceptions.UsuarioNotFoundException;
+import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import ar.edu.utn.frba.dds.repositories.autenticacion.AutenticacionRepositorio;
+import ar.edu.utn.frba.dds.repositories.usuarios.UsuariosRepositorio;
 import io.javalin.http.Context;
 
 import java.util.Map;
@@ -34,6 +40,17 @@ public class AuthController {
   }
 
   public void registro(Context ctx) {
+    try {
+      RegistroRequest request = ctx.bodyAsClass(RegistroRequest.class);
+
+      Usuario usuario = AutenticacionRepositorio.Instance.validarDatos(request);
+      UsuariosRepositorio.Instance.registrar(usuario);
+      ctx.status(201);
+    } catch (MailAlreadyRegisteredException e) {
+      ctx.status(409);
+    } catch (Exception e) {
+      ctx.status(400);
+    }
 
   }
 

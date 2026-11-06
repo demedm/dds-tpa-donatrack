@@ -1,11 +1,15 @@
-{{#partial "contenido-header"}}
-    <a href="/login">Iniciar sesión</a>
-    <a href="/registro">Registro</a>
-    <a href="/donaciones">Donaciones</a>
-    <a href="/legal">Legal</a>
-{{/partial}}
+{{#partial "contenido-header"}}{{/partial}}
 
 {{#partial "contenido"}}
+
+    <h1>Iniciar Sesión</h1>
+
+    {{#if exito}}
+        <div class="mensaje exito">
+            {{exito}}
+        </div>
+    {{/if}}
+
     <form method="POST" action="/login">
         <label>Email</label><input name="email">
         <label>Password</label><input name="password">

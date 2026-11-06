@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.clients;
 
 import ar.edu.utn.frba.dds.dto.DonacionDto;
 import ar.edu.utn.frba.dds.dto.LoginRequest;
+import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,6 +41,22 @@ public class DonacionesHttpClient {
     } catch (Exception e) {
       System.err.println("Error al intentar enviar el request");
       return null;
+    }
+  }
+
+  public HttpResponse<String> registrarUsuario(RegistroRequest registro) {
+    try {
+      String body = objectMapper.writeValueAsString(registro);
+
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create(baseUrl + "/auth/registro"))
+          .header("Content-Type", "application/json")
+          .POST(HttpRequest.BodyPublishers.ofString(body))
+          .build();
+
+      return client.send(request, HttpResponse.BodyHandlers.ofString());
+    } catch (Exception e) {
+      throw new RuntimeException("Error al enviar el registro a Donaciones", e);
     }
   }
 
