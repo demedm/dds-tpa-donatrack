@@ -1,13 +1,45 @@
-{{#partial "contenido-header"}}
-    <a href="/login">Iniciar sesión</a>
-    <a href="/registro">Registro</a>
-    <a href="/donaciones">Donaciones</a>
-    <a href="/legal">Legal</a>
-{{/partial}}
+{{#partial "contenido-header"}}{{/partial}}
+
 {{#partial "contenido"}}
-    <h>
-        El sistema debe permitir el registro de personas donantes y entidades beneficiarias.
-    </h>
+
+    <h1>Crear una cuenta</h1>
+
+    {{#if error}}
+        <div class="mensaje error">
+            {{error}}
+        </div>
+    {{/if}}
+
+    {{#if exito}}
+        <div class="mensaje exito">
+            {{exito}}
+        </div>
+    {{/if}}
+
+    <form action="/registro" method="POST">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="nombre">Nombre</label>
+        <input type="nombre" id="nombre" name="nombre" required>
+
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="rol">Rol</label>
+        <select id="rol" name="rol" required>
+            <option value="" disabled selected>— Elegir —</option>
+            <option value="DONANTE">Donante</option>
+            <option value="BENEFICIARIO">Entidad Beneficiaria</option>
+            {{#if admin}}
+                <option value="ADMIN">Administrador</option>
+            {{/if}}
+        </select>
+
+        <button type="submit">Registro</button>
+
+    </form>
 
 
 {{/partial}}

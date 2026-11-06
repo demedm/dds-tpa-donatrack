@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.controllers.autenticacion;
+package ar.edu.utn.frba.dds.dto.autenticacion;
 
 public class LoginRequest {
   private String mail;
