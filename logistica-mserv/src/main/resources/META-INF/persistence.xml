@@ -26,7 +26,7 @@
             <property name="hibernate.connection.url"
                       value="jdbc:mariadb://localhost:3306/logistica"/>
             <property name="hibernate.connection.username" value="root" />
-            <property name="hibernate.connection.password" value="" />
+            <property name="hibernate.connection.password" value="root" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
 
 <!--

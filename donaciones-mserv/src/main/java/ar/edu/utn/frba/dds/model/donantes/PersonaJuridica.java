@@ -1,10 +1,6 @@
 package ar.edu.utn.frba.dds.model.donantes;
 import javax.persistence.*;
 
-import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
-
-import java.util.ArrayList;
-import java.util.List;
 @Entity
 @DiscriminatorValue("JURIDICA")
 public class PersonaJuridica extends Persona {
@@ -16,8 +12,6 @@ public class PersonaJuridica extends Persona {
   @Column(name = "tipo_entidad_juridica")
   private TipoEntidadJuridica tipo;
 
-  @Transient // Anotado como @Transient porque JPA no mapea List<Interface> directamente.
-  private List<MedioContacto> listaContactos = new ArrayList<>();
   public PersonaJuridica() {}
 
   public void setTipo(TipoEntidadJuridica tipo) {
@@ -26,10 +20,6 @@ public class PersonaJuridica extends Persona {
 
   public void setRubro(String rubro) {
     this.rubro = rubro;
-  }
-
-  public void setListaContactos(List<MedioContacto> contacto) {
-    this.listaContactos.addAll(contacto);
   }
 
   public TipoEntidadJuridica getTipo() {

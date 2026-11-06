@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds;
 
 import ar.edu.utn.frba.dds.model.donantes.Genero;
 import ar.edu.utn.frba.dds.model.donantes.Identificacion;
+import ar.edu.utn.frba.dds.model.donantes.MedioPreferido;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 import ar.edu.utn.frba.dds.model.donantes.PersonaJuridica;
@@ -33,7 +34,7 @@ public class DonanteTest {
     PersonaFisica persona = new PersonaFisica();
     persona.setNombreIdentificador("Ana Losada");
     persona.setMail(new Mail(email));
-    persona.setMedioPreferido(persona.getMail());
+    persona.setMedioPreferido(MedioPreferido.MAIL);
     persona.setTelefono(new Telefono("1122334455"));
     persona.setIdentificacion(new Identificacion(TipoDocumento.DNI, "12345678"));
     persona.setEdad(30);
@@ -46,7 +47,7 @@ public class DonanteTest {
     PersonaJuridica persona = new PersonaJuridica();
     persona.setNombreIdentificador("Patitas");
     persona.setMail(new Mail(email));
-    persona.setMedioPreferido(persona.getMail());
+    persona.setMedioPreferido(MedioPreferido.MAIL);
     persona.setTelefono(new Telefono("1144556677"));
     persona.setIdentificacion(new Identificacion(TipoDocumento.CUIT, "30712345671"));
     persona.setRubro("alimenticio");

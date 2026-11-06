@@ -15,10 +15,17 @@ import java.util.List;
 
 public class Bootstrap {
   public static void init() {
-    List<Camion> camiones = camiones();
+    List<Camion> camiones = Arrays.asList(
+            new Camion("aaaaAAAA", 1000.0, 5000.0, 7.0),
+            new Camion("bbbbBBBB", 300.0, 6000.0, 5.0)
+    );
     List<Chofer> choferes = choferes();
-    List<Entrega> entregas = entregas();
     List<EntidadBeneficiaria> beneficiarias = beneficiarias();
+    List<Entrega> entregas = entregas();
+
+    beneficiarias.forEach(UsuarioRepositorio.Instance::registrar);
+    choferes.forEach(UsuarioRepositorio.Instance::registrar);
+    camiones.forEach(CamionRepositorio.Instance::registrar);
 
     entregas.get(0).setEntidadBeneficiaria(beneficiarias.get(0));
     entregas.get(1).setEntidadBeneficiaria(beneficiarias.get(1));
@@ -26,30 +33,25 @@ public class Bootstrap {
     entregas.get(3).setEntidadBeneficiaria(beneficiarias.get(1));
     entregas.get(4).setEntidadBeneficiaria(beneficiarias.get(1));
 
-    var listaEntregas = Arrays.asList(entregas.get(0), entregas.get(1), entregas.get(2));
+    entregas.forEach(EntregaRepositorio.Instance::registrar);
+
+    var listaEntregas1 = Arrays.asList(entregas.get(0), entregas.get(1), entregas.get(2));
     var listaEntregas2 = Arrays.asList(entregas.get(3), entregas.get(4));
-    Ruta ruta1 = new Ruta(listaEntregas);
+
+    Ruta ruta1 = new Ruta(listaEntregas1);
     Ruta ruta2 = new Ruta(listaEntregas2);
+
     ruta1.asignarCamion(camiones.get(0));
     ruta2.asignarCamion(camiones.get(1));
     ruta1.asignarChofer(choferes.get(0));
     ruta2.asignarChofer(choferes.get(1));
 
-    beneficiarias.forEach(UsuarioRepositorio.Instance::registrar);
-    choferes.forEach(UsuarioRepositorio.Instance::registrar);
-    camiones.forEach(CamionRepositorio.Instance::registrar);
-    entregas.forEach(EntregaRepositorio.Instance::registrar);
     RutaRepositorio.Instance.registrar(ruta1);
     RutaRepositorio.Instance.registrar(ruta2);
-
-    // Para probar el dashboard:
-    ruta1.iniciarRuta();
-    // Marcamos la primera entrega como entregada
-    ruta1.getEntregas().get(0).marcarComoEntregada(camiones.get(0), LocalDateTime.now());
   }
 
   private static List<Entrega> entregas() {
-    return Arrays.asList(new Entrega("Av Libertad 123", (long) 13),
+    return Arrays.asList(new Entrega("Av Libertad 123", (long) 1),
         new Entrega("Helguera 516", (long) 57),
         new Entrega("Mandioca 67", (long) 4551),
         new Entrega("Luis Maria 777", (long) 12),

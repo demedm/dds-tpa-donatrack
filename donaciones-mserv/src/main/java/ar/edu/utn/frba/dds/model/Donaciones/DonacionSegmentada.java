@@ -9,7 +9,6 @@ import ar.edu.utn.frba.dds.model.Estado.EstadoDonacion;
 import ar.edu.utn.frba.dds.model.Estado.RegistroCambioEstado;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
-import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 
 import ar.edu.utn.frba.dds.model.Estado.EstadoDonacionConverter;
 import java.time.LocalDate;
@@ -35,7 +34,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Convert;
 
 
@@ -68,6 +66,7 @@ public class DonacionSegmentada {
   @ElementCollection
   @CollectionTable(name ="historial_estados",
       joinColumns = @JoinColumn(name = "donacion_segmentada_id"))
+
   @JsonIgnore
   private List<RegistroCambioEstado> historialEstados = new ArrayList<>();
 
@@ -77,13 +76,6 @@ public class DonacionSegmentada {
 
   // Asignación a una entidad beneficiaria
   private Long entidadAsignadaId;
-
-  @Transient
-  private MedioContacto medioContactoEntidad;
-
-  // Algoritmos de asignación (matchmaking): entidades propuestas
-  @Transient
-  private Resultados resultadosPropuestos;
 
   @ElementCollection
   @CollectionTable(name = "propuestas_asignacion",
@@ -166,6 +158,7 @@ public class DonacionSegmentada {
       case "EN_TRASLADO" -> iniciarTraslado();
       case "ENTREGADA" -> confirmarEntrega();
       case "NO_RECIBIDO", "NO_RECIBIDA", "FALLIDA" -> fallarEntrega(justificacionFallo);
+      case "VENCIDA" -> vencer();
       default -> throw new IllegalArgumentException("Estado desconocido: " + nuevoEstado);
     }
   }
@@ -241,20 +234,18 @@ public class DonacionSegmentada {
         .filter(entidad -> rankings.stream().allMatch(ranking -> ranking.contains(entidad)))
         .toList();
 
-    this.resultadosPropuestos = new Resultados(coincidencias, rankings);
+
+    Resultados resultados = new Resultados(coincidencias, rankings);
     this.idsEntidadesPropuestas.clear();
     this.idsEntidadesPropuestas.addAll(
-        resultadosPropuestos.entidadesPropuestas().stream()
+        resultados.entidadesPropuestas().stream()
             .map(EntidadBeneficiaria::getId)
             .toList());
 
-    return this.resultadosPropuestos;
+    return resultados;
 
   }
 
-  public Resultados getResultadosPropuestos(){
-    return this.resultadosPropuestos;
-  }
 
   public List<Long> getIdsEntidadesPropuestas() {
     return idsEntidadesPropuestas;

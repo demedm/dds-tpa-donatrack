@@ -12,11 +12,11 @@ public class MatchmakingRutas {
     MatchmakingController matchmakingController = new MatchmakingController();
 
     path("matchmaking",() -> {
-      get("ranking/{idSegmentada}", ctx ->
+      get("ranking", ctx ->
           ctx.status(200).json(matchmakingController.obtenerRanking(ctx)));
-      post("asignar",ctx ->
+      post("asignaciones",ctx ->
           ctx.status(200).json(matchmakingController.asignarDonacion(ctx)));
-      post("procesar-pendientes",ctx ->
+      post("ejecuciones",ctx ->
           ctx.status(202).json(matchmakingController.procesarPendientes(ctx)));
     });
   }

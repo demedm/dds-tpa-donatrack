@@ -49,8 +49,9 @@ public abstract class Persona implements Destinatario{
   @Column(name = "ultima_actividad")
   private LocalDate ultimaActividad;
 
-  @Transient // JPA no puede persistir interfaces nativamente. Conviene guardar un Enum (ej: MAIL, TELEFONO)
-  private MedioContacto medioPreferido;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "medio_preferido")
+  private MedioPreferido medioPreferido;
 
   public LocalDate getUltimaActividad() {
     return ultimaActividad;
@@ -80,11 +81,11 @@ public abstract class Persona implements Destinatario{
     this.mail = mail;
   }
 
-  public void setMedioPreferido(MedioContacto medioPreferido) {
+  public void setMedioPreferido(MedioPreferido medioPreferido) {
     this.medioPreferido = medioPreferido;
   }
 
-  public MedioContacto getMedioPreferido() {
+  public MedioPreferido getMedioPreferido() {
     return this.medioPreferido;
   }
 
@@ -134,10 +135,10 @@ public abstract class Persona implements Destinatario{
 
   @Override
   public MedioContacto medioDeContacto() {
-    if (medioPreferido != null) {
-      return medioPreferido;
+    if (medioPreferido == MedioPreferido.TELEFONO && telefono != null) {
+      return telefono;
     }
-    return getMail() != null ? getMail() : getTelefono();
+    return mail != null ? mail : telefono;
   }
 
   @Override

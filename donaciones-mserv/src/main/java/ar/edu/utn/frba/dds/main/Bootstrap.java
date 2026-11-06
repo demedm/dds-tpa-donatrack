@@ -7,13 +7,13 @@ import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 import ar.edu.utn.frba.dds.model.Bienes.UnidadMedida;
 import ar.edu.utn.frba.dds.model.Donaciones.Donacion;
 import ar.edu.utn.frba.dds.model.donantes.Identificacion;
+import ar.edu.utn.frba.dds.model.donantes.MedioPreferido;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 import ar.edu.utn.frba.dds.model.donantes.PersonaJuridica;
 import ar.edu.utn.frba.dds.model.donantes.TipoDocumento;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
-import ar.edu.utn.frba.dds.model.medioscontacto.MedioContacto;
 import ar.edu.utn.frba.dds.model.necesidad.Necesidad;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import ar.edu.utn.frba.dds.model.usuarios.Rol;
@@ -87,19 +87,15 @@ public class Bootstrap {
 		PersonaFisica maria = new PersonaFisica();
 		maria.setNombreIdentificador("Maria A");
 		maria.setMail(new Mail("mariaa@gmail.com"));
-		maria.setMedioPreferido(maria.getMail());
+		maria.setMedioPreferido(MedioPreferido.MAIL);
 		maria.setEdad(46);
 		maria.setIdentificacion(new Identificacion(TipoDocumento.DNI, "30111222"));
 		PersonaJuridica org = new PersonaJuridica();
 		org.setNombreIdentificador("Patitas");
 		org.setMail(new Mail("patitas@org.com"));
-		org.setMedioPreferido(org.getMail());
+		org.setMedioPreferido(MedioPreferido.MAIL);
 		org.setRubro("alimenticio");
 		org.setIdentificacion(new Identificacion(TipoDocumento.CUIT, "30712345671"));
-		List<MedioContacto> mails = new ArrayList<>();
-		mails.add(new Mail("marior@gmail.com"));
-		mails.add(new Mail("comidas@outlook.com"));
-		org.setListaContactos(mails);
 		return Arrays.asList(maria, org);
 	}
 

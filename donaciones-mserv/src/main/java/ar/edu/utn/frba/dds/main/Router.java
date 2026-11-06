@@ -51,7 +51,6 @@ public class Router {
     ctx.result("Cron ejecutado manualmente");
 });
 
-
     app.post("/tareas/notificar-inactivos", ctx -> {
       int dias = ctx.queryParam("dias") != null ? Integer.parseInt(ctx.queryParam("dias")) : 20;
       ctx.json(NotificarInactivos.ejecutar(dias));

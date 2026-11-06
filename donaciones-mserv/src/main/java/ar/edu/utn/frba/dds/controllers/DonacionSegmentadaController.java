@@ -1,49 +1,41 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.dto.CambioEstadoDTO;
+import ar.edu.utn.frba.dds.dto.salida.DonacionSegmentadaSalidaDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
-public class DonacionSegmentadaController {
-  public DonacionSegmentada cambiarEstadoDonacion(Context ctx) {
-    Long idDonacion = ctx.pathParamAsClass("id",Long.class).get();
+public class DonacionSegmentadaController implements WithSimplePersistenceUnit {
+
+
+  public DonacionSegmentadaSalidaDTO cambiarEstadoDonacion(Context ctx) {
+    Long id = ctx.pathParamAsClass("id",Long.class).get();
     CambioEstadoDTO cambioEstado = ctx.bodyAsClass(CambioEstadoDTO.class);
 
-    // 1. ABRIMOS TRANSACCIÓN DESDE EL INICIO
-    ar.edu.utn.frba.dds.repositories.EntityManagerHelper.beginTransaction();
+    DonacionSegmentada segmentada = DonacionesRepository.Instance.findSegmentadaById(id);
 
-    try {
-      DonacionSegmentada donacion = DonacionesRepository.Instance.findSegmentadaById(idDonacion);
-
-      if(donacion == null){
-        throw new NotFoundResponse("DonacionSegmentada no encontrada");
-      }
-
-      // 2. MODIFICAMOS EL ESTADO (Hibernate ya está vigilando el historial)
-      if(cambioEstado.getMotivoFalla() == null) {
-        donacion.cambiarEstado(cambioEstado.getNuevoEstado());
-      } else {
-        // Primero seteamos la justificación para que cambiarEstado() la tenga disponible
-        donacion.setJustificacionFallo(cambioEstado.getMotivoFalla());
-        donacion.cambiarEstado(cambioEstado.getNuevoEstado());
-      }
-
-      // 3. PERSISTIMOS
-      DonacionesRepository.Instance.actualizarSegmentada(donacion);
-
-      ar.edu.utn.frba.dds.repositories.EntityManagerHelper.commit();
-      return donacion;
-
-    } catch (Exception e) {
-      // SI ALGO FALLA (ej. IllegalStateException de tu patrón State),
-      // HACEMOS ROLLBACK Y LO IMPRIMIMOS PARA NO VOLVERNOS LOCOS
-      ar.edu.utn.frba.dds.repositories.EntityManagerHelper.rollback();
-      System.err.println("ERROR al cambiar estado: " + e.getMessage());
-      throw e;
+    if (segmentada == null) {
+      throw new NotFoundResponse("Donacion segmentada " + id + "no encontrada");
     }
+
+    withTransaction( () -> {
+      if(cambioEstado.getMotivoFalla() != null) {
+        segmentada.setJustificacionFallo(cambioEstado.getMotivoFalla());
+      }
+      segmentada.cambiarEstado(cambioEstado.getNuevoEstado());
+
+    });
+
+    return DonacionSegmentadaSalidaDTO.desde(segmentada);
+
   }
+
+
+
+
 //
 //  public DonacionSegmentada asignarDonacion(Context ctx) {
 //    String idDonacion = ctx.pathParam("id");

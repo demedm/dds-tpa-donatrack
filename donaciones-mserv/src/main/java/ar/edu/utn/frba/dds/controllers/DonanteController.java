@@ -1,8 +1,8 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.dto.PersonaDTO;
-import ar.edu.utn.frba.dds.dto.PersonaFisicaDTO;
-import ar.edu.utn.frba.dds.dto.PersonaJuridicaDTO;
+import ar.edu.utn.frba.dds.dto.entrada.PersonaDTO;
+import ar.edu.utn.frba.dds.dto.entrada.PersonaFisicaDTO;
+import ar.edu.utn.frba.dds.dto.entrada.PersonaJuridicaDTO;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 
