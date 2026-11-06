@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AdminController {
-  public void registrarDonante(@NotNull Context ctx) {
-  }
 
   public void administracion(@NotNull Context ctx) {
     Map<String, Object> modelo = new HashMap<>();

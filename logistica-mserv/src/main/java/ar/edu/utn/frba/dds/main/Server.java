@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceLogisticaImplementation;
+import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceUsuarioImplementation;
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
 import ar.edu.utn.frba.dds.main.templates.JavalinRenderer;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -12,7 +13,12 @@ import io.javalin.json.JavalinJackson;
 
 import java.io.IOException;
 
-public class Server {
+public class
+
+
+
+
+Server {
   public void start() throws IOException {
     Bootstrap.init();
     var app = Javalin.create(config -> {
@@ -29,6 +35,7 @@ public class Server {
     io.grpc.Server grpcServer = io.grpc.ServerBuilder
             .forPort(grpcPort)
             .addService(new GrpcServiceLogisticaImplementation())
+            .addService(new GrpcServiceUsuarioImplementation())
             .build()
             .start();
 

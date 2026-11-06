@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.repositories;
 
+import ar.edu.utn.frba.dds.exceptions.PersonaNotFoundException;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.donantes.RegistroDonante;
 import ar.edu.utn.frba.dds.model.importerdonantes.ImporterDonantes;
@@ -53,6 +54,16 @@ public class DonanteRepository implements WithSimplePersistenceUnit {
         .getResultList()
         .stream()
         .findFirst();
+  }
+
+  public Persona buscarXmail(String direccionMail) {
+     return entityManager()
+        .createQuery("SELECT p FROM Persona p WHERE p.mail.direccionMail = :email", Persona.class)
+        .setParameter("email", direccionMail)
+        .getResultList()
+        .stream()
+        .findFirst()
+        .orElse(null);
   }
 
   public boolean eliminarPorEmail(String direccionMail) {

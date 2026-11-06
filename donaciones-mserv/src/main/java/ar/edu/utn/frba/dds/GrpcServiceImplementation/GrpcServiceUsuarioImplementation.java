@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.GrpcServiceImplementation;
 
 import ar.edu.utn.frba.dds.grpc.RegistroUsuarioResponse;
+import ar.edu.utn.frba.dds.grpc.UsuarioRequest;
 import ar.edu.utn.frba.dds.grpc.UsuarioServiceGrpc;
+import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import io.grpc.stub.StreamObserver;
 
 public class GrpcServiceUsuarioImplementation

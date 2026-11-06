@@ -4,6 +4,7 @@ import ar.edu.utn.frba.dds.clients.DonacionesHttpClient;
 import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
+import ar.edu.utn.frba.dds.session.Rol;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
@@ -100,6 +101,14 @@ public class SessionController {
     ctx.render("public/registro.hbs");
   }
 
+  public void mostrarRegistroAdmin(Context ctx) {
+    Map<String, Object> modelo = new HashMap<>();
+
+    modelo.put("esAdmin", true);
+
+    ctx.render("public/registro.hbs", modelo);
+  }
+
   public void registrarUsuario(Context ctx) {
     String mail = ctx.formParam("email");
     String password = ctx.formParam("password");
@@ -107,10 +116,15 @@ public class SessionController {
     String nombre = ctx.formParam("nombre");
 
     Map<String, Object> modelo = new HashMap<>();
+    String token = ctx.cookie("session");
+    UsuarioLogueado usuario = new JwtRepositorio().obtenerUsuario(token);
+    if (usuario.getRol().equals(Rol.ADMIN)) {
+      modelo.put("esAdmin", true);
+    }
 
     RegistroRequest request = new RegistroRequest(nombre, mail, password, rol);
 
-    // datos adicionales según el rol
+    // Datos adicionales según el rol
     if ("DONANTE".equals(rol)) {
 
       request.setTipoPersona(ctx.formParam("tipoPersona"));
@@ -124,9 +138,7 @@ public class SessionController {
       request.setRazonSocial(ctx.formParam("razonSocial"));
       request.setDireccion(ctx.formParam("direccion"));
       request.setMailContacto(ctx.formParam("mailContacto"));
-      request.setTelefonoBeneficiario(
-          ctx.formParam("telefonoBeneficiario")
-      );
+      request.setTelefonoBeneficiario(ctx.formParam("telefonoBeneficiario"));
     }
 
     try {
@@ -134,16 +146,26 @@ public class SessionController {
           .registrarUsuario(request);
 
       if (response.statusCode() == 201) {
-        ctx.redirect("/login?registro=exitoso");
+
+        // Si lo creó un administrador, vuelve al panel
+        if ("ADMIN".equals(rol)) {
+          ctx.redirect("/admin/panel?registro=exitoso");
+        } else {
+          ctx.redirect("/login?registro=exitoso");
+        }
         return;
+
       } else if (response.statusCode() == 409) {
         modelo.put("error", "Ya existe un usuario registrado con ese email.");
       } else {
         modelo.put("error", "No se pudo completar el registro.");
       }
+
     } catch (Exception e) {
+      e.printStackTrace();
       modelo.put("error", "No fue posible comunicarse con el servidor.");
     }
+
     ctx.render("public/registro.hbs", modelo);
   }
 

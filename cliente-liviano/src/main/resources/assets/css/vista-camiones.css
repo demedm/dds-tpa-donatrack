@@ -1,0 +1,87 @@
+
+.camiones {
+    width: 100%;
+    max-width: none;
+    padding: 20px 30px;
+    box-sizing: border-box;
+}
+
+.tabla-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-camiones {
+    width: 100%;
+    table-layout: auto;
+}
+
+.container {
+    max-width: none;
+    width: 100%;
+}
+
+.encabezado-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.encabezado-seccion h1 {
+    margin-bottom: 8px;
+}
+
+.encabezado-seccion p {
+    color: #777;
+    margin: 0;
+}
+
+.tabla-camiones th,
+.tabla-camiones td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+}
+
+.tabla-camiones th {
+    background: #f5f6f8;
+    font-weight: 600;
+}
+
+.tabla-camiones tbody tr:hover {
+    background: #f9fafb;
+}
+
+.patente {
+    font-weight: 600;
+}
+
+.estado-camion {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background: #e8f0fe;
+    color: #2455a4;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.boton-modificar {
+    padding: 8px 14px;
+    font-size: 13px;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.mensaje-info {
+    padding: 35px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.mensaje-info p {
+    color: #777;
+}

@@ -6,11 +6,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Usuario {
   @Id
+  @GeneratedValue
+  private Long id;
+
+  @Column(unique = true)
   private Long dominioId;
 
   @Column(nullable = false, unique = true)
@@ -51,4 +56,7 @@ public class Usuario {
     this.dominioId = dominioId;
   }
 
+  public Long getId() {
+    return id;
+  }
 }

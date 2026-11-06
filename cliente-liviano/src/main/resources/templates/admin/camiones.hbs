@@ -1,38 +1,69 @@
+
 {{#partial "contenido-header"}}{{/partial}}
 
 {{#partial "contenido"}}
-    <section class="camiones">
-        <h1>Listado de camiones</h1>
+    <link rel="stylesheet" href="/assets/css/vista-camiones.css">
 
-        <div class="acciones">
-            <a href="/camiones/nuevo" class="boton">Registrar camión</a>
+    <section class="camiones">
+        <div class="encabezado-seccion">
+            <div>
+                <h1>Gestión de camiones</h1>
+                <p>Consultá y administrá los camiones registrados en el sistema.</p>
+            </div>
+
+            <button>
+                <a href="/camiones/nuevo" class="boton">
+                    Registrar camión
+                </a>
+            </button>
         </div>
 
         {{#if camiones}}
             <div class="tabla-container">
-                <table>
+                <table class="tabla-camiones">
                     <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Patente</th>
-                        <th>Capacidad de carga (kg)</th>
-                        <th>Capacidad de volumen (m³)</th>
-                        <th>Altura (m)</th>
+                        <th>Capacidad de carga</th>
+                        <th>Capacidad de volumen</th>
+                        <th>Altura</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
+
                     <tbody>
                     {{#each camiones}}
                         <tr>
-                            <td>{{patente}}</td>
-                            <td>{{capacidadCarga}}</td>
-                            <td>{{capacidadVolumen}}</td>
-                            <td>{{altura}}</td>
+                            <td>{{id}}</td>
+                            <td class="patente">{{patente}}</td>
+                            <td>{{capacidadCarga}} kg</td>
+                            <td>{{capacidadVolumen}} m³</td>
+                            <td>{{altura}} m</td>
+                            <td>
+                                <span class="estado-camion">
+                                    {{estado}}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="/" class="boton boton-modificar">
+                                    Modificar
+                                </a>
+                            </td>
                         </tr>
                     {{/each}}
                     </tbody>
                 </table>
             </div>
         {{else}}
-            <p class="mensaje-info">Todavía no hay camiones registrados.</p>
+            <div class="mensaje-info">
+                <h3>No hay camiones registrados</h3>
+                <p>Cuando registres un camión, aparecerá en este listado.</p>
+                <a href="/camiones/nuevo" class="boton">
+                    Registrar primer camión
+                </a>
+            </div>
         {{/if}}
     </section>
 {{/partial}}

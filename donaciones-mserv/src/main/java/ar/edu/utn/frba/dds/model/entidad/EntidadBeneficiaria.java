@@ -52,13 +52,11 @@ public class EntidadBeneficiaria implements Destinatario{
 
   public EntidadBeneficiaria() {}
 
-  public EntidadBeneficiaria(String direccion, List<Mail> mails, String razonSocial, Telefono telefono, String tipo) {
+  public EntidadBeneficiaria(String direccion, List<Mail> mails, String razonSocial, Telefono telefono) {
     this.direccion = direccion;
     this.mailsContacto = mails;
     this.razonSocial = razonSocial;
     this.telefono = telefono;
-    this.tipo = tipo;
-
   }
 
   public Long getId() {

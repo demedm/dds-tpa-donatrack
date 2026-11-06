@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.GrpcClientLogistica;
 
+import ar.edu.utn.frba.dds.dto.autenticacion.RegistroRequest;
 import ar.edu.utn.frba.dds.grpc.ConfirmationPlanificacionResponse;
 import ar.edu.utn.frba.dds.grpc.PlanificacionServiceGrpc;
 import ar.edu.utn.frba.dds.grpc.RegistroUsuarioResponse;
@@ -62,23 +63,45 @@ public class GrpcClientLogisticaImplementation {
     }
 
     public boolean enviarUsuario(Usuario usuario) {
-        try {
-            UsuarioRequest request = UsuarioRequest.newBuilder()
-                .setId(usuario.getDominioId())
-                .setEmail(usuario.getEmail())
-                .setRol(usuario.getRol().name())
-                .build();
+        UsuarioRequest request = UsuarioRequest.newBuilder()
+            .setId(usuario.getId())
+            .setEmail(usuario.getEmail())
+            .setRol(usuario.getRol().name())
+            .build();
 
-            RegistroUsuarioResponse response = usuarioStub.registrarUsuario(request);
+        return enviarRequest(request);
+    }
+
+    public boolean enviarBeneficiario(
+        Usuario usuario,
+        RegistroRequest registro
+    ) {
+        UsuarioRequest request = UsuarioRequest.newBuilder()
+            .setId(usuario.getId())
+            .setEmail(usuario.getEmail())
+            .setRol(usuario.getRol().name())
+            .setRazonSocial(registro.getRazonSocial())
+            .setDireccion(registro.getDireccion())
+            .build();
+
+        return enviarRequest(request);
+    }
+
+    private boolean enviarRequest(UsuarioRequest request) {
+        try {
+            RegistroUsuarioResponse response =
+                usuarioStub.registrarUsuario(request);
 
             System.out.println("Respuesta de Logística: " + response.getMensaje());
 
             return response.getExito();
-        } catch (StatusRuntimeException e) {
-            System.err.println("Error gRPC al enviar usuario a Logística: ");
+
+        } catch (io.grpc.StatusRuntimeException e) {
+            System.err.println("Error gRPC: " + e.getStatus());
             return false;
+
         } catch (Exception e) {
-            System.err.println("Error al enviar usuario a Logística: " + e.getMessage());
+            System.err.println("Error al enviar usuario: " + e.getMessage());
             return false;
         }
     }

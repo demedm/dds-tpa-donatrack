@@ -15,6 +15,10 @@ public class EntidadRepository implements WithSimplePersistenceUnit {
         necesidad.setEntidadId(entidad.getId()));
   }
 
+  public void registrarEntidadSinNecesidades(EntidadBeneficiaria beneficiaria) {
+    entityManager().persist(beneficiaria);
+  }
+
   public EntidadBeneficiaria obtenerPorId(Long id) {
     return entityManager().find(EntidadBeneficiaria.class, id);
   }
