@@ -81,6 +81,18 @@ public class LogisticaController {
   }
   public void entregasEnCurso(Context ctx) {
     var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
-    ctx.render("entregas-en-curso.hbs", Map.of("idUsuario", idUsuario));
-  }
+    
+    
+    List<EntregaDTO> entregas = logisticaService.obtenerEntregasEnCurso(idUsuario);
+
+
+    String puntosJson = new ObjectMapper().writeValueAsString(entregas);
+
+    ctx.render("entregas-en-curso.hbs", Map.of(
+        "idUsuario", idUsuario,
+        "enCurso", entregas,
+        "puntosJson", puntosJson
+    ));
+}
+
 }
