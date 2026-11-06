@@ -36,7 +36,7 @@ class ClientTest {
   void setUp() {
     httpClientMock = mock(HttpClient.class);
     httpResponseMock = mock(HttpResponse.class);
-    clientDonaciones = new ClientDonaciones(httpClientMock, "http://localhost:9001/");
+    //clientDonaciones = new ClientDonaciones(httpClientMock, "http://localhost:9001/");
     clientPlanificacion = new ClientPlanificacion(httpClientMock, "http://localhost:9002/");
 
     responseOk = mock(HttpResponse.class);

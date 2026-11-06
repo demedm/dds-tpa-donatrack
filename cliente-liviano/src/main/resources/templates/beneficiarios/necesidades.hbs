@@ -8,15 +8,14 @@
 <body>
 <div class="container">
     <h1>{{titulo}}</h1>
-    <a href="http://localhost:9002/usuarios/1/entregas-en-curso" class="btn btn-info">
-        Ver envíos en recorrido
+    <a href="/usuarios/{{idUsuario}}/entregas-en-curso" class="btn btn-info">
+         Ver envíos en recorrido
     </a>
     <form action="/necesidades" method="post" class="nueva-necesidad-post">
-        <label>Entidad ID (por ahora MOCK):</label>
-        <input type="text" name="entidadId" value="001" required>
+        <!-- El ID de la entidad ya no se pide por input: el Cliente Liviano lo asocia con la sesión -->
 
-        <label>Descripcion: </label>
-        <input type="text" name="descripcion" placeholder="Ej:Bebidas para comedor">
+        <label>Descripción: </label>
+        <input type="text" name="descripcion" placeholder="Ej: Bebidas para comedor" required>
 
         <label>Tipo de necesidad: </label>
         <select name="tipo">
@@ -24,7 +23,7 @@
             <option value="RECURRENTE">Recurrente</option>
         </select>
 
-        <label>Dias de recurrencia: </label>
+        <label>Días de recurrencia: </label>
         <input type="number" name="diasRecurrencia" placeholder="Ej: 7">
 
         <button type="submit">Crear necesidad y agregar peticiones</button>

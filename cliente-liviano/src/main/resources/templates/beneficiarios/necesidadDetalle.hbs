@@ -68,11 +68,15 @@
     </section>
 
     <h2>Completar y Adjuntar Comprobante/Foto</h2>
-    <form action="/necesidades/{{necesidad.id}}/adjuntos" method="POST" enctype="multipart/form-data">
-        <label>Seleccionar Imagen:</label>
-        <input type="file" name="foto" accept="image/*" required>
+    <h2>Agregar Peticion</h2>
+    <form action="/necesidades/{{necesidad.id}}/peticiones" method="POST">
+        <label>Subclase / Item:</label>
+        <input type="text" name="subclase" placeholder="Ej: ARROZ, FIDEOS" required>
 
-        <button type="submit">Subir Foto</button>
+        <label>Cantidad Requerida:</label>
+        <input type="number" name="cantidadRequerida" min="1" required>
+
+        <button type="submit">Agregar Petición</button>
     </form>
 
     {{#if necesidad.tieneAdjuntos}}
