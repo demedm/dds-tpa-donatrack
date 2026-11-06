@@ -45,7 +45,7 @@ public class UsuarioController {
 
 
     if (entrega.getEstado() == EstadoEntrega.ENTREGADA) {
-      clienteDonaciones.notificarCambioEstado(entrega.getDonacionId(), "ENTREGADA");
+      clienteDonaciones.notificarEntregaExitosa(entrega);
     }
 
     ctx.status(200);
@@ -84,7 +84,7 @@ public class UsuarioController {
 
     if (ruta.getEntregas() != null) {
       for (Entrega entrega : ruta.getEntregas()) {
-        clienteDonaciones.notificarCambioEstado(entrega.getDonacionId(), "EN_TRASLADO");
+        clienteDonaciones.notificarInicioDeRuta(entrega, ruta);
       }
     }
 

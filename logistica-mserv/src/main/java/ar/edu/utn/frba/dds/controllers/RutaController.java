@@ -9,11 +9,13 @@ import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.RutaDto;
 import io.javalin.http.Context;
+import ar.edu.utn.frba.dds.model.Camion;
+import java.time.LocalDateTime;
 import java.util.List;
 
-public class RutaController{
+public class RutaController {
   private final GrpcClientDonacionesImplementation cliente =
-          new GrpcClientDonacionesImplementation();
+      new GrpcClientDonacionesImplementation();
 
   public Ruta showRuta(Context ctx) {
     var id = Long.parseLong(ctx.pathParam("id"));
@@ -46,6 +48,7 @@ public class RutaController{
 
     ctx.status(201).json(rutaGuardada);
   }
+
   public Ruta postEntrega(Context ctx) {
     Long idRuta = Long.parseLong(ctx.pathParam("idRuta"));
     Entrega entrega = ctx.bodyValidator(Entrega.class)
@@ -89,7 +92,7 @@ public class RutaController{
           rutaActualizada.getEntregas().forEach(e -> {
             e.marcarComoIniciada();
             EntregaRepositorio.Instance.actualizar(e);
-            cliente.notificarCambioEstado(e.getDonacionId(), "EN_TRASLADO");
+            cliente.notificarInicioDeRuta(e, rutaActualizada);
           });
         }
         case CANCELADA -> {
@@ -156,7 +159,7 @@ public class RutaController{
     ruta.iniciarRuta();
     if (ruta.getEntregas() != null) {
       for (Entrega entrega : ruta.getEntregas()) {
-        cliente.notificarCambioEstado(entrega.getDonacionId(), "EN_TRASLADO");
+        cliente.notificarInicioDeRuta(entrega, ruta);
       }
     }
 
@@ -197,23 +200,29 @@ public class RutaController{
       ctx.status(404).result("Entrega no encontrada");
       return;
     }
+
     String urlFoto = ctx.formParam("fotoUrl");
     if (urlFoto != null && !urlFoto.isBlank()) {
       entrega.cargarFoto(urlFoto);
     }
-    entrega.setEstado(EstadoEntrega.ENTREGADA);
+
+    entrega.marcarComoEntregada(camionDe(entrega), LocalDateTime.now());
 
     EntregaRepositorio.Instance.actualizar(entrega);
 
-    boolean notificacionExitosa = cliente.notificarCambioEstado(entrega.getDonacionId(), "ENTREGADA");
+    boolean notificacionExitosa = cliente.notificarEntregaExitosa(entrega);
 
     if (notificacionExitosa) {
       ctx.status(200).result("Entrega recepcionada con éxito y Donaciones notificada.");
     } else {
-      ctx.status(502).result("Advertencia: La entrega se guardó en Logística, pero Donaciones rechazó la actualización.");
+      ctx.status(502).result(
+          "Advertencia: La entrega se guardó en Logística, pero Donaciones rechazó la actualización.");
     }
   }
 
+  private Camion camionDe(Entrega entrega) {
+    return entrega.getRuta() != null ? entrega.getRuta().getCamion() : null;
+  }
   public void rechazarEntrega(Context ctx) {
     Long idEntrega = Long.parseLong(ctx.pathParam("idEntrega"));
 

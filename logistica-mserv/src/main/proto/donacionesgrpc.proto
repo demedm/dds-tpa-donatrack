@@ -9,10 +9,16 @@ service donacionesService{
       }
 
       message ActualizacionEstadoRequest {
-      int64 donacion_id = 1;
-      string nuevo_estado = 2;
-      string motivo = 3;
-      bool replanificable = 4;
+          int64 donacion_id = 1;
+          string nuevo_estado = 2;
+          string motivo = 3;
+          bool replanificable = 4;
+
+          //datos para notis
+          string ruta_id = 5;  //inicio ruta
+          string url_mapa = 6;  //seeguimiento
+          string fecha_hora = 7;  // para entrega exitosa
+          string patente_camion = 8;
       }
 
       message ActualizacionEstadoResponse {

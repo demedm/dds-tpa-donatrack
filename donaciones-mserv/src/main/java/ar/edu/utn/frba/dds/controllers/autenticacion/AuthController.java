@@ -15,6 +15,7 @@ import ar.edu.utn.frba.dds.model.donantes.TipoPersona;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.medioscontacto.Mail;
 import ar.edu.utn.frba.dds.model.medioscontacto.Telefono;
+import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import ar.edu.utn.frba.dds.repositories.autenticacion.AutenticacionRepositorio;
 import ar.edu.utn.frba.dds.repositories.usuarios.UsuariosRepositorio;
@@ -63,6 +64,13 @@ public class AuthController {
         UsuariosRepositorio.Instance.registrarUsuarioDeBeneficiario(usuario, beneficiaria, request);
       } else {
         UsuariosRepositorio.Instance.registrarUsuarioDeAdmin(usuario);
+      }
+      UsuariosRepositorio.Instance.registrar(usuario);
+      try {
+        EventoNotificacionService.Instance.notificarBienvenida(new Mail(usuario.getEmail()));
+      } catch (Exception e) {
+        System.err.println("[Bienvenida] No se pudo notificar a "
+            + usuario.getEmail() + ": " + e.getMessage());
       }
       ctx.status(201);
     } catch (MailAlreadyRegisteredException e) {

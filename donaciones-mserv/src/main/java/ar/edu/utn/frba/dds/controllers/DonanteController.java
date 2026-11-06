@@ -30,7 +30,9 @@ public class DonanteController implements WithSimplePersistenceUnit {
       registroDonante.registrarDonante(nuevoDonante));
 
     if (esNuevo) {
+      enviarBienvenida(nuevoDonante);
       ctx.status(201).json(nuevoDonante);
+      return;
     }
 
     ctx.status(204).json(nuevoDonante);
@@ -41,7 +43,6 @@ public class DonanteController implements WithSimplePersistenceUnit {
     try{
       notificaciones.notificarBienvenida(donante);
     }catch(Exception e){
-      // El alta ya está confirmada: que falle el mail no la invalida
       System.err.println("[Bienvenida] No se pudo notificar a "
           + donante.getNombreIdentificador() + ": " + e.getMessage());
     }

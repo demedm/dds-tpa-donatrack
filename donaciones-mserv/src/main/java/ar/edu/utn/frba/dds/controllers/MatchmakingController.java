@@ -7,6 +7,8 @@ import ar.edu.utn.frba.dds.dto.salida.PropuestasSalidaDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.model.necesidad.Peticion;
+import ar.edu.utn.frba.dds.model.donantes.Persona;
+import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.repositories.*;
 
 import java.util.List;
@@ -21,6 +23,8 @@ import io.javalin.http.NotFoundResponse;
 import io.javalin.http.UnauthorizedResponse;
 
 public class MatchmakingController implements WithSimplePersistenceUnit {
+
+  private final EventoNotificacionService notificaciones = EventoNotificacionService.Instance;
 
   public PropuestasSalidaDTO obtenerRanking(Context ctx) {
     Long idSegmentada = ctx.queryParamAsClass("donacionSegmentadaId", Long.class).get();
@@ -39,7 +43,6 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
     });
   }
 
-  // El administrador elige la entidad final
   public DonacionSegmentadaSalidaDTO asignarDonacion(Context ctx) {
     AsignarDonacionDTO dto = ctx.bodyAsClass(AsignarDonacionDTO.class);
 
@@ -61,20 +64,19 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
           + " no está entre las propuestas de la donación " + segmentada.getId());
     }
 
-    // La primera petición de la entidad que esta donación puede cubrir (o ninguna)
     Peticion peticion = entidad.getNecesidades().stream()
         .flatMap(necesidad -> necesidad.getPeticiones().stream())
         .filter(segmentada::puedeCubrir)
         .findFirst()
         .orElse(null);
 
-    // Se compromete la cantidad; se suma como recibida recién cuando se confirma la entrega
     withTransaction(() -> segmentada.asignarA(entidad.getId(), peticion));
+
+    avisarAsignacion(segmentada, entidad);
 
     return DonacionSegmentadaSalidaDTO.desde(segmentada);
   }
 
-  // Ejecución a demanda: valida el token y lanza el matchmaking en otro hilo
   public Map<String, Object> procesarPendientes(Context ctx) {
     validarTokenDeJob(ctx);
     AsignacionCronScheduler.ejecutarAhora();
@@ -85,6 +87,31 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
     String tokenEsperado = System.getenv("MATCHMAKING_JOB_TOKEN");
     if (tokenEsperado == null || !tokenEsperado.equals(ctx.header("X-Job-Token"))) {
       throw new UnauthorizedResponse("No autorizado");
+    }
+  }
+  private void avisarAsignacion(DonacionSegmentada segmentada, EntidadBeneficiaria entidad) {
+    String nombreEntidad = entidad.nombreParaMostrar();
+
+    Persona donante = segmentada.getDonante();
+    if (donante != null) {
+      try {
+        notificaciones.notificarDonacionAsignadaDonante(
+            donante, segmentada.getId(), nombreEntidad);
+      } catch (Exception e) {
+        System.err.println("[Asignacion] No se pudo avisar al donante de la donacion "
+            + segmentada.getId() + ": " + e.getMessage());
+      }
+    } else {
+      System.err.println("[Asignacion] La donacion " + segmentada.getId()
+          + " no tiene donante resoluble: no se le avisa.");
+    }
+
+    try {
+      notificaciones.notificarDonacionAsignadaBeneficiario(
+          entidad, nombreEntidad, segmentada.getId());
+    } catch (Exception e) {
+      System.err.println("[Asignacion] No se pudo avisar a la entidad " + nombreEntidad
+          + ": " + e.getMessage());
     }
   }
 }
