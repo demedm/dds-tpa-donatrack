@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.server.templates;
 
+import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import io.javalin.http.Context;
@@ -17,6 +18,10 @@ public class JavalinHandlebars implements FileRenderer {
     @NotNull
     @Override
     public String render(@NotNull String path, @NotNull Map<String, ?> model, @NotNull Context context) {
+        Map<String, Object> modelo = new HashMap<>(model);
+        UsuarioLogueado usuario = context.attribute("usuarioLogueado");
+        modelo.put("logueado", usuario != null);
+
         Template template = null;
         try {
             template = handlebars.compile("templates/" + path.replace(".hbs",""));

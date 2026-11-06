@@ -16,6 +16,7 @@ public class RolMiddleware {
 
     if (usuario == null) {
       ctx.status(403);
+      ctx.redirect("/login");
       return;
     }
 

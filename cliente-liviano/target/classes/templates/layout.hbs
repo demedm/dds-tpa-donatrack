@@ -19,13 +19,13 @@
     <nav>
         <div>
             <a href="/">Home</a>
-            <a href="/donaciones">Donaciones</a>
             <a href="/legal">Legal</a>
-            <a href="/registro">Registro</a>
             {{#if logueado }}
-            <a href="/">Cerrar sesión</a>
+                <a href="/donaciones">Donaciones</a>
+                <a href="/logout">Cerrar sesión</a>
             {{else}}
-            <a href="/login">Iniciar sesión</a>
+                <a href="/registro">Registro</a>
+                <a href="/login">Iniciar sesión</a>
             {{/if}}
         </div>
     </nav>

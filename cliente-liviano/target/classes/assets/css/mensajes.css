@@ -1,0 +1,15 @@
+.mensaje {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.error {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.exito {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}

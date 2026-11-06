@@ -7,6 +7,7 @@ import ar.edu.utn.frba.dds.controllers.HomeController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import ar.edu.utn.frba.dds.controllers.RolMiddleware;
 import ar.edu.utn.frba.dds.controllers.SessionController;
+import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
 import ar.edu.utn.frba.dds.session.Rol;
 import io.javalin.Javalin;
@@ -21,18 +22,22 @@ public class Router {
     var logisticaController = new LogisticaController();
     var adminController = new AdminController();
 
+    app.before(this::cargarSesion);
+
     // rutas publicas
     app.get("/", home::landing);
     app.get("/legal", home::mostrarLegal);
 
-    app.before("/login", ctx -> redireccionar(ctx, "/login"));
+    app.before("/login", this::noAutenticados);
     app.get("/login", session::login);
     app.post("/login", session::create);
-    app.before("/registro", ctx -> redireccionar(ctx, "/registro"));
+    app.before("/registro", this::noAutenticados);
     app.get("/registro", session::mostrarRegistro);
     app.post("/registro", session::registrarUsuario);
 
-    app.before("/donaciones", ctx -> redireccionar(ctx, "/donaciones"));
+    app.get("/logout", session::logout);
+
+    app.before("/donaciones", this::autenticados);
     app.get("/donaciones", donacionController::mostrarDonaciones);
     app.post("/donaciones", donacionController::registrarDonacion);
 
@@ -43,6 +48,7 @@ public class Router {
 
     app.before("/admin/*", session::validarAutenticacion);
     app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
+    app.get("/admin/panel", adminController::administracion);
     app.get("/admin/camiones", logisticaController::mostrarCamiones);
     app.get("/admin/donaciones", donacionController::mostrarDonaciones);
     app.post("/admin/donaciones", donacionController::registrarDonacion);
@@ -50,16 +56,29 @@ public class Router {
 
   }
 
-  private void redireccionar(Context ctx, String path) {
+  private void cargarSesion(Context ctx) {
     String token = ctx.cookie("session");
     if (token == null || token.isBlank()) {
       return;
     }
     try {
-      JwtRepositorio.Instance.obtenerUsuario(token);
-      ctx.redirect("/");
+      ctx.attribute("usuarioLogueado", JwtRepositorio.Instance.obtenerUsuario(token));
     } catch (Exception e) {
-      ctx.redirect(path);
+      // vencido, firma inválida o rol desconocido: se borra la cookie y se sigue como visitante
+      System.err.println("Sesión descartada: " + e.getMessage());
+      ctx.header("Set-Cookie", "session=; Path=/; HttpOnly; SameSite=Lax; Secure");
+    }
+  }
+
+  private void noAutenticados(Context ctx) {
+    if (ctx.attribute("usuarioLogueado") != null) {
+      ctx.redirect("/");
+    }
+  }
+
+  private void autenticados(Context ctx) {
+    if (ctx.attribute("usuarioLogueado") == null) {
+      ctx.redirect("/login");
     }
   }
 }

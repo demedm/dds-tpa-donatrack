@@ -52,6 +52,11 @@ public class SessionController {
     ctx.render("login.hbs", modelo);
   }
 
+  public void logout(Context ctx) {
+    ctx.header("Set-Cookie", "session=; Path=/; HttpOnly; SameSite=Lax; Secure");
+    ctx.redirect("/");
+  }
+
   public void create(Context ctx) {
     String mail = ctx.formParam("email");
     String password = ctx.formParam("password");
@@ -80,7 +85,6 @@ public class SessionController {
         modelo.put("error", "Email o contraseña incorrectos");
         ctx.render("/login", modelo);
         ctx.status(401);
-        return;
       } else {
         Map<String, Object> modelo = new HashMap<>();
         modelo.put("error", "Ocurrió un error al iniciar sesión.");
@@ -146,6 +150,7 @@ public class SessionController {
 
   public void mostrarUsuarios(@NotNull Context ctx) {
   }
+
 }
 
 // JSESSIONID=node01rra7at67x33zkdgq3rqze4ck0.node0
