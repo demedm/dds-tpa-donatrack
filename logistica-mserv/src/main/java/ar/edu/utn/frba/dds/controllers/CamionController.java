@@ -3,9 +3,11 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.main.ClientDonaciones;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
+import ar.edu.utn.frba.dds.model.EstadoCamion;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
+import ar.edu.utn.frba.dds.scripts.dto.vista_camiones.CamionRequest;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +65,30 @@ public class CamionController {
   }
 
   public void registrarCamion(@NotNull Context ctx) {
+    try {
+      CamionRequest request = ctx.bodyAsClass(CamionRequest.class);
 
+      Camion camion = new Camion(
+          request.getPatente(),
+          request.getCapacidadCarga(),
+          request.getCapacidadVolumen(),
+          request.getAltura()
+      );
+
+      Camion existente = CamionRepositorio.Instance.buscarPorPatente(request.getPatente());
+      if (existente != null) {
+        ctx.status(409);
+        return;
+      }
+
+      CamionRepositorio.Instance.registrar(camion);
+
+      ctx.status(201);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      ctx.status(400);
+    }
   }
 
   public void saveCamion(Context ctx) {

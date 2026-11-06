@@ -212,3 +212,25 @@ h1 {
     display: flex;
     gap: 8px;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+form label {
+    display: block;
+}
+
+form input,
+form select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

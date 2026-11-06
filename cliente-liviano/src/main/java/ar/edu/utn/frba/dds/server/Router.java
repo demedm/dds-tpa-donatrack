@@ -51,8 +51,10 @@ public class Router {
     app.get("/admin/panel", adminController::administracion);
     app.get("/admin/camiones", logisticaController::mostrarCamiones);
     app.get("/admin/donaciones", donacionController::mostrarDonaciones);
+    app.post("/admin/camiones", logisticaController::registrarCamion);
     app.post("/admin/donaciones", donacionController::registrarDonacion);
-    app.post("/admin/donantes", adminController::registrarDonante);
+    app.get("/admin/registro", session::mostrarRegistroAdmin);
+    app.post("/admin/registro", session::registrarUsuario);
     app.post("/admin/donantes/importar", adminController::importarDonantesDesdeCsv);
 
   }
