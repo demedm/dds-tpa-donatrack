@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.dto.salida.DonacionSegmentadaSalidaDTO;
 import ar.edu.utn.frba.dds.dto.salida.PropuestasSalidaDTO;
 import ar.edu.utn.frba.dds.model.Donaciones.DonacionSegmentada;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
+import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import ar.edu.utn.frba.dds.repositories.*;
 
 import java.util.List;
@@ -55,15 +56,15 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
       throw new NotFoundResponse("No se encontró la entidad " + dto.getEntidadBeneficiariaId());
     }
 
-    withTransaction(() -> {
-      entidad.getNecesidades().stream()
-          .flatMap(necesidad -> necesidad.getPeticiones().stream())
-          .filter(segmentada::puedeCubrir)
-          .findFirst()
-          .ifPresent(peticion ->
-              peticion.agregarCantidadRecibida(segmentada.getCantidad(), String.valueOf(segmentada.getId())));
-      segmentada.asignarA(entidad.getId());
-    });
+    // La primera petición de la entidad que esta donación puede cubrir (o ninguna)
+    Peticion peticion = entidad.getNecesidades().stream()
+        .flatMap(necesidad -> necesidad.getPeticiones().stream())
+        .filter(segmentada::puedeCubrir)
+        .findFirst()
+        .orElse(null);
+
+    // Se compromete la cantidad; se suma como recibida recién cuando se confirma la entrega
+    withTransaction(() -> segmentada.asignarA(entidad.getId(), peticion));
 
     return DonacionSegmentadaSalidaDTO.desde(segmentada);
   }

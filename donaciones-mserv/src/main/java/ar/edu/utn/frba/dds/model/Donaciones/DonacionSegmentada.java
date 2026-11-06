@@ -76,6 +76,11 @@ public class DonacionSegmentada {
   // Asignación a una entidad beneficiaria
   private Long entidadAsignadaId;
 
+  // La petición a la que va esta donación: al entregarse le suma lo recibido; si falla, la libera
+  @ManyToOne
+  @JoinColumn(name = "peticion_id")
+  private Peticion peticionCubierta;
+
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "donacion_segmentada_id")
   @OrderColumn(name = "orden")
@@ -145,7 +150,7 @@ public class DonacionSegmentada {
   // Traduce el texto que llega por HTTP a la transición correspondiente
   public void cambiarEstado(String nuevoEstado) {
     switch (nuevoEstado) {
-      case "PENDIENTE" -> setEstado(new EnDeposito());
+      case "PENDIENTE" -> volverAlDeposito();
       case "ASIGNADA" -> asignar();
       case "PLANIFICADA", "LISTA_PARA_ENTREGAR" -> planificarRuta();
       case "EN_TRASLADO" -> iniciarTraslado();
@@ -169,10 +174,21 @@ public class DonacionSegmentada {
   public void confirmarEntrega() {
     estadoActual.confirmarEntrega(this);
     fechaDeEntrega = LocalDate.now();
+    if(peticionCubierta != null) {
+      peticionCubierta.agregarCantidadRecibida(getCantidad());
+    }
   }
   public void fallarEntrega(String justificacion) {
     estadoActual.fallarEntrega(this, justificacion);
+    liberarAsignacion();
   }
+
+  // Logística la devuelve sin entregar (fin de ruta con la entrega pendiente)
+  public void volverAlDeposito() {
+    setEstado(new EnDeposito());
+    liberarAsignacion();
+  }
+
   public void vencer() {
     estadoActual.vencer(this);
   }
@@ -199,15 +215,37 @@ public class DonacionSegmentada {
     this.entidadAsignadaId = entidadAsignadaId;
   }
 
-  public void asignarA(Long entidadId) {
+  public void asignarA(Long entidadId, Peticion peticion) {
     asignar();
     this.entidadAsignadaId = entidadId;
+    this.peticionCubierta = peticion;
+
+    if (peticion != null) {
+      peticion.comprometer(getCantidad());      // todavía no llegó: queda "en camino"
+    }
   }
 
+  public Peticion getPeticionCubierta() {
+    return peticionCubierta;
+  }
+
+  // Si estaba asignada y no se entregó, se deshace la asignación.
+  // Puede llamarse dos veces en una misma falla (EnTraslado → EntregaFallida → EnDeposito):
+  // la segunda vez peticionCubierta ya es null y no libera de nuevo
+  private void liberarAsignacion() {
+    if(peticionCubierta != null) {
+      peticionCubierta.liberar(getCantidad());
+      peticionCubierta = null;
+    }
+    entidadAsignadaId = null;
+  }
+
+  // Está en depósito, es de la subcategoría pedida y a la petición todavía le falta asignar
+  // (contando lo que ya viene en camino, para no asignar de más)
   public boolean puedeCubrir(Peticion peticion) {
     return estaAlmacen()
         && peticion.getSubclase().equalsIgnoreCase(getSubcategoria().getDescripcion())
-        && peticion.getCantidadRecibida().compareTo(peticion.getCantidadRequerida()) < 0;
+        && peticion.faltaAsignar();
   }
 
 

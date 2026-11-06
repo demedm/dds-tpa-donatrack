@@ -256,6 +256,74 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
     assertTrue(repo.findSegmentadaById(idSegmentada).getIdsEntidadesPropuestas().contains(comedor.getId()));
   }
 
+  // ---------- Asignación y entrega: la petición ----------
+
+  @Test
+  void laDonacionAsignadaRecuerdaSuPeticionYLaCantidadComprometida() {
+    Donacion donacion = donacionDeArrozYSilla();
+    repo.guardar(donacion);
+    Long idSegmentada = segmentadaDe(donacion, arroz).getId();   // 2 bienes: 10 + 5
+    Peticion peticion = peticionPersistida("ARROZ", "100");
+
+    repo.findSegmentadaById(idSegmentada).asignarA(entidadPersistidaId(), peticion);
+    sincronizarYLimpiar();
+
+    DonacionSegmentada leida = repo.findSegmentadaById(idSegmentada);
+    assertNotNull(leida.getPeticionCubierta());
+    assertEquals(peticion.getId(), leida.getPeticionCubierta().getId());
+    assertEquals(0, new BigDecimal("15").compareTo(leida.getPeticionCubierta().getCantidadComprometida()));
+    assertEquals(0, BigDecimal.ZERO.compareTo(leida.getPeticionCubierta().getCantidadRecibida()));
+  }
+
+  @Test
+  void alConfirmarseLaEntregaLaPeticionGuardaLoRecibido() {
+    Donacion donacion = donacionDeArrozYSilla();
+    repo.guardar(donacion);
+    Long idSegmentada = segmentadaDe(donacion, arroz).getId();
+    Peticion peticion = peticionPersistida("ARROZ", "100");
+
+    DonacionSegmentada segmentada = repo.findSegmentadaById(idSegmentada);
+    segmentada.asignarA(entidadPersistidaId(), peticion);
+    segmentada.planificarRuta();
+    segmentada.iniciarTraslado();
+    sincronizarYLimpiar();
+
+    // como llega el aviso de logística: se busca por id y se cambia el estado
+    repo.findSegmentadaById(idSegmentada).cambiarEstado("ENTREGADA");
+    sincronizarYLimpiar();
+
+    Peticion leida = entityManager().find(Peticion.class, peticion.getId());
+    assertEquals(0, new BigDecimal("15").compareTo(leida.getCantidadRecibida()));
+    assertEquals(0, BigDecimal.ZERO.compareTo(leida.getCantidadComprometida()));
+  }
+
+  @Test
+  void siLaEntregaFallaLaBaseQuedaSinAsignacion() {
+    Donacion donacion = donacionDeArrozYSilla();
+    repo.guardar(donacion);
+    Long idSegmentada = segmentadaDe(donacion, arroz).getId();
+    Peticion peticion = peticionPersistida("ARROZ", "100");
+
+    DonacionSegmentada segmentada = repo.findSegmentadaById(idSegmentada);
+    segmentada.asignarA(entidadPersistidaId(), peticion);
+    segmentada.planificarRuta();
+    segmentada.iniciarTraslado();
+    sincronizarYLimpiar();
+
+    DonacionSegmentada enTraslado = repo.findSegmentadaById(idSegmentada);
+    enTraslado.setJustificacionFallo("Nadie respondió");
+    enTraslado.cambiarEstado("FALLIDA");
+    sincronizarYLimpiar();
+
+    DonacionSegmentada leida = repo.findSegmentadaById(idSegmentada);
+    assertTrue(leida.estaAlmacen());
+    assertNull(leida.getPeticionCubierta());
+    assertNull(leida.getEntidadAsignadaId());
+    Peticion peticionLeida = entityManager().find(Peticion.class, peticion.getId());
+    assertEquals(0, BigDecimal.ZERO.compareTo(peticionLeida.getCantidadComprometida()));
+    assertEquals(0, BigDecimal.ZERO.compareTo(peticionLeida.getCantidadRecibida()));
+  }
+
   // ---------- Helpers ----------
 
   // 2 bienes de arroz con el mismo vencimiento (una segmentada) y una silla (otra segmentada)
@@ -280,6 +348,21 @@ public class PersistenciaDonacionesTest implements SimplePersistenceTest {
 
   // flush: manda a la base lo pendiente (dentro de la transacción del test)
   // clear: olvida los objetos en memoria, para que lo siguiente se lea DE LA BASE
+  // entidadAsignadaId tiene FK a entidades_beneficiarias: la entidad tiene que existir
+  private Long entidadPersistidaId() {
+    EntidadBeneficiaria comedor = entidad(null);
+    entityManager().persist(comedor);
+    return comedor.getId();
+  }
+
+  private Peticion peticionPersistida(String subclase, String cantidad) {
+    Necesidad necesidad = new Necesidad();
+    Peticion peticion = new Peticion(subclase, new BigDecimal(cantidad));
+    necesidad.agregarPeticion(peticion);
+    entityManager().persist(necesidad);   // cascade ALL: guarda también la petición
+    return peticion;
+  }
+
   private void sincronizarYLimpiar() {
     entityManager().flush();
     entityManager().clear();

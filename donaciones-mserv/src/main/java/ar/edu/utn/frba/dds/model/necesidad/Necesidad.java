@@ -93,6 +93,11 @@ public class Necesidad {
     RECURRENTE
   };
 
+  // Cubierta cuando todas sus peticiones recibieron lo que pedían
+  public boolean estaCubierta() {
+    return !peticiones.isEmpty() && peticiones.stream().allMatch(Peticion::estaCubierta);
+  }
+
   public boolean estaVencida(){
     return this.proximoVencimiento.isBefore(LocalDate.now());
   }

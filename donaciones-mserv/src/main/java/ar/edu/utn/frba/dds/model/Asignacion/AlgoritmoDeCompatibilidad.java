@@ -32,7 +32,7 @@ public class AlgoritmoDeCompatibilidad implements AlgoritmoAsignacion {
     return entidad.getNecesidades().stream()
         .flatMap(n -> n.getPeticiones().stream())
         .filter(p -> p.getSubclase().equalsIgnoreCase(donacion.getSubcategoria().getDescripcion())
-            && p.getCantidadRecibida().compareTo(p.getCantidadRequerida()) < 0)
+            && p.faltaAsignar())
         .count();
   }
 }
