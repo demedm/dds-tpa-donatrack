@@ -50,6 +50,7 @@ public class Router {
     app.post("/usuarios/{idUsuario}/rutas/{id}/iniciar",
         usuarioController::iniciarRuta);
     app.get("/usuarios/{id}", usuarioController::showUsuario);
+    app.get("/usuarios/{idUsuario}/entregas-en-curso", usuarioController::entregasEnCurso);
 
     // RECEPCION DE DONACIONES
     app.post("/donaciones/{id}", callbackController::recibirDonacion);

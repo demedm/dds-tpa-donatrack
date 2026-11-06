@@ -93,4 +93,12 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
         .getSingleResult();
   }
 
+  public List<Entrega> buscarEnTrasladoDeEntidad(Long idEntidad) {
+    return entityManager()
+            .createQuery("from Entrega e where e.entidadBeneficiaria.id = :id and e.estado = :estado", Entrega.class)
+            .setParameter("id", idEntidad)
+            .setParameter("estado", EstadoEntrega.EN_TRASLADO)
+            .getResultList();
+  }
+
 }

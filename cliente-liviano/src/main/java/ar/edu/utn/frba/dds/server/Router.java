@@ -46,6 +46,10 @@ public class Router {
     app.post("/necesidades/{id}/peticiones/",necesidadController::agregarPeticion);
     app.post("/necesidades/{id}/adjuntos", necesidadController::subirAdjunto);
 
+    app.before("/usuarios/*", this::autenticados);
+    app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    app.get("/usuarios/{idUsuario}/entregas-en-curso", logisticaController::entregasEnCurso);
+
     app.before("/admin/*", session::validarAutenticacion);
     app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
     app.get("/admin/panel", adminController::administracion);

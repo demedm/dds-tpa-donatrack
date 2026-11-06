@@ -220,4 +220,12 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
       entityManager().remove(entityManager().contains(ruta) ? ruta : entityManager().merge(ruta));
     });
   }
+  public Ruta buscarRutaDeEntrega(Long idEntrega) {
+    List<Ruta> resultados = entityManager()
+            .createQuery("select r from Ruta r join r.entregas e where e.id = :idEntrega", Ruta.class)
+            .setParameter("idEntrega", idEntrega)
+            .getResultList();
+
+    return resultados.isEmpty() ? null : resultados.get(0);
+  }
 }
