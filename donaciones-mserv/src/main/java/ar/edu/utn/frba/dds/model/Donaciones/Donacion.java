@@ -77,7 +77,6 @@ public class Donacion {
     return id;
   }
 
-  @JsonIgnore
   public Persona getDonante(){
     return donante;
   }

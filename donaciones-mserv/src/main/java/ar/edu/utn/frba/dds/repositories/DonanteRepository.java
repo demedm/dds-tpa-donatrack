@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class DonanteRepository implements WithSimplePersistenceUnit {
+
   public static DonanteRepository Instance = new DonanteRepository();
 
   private EventoNotificacionService notificaciones = EventoNotificacionService.Instance;
@@ -18,35 +19,20 @@ public class DonanteRepository implements WithSimplePersistenceUnit {
     this.notificaciones = notificaciones;
   }
 
-  public void registrarDonante(Persona nuevoDonante) {
+  public boolean registrarDonante(Persona nuevoDonante) {
 
     Optional<Persona> existente = buscarPorEmail(nuevoDonante.getMail().getMedioContacto());
 
-    withTransaction(() -> {
-      if (existente.isPresent()) {
-        Persona personaGuardada = existente.get();
-        personaGuardada.actualizarInfo(nuevoDonante);
-        entityManager().merge(personaGuardada);
-        System.out.println("Donante actualizado");
-
-      } else {
-        entityManager().persist(nuevoDonante);
-        System.out.println("Nuevo donante registrado");
-
-      //  notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
-      }
-    });
-
-    if (existente.isEmpty()) {
-      try {
-        notificaciones.notificarBienvenida(nuevoDonante);
-      } catch (Exception e) {
-        // El alta ya esta confirmada: que falle el mail no la invalida.
-        System.err.println("[Bienvenida] No se pudo notificar a "
-            + nuevoDonante.getNombreIdentificador() + ": " + e.getMessage());
-      }
+    if (existente.isPresent()) {
+      Persona personaGuardada = existente.get();
+      personaGuardada.actualizarInfo(nuevoDonante);
+      return false;
     }
-  }
+
+    entityManager().persist(nuevoDonante);
+    return true;
+
+    }
 
   public Optional<Persona> buscarPorEmail(String direccionMail) {
     return entityManager()
@@ -59,12 +45,12 @@ public class DonanteRepository implements WithSimplePersistenceUnit {
 
   public boolean eliminarPorEmail(String direccionMail) {
     Optional<Persona> existente = buscarPorEmail(direccionMail);
+
     if (existente.isPresent()) {
-      withTransaction(() -> {
-        entityManager().remove(existente.get());
-      });
+      entityManager().remove(existente.get());
       return true;
     }
+
     return false;
   }
 

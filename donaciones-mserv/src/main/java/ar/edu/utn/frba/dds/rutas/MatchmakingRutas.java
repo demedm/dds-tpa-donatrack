@@ -12,7 +12,7 @@ public class MatchmakingRutas {
     MatchmakingController matchmakingController = new MatchmakingController();
 
     path("matchmaking",() -> {
-      get("ranking", ctx ->
+      get("rankings", ctx ->
           ctx.status(200).json(matchmakingController.obtenerRanking(ctx)));
       post("asignaciones",ctx ->
           ctx.status(200).json(matchmakingController.asignarDonacion(ctx)));

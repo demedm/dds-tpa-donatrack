@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.model.notificaciones.Destinatario;
 import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.EntidadRepository;
+import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.http.Context;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
  * REST. Donaciones es quien conoce a los donantes, a las entidades y sus medios
  * de contacto; duplicar Twilio y SMTP en los dos servicios seria peor.
  */
-public class EstadoEntregaController {
+public class EstadoEntregaController implements WithSimplePersistenceUnit {
 
   private final EventoNotificacionService notificaciones;
 
@@ -50,12 +51,13 @@ public class EstadoEntregaController {
       return;
     }
 
-    // La justificación va antes: fallarEntrega() la usa al cambiar de estado
-    if (cambio.getMotivoFalla() != null) {
-      segmentada.setJustificacionFallo(cambio.getMotivoFalla());
-    }
-    segmentada.cambiarEstado(cambio.getNuevoEstado());
-    DonacionesRepository.Instance.actualizarSegmentada(segmentada);
+    withTransaction( () -> {
+      // La justificación va antes: fallarEntrega() la usa al cambiar de estado
+      if (cambio.getMotivoFalla() != null) {
+        segmentada.setJustificacionFallo(cambio.getMotivoFalla());
+      }
+      segmentada.cambiarEstado(cambio.getNuevoEstado());
+    });
 
     List<Destinatario> involucrados = involucradosEn(segmentada);
 

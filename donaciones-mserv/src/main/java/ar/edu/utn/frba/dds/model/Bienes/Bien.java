@@ -82,7 +82,6 @@ public class Bien {
     return criterio;
   }
 
-  @JsonIgnore
   public Criterio getCriterioDeAgrupacion() {
     return new Criterio(subcategoria, criterio.valor());
   }
