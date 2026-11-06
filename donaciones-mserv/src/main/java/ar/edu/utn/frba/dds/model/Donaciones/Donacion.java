@@ -119,26 +119,4 @@ public class Donacion {
     return Collections.unmodifiableList(donacionesSegmentadas);
   }
 
-  /*
-  public List<DonacionSegmentada> asignarA(Necesidad necesidad){
-    List<DonacionSegmentada> segmentadas = new ArrayList<>();
-
-    for(DonacionSegmentada segmentada : donacionesSegmentadas){
-      necesidad.getPeticiones().stream()
-          .filter(segmentada::puedeCubrir)
-          .findFirst()
-          .ifPresent(peticion -> {
-            segmentada.asignarA(necesidad.getEntidadId());
-            peticion.agregarCantidadRecibida(segmentada.getCantidad(), String.valueOf(segmentada.getId()));
-            segmentadas.add(segmentada);
-          });
-    }
-    return segmentadas;
-  public void agregarDonaciones(DonacionSegmentada donacionSegmentada){
-    donacionesSegmentadas.add(donacionSegmentada);
-  }
-
-  }
-  */
-
 }

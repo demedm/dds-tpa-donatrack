@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.dto.DonacionSegmentadaDTO;
-import ar.edu.utn.frba.dds.main.Client;
+
 import java.net.http.HttpClient;
 import java.util.List;
 

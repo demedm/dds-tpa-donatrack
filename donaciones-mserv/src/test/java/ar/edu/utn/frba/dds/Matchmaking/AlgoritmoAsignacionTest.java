@@ -16,6 +16,7 @@ import ar.edu.utn.frba.dds.model.necesidad.Peticion;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +139,7 @@ public class AlgoritmoAsignacionTest {
   // La segmentada la arma la donación al segmentar sus bienes
   private static DonacionSegmentada segmentadaDe(String subcategoria, int cantidad){
     Subcategoria sub = new Subcategoria(Categoria.ALIMENTOS, subcategoria, UnidadMedida.UNIDADES);
-    Bien bien = new Bien(sub, null, subcategoria, cantidad, new PorVencimiento(LocalDate.now().plusMonths(6)));
+    Bien bien = new Bien(sub, null, subcategoria, BigDecimal.valueOf(cantidad), new PorVencimiento(LocalDate.now().plusMonths(6)));
     return new Donacion("Donación de prueba", List.of(bien), new PersonaFisica()).getSegmentadas().get(0);
   }
 
@@ -151,7 +152,7 @@ public class AlgoritmoAsignacionTest {
     Necesidad necesidad = new Necesidad();
 
     for (String subcategoria : subcategorias) {
-      necesidad.agregarPeticion(new Peticion(subcategoria,1));
+      necesidad.agregarPeticion(new Peticion(subcategoria, BigDecimal.ONE));
     }
     entidad.getNecesidades().add(necesidad);
     return entidad;

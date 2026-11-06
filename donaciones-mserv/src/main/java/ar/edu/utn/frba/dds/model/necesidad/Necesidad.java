@@ -13,13 +13,13 @@ import java.time.temporal.ChronoUnit;
 @Table(name = "necesidades")
 
 public class Necesidad {
-  @Id //La insatncio como primary key
-  @GeneratedValue(strategy = GenerationType.IDENTITY) //Hace autoincremento
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
 
   private Long id;
   private Long entidadId;
 
-  @Enumerated(EnumType.STRING) //Guarda el enum como texto
+  @Enumerated(EnumType.STRING)
   private TipoNecesidad tipo;
 
   private String estado = "en_preparacion";
@@ -32,8 +32,8 @@ public class Necesidad {
   @Column(name = "ruta_adjunto")
   private List<String> adjuntos = new ArrayList<>();
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //Con cascada puedo ahcer que caundo guardo o modifico la nencesidad, guardo todas las peticioens que le agregue
-  @JoinColumn(name = "necesidad_id") //El campo que vinculo a la necesidad. 
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @JoinColumn(name = "necesidad_id")
 
   public List<Peticion> peticiones = new ArrayList<>();
   //private List<String> idDonantesParticipantes = new ArrayList<>();
@@ -52,7 +52,6 @@ public class Necesidad {
 
   public Necesidad crearSiguienteRecurrencia(){
     List <Peticion> peticionesReiniciadas = new ArrayList<>();
-    //Tengo que crear una nueva porque si no sigue guardando la conexion 
     for(Peticion p: this.peticiones){
       Peticion nuevaPeticion= new Peticion(p.getSubclase(),p.getCantidadRequerida());
       peticionesReiniciadas.add(nuevaPeticion);
@@ -92,6 +91,11 @@ public class Necesidad {
     NORMAL,
     RECURRENTE
   };
+
+  // Cubierta cuando todas sus peticiones recibieron lo que pedían
+  public boolean estaCubierta() {
+    return !peticiones.isEmpty() && peticiones.stream().allMatch(Peticion::estaCubierta);
+  }
 
   public boolean estaVencida(){
     return this.proximoVencimiento.isBefore(LocalDate.now());

@@ -10,4 +10,8 @@ public class LogisticaController {
 
     ctx.render("admin/camiones.hbs", Map.of("camiones", camiones));
   }
+  public void entregasEnCurso(Context ctx) {
+    var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
+    ctx.render("entregas-en-curso.hbs", Map.of("idUsuario", idUsuario));
+  }
 }

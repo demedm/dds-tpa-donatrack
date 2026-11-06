@@ -73,26 +73,25 @@ public class SessionController {
         String token = json.get("token").asText();
 
         // setteo del token jwt para la sesion
-        ctx.header("Set-Cookie", "session=" + token +
-            "; Path=/; HttpOnly; SameSite=Lax; Secure");
+        ctx.header("Set-Cookie", "session=" + token + "; Path=/; HttpOnly; SameSite=Lax");
 
         UsuarioLogueado usuario = JwtRepositorio.Instance.obtenerUsuario(token);
         ctx.attribute("usuarioLogueado", usuario);
         ctx.status(200);
 
       } else if (response.statusCode() == 401) {
-        Map<String, Object> modelo = new HashMap<>();
-        modelo.put("error", "Email o contraseña incorrectos");
-        ctx.render("/login", modelo);
-        ctx.status(401);
+        // CAMBIAR ctx.render POR:
+        ctx.redirect("/login?error=true");
+        return;
       } else {
-        Map<String, Object> modelo = new HashMap<>();
-        modelo.put("error", "Ocurrió un error al iniciar sesión.");
-        ctx.render("/login?error=true", modelo);
+        // CAMBIAR ctx.render POR:
+        ctx.redirect("/login?error=true");
         return;
       }
       ctx.redirect("/");
     } catch (Exception e) {
+      System.err.println("--- ERROR EN LOGIN ---");
+      e.printStackTrace(); // Esto te mostrará en la consola de IntelliJ el error exacto
       ctx.redirect("/login?error=true");
     }
   }

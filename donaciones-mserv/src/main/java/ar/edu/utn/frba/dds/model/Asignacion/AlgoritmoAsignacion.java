@@ -9,5 +9,6 @@ public interface AlgoritmoAsignacion {
 
   List<EntidadBeneficiaria> obtenerRanking(DonacionSegmentada donacion, List<EntidadBeneficiaria> entidades);
 
+  String nombre();
 
 }

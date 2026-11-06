@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Envíos en Traslado</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #mapa { height: 420px; width: 100%; border-radius: 8px; margin-top: 15px; }
+        .tabla { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .tabla th, .tabla td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    </style>
+</head>
+<body>
+<h2>Mis Envíos en Curso</h2>
+
+<table class="tabla">
+    <thead>
+    <tr>
+        <th>ID Entrega</th>
+        <th>ID Donación</th>
+        <th>Dirección Destino</th>
+        <th>Estado</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each enCurso}}
+        <tr>
+            <td>{{this.id}}</td>
+            <td>{{this.donacionId}}</td>
+            <td>{{this.direccion}}</td>
+            <td><b style="color: green;">{{this.estado}}</b></td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
+
+<h3>Mapa de Ruta</h3>
+<div id="mapa"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const mapa = L.map('mapa').setView([-34.6037, -58.3816], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa);
+
+    fetch('/usuarios/{{idUsuario}}/entregas-en-curso', {
+        headers: { 'Accept': 'application/json' }
+    })
+            .then(res => res.json())
+            .then(entregas => {
+                entregas.forEach(entrega => {
+                    // Verificamos si vinieron la latitud y longitud del camión
+                    if (entrega.latitudCamion && entrega.longitudCamion) {
+                        L.marker([entrega.latitudCamion, entrega.longitudCamion])
+                                .addTo(mapa)
+                                .bindPopup(`🚚 <b>Camión en camino</b><br>Entrega #${entrega.id}<br>Donación #${entrega.donacionId}<br>Destino: ${entrega.direccion}`);
+                    }
+                });
+            });
+</script>
+</body>
+</html>

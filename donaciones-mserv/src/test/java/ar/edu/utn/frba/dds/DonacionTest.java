@@ -14,6 +14,7 @@ import ar.edu.utn.frba.dds.model.donantes.PersonaFisica;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class DonacionTest {
     Donacion donacion = new Donacion("desc", List.of(fideos(3, vencimiento), fideos(4, vencimiento)), donante);
 
     assertEquals(1, donacion.getSegmentadas().size());
-    assertEquals(7, donacion.getSegmentadas().get(0).getCantidad());
+    assertEquals(0, new BigDecimal("7").compareTo(donacion.getSegmentadas().get(0).getCantidad()));
   }
 
   @Test
@@ -78,13 +79,13 @@ public class DonacionTest {
         fideos(1, vencimiento.plusMonths(1)),
         silla(2, EstadoUso.USADO)), donante);
 
-    int total = 0;
+    BigDecimal total = BigDecimal.ZERO;
     for (DonacionSegmentada segmentada : donacion.getSegmentadas()) {
-      total += segmentada.getCantidad();
+      total = total.add(segmentada.getCantidad());
     }
 
     assertEquals(3, donacion.getSegmentadas().size());
-    assertEquals(10, total);
+    assertEquals(0, new BigDecimal("10").compareTo(total));
   }
 
   // ---------- Datos que la segmentada calcula ----------
@@ -126,16 +127,13 @@ public class DonacionTest {
   @Test
   public void unBienNoPuedeCrearseSinCriterio() {
     assertThrows(IllegalArgumentException.class,
-        () -> new Bien(subFideos, null, "fideos", 3, null));
-  }
+        () -> new Bien(subFideos, null, "fideos", new BigDecimal("3"), null));  }
 
   // ---------- Helpers ----------
 
   private Bien fideos(int cantidad, LocalDate vence) {
-    return new Bien(subFideos, null, "fideos", cantidad, new PorVencimiento(vence));
-  }
+    return new Bien(subFideos, null, "fideos", BigDecimal.valueOf(cantidad), new PorVencimiento(vence));  }
 
   private Bien silla(int cantidad, EstadoUso estado) {
-    return new Bien(subSillas, null, "silla", cantidad, new PorEstado(estado));
-  }
+    return new Bien(subSillas, null, "silla", BigDecimal.valueOf(cantidad), new PorEstado(estado));  }
 }

@@ -1,7 +1,6 @@
 package ar.edu.utn.frba.dds.model.necesidad;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 import javax.persistence.*;
 
 
@@ -13,24 +12,23 @@ public class Peticion {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String subclase;
-  private int cantidadRequerida;
-  private int cantidadRecibida = 0;
+
+  @Column (precision = 10, scale = 3)
+  private BigDecimal cantidadRequerida;
+
+  @Column (precision = 10, scale = 3)
+  private BigDecimal cantidadRecibida = BigDecimal.ZERO;
+
+  @Column (precision = 10, scale = 3)
+  private BigDecimal cantidadComprometida = BigDecimal.ZERO;
 
   @ManyToOne
   @JoinColumn(name = "necesidad_id")
   private Necesidad necesidad;
 
-  @ElementCollection
-  @CollectionTable(
-      name = "peticion_donaciones",
-      joinColumns = @JoinColumn(name = "peticion_id")
-  )
-  @Column(name = "donacion_id")
-  private List<String> donacionesAsignados = new ArrayList<>();
-
   public Peticion(){};
 
-  public Peticion(String subclase, int cantidadRequerida) {
+  public Peticion(String subclase, BigDecimal cantidadRequerida) {
     this.cantidadRequerida=cantidadRequerida;
     this.subclase=subclase;
   }
@@ -39,47 +37,57 @@ public class Peticion {
     this.subclase = subclase;
   }
 
-  public void setCantidadRequerida(int cantidadRequerida) {
+  public void setCantidadRequerida(BigDecimal cantidadRequerida) {
     this.cantidadRequerida = cantidadRequerida;
   }
 
-  public void setCantidadRecibida(int cantidadRecibida) {
+  public void setCantidadRecibida(BigDecimal cantidadRecibida) {
     this.cantidadRecibida = cantidadRecibida;
   }
 
-  public void setDonacionesAsignados(List<String> donacionesAsignados) {
-    this.donacionesAsignados.addAll(donacionesAsignados);
+  public Long getId() {
+    return id;
   }
 
-  public int getCantidadRecibida() {
+  public BigDecimal getCantidadComprometida() {
+    return cantidadComprometida;
+  }
+
+  public BigDecimal getCantidadRecibida() {
     return cantidadRecibida;
   }
 
-  public List<String> getDonacionesAsignados() {
-    return donacionesAsignados;
-  }
-
-  public List<String> getDonacionesAsignadas() {
-    return this.donacionesAsignados;
-  }
-
-  public Integer getCantidadRequerida(){
+  public BigDecimal getCantidadRequerida(){
     return cantidadRequerida;
   }
 
   public boolean estaCubierta(){
-    if (cantidadRequerida == 0) {
-      return true;
-    }else return false;
+    return cantidadRecibida.compareTo(cantidadRequerida) >= 0;
+  }
+
+  // Para el matchmaking: lo recibido más lo que viene en camino todavía no alcanza
+  public boolean faltaAsignar() {
+    return cantidadRecibida.add(cantidadComprometida).compareTo(cantidadRequerida) < 0;
   }
 
   public String getSubclase(){
     return subclase;
   }
 
-  public void agregarCantidadRecibida (Integer cantidad, String idDonacion){
-    this.cantidadRecibida += cantidad;
-    this.donacionesAsignados.add(idDonacion);
+  // Se le asignó una donación que todavía no llegó
+  public void comprometer(BigDecimal cantidad) {
+    this.cantidadComprometida = this.cantidadComprometida.add(cantidad);
+  }
+
+  // La donación asignada no va a llegar (la entrega falló o volvió al depósito)
+  public void liberar(BigDecimal cantidad) {
+    this.cantidadComprometida = this.cantidadComprometida.subtract(cantidad).max(BigDecimal.ZERO);
+  }
+
+  // La donación asignada llegó: deja de estar en camino y pasa a recibida
+  public void agregarCantidadRecibida(BigDecimal cantidad) {
+    liberar(cantidad);
+    this.cantidadRecibida = this.cantidadRecibida.add(cantidad);
   }
 
   public Necesidad getNecesidad() {

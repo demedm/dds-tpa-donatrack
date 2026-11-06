@@ -30,6 +30,7 @@ import org.quartz.impl.matchers.KeyMatcher;
 import org.quartz.listeners.JobListenerSupport;
 
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -134,7 +135,7 @@ public class AsignacionProgramadaTest implements WithSimplePersistenceUnit {
         // el comedor necesita arroz, así el algoritmo de compatibilidad lo propone
         comedor = new EntidadBeneficiaria("Av. Medrano 951", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
         Necesidad necesidad = new Necesidad();
-        necesidad.agregarPeticion(new Peticion("ARROZ", 100));
+        necesidad.agregarPeticion(new Peticion("ARROZ", new BigDecimal("100")));
         comedor.agregarNecesidad(necesidad);
         entityManager().persist(comedor);
         comedor.getNecesidades().forEach(n -> n.setEntidadId(comedor.getId()));
@@ -145,7 +146,7 @@ public class AsignacionProgramadaTest implements WithSimplePersistenceUnit {
         entityManager().persist(subcatArroz);
         entityManager().persist(donante);
 
-        Bien paquete = new Bien(subcatArroz, "foto.jpg", "Arroz 1kg", 10, new PorVencimiento(LocalDate.now().plusMonths(6)));
+        Bien paquete = new Bien(subcatArroz, "foto.jpg", "Arroz 1kg", new BigDecimal("10"), new PorVencimiento(LocalDate.now().plusMonths(6)));
         donacion = new Donacion("Donacion de prueba", new ArrayList<>(List.of(paquete)), donante);
         arroz = donacion.getSegmentadas().get(0);
         DonacionesRepository.Instance.guardar(donacion);

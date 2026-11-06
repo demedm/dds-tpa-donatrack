@@ -31,15 +31,6 @@ public class Router {
 
     app.get("/", ctx -> ctx.redirect("/home"));
 
-    /*PRUEBA DE ASIGNACION
-    app.post("/donaciones/asignar", ctx ->
-        {
-          List<Map<String, Object>> resultado = donacionController.asignarDonacionANecesidad(ctx);
-    ctx.json(resultado);});
-    */
-
-    //Necesidades
-
     app.post("/necesidades/",necesidadController::crear);
     app.post("/necesidades/{id}/peticiones/",necesidadController::agregarPeticion);
     app.post("/necesidades/{id}/adjuntos", necesidadController::subirAdjunto);

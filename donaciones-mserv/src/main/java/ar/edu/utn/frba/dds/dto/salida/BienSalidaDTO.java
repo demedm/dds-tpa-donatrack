@@ -5,13 +5,14 @@ import ar.edu.utn.frba.dds.model.Bienes.PorEstado;
 import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
 import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class BienSalidaDTO {
 
   private String descripcion;
   private String foto;
-  private int cantidad;
+  private BigDecimal cantidad;
   private String unidad;
   private String categoria;
   private String subcategoria;
@@ -39,7 +40,7 @@ public class BienSalidaDTO {
 
   public String getDescripcion() { return descripcion; }
   public String getFoto() { return foto; }
-  public int getCantidad() { return cantidad; }
+  public BigDecimal getCantidad() { return cantidad; }
   public String getUnidad() { return unidad; }
   public String getCategoria() { return categoria; }
   public String getSubcategoria() { return subcategoria; }
