@@ -29,6 +29,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.KeyMatcher;
 import org.quartz.listeners.JobListenerSupport;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -129,32 +130,39 @@ public class AsignacionProgramadaTest implements WithSimplePersistenceUnit {
 
     @BeforeEach
     void cargarDatos() {
-      // el comedor necesita arroz, así el algoritmo de compatibilidad lo propone
-      comedor = new EntidadBeneficiaria("Av. Medrano 951", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
-      Necesidad necesidad = new Necesidad();
-      necesidad.agregarPeticion(new Peticion("ARROZ", 100));
-      comedor.agregarNecesidad(necesidad);
-      EntidadRepository.Instance.registrar(comedor);
-
-      // Subcategoria y donante no se guardan en cascada: van antes que la donación
-      Subcategoria subcatArroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ", UnidadMedida.UNIDADES);
-      Persona donante = new PersonaFisica();
       withTransaction(() -> {
+        // el comedor necesita arroz, así el algoritmo de compatibilidad lo propone
+        comedor = new EntidadBeneficiaria("Av. Medrano 951", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
+        Necesidad necesidad = new Necesidad();
+        necesidad.agregarPeticion(new Peticion("ARROZ", 100));
+        comedor.agregarNecesidad(necesidad);
+        entityManager().persist(comedor);
+        comedor.getNecesidades().forEach(n -> n.setEntidadId(comedor.getId()));
+
+        // Subcategoria y donante no se guardan en cascada: van antes que la donación
+        Subcategoria subcatArroz = new Subcategoria(Categoria.ALIMENTOS, "ARROZ", UnidadMedida.UNIDADES);
+        Persona donante = new PersonaFisica();
         entityManager().persist(subcatArroz);
         entityManager().persist(donante);
-      });
 
-      Bien paquete = new Bien(subcatArroz, "foto.jpg", "Arroz 1kg", 10, new PorVencimiento(LocalDate.now().plusMonths(6)));
-      donacion = new Donacion("Donacion de prueba", new ArrayList<>(List.of(paquete)), donante);
-      arroz = donacion.getSegmentadas().get(0);
-      DonacionesRepository.Instance.guardar(donacion);
+        Bien paquete = new Bien(subcatArroz, "foto.jpg", "Arroz 1kg", 10, new PorVencimiento(LocalDate.now().plusMonths(6)));
+        donacion = new Donacion("Donacion de prueba", new ArrayList<>(List.of(paquete)), donante);
+        arroz = donacion.getSegmentadas().get(0);
+        DonacionesRepository.Instance.guardar(donacion);
+      });
     }
 
     @AfterEach
     void borrarDatos() {
-      // Los repositorios son compartidos entre tests: dejamos todo como estaba
-      DonacionesRepository.Instance.eliminar(donacion.getId());
-      EntidadRepository.Instance.eliminarPorId(comedor.getId());
+
+      withTransaction(() -> {
+        // Los repositorios son compartidos entre tests: dejamos todo como estaba
+        DonacionesRepository.Instance.eliminar(donacion.getId());
+        //EntidadRepository.Instance.eliminarPorId(comedor.getId());
+        EntityManager em = entityManager();
+        em.remove(em.find(EntidadBeneficiaria.class, comedor.getId()));
+      });
+
       entityManager().clear();   // que no le queden objetos de este test al siguiente
     }
 

@@ -11,18 +11,14 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
 
     public static final DonacionesRepository Instance = new DonacionesRepository();
 
-
     //Donaciones
 
     public void guardar(Donacion donacion) {
-        withTransaction(() -> {
-            if (donacion.getId() == null){
-                entityManager().persist(donacion);
-            }else{
-                entityManager().merge(donacion);
-            }
-        });
-
+        if (donacion.getId() == null){
+            entityManager().persist(donacion);
+        }else{
+            entityManager().merge(donacion);
+        }
     }
 
     public Donacion findById(Long id){
@@ -33,17 +29,13 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
         return entityManager().createQuery("from Donacion", Donacion.class).getResultList();
     }
     public void actualizarSegmentada(DonacionSegmentada segmentada) {
-        withTransaction(() -> {
-            entityManager().merge(segmentada);
-        });
+        entityManager().merge(segmentada);
     }
     public void eliminar(Long id){
-        withTransaction(() -> {
-            Donacion donacion = entityManager().find(Donacion.class, id);
-            if (donacion != null){
-                entityManager().remove(donacion);
-            }
-        });
+        Donacion donacion = entityManager().find(Donacion.class, id);
+        if (donacion != null){
+            entityManager().remove(donacion);
+        }
     }
 
     //Donaciones segmentadas
