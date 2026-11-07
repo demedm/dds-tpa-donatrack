@@ -25,7 +25,7 @@ public class JavalinHandlebars implements FileRenderer {
         Template template = null;
         try {
             template = handlebars.compile("templates/" + path.replace(".hbs",""));
-            return template.apply(model);
+            return template.apply(modelo);
         } catch (IOException e) {
             e.printStackTrace();
             context.status(HttpStatus.NOT_FOUND);

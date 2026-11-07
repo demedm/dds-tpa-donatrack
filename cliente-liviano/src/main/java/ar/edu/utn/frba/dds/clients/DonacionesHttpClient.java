@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.clients;
 
 import ar.edu.utn.frba.dds.dto.DonacionDto;
+import ar.edu.utn.frba.dds.dto.DonanteDto;
 import ar.edu.utn.frba.dds.dto.LoginRequest;
 import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -15,6 +16,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class DonacionesHttpClient {
@@ -120,6 +122,7 @@ public class DonacionesHttpClient {
       return client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (Exception e) {
       throw new RuntimeException("Error al enviar el CSV a Donaciones", e);
+
     }
   }
 }
