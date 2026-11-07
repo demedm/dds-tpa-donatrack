@@ -3,10 +3,15 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.clients.LogisticaHttpClient;
 import ar.edu.utn.frba.dds.dto.CamionDto;
 import ar.edu.utn.frba.dds.dto.CamionRequest;
+import ar.edu.utn.frba.dds.dto.EntregaEnCursoDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URI;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,18 +86,22 @@ public class LogisticaController {
   }
   public void entregasEnCurso(Context ctx) {
     var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
-    
-    
-    List<EntregaDTO> entregas = logisticaService.obtenerEntregasEnCurso(idUsuario);
+    List<EntregaEnCursoDto> entregas = new LogisticaHttpClient().obtenerEntregasEnCurso(idUsuario);
 
+    // 2. Serializa la lista a JSON String para Leaflet
+    String puntosJson = "[]";
+    try {
+      puntosJson = new ObjectMapper().writeValueAsString(entregas);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
-    String puntosJson = new ObjectMapper().writeValueAsString(entregas);
-
+    // 3. Renderiza la vista de Handlebars
     ctx.render("entregas-en-curso.hbs", Map.of(
         "idUsuario", idUsuario,
         "enCurso", entregas,
         "puntosJson", puntosJson
     ));
-}
+  }
 
 }

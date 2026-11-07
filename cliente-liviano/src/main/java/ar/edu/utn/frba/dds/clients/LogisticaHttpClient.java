@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.clients;
 import ar.edu.utn.frba.dds.dto.CamionDto;
 import ar.edu.utn.frba.dds.dto.CamionRequest;
 import ar.edu.utn.frba.dds.dto.DonacionDto;
+import ar.edu.utn.frba.dds.dto.EntregaEnCursoDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,6 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LogisticaHttpClient {
@@ -61,6 +63,27 @@ public class LogisticaHttpClient {
     } catch (Exception e) {
       throw new RuntimeException("Error al enviar el registro del camión a Logística", e);
     }
+  }
+
+  public List<EntregaEnCursoDto> obtenerEntregasEnCurso(Long idUsuario) {
+    // 1. Pega directamente al microservicio de Logística (Puerto 9002)
+    try {
+      List<EntregaEnCursoDto> entregas = new ArrayList<>();
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create("http://localhost:9002/api/usuarios/" + idUsuario + "/entregas"))
+          .header("Accept", "application/json")
+          .GET()
+          .build();
+
+      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+      if (response.statusCode() == 200) {
+        entregas = new ObjectMapper().readValue(response.body(), new TypeReference<List<EntregaEnCursoDto>>() {});
+      }
+    } catch (Exception e) {
+      System.err.println("Error al consultar Logística MS: " + e.getMessage());
+    }
+    return null;
   }
 
 }

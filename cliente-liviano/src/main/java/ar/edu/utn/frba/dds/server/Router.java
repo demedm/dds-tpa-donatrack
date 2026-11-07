@@ -42,10 +42,12 @@ public class Router {
     app.post("/donaciones", donacionController::registrarDonacion);
 
     app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    app.before("/necesidades/*", this::autenticados);
     app.get("/necesidades", necesidadController::showNecesidades);
     app.post("/necesidades/",necesidadController::crear);
     app.get("/necesidades/{id}", necesidadController::showNecesidad);
-    app.post("/necesidades/{id}/peticiones", necesidadController::agregarPeticion);    app.post("/necesidades/{id}/adjuntos", necesidadController::subirAdjunto);
+    app.post("/necesidades/{id}/peticiones", necesidadController::agregarPeticion);
+    app.post("/necesidades/{id}/adjuntos", necesidadController::subirAdjunto);
 
     app.before("/usuarios/*", this::autenticados);
     app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
