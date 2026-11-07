@@ -8,10 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class RegistroDonante implements WithSimplePersistenceUnit {
-
-  // ¡Se elimina la lista en memoria! Ahora todo va directo a la base de datos.
-
-  // Para hacerla Singleton (como usás en tu controller DonanteRepository.Instance)
   public static final RegistroDonante Instance = new RegistroDonante();
 
   private final Notificador notificador = new Notificador();
@@ -20,10 +16,9 @@ public class RegistroDonante implements WithSimplePersistenceUnit {
   }
 
   public void registrarDonante(Persona nuevoDonante) {
-    // Usamos el campo direccion de la clase embebida Mail
     Optional<Persona> existente = buscarPorEmail(nuevoDonante.getMail().getMedioContacto());
 
-    // jpa-extras nos provee withTransaction para manejar el begin/commit automáticamente
+    // withTransaction para manejar el begin/commit automáticamente
     withTransaction(() -> {
       if (existente.isPresent()) {
         Persona personaGuardada = existente.get();
@@ -33,7 +28,7 @@ public class RegistroDonante implements WithSimplePersistenceUnit {
       } else {
         entityManager().persist(nuevoDonante); // Insertamos en BD
         System.out.println("Nuevo donante registrado");
-        // Mandamos la notificación
+        // envia la notificación
         notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
       }
     });

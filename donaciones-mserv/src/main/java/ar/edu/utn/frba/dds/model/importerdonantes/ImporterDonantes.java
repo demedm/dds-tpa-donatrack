@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.model.importerdonantes;
 import ar.edu.utn.frba.dds.model.donantes.RegistroDonante;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 
+import java.io.InputStream;
 import java.util.List;
 
 public class ImporterDonantes {
@@ -12,6 +13,13 @@ public class ImporterDonantes {
   public void importarDonantes(String filePath, RegistroDonante registroDonantes) {
     List<String[]> nuevosDatos = scanner.scanCSVFile(filePath);
     List<Persona> nuevosDonantes = parser.parseCSVcontent(nuevosDatos);
+    nuevosDonantes.forEach(registroDonantes::registrarDonante);
+  }
+
+  public void importarDonantes(InputStream inputStream, RegistroDonante registroDonantes) {
+    List<String[]> nuevosDatos = scanner.scanCSVFile(inputStream);
+    List<Persona> nuevosDonantes = parser.parseCSVcontent(nuevosDatos);
+
     nuevosDonantes.forEach(registroDonantes::registrarDonante);
   }
 

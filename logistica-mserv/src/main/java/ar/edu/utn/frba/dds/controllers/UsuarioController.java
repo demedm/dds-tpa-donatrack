@@ -11,6 +11,7 @@ import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.ConfirmacionEntregaDto;
 import ar.edu.utn.frba.dds.scripts.dto.EntregaEnCursoDto;
 import io.javalin.http.Context;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class UsuarioController {
   private final GrpcClientDonacionesImplementation clienteDonaciones =
           new GrpcClientDonacionesImplementation();
+
   public void showUsuario(Context ctx) {
     var idUsuario = Long.parseLong(ctx.pathParam("id"));
     if (idUsuario != 0) {
@@ -43,7 +45,7 @@ public class UsuarioController {
 
 
     if (entrega.getEstado() == EstadoEntrega.ENTREGADA) {
-      clienteDonaciones.notificarCambioEstado(entrega.getDonacionId(), "ENTREGADA");
+      clienteDonaciones.notificarEntregaExitosa(entrega);
     }
 
     ctx.status(200);
@@ -82,12 +84,16 @@ public class UsuarioController {
 
     if (ruta.getEntregas() != null) {
       for (Entrega entrega : ruta.getEntregas()) {
-        clienteDonaciones.notificarCambioEstado(entrega.getDonacionId(), "EN_TRASLADO");
+        clienteDonaciones.notificarInicioDeRuta(entrega, ruta);
       }
     }
 
     ctx.status(200);
     ctx.json(ruta);
+  }
+
+  public void guardarUsuario(@NotNull Context ctx) {
+
   }
 
   public void entregasEnCurso(Context ctx) {

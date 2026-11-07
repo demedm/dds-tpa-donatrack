@@ -7,7 +7,32 @@
     <div>
         <a href="/admin/camiones">Logistica</a>
         <a href="/admin/donaciones">Donaciones</a>
-        <a href="">Registro</a>
+        <a href="/admin/registro">Registrar</a>
+        <a href="/admin/camiones">Flota</a>
+
+        <h3>Importar Donantes</h3>
+        <div>
+            {{#if error}}
+                <div class="mensaje error">
+                    {{error}}
+                </div>
+            {{/if}}
+
+            {{#if exito}}
+                <div class="mensaje exito">
+                    {{exito}}
+                </div>
+            {{/if}}
+
+            <form action="/admin/donantes/importar" method="POST" enctype="multipart/form-data">
+
+                <label for="archivo">Seleccionar archivo CSV:</label>
+                <input type="file" id="archivo" name="archivo" accept=".csv" required>
+
+                <button type="submit">Importar donantes</button>
+
+            </form>
+        </div>
     </div>
 
 {{/partial}}

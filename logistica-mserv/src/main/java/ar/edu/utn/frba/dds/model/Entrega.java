@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Entrega {
@@ -20,6 +22,11 @@ public class Entrega {
 
   @ManyToOne
   private EntidadBeneficiaria entidadBeneficiaria;
+
+  @ManyToOne
+  @JoinColumn(name = "ruta_id", insertable = false, updatable = false)
+  @JsonIgnore
+  private Ruta ruta;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "estado_entrega")
@@ -47,6 +54,8 @@ public class Entrega {
   public Entrega() {
     this.estado = EstadoEntrega.PENDIENTE;
   }
+
+  public Ruta getRuta() {return this.ruta;}
 
   public LocalDate getFechaVencimiento() {
     return fechaVencimiento;

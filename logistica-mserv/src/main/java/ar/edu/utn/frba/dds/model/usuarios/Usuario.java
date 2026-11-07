@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.model.usuarios;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,6 +13,9 @@ public abstract class Usuario {
   @Id
   @GeneratedValue
   private Long id;
+
+  @Column(unique = true)
+  private Long idDonaciones;
 
   private String email;
 
@@ -33,4 +37,11 @@ public abstract class Usuario {
     this.email = email;
   }
 
+  public void setIdDonaciones(Long idDonaciones) {
+    this.idDonaciones = idDonaciones;
+  }
+
+  public Long getIdDonaciones() {
+    return idDonaciones;
+  }
 }

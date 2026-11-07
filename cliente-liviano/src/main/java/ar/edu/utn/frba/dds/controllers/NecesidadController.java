@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class NecesidadController {
   public void showNecesidades(Context ctx) {
+
     UsuarioLogueado usuarioLogueado = ctx.attribute("usuarioLogueado");
 
     Long idUsuario = null;
@@ -29,7 +30,7 @@ public class NecesidadController {
     model.put("entidadId", idUsuario);
     model.put("titulo", "Mis Necesidades");
 
-    ctx.render("necesidades.hbs", model);
+    ctx.render("beneficiarios/necesidades.hbs", model);
   }
 
   public void crear(Context ctx) {
