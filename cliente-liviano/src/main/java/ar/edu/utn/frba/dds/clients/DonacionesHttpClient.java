@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.clients;
 
 import ar.edu.utn.frba.dds.dto.DonacionDto;
+import ar.edu.utn.frba.dds.dto.DonanteDto;
 import ar.edu.utn.frba.dds.dto.LoginRequest;
 import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,6 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 public class DonacionesHttpClient {
   private final java.net.http.HttpClient client;
@@ -79,6 +81,53 @@ public class DonacionesHttpClient {
     } catch (Exception e) {
       System.err.println("Error consultando Donaciones (" + path + "): " + e.getMessage());
       return List.of();
+    }
+  }
+
+  // ---------- Pantalla del admin: ingresar donaciones ----------
+
+  public List<DonacionDto> todasLasDonaciones(String token) {
+    return listarDonaciones("/donaciones", token);
+  }
+
+  public List<DonanteDto> listarDonantes(String token) {
+    try {
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create(baseUrl + "/donantes"))
+          .timeout(Duration.ofSeconds(5))
+          .header("Authorization", "Bearer " + token)
+          .GET()
+          .build();
+      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+      if (response.statusCode() >= 400) {
+        return List.of();
+      }
+      return objectMapper.readValue(response.body(), new TypeReference<List<DonanteDto>>() {});
+    } catch (Exception e) {
+      System.err.println("Error consultando los donantes: " + e.getMessage());
+      return List.of();
+    }
+  }
+
+  // Devuelve la donación creada, o null si donaciones la rechazó (el motivo queda en el log)
+  public DonacionDto crearDonacion(Map<String, Object> donacion, String token) {
+    try {
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create(baseUrl + "/donaciones"))
+          .timeout(Duration.ofSeconds(10))
+          .header("Content-Type", "application/json")
+          .header("Authorization", "Bearer " + token)
+          .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(donacion)))
+          .build();
+      HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+      if (response.statusCode() >= 400) {
+        System.err.println("-> Donaciones rechazó la donación: " + response.statusCode() + " " + response.body());
+        return null;
+      }
+      return objectMapper.readValue(response.body(), DonacionDto.class);
+    } catch (Exception e) {
+      System.err.println("Error creando la donación: " + e.getMessage());
+      return null;
     }
   }
 }

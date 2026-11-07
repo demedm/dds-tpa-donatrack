@@ -1,11 +1,99 @@
-{{#partial "contenido-header"}}{{/partial}}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Donaciones</title>
+    <link rel="stylesheet" href="/assets/css/estilo-minimal.css">
+</head>
+<body>
+<div class="container">
+    <h1>Ingresar donaciones</h1>
 
-{{#partial "contenido"}}
-    <h>
-        El sistema debe mostrar las donaciones ya entregadas a entidades beneficiarias en un mapa interactivo y permitir ver sus detalles al hacer clic en cada marcador.
-    </h>
+    {{#if registrada}}<p class="exito">Donación {{registrada}} registrada.</p>{{/if}}
+    {{#if error}}<p class="error">{{error}}</p>{{/if}}
 
+    <form action="/donaciones" method="post" class="nueva-necesidad-post">
 
-{{/partial}}
+        <label>Donante: </label>
+        <select name="donanteId" required>
+            <option value="">Elegí un donante</option>
+            {{#each donantes}}
+                <option value="{{this.id}}">{{this.nombreIdentificador}}</option>
+            {{/each}}
+        </select>
 
-{{>templates/layout}}
+        <label>Descripción: </label>
+        <input type="text" name="descripcionGeneral" placeholder="Ej: Donación de alimentos varios" required>
+
+        <label>Bienes (las filas sin cantidad se ignoran; cada bien lleva fecha de vencimiento o estado de uso): </label>
+        <table class="necesidades-table">
+            <thead>
+            <tr>
+                <th>Categoría</th>
+                <th>Subcategoría</th>
+                <th>Unidad</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Vence el</th>
+                <th>Estado de uso</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each filas}}
+                <tr>
+                    <td>
+                        <select name="categoria">
+                            {{#each ../categorias}}<option value="{{this}}">{{this}}</option>{{/each}}
+                        </select>
+                    </td>
+                    <td><input type="text" name="subcategoria" placeholder="Ej: ARROZ"></td>
+                    <td>
+                        <select name="unidad">
+                            {{#each ../unidades}}<option value="{{this}}">{{this}}</option>{{/each}}
+                        </select>
+                    </td>
+                    <td><input type="text" name="descripcion" placeholder="Ej: Paquete de 1 kg"></td>
+                    <td><input type="number" name="cantidad" min="0.001" step="0.001"></td>
+                    <td><input type="date" name="fechaVencimiento"></td>
+                    <td>
+                        <select name="estadoUso">
+                            <option value="">—</option>
+                            <option value="NUEVO">Nuevo</option>
+                            <option value="USADO">Usado</option>
+                        </select>
+                    </td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+
+        <button type="submit">Registrar donación</button>
+    </form>
+
+    <table class="necesidades-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Recibida</th>
+            <th>Donante</th>
+            <th>Descripción</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each donaciones}}
+            <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.fechaRecepcion}}</td>
+                <td>{{this.donanteNombre}}</td>
+                <td>{{this.descripcionGeneral}}</td>
+            </tr>
+        {{else}}
+            <tr>
+                <td colspan="4">Todavía no hay donaciones.</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
