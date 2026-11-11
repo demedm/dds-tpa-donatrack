@@ -1,11 +1,275 @@
-{{#partial "contenido-header"}}{{/partial}}
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/admin/admin.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-donaciones.css">
+{{/partial}}
 
 {{#partial "contenido"}}
-    <h>
-        El sistema debe mostrar las donaciones ya entregadas a entidades beneficiarias en un mapa interactivo y permitir ver sus detalles al hacer clic en cada marcador.
-    </h>
+    <div class="admin">
+        <h1 class="sr-only">Panel de administración: Donaciones</h1>
 
+        <!-- Pestañas del panel -->
+        <nav class="admin-tabs" aria-label="Secciones de administración">
+            <a href="/admin/donaciones" aria-current="page">Donaciones</a>
+            <a href="/admin/usuarios">Usuarios</a>
+            <a href="/admin/logistica">Logística</a>
+        </nav>
 
+        <!-- Barra de búsqueda y acción principal -->
+        <div class="admin-barra">
+            <form action="/admin/donaciones" method="GET" class="busqueda" role="search">
+                <div class="campo campo-compacto">
+                    <label class="sr-only" for="buscar">Buscar</label>
+                    <input type="search" id="buscar" name="q" placeholder="Search">
+                </div>
+                <div class="campo campo-compacto">
+                    <label class="sr-only" for="categoria">Categoría</label>
+                    <select id="categoria" name="categoria">
+                        <option value="">Category</option>
+                        <option value="estado">Estado</option>
+                        <option value="entidad">Entidad</option>
+                        <option value="donante">Donante</option>
+                    </select>
+                </div>
+                <button type="submit" class="boton-icono boton-buscar" aria-label="Buscar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+                <button type="button" class="boton-icono boton-filtros" aria-label="Filtros">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+                </button>
+            </form>
+
+            <a href="/admin/donaciones/nueva" class="boton-rojo">
+                Registrar
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </a>
+        </div>
+
+        <!-- ===== ASIGNACIÓN ===== -->
+        <div class="asignacion">
+
+            <!-- Lista de donaciones a asignar -->
+            <section class="tarjeta asignacion-lista">
+                <div class="tabla-scroll">
+                    <table class="tabla">
+                        <thead>
+                        <tr>
+                            <th>Donación</th>
+                            <th>Vcto.</th>
+                            <th><span class="sr-only">Depósito</span></th>
+                            <th><span class="sr-only">Asignar</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{!-- Reemplazar por {{#each donacionesPendientes}} --}}
+                        <tr>
+                            <td>Ropa de abrigo</td>
+                            <td>30/12/2026</td>
+                            <td><a href="#" class="boton-deposito">Depósito</a></td>
+                            <td>
+                                <button type="button" class="boton-icono boton-flecha" aria-label="Asignar donación">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.4 1.4L16.2 11H4v2h12.2l-5.6 5.6L12 20l8-8z"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Alimentos enlatados</td>
+                            <td>15/11/2026</td>
+                            <td><a href="#" class="boton-deposito">Depósito</a></td>
+                            <td>
+                                <button type="button" class="boton-icono boton-flecha" aria-label="Asignar donación">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.4 1.4L16.2 11H4v2h12.2l-5.6 5.6L12 20l8-8z"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Útiles escolares</td>
+                            <td>—</td>
+                            <td><a href="#" class="boton-deposito">Depósito</a></td>
+                            <td>
+                                <button type="button" class="boton-icono boton-flecha" aria-label="Asignar donación">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.4 1.4L16.2 11H4v2h12.2l-5.6 5.6L12 20l8-8z"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Resultados de asignación -->
+            <section class="resultados">
+                <div class="resultados-cabecera">
+                    <h2 class="resultados-titulo">Resultados de Asignación</h2>
+
+                    <div class="pestanas" role="tablist" aria-label="Resultados de asignación">
+                        <button type="button" role="tab" class="pestana" id="tab-resumen" aria-controls="panel-resumen" aria-selected="true">Resumen</button>
+                        <button type="button" role="tab" class="pestana" id="tab-compat" aria-controls="panel-compat" aria-selected="false" tabindex="-1">Alg. Compatibilidad</button>
+                        <button type="button" role="tab" class="pestana" id="tab-prioridad" aria-controls="panel-prioridad" aria-selected="false" tabindex="-1">Alg. Prioridad</button>
+                    </div>
+                </div>
+
+                <!-- Resumen -->
+                <div class="panel-resultado" role="tabpanel" id="panel-resumen" aria-labelledby="tab-resumen">
+                    <h3 class="seleccion-titulo">Donación Seleccionada</h3>
+
+                    <div class="seleccion-datos">
+                        <span><strong>Categoría:</strong> Ropa</span>
+                        <span><strong>Subcategoría:</strong> Abrigos</span>
+                        <span><strong>Cantidad:</strong> 40</span>
+                        <span><strong>Uso:</strong> Usado</span>
+                        <span><strong>Foto:</strong> <a href="#" target="_blank" rel="noopener">link</a></span>
+                    </div>
+
+                    <div class="caja-resultados">
+                        <div class="tabla-scroll">
+                            <table class="tabla">
+                                <thead>
+                                <tr>
+                                    <th class="col-check">#</th>
+                                    <th>Entidad</th>
+                                    <th>Tipo</th>
+                                    <th>Necesidad</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{!-- Reemplazar por {{#each resultados}} --}}
+                                <tr><td>1.</td><td>Hogar San José</td><td>Hogar</td><td>Alta</td></tr>
+                                <tr><td>2.</td><td>Escuela Rural N.º 12</td><td>Escuela</td><td>Media</td></tr>
+                                <tr><td>3.</td><td>Comedor Esperanza</td><td>Comedor</td><td>Media</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Algoritmo de compatibilidad -->
+                <div class="panel-resultado" role="tabpanel" id="panel-compat" aria-labelledby="tab-compat" hidden>
+                    <div class="caja-resultados">
+                        <p class="vacio">Sin resultados todavía.</p>
+                    </div>
+                </div>
+
+                <!-- Algoritmo de prioridad -->
+                <div class="panel-resultado" role="tabpanel" id="panel-prioridad" aria-labelledby="tab-prioridad" hidden>
+                    <div class="caja-resultados">
+                        <p class="vacio">Sin resultados todavía.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== ACCIONES SOBRE LAS DONACIONES ===== -->
+        <div class="acciones-tabla">
+            <label class="check-recordame check-tabla">
+                <input type="checkbox" id="seleccionarTodas">
+                <span class="check-caja"></span>
+                <span class="check-texto">Seleccionar Donaciones</span>
+            </label>
+
+            <div class="acciones-tabla-der">
+                <button type="button" class="enlace-accion">Mostrar Detalles</button>
+                <button type="button" class="enlace-accion">Reactivar</button>
+                <button type="button" class="enlace-accion">Marcar como Vencida</button>
+                <button type="button" class="enlace-accion">Eliminar</button>
+
+                <div class="campo campo-compacto">
+                    <label class="sr-only" for="modificar">Modificar</label>
+                    <select id="modificar">
+                        <option value="" disabled selected>Modificar</option>
+                        <option value="datos">Datos de la donación</option>
+                        <option value="estado">Estado</option>
+                    </select>
+                </div>
+                <div class="campo campo-compacto">
+                    <label class="sr-only" for="asignar">Asignar</label>
+                    <select id="asignar">
+                        <option value="" disabled selected>Asignar</option>
+                        <option value="entidad">Entidad</option>
+                        <option value="deposito">Depósito</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TABLA DE DONACIONES ===== -->
+        <section class="tarjeta tarjeta-tabla tabla-donaciones">
+            <div class="tabla-scroll">
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th class="col-check"><span class="sr-only">Seleccionar</span></th>
+                        <th>Descripción</th>
+                        <th>Bienes</th>
+                        <th>Entidad</th>
+                        <th>Donante</th>
+                        <th>Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{!-- Reemplazar por {{#each donaciones}} --}}
+                    <tr>
+                        <td><label class="check-recordame check-tabla"><input type="checkbox" name="donaciones" value="1"><span class="check-caja"></span><span class="sr-only">Seleccionar donación 1</span></label></td>
+                        <td>Ropa de abrigo</td><td>Ropa</td><td>Hogar San José</td><td>Juan Pérez</td>
+                        <td><span class="badge badge-asignada">Asignada</span></td>
+                    </tr>
+                    <tr>
+                        <td><label class="check-recordame check-tabla"><input type="checkbox" name="donaciones" value="2"><span class="check-caja"></span><span class="sr-only">Seleccionar donación 2</span></label></td>
+                        <td>Alimentos enlatados</td><td>Alimentos</td><td>—</td><td>María Gómez</td>
+                        <td><span class="badge badge-pendiente">Pendiente</span></td>
+                    </tr>
+                    <tr>
+                        <td><label class="check-recordame check-tabla"><input type="checkbox" name="donaciones" value="3"><span class="check-caja"></span><span class="sr-only">Seleccionar donación 3</span></label></td>
+                        <td>Útiles escolares</td><td>Útiles</td><td>Escuela Rural N.º 12</td><td>Carlos Díaz</td>
+                        <td><span class="badge badge-asignada">Asignada</span></td>
+                    </tr>
+                    <tr>
+                        <td><label class="check-recordame check-tabla"><input type="checkbox" name="donaciones" value="4"><span class="check-caja"></span><span class="sr-only">Seleccionar donación 4</span></label></td>
+                        <td>Frazadas</td><td>Ropa</td><td>—</td><td>Lucía Ramos</td>
+                        <td><span class="badge badge-vencida">Vencida</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // ----- Pestañas de resultados -----
+        const pestanas = [...document.querySelectorAll('.pestana')];
+        const paneles = document.querySelectorAll('.panel-resultado');
+
+        function activarPestana(tab) {
+            pestanas.forEach(t => {
+                const activa = t === tab;
+                t.setAttribute('aria-selected', activa);
+                t.tabIndex = activa ? 0 : -1;
+            });
+            paneles.forEach(p => {
+                p.hidden = p.id !== tab.getAttribute('aria-controls');
+            });
+        }
+
+        pestanas.forEach((tab, i) => {
+            tab.addEventListener('click', () => activarPestana(tab));
+            tab.addEventListener('keydown', e => {
+                if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                const siguiente = pestanas[(i + (e.key === 'ArrowRight' ? 1 : -1) + pestanas.length) % pestanas.length];
+                activarPestana(siguiente);
+                siguiente.focus();
+            });
+        });
+
+        // ----- Seleccionar todas las donaciones -----
+        const todas = document.getElementById('seleccionarTodas');
+        const filas = document.querySelectorAll('input[name="donaciones"]');
+
+        todas.addEventListener('change', () => {
+            filas.forEach(f => f.checked = todas.checked);
+        });
+        filas.forEach(f => f.addEventListener('change', () => {
+            todas.checked = [...filas].every(x => x.checked);
+        }));
+    </script>
 {{/partial}}
 
 {{>templates/layout}}

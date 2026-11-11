@@ -1,0 +1,193 @@
+/* =====================================================
+   PANEL DE ADMINISTRACIÓN: DONACIONES
+   Se carga después de admin.css
+   ===================================================== */
+
+/* ===== ASIGNACIÓN: LISTA + RESULTADOS ===== */
+.asignacion {
+    display: grid;
+    grid-template-columns: minmax(340px, 4fr) 8fr;
+    gap: 1.5rem;
+    align-items: start;
+    margin-bottom: 1.5rem;
+}
+
+/* Lista de donaciones (izquierda) */
+.asignacion-lista {
+    padding: 0;
+}
+
+.asignacion-lista .tabla-scroll {
+    max-height: 440px;
+    overflow: auto;
+}
+
+/* El encabezado queda fijo si la lista es larga */
+.asignacion-lista .tabla thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--color-light);
+}
+
+.boton-deposito {
+    display: inline-block;
+    padding: 0.45rem 1.1rem;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-light);
+    text-decoration: underline;
+    background-color: var(--color-accent);
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.boton-deposito:hover {
+    background-color: #1a8fd0;
+}
+
+.boton-flecha {
+    width: 44px;
+    height: 36px;
+    border-radius: 10px;
+}
+
+/* ===== RESULTADOS DE ASIGNACIÓN (derecha) ===== */
+.resultados {
+    padding: 1.25rem 1.5rem 1.5rem;
+    background-color: var(--color-light);
+}
+
+.resultados-cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem 1.5rem;
+}
+
+.resultados-titulo {
+    padding-bottom: 0.6rem;
+    font-family: var(--font-main);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.pestanas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pestana {
+    position: relative;
+    margin-bottom: -1px; /* se funde con el borde del panel */
+    padding: 0.7rem 1.5rem;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    background-color: var(--color-light-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 14px 14px 0 0;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.pestana:hover {
+    color: var(--color-text);
+}
+
+.pestana[aria-selected="true"] {
+    z-index: 1;
+    color: var(--color-text);
+    background-color: var(--color-light);
+    border-bottom-color: var(--color-light);
+}
+
+.pestana:focus-visible {
+    outline: 3px solid rgba(35, 166, 240, 0.4);
+    outline-offset: 2px;
+}
+
+.panel-resultado {
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+}
+
+/* Datos de la donación seleccionada */
+.seleccion-titulo {
+    margin-bottom: 1rem;
+    font-family: var(--font-main);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.seleccion-datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.5rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-main);
+    font-size: 1.05rem;
+    color: var(--color-text);
+}
+
+.seleccion-datos strong {
+    color: var(--color-text-secondary);
+}
+
+.seleccion-datos a {
+    color: var(--color-accent);
+}
+
+/* Caja con las entidades sugeridas */
+.caja-resultados {
+    min-height: 240px;
+    padding: 0.5rem 1rem;
+    border: 2px solid #7a7a7a;
+}
+
+.caja-resultados .tabla tbody tr:nth-child(odd) {
+    background-color: transparent;
+}
+
+.vacio {
+    padding: 3rem 1rem;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    text-align: center;
+    color: var(--color-text-secondary);
+}
+
+/* ===== TABLA DE DONACIONES ===== */
+.tabla-donaciones {
+    margin-top: 0.25rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1100px) {
+    .asignacion {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .resultados {
+        padding: 1rem;
+    }
+
+    .panel-resultado {
+        padding: 1rem;
+    }
+
+    .pestana {
+        padding: 0.6rem 1rem;
+    }
+
+    .seleccion-datos {
+        gap: 0.5rem 1.5rem;
+    }
+}

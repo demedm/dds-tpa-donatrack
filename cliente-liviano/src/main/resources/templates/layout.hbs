@@ -1,37 +1,127 @@
-<html>
-<head>
-
-    <link rel="stylesheet" href="/assets/css/estilo-minimal.css">
-    <link rel="stylesheet" href="/assets/css/mensajes.css">
-</head>
 <!doctype html>
 <html lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Demo</title>
+
+    <title>Dona Track</title>
+
+    <link rel="icon" type="image/x-icon" href="/assets/images/icon/favicon.ico">
+
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/componentes.css">
+    <link rel="stylesheet" href="/assets/css/home.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    {{#block "estilos"}}{{/block}}
 </head>
 <body>
-<main>
-    <nav>
-        <div>
-            <a href="/">Home</a>
-            <a href="/legal">Legal</a>
-            {{#if logueado }}
-                <a href="/donaciones">Donaciones</a>
-                <a href="/logout">Cerrar sesión</a>
-                <a href="/necesidades">Mis Necesidades</a>
-            {{else}}
-                <a href="/registro">Registro</a>
-                <a href="/login">Iniciar sesión</a>
-            {{/if}}
+    <header class="header">
+        <div class="logo-container">
+            <a href="/" class="logo-link">
+                <img class="logo" src="/assets/images/logo/logoblanco.png" alt="Dona Track">
+            </a>
+            <h2 class="logo-titulo">Dona<br>Track</h2>
         </div>
-    </nav>
-    <div class="container">
-        {{#block "contenido"}}
-        {{/block}}
-    </div>
-</main>
+
+        <nav class="nav-principal">
+            <div class="links-nav-div">
+                <a href="/">Home</a>
+                {{#if logueado}}
+                    <a href="#">Donaciones</a>
+                    {{#if esBeneficiario}}
+                        <a href="/necesidades">Mis Necesidades</a>
+                    {{/if}}
+                {{else}}
+                    <a href="/mapa">Mapa Solidario</a>
+                    <a href="/registro">Registro</a>
+                {{/if}}
+            </div>
+
+            <div class="acciones-nav">
+                {{#if logueado}}
+                    <a href="#" class="link-sesion">Cerrar sesión</a>
+                {{else}}
+                    <a href="/login" class="link-sesion">Iniciar sesión</a>
+                {{/if}}
+                <button class="boton-donar">
+                    <a class="link-donar" href="/donaciones">DONAR</a>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            {{#block "contenido"}}
+            {{/block}}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-contenido">
+
+            <!-- Columna 1 -->
+            <div class="footer-columna">
+                <section class="footer-bloque">
+                    <h3 class="footer-titulo">Contacto</h3>
+                    <address class="footer-contacto">
+                        <p>Tel.: (54) xxxx-xxxx</p>
+                        <p>Fax: (54) xxxx-xxxx</p>
+                        <a href="mailto:info@donatrack.com">info@donatrack.com</a>
+                    </address>
+                </section>
+
+                <section class="footer-bloque">
+                    <h3 class="footer-titulo">Redes sociales</h3>
+                    <div class="footer-redes">
+                        <a href="#" class="red-social" aria-label="Facebook"></a>
+                        <a href="#" class="red-social" aria-label="Instagram"></a>
+                        <a href="#" class="red-social" aria-label="X"></a>
+                        <a href="#" class="red-social" aria-label="YouTube"></a>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Columna 2 -->
+            <div class="footer-columna">
+                <section class="footer-bloque">
+                    <h3 class="footer-titulo">Más información</h3>
+                    <ul class="footer-lista">
+                        <li><a href="#">Ubicaciones</a></li>
+                        <li><a href="/mapa">Mapa de Solidaridad</a></li>
+                        <li><a href="#">Donar</a></li>
+                        <li><a href="#">Noticias</a></li>
+                        <li><a href="#">Sobre Nosotros</a></li>
+                        <li><a href="#">Voluntariado</a></li>
+                    </ul>
+                </section>
+            </div>
+
+            <!-- Columna 3 -->
+            <div class="footer-columna">
+                <section class="footer-bloque">
+                    <h3 class="footer-titulo">Legales</h3>
+                    <ul class="footer-lista">
+                        <li><a href="/legal">Ver términos legales</a></li>
+                    </ul>
+                </section>
+
+                <section class="footer-bloque">
+                    <h3 class="footer-titulo">Donaciones</h3>
+                    <ul class="footer-lista">
+                        <li><a href="#">Logística</a></li>
+                    </ul>
+                </section>
+            </div>
+
+        </div>
+
+        <p class="footer-copyright">Copyright 2026. Todos los derechos reservados.</p>
+    </footer>
 </body>
 </html>

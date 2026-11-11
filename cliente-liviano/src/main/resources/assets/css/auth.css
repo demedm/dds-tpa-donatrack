@@ -1,0 +1,63 @@
+
+/* ===== AUTH (login y registro): solo layout ===== */
+.auth {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 600px;
+    background-color: var(--color-background);
+}
+
+.auth-formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 8%;
+}
+
+.auth-titulo {
+    font-family: var(--font-tittles);
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--color-primary-azul);
+    margin-bottom: 1.5rem;
+}
+
+.form-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 520px;
+}
+
+/* Misma separación del botón en login y registro */
+.form-auth .boton-auth {
+    margin-top: 0.5rem;
+}
+
+.auth-imagen {
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-imagen img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 900px) {
+    .auth {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-imagen {
+        display: none;
+    }
+
+    .auth-formulario {
+        padding: 2.5rem 6%;
+    }
+}

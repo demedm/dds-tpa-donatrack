@@ -1,0 +1,139 @@
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    <link rel="stylesheet" href="/assets/css/donacion.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <div class="auth auth-donacion">
+
+        <div class="auth-imagen">
+            <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Persona entregando ropa donada">
+            <div class="donacion-mensaje">
+                <h2>Ya estás un paso más cerca. Aportá tu granito de arena con tu donación.</h2>
+                <p>Si ya sos donante podés registrar una donación directamente iniciando sesión.</p>
+            </div>
+        </div>
+
+        <section class="auth-formulario">
+            <form action="/donar" method="POST" class="form-auth">
+
+                <div class="campo">
+                    <label for="personeria">Seleccioná tu personería</label>
+                    <select id="personeria" name="personeria">
+                        <option value="humana" selected>Humana</option>
+                        <option value="juridica">Jurídica</option>
+                    </select>
+                </div>
+
+                <!-- PERSONA HUMANA -->
+                <fieldset class="grupo-personeria" id="grupo-humana">
+                    <div class="campo">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Nombre *" required>
+                    </div>
+                    <div class="campo">
+                        <label for="apellido">Apellido</label>
+                        <input type="text" id="apellido" name="apellido" placeholder="Apellido *" required>
+                    </div>
+                    <div class="campo">
+                        <label for="email-humana">Email</label>
+                        <input type="email" id="email-humana" name="email" placeholder="Email *" required>
+                    </div>
+                    <div class="campo">
+                        <label for="fechaNacimiento">Fecha de nacimiento</label>
+                        <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+                    </div>
+                    <div class="campo">
+                        <label for="dni">DNI</label>
+                        <input type="text" id="dni" name="dni" placeholder="DNI *" inputmode="numeric" pattern="[0-9]{7,8}" required>
+                    </div>
+                    <div class="campo">
+                        <label for="direccion-humana">Dirección</label>
+                        <input type="text" id="direccion-humana" name="direccion" placeholder="Dirección *" required>
+                    </div>
+                    <div class="campo">
+                        <label for="genero">Género</label>
+                        <select id="genero" name="genero" required>
+                            <option value="" disabled selected>Seleccionar</option>
+                            <option value="femenino">Femenino</option>
+                            <option value="masculino">Masculino</option>
+                            <option value="otro">Otro</option>
+                            <option value="no-informa">Prefiero no decirlo</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <!-- PERSONA JURÍDICA -->
+                <fieldset class="grupo-personeria" id="grupo-juridica" hidden disabled>
+                    <div class="campo">
+                        <label for="razonSocial">Razón Social</label>
+                        <input type="text" id="razonSocial" name="razonSocial" placeholder="Razón social *" required>
+                    </div>
+                    <div class="campo">
+                        <label for="direccion-juridica">Dirección</label>
+                        <input type="text" id="direccion-juridica" name="direccion" placeholder="Dirección *" required>
+                    </div>
+                    <div class="campo">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" placeholder="Teléfono *" required>
+                    </div>
+                    <div class="campo">
+                        <label for="email-juridica">Email</label>
+                        <input type="email" id="email-juridica" name="email" placeholder="Email *" required>
+                    </div>
+                    <div class="campo">
+                        <label for="emailExtra">Agregar Email</label>
+                        <div class="campo-con-boton">
+                            <input type="email" id="emailExtra" placeholder="Email">
+                            <button type="button" class="boton-mas" id="agregarEmail" aria-label="Agregar email">+</button>
+                        </div>
+                        <ul class="lista-emails" id="listaEmails"></ul>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="boton-auth">Continuar</button>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        const select = document.getElementById('personeria');
+        const grupos = {
+            humana: document.getElementById('grupo-humana'),
+            juridica: document.getElementById('grupo-juridica')
+        };
+
+        function mostrarGrupo() {
+            Object.entries(grupos).forEach(([tipo, grupo]) => {
+                const activo = tipo === select.value;
+                grupo.hidden = !activo;
+                grupo.disabled = !activo;
+            });
+        }
+        select.addEventListener('change', mostrarGrupo);
+        mostrarGrupo();
+
+        // Emails adicionales (jurídica)
+        const inputExtra = document.getElementById('emailExtra');
+        const lista = document.getElementById('listaEmails');
+
+        document.getElementById('agregarEmail').addEventListener('click', () => {
+            const valor = inputExtra.value.trim();
+            if (!valor || !inputExtra.checkValidity()) {
+                inputExtra.reportValidity();
+                return;
+            }
+            const li = document.createElement('li');
+            li.innerHTML = `<span></span>
+            <input type="hidden" name="emailsAdicionales[]">
+            <button type="button" aria-label="Quitar email">×</button>`;
+            li.querySelector('span').textContent = valor;
+            li.querySelector('input').value = valor;
+            li.querySelector('button').addEventListener('click', () => li.remove());
+            lista.appendChild(li);
+            inputExtra.value = '';
+        });
+    </script>
+{{/partial}}
+
+{{>templates/layout}}

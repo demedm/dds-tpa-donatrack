@@ -1,0 +1,234 @@
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/admin/admin.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <div class="admin">
+        <h1 class="sr-only">Panel de administración: Logística</h1>
+
+        <!-- Pestañas -->
+        <nav class="admin-tabs" aria-label="Secciones de administración">
+            <a href="/admin/donaciones">Donaciones</a>
+            <a href="/admin/usuarios">Usuarios</a>
+            <a href="/admin/logistica" aria-current="page">Logística</a>
+        </nav>
+
+        <!-- Barra de búsqueda y acciones -->
+        <div class="admin-barra">
+            <form action="/admin/logistica" method="GET" class="busqueda" role="search">
+                <div class="campo campo-compacto">
+                    <label class="sr-only" for="buscar">Buscar</label>
+                    <input type="search" id="buscar" name="q" placeholder="Search">
+                </div>
+                <div class="campo campo-compacto">
+                    <label class="sr-only" for="categoria">Categoría</label>
+                    <select id="categoria" name="categoria">
+                        <option value="">Category</option>
+                        <option value="camiones">Camiones</option>
+                        <option value="rutas">Rutas</option>
+                        <option value="choferes">Choferes</option>
+                    </select>
+                </div>
+                <button type="submit" class="boton-icono boton-buscar" aria-label="Buscar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+                <button type="button" class="boton-icono boton-filtros" aria-label="Filtros">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+                </button>
+            </form>
+
+            <div class="admin-agregar">
+                <a href="/admin/logistica/rutas/nueva" class="boton-rojo">
+                    Agregar Ruta
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                </a>
+                <a href="/admin/logistica/camiones/nuevo" class="boton-rojo">
+                    Agregar Camión
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="admin-grilla">
+
+            <!-- ===== COLUMNA IZQUIERDA ===== -->
+            <div class="admin-col">
+
+                <!-- Ficha del camión seleccionado -->
+                <section class="tarjeta ficha" id="fichaCamion">
+                    <header class="ficha-cabecera">
+                        <h2>Seleccionado</h2>
+                        <span class="ficha-codigo">CAM-001</span>
+                    </header>
+
+                    <div class="ficha-cuerpo">
+                        <div class="ficha-avance">
+                            <h3>Avance del recorrido</h3>
+                            <div class="anillo" style="--valor: 75" role="img" aria-label="Avance del recorrido: 75%">
+                                <span>75%</span>
+                            </div>
+                        </div>
+
+                        <dl class="ficha-datos">
+                            <dt>Patente</dt><dd>AB 123 CD</dd>
+                            <dt>Capac. Carga</dt><dd>3 t</dd>
+                            <dt>Capac. Volumen</dt><dd>12 m³</dd>
+                            <dt>Altura</dt><dd>2,8 m</dd>
+                        </dl>
+                    </div>
+
+                    <div class="ficha-pie">
+                        <p><strong>Estado:</strong> <span class="badge badge-ruta">En ruta</span></p>
+                        <p><strong>Último mantenimiento:</strong> 12/09/2026</p>
+                        <p><strong>Ubicación:</strong> Av. Corrientes 1234</p>
+                    </div>
+                </section>
+
+                <!-- Paradas -->
+                <section class="tarjeta">
+                    <h2 class="tarjeta-titulo">Paradas</h2>
+                    <div class="tabla-scroll">
+                        <table class="tabla">
+                            <thead>
+                            <tr>
+                                <th class="col-check"><span class="sr-only">Seleccionar</span></th>
+                                <th>Dirección</th>
+                                <th>Chofer</th>
+                                <th>Salida</th>
+                                <th>Llegada</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{!-- Reemplazar por {{#each paradas}} --}}
+                            <tr>
+                                <td><label class="check-recordame check-tabla"><input type="radio" name="parada" value="1" checked><span class="check-caja"></span><span class="sr-only">Seleccionar parada 1</span></label></td>
+                                <td>Av. Rivadavia 100</td><td>Juan Pérez</td><td>08:00</td><td>08:45</td>
+                            </tr>
+                            <tr>
+                                <td><label class="check-recordame check-tabla"><input type="radio" name="parada" value="2"><span class="check-caja"></span><span class="sr-only">Seleccionar parada 2</span></label></td>
+                                <td>Calle Falsa 123</td><td>Juan Pérez</td><td>09:00</td><td>09:30</td>
+                            </tr>
+                            <tr>
+                                <td><label class="check-recordame check-tabla"><input type="radio" name="parada" value="3"><span class="check-caja"></span><span class="sr-only">Seleccionar parada 3</span></label></td>
+                                <td>San Martín 456</td><td>Juan Pérez</td><td>10:00</td><td>10:40</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Donaciones -->
+                <section class="tarjeta">
+                    <h2 class="tarjeta-titulo">Donaciones</h2>
+                    <div class="tabla-scroll">
+                        <table class="tabla tabla-marco">
+                            <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Bienes</th>
+                                <th>Vcto.</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{!-- Reemplazar por {{#each donaciones}} --}}
+                            <tr><td>Ropa de abrigo</td><td>Asignada</td><td>Ropa</td><td>—</td></tr>
+                            <tr><td>Alimentos enlatados</td><td>Pendiente</td><td>Alimentos</td><td>30/12/2026</td></tr>
+                            <tr><td>Útiles escolares</td><td>Asignada</td><td>Útiles</td><td>—</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ===== COLUMNA DERECHA ===== -->
+            <div class="admin-col">
+
+                <!-- Mapa (placeholder hasta tener la lógica) -->
+                <div class="mapa" id="mapa" role="img" aria-label="Mapa de rutas (próximamente)">
+                    <div class="mapa-etiqueta">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                        Logística
+                    </div>
+                    <p class="mapa-aviso">Mapa próximamente</p>
+                </div>
+
+                <!-- Acciones sobre el camión seleccionado -->
+                <div class="acciones-tabla">
+                    <label class="check-recordame check-tabla">
+                        <input type="checkbox" id="seleccionarTodos">
+                        <span class="check-caja"></span>
+                        <span class="check-texto">Seleccionar Camión</span>
+                    </label>
+
+                    <div class="acciones-tabla-der">
+                        <button type="button" class="enlace-accion">Mostrar Detalles</button>
+                        <button type="button" class="enlace-accion">Reactivar</button>
+                        <button type="button" class="enlace-accion">Eliminar</button>
+
+                        <div class="campo campo-compacto">
+                            <label class="sr-only" for="modificar">Modificar</label>
+                            <select id="modificar">
+                                <option value="" disabled selected>Modificar</option>
+                                <option value="datos">Datos del camión</option>
+                                <option value="estado">Estado</option>
+                            </select>
+                        </div>
+                        <div class="campo campo-compacto">
+                            <label class="sr-only" for="asignar">Asignar</label>
+                            <select id="asignar">
+                                <option value="" disabled selected>Asignar</option>
+                                <option value="chofer">Chofer</option>
+                                <option value="ruta">Ruta</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de camiones -->
+                <section class="tarjeta tarjeta-tabla">
+                    <div class="tabla-scroll">
+                        <table class="tabla">
+                            <thead>
+                            <tr>
+                                <th class="col-check">#</th>
+                                <th>Patente</th>
+                                <th>Chofer</th>
+                                <th>Características</th>
+                                <th>Entidad</th>
+                                <th>Estado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{!-- Reemplazar por {{#each camiones}} --}}
+                            <tr>
+                                <td><label class="check-recordame check-tabla"><input type="radio" name="camion" value="CAM-001" checked><span class="check-caja"></span><span class="sr-only">Seleccionar CAM-001</span></label></td>
+                                <td>AB 123 CD</td><td>Juan Pérez</td><td>3 t · 12 m³</td><td>Entidad 1</td>
+                                <td><span class="badge badge-ruta">En ruta</span></td>
+                            </tr>
+                            <tr>
+                                <td><label class="check-recordame check-tabla"><input type="radio" name="camion" value="CAM-002"><span class="check-caja"></span><span class="sr-only">Seleccionar CAM-002</span></label></td>
+                                <td>AC 456 EF</td><td>María Gómez</td><td>5 t · 20 m³</td><td>Entidad 2</td>
+                                <td><span class="badge badge-mantenimiento">Mantenimiento</span></td>
+                            </tr>
+                            <tr>
+                                <td><label class="check-recordame check-tabla"><input type="radio" name="camion" value="CAM-003"><span class="check-caja"></span><span class="sr-only">Seleccionar CAM-003</span></label></td>
+                                <td>AD 789 GH</td><td>Carlos Díaz</td><td>2 t · 8 m³</td><td>Entidad 1</td>
+                                <td><span class="badge badge-disponible">Disponible</span></td>
+                            </tr>
+                            <tr>
+                                <td><label class="check-recordame check-tabla"><input type="radio" name="camion" value="CAM-004"><span class="check-caja"></span><span class="sr-only">Seleccionar CAM-004</span></label></td>
+                                <td>AE 321 IJ</td><td>Lucía Ramos</td><td>3 t · 12 m³</td><td>Entidad 3</td>
+                                <td><span class="badge badge-ruta">En ruta</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </div>
+{{/partial}}
+
+{{>templates/layout}}

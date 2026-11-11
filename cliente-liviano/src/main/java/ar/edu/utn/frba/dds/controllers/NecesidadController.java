@@ -1,13 +1,17 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NecesidadController {
@@ -25,10 +29,36 @@ public class NecesidadController {
       }
     }
 
+
+    List<Object> necesidades = new ArrayList<>();
+    if (idUsuario != null) {
+      try {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:9001/necesidades?entidadId=" + idUsuario))
+            .header("Accept", "application/json")
+            .GET()
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+          ObjectMapper mapper = new ObjectMapper();
+          necesidades = mapper.readValue(response.body(), new TypeReference<List<Object>>() {});
+        } else {
+          System.err.println("Error al obtener necesidades de Donaciones MS: " + response.body());
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+
     Map<String, Object> model = new HashMap<>();
     model.put("idUsuario", idUsuario);
     model.put("entidadId", idUsuario);
     model.put("titulo", "Mis Necesidades");
+    model.put("necesidades", necesidades); // <-- Se agrega la lista para la vista
 
     ctx.render("beneficiarios/necesidades.hbs", model);
   }

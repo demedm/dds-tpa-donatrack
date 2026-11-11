@@ -1,0 +1,37 @@
+/* Base de los estilos */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Special+Gothic+Expanded+One&family=Spinnaker&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+
+    --color-primary-rojo: #c62323;
+    --color-primary-azul: #303956;
+    --color-primary-verde: #accd44;
+    --color-secondary-verde: #a2ae46;
+    --color-accent: #23a6f0;
+    --color-text: #252b42;
+    --color-text-secondary: #737373;
+    --color-light: #ffffff;
+    --color-light-secondary: #f1f1f1;
+    --color-background: #fffefe;
+
+    --color-border: #d1d5db;
+    --shadow: 0 2px 8px rgba(58, 58, 58);
+
+    --transition: all 0.3s ease;
+
+    --font-tittles: 'Special Gothic Expanded One', sans-serif;
+    --font-main: 'Spinnaker', sans-serif;
+    --font-secondary: 'Source Sans 3', sans-serif;
+}
+
+html {
+    font-size: 15px;
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px; /* alto aproximado del nav */
+}

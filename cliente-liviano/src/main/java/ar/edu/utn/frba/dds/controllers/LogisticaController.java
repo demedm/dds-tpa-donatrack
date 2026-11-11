@@ -31,7 +31,7 @@ public class LogisticaController {
 
       modelo.put("camiones", camiones);
       modelo.put("logueado", true);
-      ctx.render("admin/camiones.hbs", modelo);
+      ctx.render("admin/logistica.hbs", modelo);
 
     } catch (Exception e) {
       System.err.println("Error en mostrarCamiones:");

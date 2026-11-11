@@ -7,7 +7,6 @@ import ar.edu.utn.frba.dds.controllers.HomeController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import ar.edu.utn.frba.dds.controllers.RolMiddleware;
 import ar.edu.utn.frba.dds.controllers.SessionController;
-import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
 import ar.edu.utn.frba.dds.session.Rol;
 import io.javalin.Javalin;
@@ -31,33 +30,41 @@ public class Router {
     app.before("/login", this::noAutenticados);
     app.get("/login", session::login);
     app.post("/login", session::create);
+
     app.before("/registro", this::noAutenticados);
     app.get("/registro", session::mostrarRegistro);
     app.post("/registro", session::registrarUsuario);
 
     app.get("/logout", session::logout);
 
-    app.before("/donaciones", this::autenticados);
-    app.get("/donaciones", donacionController::mostrarDonaciones);
+    app.get("/mapa", donacionController::mostrarUbicacionDonaciones);
+    app.get("/donaciones", donacionController::mostrarRegistroDonacion);
     app.post("/donaciones", donacionController::registrarDonacion);
 
-    app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
-    app.before("/necesidades/*", this::autenticados);
+    app.get("/donaciones-2", ctx -> {
+      ctx.render("public/registro-donacion.hbs");
+    });
+
+    // app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    // app.before("/necesidades/*", this::autenticados);
     app.get("/necesidades", necesidadController::showNecesidades);
     app.post("/necesidades/",necesidadController::crear);
     app.get("/necesidades/{id}", necesidadController::showNecesidad);
     app.post("/necesidades/{id}/peticiones", necesidadController::agregarPeticion);
     app.post("/necesidades/{id}/adjuntos", necesidadController::subirAdjunto);
 
-    app.before("/usuarios/*", this::autenticados);
-    app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    // las rutas comentadas son para poder ver las vistas sin loggear
+    // app.before("/usuarios/*", this::autenticados);
+    // app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     app.get("/usuarios/{idUsuario}/entregas-en-curso", logisticaController::entregasEnCurso);
 
-    app.before("/admin/*", session::validarAutenticacion);
-    app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
+    // app.before("/admin/*", session::validarAutenticacion);
+    // app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
     app.get("/admin/panel", adminController::administracion);
-    app.get("/admin/camiones", logisticaController::mostrarCamiones);
-    app.get("/admin/donaciones", donacionController::mostrarDonaciones);
+    app.get("/admin/logistica", logisticaController::mostrarCamiones);
+    // app.get("/admin/donaciones", donacionController::mostrarUbicacionDonaciones);
+    app.get("/admin/donaciones", ctx -> ctx.render("admin/donaciones.hbs"));
+
     app.post("/admin/camiones", logisticaController::registrarCamion);
     app.post("/admin/donaciones", donacionController::registrarDonacion);
     app.get("/admin/registro", session::mostrarRegistroAdmin);

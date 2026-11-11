@@ -1,14 +1,103 @@
-{{#partial "contenido-header"}}{{/partial}}
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/home.css">
+{{/partial}}
 
 {{#partial "contenido"}}
-    ¡Hola! Esta es la landing page :D
 
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-contenido">
+            <h1 class="hero-titulo">Sumate a la causa</h1>
+            <p class="hero-texto">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+            </p>
+            <a href="/donar" class="boton-verde">DONÁ AHORA</a>
+        </div>
 
-    Presentar el propósito y objetivos de DonaTrack.
-    Incluir enlaces de acceso a:
-        Visualización de fotos de donaciones entregadas sin login.
-        Registro o inicio de sesión para personas donantes y beneficiarias.
-        Información legal y de privacidad.
+        <svg class="hero-onda" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,60 C240,120 480,0 720,40 C960,80 1200,110 1440,50 L1440,120 L0,120 Z"/>
+        </svg>
+    </section>
+
+    <!-- INTRODUCCIÓN -->
+    <section class="intro">
+        <p>
+            Somos una organización sin fines de lucro dedicada a la recolección y distribución de donaciones de bienes. Impulsados por la necesidad de llevar transparencia y fortalecer la relación entre donantes y las entidades beneficiarias, traemos DonaTrack.
+        </p>
+    </section>
+
+    <!-- BLOQUES IMAGEN + TEXTO -->
+    <div class="container-limitado">
+
+        <section class="bloque bloque-azul">
+            <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Persona entregando ropa donada">
+            <div class="bloque-texto">
+                <h2>Conocé cómo podés ayudar.</h2>
+                <p>Ropa, alimentos enlatados, útiles escolares, muebles.</p>
+            </div>
+        </section>
+
+        <section class="bloque bloque-verde">
+            <div class="bloque-texto">
+                <h2>Apoyá entidades necesitadas con tu aporte.</h2>
+                <p>Ropa, alimentos enlatados, útiles escolares, muebles.</p>
+            </div>
+            <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Voluntarios cargando muebles donados">
+        </section>
+
+        <!-- CASOS DE ÉXITO -->
+        <section class="casos">
+            <h2 class="casos-titulo">Descubrí algunos de nuestros casos de éxito</h2>
+
+            <div class="casos-grilla">
+                <a href="#" class="caso caso-destacado">
+                    <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Mobiliario para escuelas rurales">
+                    <div class="caso-info">
+                        <h3>Recolección de mobiliario para escuelas rurales.</h3>
+                        <span class="caso-fecha">Junio 2026</span>
+                    </div>
+                </a>
+
+                <a href="#" class="caso">
+                    <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Caso de éxito">
+                    <h3>Lorem ipsum dolor sit amet</h3>
+                </a>
+                <a href="#" class="caso">
+                    <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Caso de éxito">
+                    <h3>Lorem ipsum dolor sit amet</h3>
+                </a>
+                <a href="#" class="caso">
+                    <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Caso de éxito">
+                    <h3>Lorem ipsum dolor sit amet</h3>
+                </a>
+                <a href="#" class="caso">
+                    <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Caso de éxito">
+                    <h3>Lorem ipsum dolor sit amet</h3>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- BANNER ROJO -->
+    <section class="banner-rojo">
+        <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Voluntarios entregando donaciones">
+        <div class="banner-texto">
+            <h2>DonaTrack es una plataforma líder en recaudación y distribución de donaciones.</h2>
+            <p>Explorá nuestro Mapa de Solidaridad</p>
+            <a href="/mapa" class="boton-verde">CONOCER MÁS</a>
+        </div>
+    </section>
+
+    <script>
+        const header = document.querySelector('.header');
+
+        function actualizarNav() {
+            header.classList.toggle('header-scrolled', window.scrollY > 50);
+        }
+
+        window.addEventListener('scroll', actualizarNav, { passive: true });
+        actualizarNav(); // por si la página carga ya scrolleada
+    </script>
 
 {{/partial}}
 

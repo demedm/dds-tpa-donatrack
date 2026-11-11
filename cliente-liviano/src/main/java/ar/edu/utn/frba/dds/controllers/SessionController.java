@@ -50,7 +50,7 @@ public class SessionController {
     }
 
     modelo.put("sesionIniciada", ctx.sessionAttribute("user_id") != null);
-    ctx.render("login.hbs", modelo);
+    ctx.render("public/login.hbs", modelo);
   }
 
   public void logout(Context ctx) {
@@ -98,7 +98,7 @@ public class SessionController {
   }
 
   public void mostrarRegistro(Context ctx) {
-    ctx.render("public/registro.hbs");
+    ctx.render("/public/registro-usuario.hbs");
   }
 
   public void mostrarRegistroAdmin(Context ctx) {
@@ -106,7 +106,7 @@ public class SessionController {
 
     modelo.put("esAdmin", true);
 
-    ctx.render("public/registro.hbs", modelo);
+    ctx.render("public/registro-donacion-persona.hbs", modelo);
   }
 
   public void registrarUsuario(Context ctx) {
@@ -166,7 +166,7 @@ public class SessionController {
       modelo.put("error", "No fue posible comunicarse con el servidor.");
     }
 
-    ctx.render("public/registro.hbs", modelo);
+    ctx.render("public/registro-donacion-persona.hbs", modelo);
   }
 
   public void validarAutenticacion(@NotNull Context ctx) {
