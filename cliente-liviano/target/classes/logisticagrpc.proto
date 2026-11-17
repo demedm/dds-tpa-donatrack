@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "ar.edu.utn.frba.dds.grpc";
+
+service PlanificacionService {
+  rpc SolicitarPlanificacion (SolicitudPlanificacionRequest) returns (ConfirmationPlanificacionResponse);
+  rpc ObtenerEntregasEnCurso (EntregasEnCursoRequest) returns (EntregasEnCursoResponse);
+}
+
+message EntregasEnCursoRequest {
+  int64 entidad_id = 1;
+}
+
+message EntregaEnCursoDto {
+  int64 id = 1;
+  int64 donacion_id = 2;
+  string direccion = 3;
+  string estado = 4;
+  double latitud_camion = 5;
+  double longitud_camion = 6;
+}
+
+message EntregasEnCursoResponse {
+  repeated EntregaEnCursoDto entregas = 1;
+}
+
+message CamionDto {
+  string patente = 1;
+  double altura = 2;
+  double capacidad_carga = 3;
+  double capacidad_volumen = 4;
+}
+
+message RequestPlanificacionDto {
+  string id = 1;
+  string direccion =2;
+  int64 idEntidad = 3;
+  int64 idDonacion=4;
+  string vencimiento = 5;
+}
+
+message SolicitudPlanificacionRequest {
+  repeated RequestPlanificacionDto donaciones = 1;
+  repeated CamionDto camiones = 2;
+  string url_callback = 3;
+}
+
+message ConfirmationPlanificacionResponse {
+  string response_id = 1;
+  string estado = 2;
+}

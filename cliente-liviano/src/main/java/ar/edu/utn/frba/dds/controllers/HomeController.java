@@ -14,6 +14,7 @@ public class HomeController {
     UsuarioLogueado usuario = ctx.attribute("usuarioLogueado");
     System.out.println("Usuario autenticado: " + usuario);
     modelo.put("logueado", usuario != null);
+    modelo.put("esBeneficiario", usuario != null && Rol.BENEFICIARIO.equals(usuario.getRol()));
 
     try {
       if (usuario.getRol().equals(Rol.ADMIN)) {

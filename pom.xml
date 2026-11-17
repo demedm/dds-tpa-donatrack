@@ -16,6 +16,7 @@
   <modules>
     <module>donaciones-mserv</module>
     <module>logistica-mserv</module>
+    <module>cliente-liviano</module>
   </modules>
 
   <properties>

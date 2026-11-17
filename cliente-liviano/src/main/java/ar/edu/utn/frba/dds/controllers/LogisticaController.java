@@ -1,14 +1,19 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.clients.GrpcClientLogisticaImplementation;
 import ar.edu.utn.frba.dds.clients.HttpClient.LogisticaHttpClient;
 import ar.edu.utn.frba.dds.dto.CamionDto;
 import ar.edu.utn.frba.dds.dto.CamionRequest;
 import ar.edu.utn.frba.dds.dto.EntregaEnCursoDto;
+import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URI;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,24 +86,26 @@ public class LogisticaController {
 
     ctx.render("admin/nuevo-camion.hbs", modelo);
   }
-  public void entregasEnCurso(Context ctx) {
-    var idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
-    List<EntregaEnCursoDto> entregas = new LogisticaHttpClient().obtenerEntregasEnCurso(idUsuario);
+  private final GrpcClientLogisticaImplementation grpcLogisticaClient = new GrpcClientLogisticaImplementation();
 
-    // 2. Serializa la lista a JSON String para Leaflet
-    String puntosJson = "[]";
-    try {
-      puntosJson = new ObjectMapper().writeValueAsString(entregas);
-    } catch (Exception e) {
-      e.printStackTrace();
+  public void entregasEnCurso(Context ctx) {
+    Long idUsuario = Long.parseLong(ctx.pathParam("idUsuario"));
+    List enCurso = grpcLogisticaClient.obtenerEntregasEnCurso(idUsuario);
+
+    String accept = ctx.header("Accept");
+    if (accept != null && accept.contains("application/json")) {
+      ctx.json(enCurso);
+      return;
     }
 
-    // 3. Renderiza la vista de Handlebars
-    ctx.render("entregas-en-curso.hbs", Map.of(
-        "idUsuario", idUsuario,
-        "enCurso", entregas,
-        "puntosJson", puntosJson
-    ));
+    UsuarioLogueado usuarioLogueado = ctx.attribute("usuarioLogueado");
+    Map<String, Object> model = new HashMap<>();
+    model.put("logueado", usuarioLogueado != null);
+    model.put("esBeneficiario", usuarioLogueado != null && "BENEFICIARIO".equalsIgnoreCase(String.valueOf(usuarioLogueado.getRol())));
+    model.put("idUsuario", idUsuario);
+    model.put("enCurso", enCurso);
+
+    ctx.render("entregas-en-curso.hbs", model);
   }
 
 }

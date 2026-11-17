@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.main;
 
+import ar.edu.utn.frba.dds.exceptions.UsuarioNotFoundException;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
 import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
@@ -31,7 +32,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Bootstrap {
+	private static Long comedorId;
 	public static void init() {
+
+		if (yaInicializado()) {
+			System.out.println("Bootstrap ya creado, entonces pasaa");
+			return;
+		}
 		WithSimplePersistenceUnit persistence = new WithSimplePersistenceUnit() {};
 		persistence.withTransaction(Bootstrap::crearNecesidadesConNecesidades);
 
@@ -41,9 +48,16 @@ public class Bootstrap {
 
 		Persona maria = DonanteRepository.Instance.buscarPorEmail("mariaa@gmail.com").orElseThrow();
 		donaciones(maria);
-		// registro de algunos usuarios de prueba
-		UsuariosRepositorio.Instance.registrarUsuarioDeDonante(usuarios().get(1), donadores().get(0));
-		UsuariosRepositorio.Instance.registrarUsuarioDeAdmin(usuarios().get(0));
+
+		List<Usuario> listaUsuarios = usuarios();
+		UsuariosRepositorio.Instance.registrarUsuarioDeDonante(listaUsuarios.get(1), maria);
+		UsuariosRepositorio.Instance.registrarUsuarioDeAdmin(listaUsuarios.get(0));
+
+		UsuariosRepositorio.Instance.withTransaction(() -> {
+			Usuario userComedor = listaUsuarios.get(2);
+			userComedor.setDominioId(comedorId);
+			UsuariosRepositorio.Instance.entityManager().persist(userComedor);
+		});
 	}
 
 	private static List<Usuario> usuarios(){
@@ -51,8 +65,10 @@ public class Bootstrap {
 				"neme@email.com", "nemesito");
 		Usuario usuario2 = new Usuario(Rol.DONANTE,
 				"mariaa@gmail.com", "gatos123");
+		Usuario usuario3 = new Usuario(Rol.BENEFICIARIO,
+				"comedor@email.com", "comedor123");
 
-		return List.of(usuario1, usuario2);
+		return List.of(usuario1, usuario2,usuario3);
 	}
 
 	private static List<Donacion> donaciones(Persona donante) {
@@ -118,6 +134,7 @@ public class Bootstrap {
 		nec1.agregarPeticion(pet2);
 		comedor.agregarNecesidad(nec1);
 		EntidadRepository.Instance.registrar(comedor);
+		comedorId = comedor.getId();
 
 		EntidadBeneficiaria hogar = new EntidadBeneficiaria(
 				"Mozart 2300", new ArrayList<>(), "Hogar San José", null);
@@ -134,4 +151,12 @@ public class Bootstrap {
 		EntidadRepository.Instance.registrar(hogar);
 
     }
+	private static boolean yaInicializado() {
+		try {
+			UsuariosRepositorio.Instance.buscarXmail("comedor@email.com");
+			return true;
+		} catch (UsuarioNotFoundException e) {
+			return false;
+		}
+	}
 }

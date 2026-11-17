@@ -2,20 +2,17 @@ package ar.edu.utn.frba.dds.model.usuarios;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "usuario",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"rol", "dominioId"}))
 public class Usuario {
   @Id
   @GeneratedValue
   private Long id;
 
-  @Column(unique = true)
+  @Column(name ="dominioId")
   private Long dominioId;
 
   @Column(nullable = false, unique = true)
