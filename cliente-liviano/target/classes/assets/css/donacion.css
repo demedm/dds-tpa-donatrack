@@ -1,0 +1,121 @@
+
+/* ===== DONACIÓN ===== */
+
+/* Imagen a la izquierda, formulario a la derecha */
+.auth-donacion .auth-imagen {
+    min-height: 600px;
+}
+
+/* Recuadro rojo sobre la imagen */
+.donacion-mensaje {
+    position: absolute;
+    top: 50%;
+    left: 15%;
+    right: 15%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 3rem;
+    padding: 3rem 2.5rem;
+    background-color: rgba(198, 35, 35, 0.92);
+    color: var(--color-light);
+    box-shadow: var(--shadow);
+}
+
+.donacion-mensaje h2 {
+    font-family: var(--font-tittles);
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.donacion-mensaje p {
+    font-family: var(--font-main);
+    font-size: 1.15rem;
+    line-height: 1.3;
+}
+
+/* Grupos de campos */
+.grupo-personeria {
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Importante: sin esto, display:flex pisa el atributo hidden */
+.grupo-personeria[hidden] {
+    display: none;
+}
+
+/* Input de fecha con el mismo aspecto que el resto */
+.campo input[type="date"] {
+    color: var(--color-text-secondary);
+}
+
+/* Input con botón "+" */
+.campo-con-boton {
+    position: relative;
+}
+
+.campo-con-boton input {
+    padding-right: 4rem;
+}
+
+.boton-mas {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.boton-mas:hover {
+    color: var(--color-light);
+    background-color: var(--color-primary-verde);
+}
+
+/* Emails agregados */
+.lista-emails {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.lista-emails li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    background-color: var(--color-light-secondary);
+    border-radius: 6px;
+}
+
+.lista-emails button {
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--color-primary-rojo);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .donacion-mensaje {
+        left: 8%;
+        right: 8%;
+    }
+}

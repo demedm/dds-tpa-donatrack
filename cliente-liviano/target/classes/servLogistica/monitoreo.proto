@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package monitoreo;
+
+option java_multiple_files = true;
+option java_package = "com.servLogistica.monitoreoServiceGrpc.grpc";
+
+service monitoreoService {
+  rpc GetUbicacion (Camion) returns (Ubicacion) {}
+}
+
+message Camion {
+  string patente = 1;
+}
+
+message Ubicacion {
+  double latitud = 1;
+  double longitud = 2;
+}

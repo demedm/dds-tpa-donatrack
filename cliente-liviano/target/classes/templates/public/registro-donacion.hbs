@@ -1,0 +1,174 @@
+
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    <link rel="stylesheet" href="/assets/css/donacion.css">
+    <link rel="stylesheet" href="/assets/css/donacion-detalle.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <div class="detalle-donacion">
+        <section class="detalle-panel">
+            <h1 class="detalle-titulo">Completá los detalles de la donación</h1>
+
+            <form action="/donar/detalle" method="POST" enctype="multipart/form-data" class="form-detalle" id="formDetalle">
+
+                <div id="listaArticulos">
+                    <!-- Artículo inicial -->
+                    <fieldset class="articulo" data-indice="0">
+                        <h2 class="articulo-titulo">Artículo</h2>
+
+                        <div class="campo">
+                            <label class="sr-only" for="categoria-0">Categoría</label>
+                            <select id="categoria-0" name="articulos[0][categoria]" class="select-categoria" required>
+                                <option value="" disabled selected>Categoría</option>
+                                <option value="ropa">Ropa</option>
+                                <option value="alimentos">Alimentos</option>
+                                <option value="higiene">Higiene</option>
+                                <option value="muebles">Muebles</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label class="sr-only" for="subcategoria-0">Subcategoría</label>
+                            <select id="subcategoria-0" name="articulos[0][subcategoria]" class="select-subcategoria" required disabled>
+                                <option value="" disabled selected>Subcategoría</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label class="sr-only" for="cantidad-0">Cantidad</label>
+                            <input type="number" id="cantidad-0" name="articulos[0][cantidad]" placeholder="Cantidad *" min="1" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="descripcion-0">Descripción *</label>
+                            <textarea id="descripcion-0" name="articulos[0][descripcion]" placeholder="Breve descripción ..." rows="6" required></textarea>
+                        </div>
+
+                        <div class="campo">
+                            <label for="imagen-0">Upload</label>
+                            <label class="input-archivo" for="imagen-0">
+                                <svg class="input-archivo-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                                <span class="input-archivo-nombre">Choose File</span>
+                                <span class="input-archivo-boton">Go</span>
+                            </label>
+                            <input type="file" id="imagen-0" name="imagen_0" accept="image/*" class="archivo-oculto">
+                        </div>
+                    </fieldset>
+                </div>
+
+                <button type="button" class="boton-agregar" id="agregarArticulo">
+                    Agregar artículo
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+
+                <button type="submit" class="boton-auth boton-donar-final">Donar</button>
+            </form>
+        </section>
+    </div>
+
+    <!-- Plantilla para clonar artículos -->
+    <template id="plantillaArticulo">
+        <fieldset class="articulo" data-indice="__I__">
+            <div class="articulo-cabecera">
+                <h2 class="articulo-titulo">Artículo</h2>
+                <button type="button" class="boton-quitar" aria-label="Quitar artículo">×</button>
+            </div>
+
+            <div class="campo">
+                <label class="sr-only" for="categoria-__I__">Categoría</label>
+                <select id="categoria-__I__" name="articulos[__I__][categoria]" class="select-categoria" required>
+                    <option value="" disabled selected>Categoría</option>
+                    <option value="ropa">Ropa</option>
+                    <option value="alimentos">Alimentos</option>
+                    <option value="higiene">Higiene</option>
+                    <option value="muebles">Muebles</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label class="sr-only" for="subcategoria-__I__">Subcategoría</label>
+                <select id="subcategoria-__I__" name="articulos[__I__][subcategoria]" class="select-subcategoria" required disabled>
+                    <option value="" disabled selected>Subcategoría</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label class="sr-only" for="cantidad-__I__">Cantidad</label>
+                <input type="number" id="cantidad-__I__" name="articulos[__I__][cantidad]" placeholder="Cantidad *" min="1" required>
+            </div>
+
+            <div class="campo">
+                <label for="descripcion-__I__">Descripción *</label>
+                <textarea id="descripcion-__I__" name="articulos[__I__][descripcion]" placeholder="Breve descripción ..." rows="6" required></textarea>
+            </div>
+
+            <div class="campo">
+                <label for="imagen-__I__">Upload</label>
+                <label class="input-archivo" for="imagen-__I__">
+                    <svg class="input-archivo-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                    <span class="input-archivo-nombre">Choose File</span>
+                    <span class="input-archivo-boton">Go</span>
+                </label>
+                <input type="file" id="imagen-__I__" name="imagen___I__" accept="image/*" class="archivo-oculto">
+            </div>
+        </fieldset>
+    </template>
+
+    <script>
+        // Subcategorías por categoría (reemplazalo por los datos reales de tu backend)
+        const subcategorias = {
+            ropa: ['Remeras', 'Pantalones', 'Abrigos', 'Calzado', 'Ropa de bebé'],
+            alimentos: ['No perecederos', 'Enlatados', 'Bebidas', 'Leche y derivados'],
+            higiene: ['Pañales', 'Jabones', 'Higiene femenina', 'Limpieza'],
+            muebles: ['Camas', 'Mesas', 'Sillas', 'Electrodomésticos']
+        };
+
+        const lista = document.getElementById('listaArticulos');
+        const plantilla = document.getElementById('plantillaArticulo');
+        let contador = 1;
+
+        // Habilita el comportamiento de un artículo (categoría → subcategoría, archivo)
+        function activarArticulo(articulo) {
+            const cat = articulo.querySelector('.select-categoria');
+            const sub = articulo.querySelector('.select-subcategoria');
+            const archivo = articulo.querySelector('input[type="file"]');
+            const nombre = articulo.querySelector('.input-archivo-nombre');
+
+            cat.addEventListener('change', () => {
+                sub.innerHTML = '<option value="" disabled selected>Subcategoría</option>';
+                (subcategorias[cat.value] || []).forEach(s => {
+                    sub.add(new Option(s, s));
+                });
+                sub.disabled = false;
+            });
+
+            archivo.addEventListener('change', () => {
+                nombre.textContent = archivo.files[0] ? archivo.files[0].name : 'Choose File';
+            });
+
+            const quitar = articulo.querySelector('.boton-quitar');
+            if (quitar) quitar.addEventListener('click', () => articulo.remove());
+        }
+
+        activarArticulo(lista.querySelector('.articulo'));
+
+        document.getElementById('agregarArticulo').addEventListener('click', () => {
+            const html = plantilla.innerHTML.replaceAll('__I__', contador++);
+            lista.insertAdjacentHTML('beforeend', html);
+            const nuevo = lista.lastElementChild;
+            activarArticulo(nuevo);
+            nuevo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    </script>
+{{/partial}}
+
+{{>templates/layout}}

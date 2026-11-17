@@ -1,0 +1,304 @@
+
+/* ===== NAV SOBRE EL HERO (solo en la home) ===== */
+body:has(.hero) .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: transparent;
+    box-shadow: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Cuando se baja un poco, el nav se vuelve azul */
+body:has(.hero) .header.header-scrolled {
+    background-color: var(--color-primary-azul);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== HERO ===== */
+.hero {
+    position: relative;
+    min-height: 640px;
+    display: flex;
+    align-items: center;
+    padding: 9rem 11% 10rem;
+    background: url("/assets/images/istockphoto-1372606861-1024x1024.jpg") center / cover no-repeat;
+    color: var(--color-light);
+}
+
+/* Oscurece un poco la imagen para que se lea el texto */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.1) 60%);
+}
+
+.hero-contenido {
+    position: relative;
+    max-width: 480px;
+}
+
+.hero-titulo {
+    font-family: var(--font-tittles);
+    font-size: 2.8rem;
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.hero-texto {
+    font-family: var(--font-main);
+    font-size: 1.6rem;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.hero-onda {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 110px;
+    fill: var(--color-background);
+}
+
+/* ===== INTRO ===== */
+.intro {
+    padding: 3rem 11%;
+    background-color: var(--color-light-secondary);
+}
+
+.intro p {
+    max-width: 820px;
+    margin: 0 auto;
+    font-family: var(--font-main);
+    font-size: 1.5rem;
+    line-height: 1.3;
+    text-align: justify;
+    color: var(--color-text);
+}
+
+/* ===== BLOQUES IMAGEN + TEXTO ===== */
+.bloque {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 330px;
+    margin-top: 2.5rem;
+}
+
+.bloque img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bloque-texto {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 2.5rem 3.5rem;
+    color: var(--color-light);
+}
+
+.bloque-texto h2 {
+    font-family: var(--font-secondary);
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.bloque-texto p {
+    font-family: var(--font-secondary);
+    font-size: 1.4rem;
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+.bloque-azul .bloque-texto {
+    background-color: var(--color-primary-azul);
+}
+
+.bloque-verde .bloque-texto {
+    background-color: var(--color-secondary-verde);
+}
+
+/* ===== CASOS DE ÉXITO ===== */
+.casos {
+    padding: 3.5rem 0;
+}
+
+.casos-titulo {
+    font-family: var(--font-tittles);
+    font-size: 1.8rem;
+    font-weight: 400;
+    text-align: center;
+    color: var(--color-text);
+    margin-bottom: 2rem;
+}
+
+.casos-grilla {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-auto-rows: auto;
+    gap: 1.5rem;
+}
+
+.caso {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--color-text);
+    background-color: var(--color-light-secondary);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.caso:hover {
+    transform: translateY(-4px);
+}
+
+.caso img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+}
+
+.caso h3 {
+    padding: 1.25rem 1.25rem 1.5rem;
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+/* Tarjeta grande: ocupa las 2 filas de la izquierda */
+.caso-destacado {
+    grid-row: span 2;
+}
+
+.caso-destacado img {
+    height: 280px;
+}
+
+.caso-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2rem 1.75rem;
+}
+
+.caso-info h3 {
+    padding: 0;
+    font-size: 1.8rem;
+}
+
+.caso-fecha {
+    font-family: var(--font-main);
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+}
+
+/* ===== BANNER ROJO ===== */
+.banner-rojo {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    min-height: 460px;
+}
+
+.banner-rojo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner-texto {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.75rem;
+    padding: 3rem 4rem;
+    text-align: center;
+    color: var(--color-light);
+    background-color: var(--color-primary-rojo);
+}
+
+.banner-texto h2 {
+    font-family: var(--font-tittles);
+    font-size: 2.2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: left;
+}
+
+.banner-texto p {
+    font-family: var(--font-main);
+    font-size: 1.3rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+    .hero {
+        padding: 10rem 6% 8rem;
+        min-height: 520px;
+    }
+
+    .hero-titulo {
+        font-size: 2.2rem;
+    }
+
+    .hero-texto {
+        font-size: 1.3rem;
+    }
+
+    .intro {
+        padding: 2rem 6%;
+    }
+
+    .intro p {
+        font-size: 1.2rem;
+    }
+
+    .bloque,
+    .banner-rojo {
+        grid-template-columns: 1fr;
+    }
+
+    /* En mobile la imagen siempre arriba del texto */
+    .bloque-verde img {
+        order: -1;
+    }
+
+    .bloque img {
+        height: 240px;
+    }
+
+    .bloque-texto {
+        padding: 2rem 1.5rem;
+    }
+
+    .casos-grilla {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .caso-destacado {
+        grid-column: 1 / -1;
+        grid-row: auto;
+    }
+
+    .banner-texto {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .banner-texto h2 {
+        font-size: 1.6rem;
+    }
+}

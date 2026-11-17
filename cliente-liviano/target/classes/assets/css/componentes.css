@@ -1,0 +1,365 @@
+
+/* =====================================================
+   COMPONENTES REUTILIZABLES
+   Se carga desde el layout
+   ===================================================== */
+
+/* ===== BOTONES ===== */
+
+/* Botón verde en forma de link o botón (ancho según contenido) */
+.boton-verde {
+    display: inline-block;
+    padding: 1.1rem 2rem;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    color: var(--color-light);
+    text-decoration: none;
+    background-color: var(--color-primary-verde);
+    border: none;
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.boton-verde:hover {
+    background-color: var(--color-secondary-verde);
+    transform: translateY(-2px);
+}
+
+/* Botón verde de formulario (ancho completo) */
+.boton-auth {
+    padding: 1.1rem;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-light);
+    background-color: var(--color-primary-verde);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.boton-auth:hover {
+    background-color: var(--color-secondary-verde);
+    transform: translateY(-2px);
+}
+
+/* Botón azul con flecha */
+.boton-agregar {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    font-family: var(--font-main);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-light);
+    background-color: var(--color-accent);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.boton-agregar:hover {
+    background-color: #1a8fd0;
+    transform: translateY(-2px);
+}
+
+.boton-agregar svg {
+    transition: var(--transition);
+}
+
+.boton-agregar:hover svg {
+    transform: translateX(4px);
+}
+
+/* ===== CAMPOS DE FORMULARIO ===== */
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.campo label {
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    color: var(--color-text);
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+    padding: 1.1rem 1.5rem;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    color: var(--color-text);
+    background-color: #f8f8f8;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+    color: var(--color-text-secondary);
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: none;
+    border-color: var(--color-primary-verde);
+    box-shadow: 0 0 0 3px rgba(172, 205, 68, 0.3);
+    background-color: var(--color-light);
+}
+
+/* Select con flecha personalizada */
+.campo select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23252b42' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.5rem center;
+}
+
+.campo select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.campo textarea {
+    min-height: 180px;
+    resize: vertical;
+}
+
+.campo input[type="date"] {
+    color: var(--color-text-secondary);
+}
+
+/* ===== CHECKBOX PERSONALIZADO ===== */
+.check-recordame {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    color: var(--color-text-secondary);
+}
+
+.check-recordame input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.check-caja {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: var(--color-light);
+    border: 2px solid var(--color-border);
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.check-caja::after {
+    content: "";
+    width: 7px;
+    height: 13px;
+    margin-bottom: 3px;
+    border: solid var(--color-light);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: var(--transition);
+}
+
+.check-recordame input:checked + .check-caja {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.check-recordame input:checked + .check-caja::after {
+    transform: rotate(45deg) scale(1);
+}
+
+.check-recordame input:focus-visible + .check-caja {
+    box-shadow: 0 0 0 3px rgba(35, 166, 240, 0.35);
+}
+
+/* ===== INPUT DE ARCHIVO ===== */
+.archivo-oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.input-archivo {
+    display: flex;
+    align-items: stretch;
+    background-color: #fafafa;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.input-archivo-icono {
+    align-self: center;
+    margin: 0 1rem 0 1.25rem;
+    color: var(--color-text-secondary);
+}
+
+.input-archivo-nombre {
+    flex: 1;
+    align-self: center;
+    padding: 1.1rem 0;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.input-archivo-boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 140px;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    color: var(--color-light);
+    background-color: #1e73be;
+    transition: var(--transition);
+}
+
+.input-archivo:hover .input-archivo-boton {
+    background-color: #175a96;
+}
+
+.archivo-oculto:focus-visible + .input-archivo {
+    box-shadow: 0 0 0 3px rgba(35, 166, 240, 0.35);
+}
+
+/* ===== UTILIDADES ===== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ===== BOTÓN ROJO ===== */
+.boton-rojo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.75rem;
+    font-family: var(--font-main);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-light);
+    text-decoration: none;
+    background-color: var(--color-primary-rojo);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.boton-rojo:hover {
+    background-color: #a51d1d;
+    transform: translateY(-2px);
+}
+
+/* ===== BADGES DE ESTADO ===== */
+.badge {
+    display: inline-block;
+    min-width: 130px;
+    padding: 0.4rem 1rem;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--color-light);
+    border-radius: 999px;
+}
+
+.badge-ruta          { background-color: #1fb355; }
+.badge-mantenimiento { background-color: #8b0a1e; }
+.badge-disponible    { background-color: var(--color-accent); }
+
+/* ===== TABLAS ===== */
+.tabla-scroll {
+    overflow-x: auto;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+.tabla th {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.tabla td {
+    padding: 0.9rem 1rem;
+    vertical-align: middle;
+}
+
+.tabla tbody tr:nth-child(odd) {
+    background-color: var(--color-light-secondary);
+}
+
+/* Fila seleccionada */
+.tabla tbody tr:has(input:checked) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+}
+
+.tabla .col-check {
+    width: 56px;
+}
+
+/* Variante del checkbox para celdas de tabla */
+.check-tabla .check-caja {
+    border-color: var(--color-accent);
+}
+
+@media (max-width: 900px) {
+    .input-archivo-boton {
+        min-width: 90px;
+    }
+}
+
+.badge-pendiente { background-color: var(--color-accent); }
+.badge-asignada  { background-color: #1fb355; }
+.badge-vencida   { background-color: #8b0a1e; }
