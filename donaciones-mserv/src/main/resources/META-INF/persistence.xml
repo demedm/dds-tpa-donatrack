@@ -34,7 +34,7 @@
             <property name="hibernate.connection.url"
                       value="jdbc:mariadb://localhost:3306/donaciones_db"/>
             <property name="hibernate.connection.username" value="root" />
-            <property name="hibernate.connection.password" value="NicoPASS127" />
+            <property name="hibernate.connection.password" value="root" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
 
             <!--
@@ -48,7 +48,7 @@
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="use_sql_comments" value="true"/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
         </properties>
     </persistence-unit>
 

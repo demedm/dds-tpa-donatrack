@@ -5,6 +5,24 @@ option java_package = "ar.edu.utn.frba.dds.grpc";
 
 service PlanificacionService {
   rpc SolicitarPlanificacion (SolicitudPlanificacionRequest) returns (ConfirmationPlanificacionResponse);
+  rpc ObtenerEntregasEnCurso (EntregasEnCursoRequest) returns (EntregasEnCursoResponse);
+}
+
+message EntregasEnCursoRequest {
+  int64 entidad_id = 1;
+}
+
+message EntregaEnCursoDto {
+  int64 id = 1;
+  int64 donacion_id = 2;
+  string direccion = 3;
+  string estado = 4;
+  double latitud_camion = 5;
+  double longitud_camion = 6;
+}
+
+message EntregasEnCursoResponse {
+  repeated EntregaEnCursoDto entregas = 1;
 }
 
 message CamionDto {

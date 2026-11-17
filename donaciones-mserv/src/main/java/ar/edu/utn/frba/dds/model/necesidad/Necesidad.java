@@ -131,7 +131,7 @@ public class Necesidad {
   public void setEntidadId(Long entidadId) {
     this.entidadId = entidadId;
   }
-
+  public LocalDate getProximoVencimiento(){return this.proximoVencimiento;}
   public void setTipo(TipoNecesidad tipo) {
     this.tipo = tipo;
   }

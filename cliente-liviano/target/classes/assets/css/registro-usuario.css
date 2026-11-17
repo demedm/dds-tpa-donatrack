@@ -1,0 +1,121 @@
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ===== REGISTRO ===== */
+.registro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 600px;
+    background-color: var(--color-background);
+}
+
+/* Lado del formulario */
+.registro-formulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 8%;
+}
+
+.registro-titulo {
+    font-family: var(--font-tittles);
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--color-primary-azul);
+    margin-bottom: 1.5rem;
+}
+
+.form-registro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 520px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.campo label {
+    font-family: var(--font-secondary);
+    font-size: 1.3rem;
+    color: var(--color-text);
+}
+
+.campo input {
+    width: 100%;
+    padding: 1.1rem 1.5rem;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    color: var(--color-text);
+    background-color: #f8f8f8;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.campo input::placeholder {
+    color: var(--color-text-secondary);
+}
+
+.campo input:focus {
+    outline: none;
+    border-color: var(--color-primary-verde);
+    box-shadow: 0 0 0 3px rgba(172, 205, 68, 0.3);
+    background-color: var(--color-light);
+}
+
+.boton-registro {
+    margin-top: 1rem;
+    padding: 1.1rem;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-light);
+    background-color: var(--color-primary-verde);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.boton-registro:hover {
+    background-color: var(--color-secondary-verde);
+    transform: translateY(-2px);
+}
+
+/* Lado de la imagen */
+.registro-imagen {
+    position: relative;
+    overflow: hidden;
+}
+
+.registro-imagen img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+    .registro {
+        grid-template-columns: 1fr;
+    }
+
+    .registro-imagen {
+        display: none;
+    }
+
+    .registro-formulario {
+        padding: 2.5rem 6%;
+    }
+}
