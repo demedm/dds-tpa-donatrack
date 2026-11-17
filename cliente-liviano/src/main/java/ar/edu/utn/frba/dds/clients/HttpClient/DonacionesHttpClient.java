@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.clients;
+package ar.edu.utn.frba.dds.clients.HttpClient;
 
 import ar.edu.utn.frba.dds.dto.DonacionDto;
 import ar.edu.utn.frba.dds.dto.LoginRequest;

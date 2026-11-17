@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.clients.DonacionesHttpClient;
+import ar.edu.utn.frba.dds.clients.HttpClient.DonacionesHttpClient;
 import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;

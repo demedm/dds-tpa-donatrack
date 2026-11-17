@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package donaciones;
+
+option java_multiple_files = true;
+option java_package = "com.servDonaciones.donacionesServicegrpc.grpc";
+
+service DonacionesService {
+
+}
