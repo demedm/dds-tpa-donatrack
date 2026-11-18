@@ -64,7 +64,8 @@ public class Router {
     app.get("/admin/panel", adminController::administracion);
     app.get("/admin/logistica", logisticaController::mostrarCamiones);
     // app.get("/admin/donaciones", donacionController::mostrarUbicacionDonaciones);
-    app.get("/admin/donaciones", ctx -> ctx.render("admin/donaciones.hbs"));
+    app.get("/admin/donaciones", adminController::mostrarDonaciones);
+    app.post("/admin/donaciones/{id}/asignacion", adminController::asignarDonacion);
 
     app.post("/admin/camiones", logisticaController::registrarCamion);
     app.post("/admin/donaciones", donacionController::registrarDonacion);

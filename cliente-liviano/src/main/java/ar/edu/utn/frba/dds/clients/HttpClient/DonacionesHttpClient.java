@@ -15,6 +15,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class DonacionesHttpClient {
@@ -64,7 +65,7 @@ public class DonacionesHttpClient {
     }
   }
 
-  private List<DonacionDto> listarDonaciones(String token) {
+  public List<DonacionDto> listarDonaciones(String token) {
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(baseUrl + "/donaciones"))
@@ -122,4 +123,55 @@ public class DonacionesHttpClient {
       throw new RuntimeException("Error al enviar el CSV a Donaciones", e);
     }
   }
+
+  public HttpResponse<String> listarEntidades(String token){
+    try {
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(URI.create(baseUrl + "/entidades"))
+              .timeout(Duration.ofSeconds(5))
+              .header("Authorization", "Bearer " + token)
+              .GET()
+              .build();
+
+      return client.send(request, HttpResponse.BodyHandlers.ofString());
+    } catch (Exception e) {
+      throw new RuntimeException("Error al consultar las entidades en Donaciones", e);
+    }
+  }
+
+  public HttpResponse<String> obtenerRanking(Long segmentadaId, String token){
+    try {
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(URI.create(baseUrl + "/matchmaking/rankings?donacionSegmentadaId=" + segmentadaId))
+              .timeout(Duration.ofSeconds(5))
+              .header("Authorization", "Bearer " + token)
+              .GET()
+              .build();
+
+      return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }catch(Exception e){
+      throw new RuntimeException("Error al consultar el ranking en Donaciones",e);
+    }
+  }
+
+  public HttpResponse<String> asignar(Long segmentadaId, Long entidadId, String token){
+    try{
+      String body = objectMapper.writeValueAsString(Map.of(
+              "donacionSegmentadaId",segmentadaId,
+              "entidadBeneficiariaId",entidadId));
+
+      HttpRequest request = HttpRequest.newBuilder()
+              .uri(URI.create(baseUrl + "/matchmaking/asignaciones"))
+              .timeout(Duration.ofSeconds(5))
+              .header("Content-Type","application/json")
+              .header("Authorization", "Bearer " + token)
+              .POST(HttpRequest.BodyPublishers.ofString(body))
+              .build();
+
+      return client.send(request,HttpResponse.BodyHandlers.ofString());
+    } catch (Exception e){
+      throw new RuntimeException("Error al pedir la asignación a Donaciones",e);
+    }
+  }
+
 }

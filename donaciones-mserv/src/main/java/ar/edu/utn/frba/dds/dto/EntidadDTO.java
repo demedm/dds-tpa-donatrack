@@ -75,7 +75,7 @@ public class EntidadDTO {
     dto.id = entidad.getId();
     dto.razonSocial = entidad.getRazonSocial();
     dto.direccion = entidad.getDireccion();
-    // dto.tipo = entidad.getTipoEntidad();
+    dto.tipo = entidad.getTipoEntidad();
     dto.mails = entidad.getMailsContacto().stream().map(Mail::getMedioContacto).toList();
     dto.telefono = entidad.getTelefono() != null ? entidad.getTelefono().getMedioContacto() : null;
     return dto;
