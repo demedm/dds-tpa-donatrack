@@ -61,6 +61,17 @@ public class AdminController {
     modelo.put("asignada", ctx.queryParam("asignada"));
     modelo.put("errorAsignacion","asignacion".equals(ctx.queryParam("error")));
 
+    String vencidas = ctx.queryParam("vencidas");
+    if (vencidas != null && !vencidas.equals("0")) {
+      modelo.put("vencidas", vencidas);
+    }
+
+    String noVencidas = ctx.queryParam("noVencidas");
+    if(noVencidas != null && !noVencidas.equals("0")) {
+      modelo.put("noVencidas", noVencidas);
+    }
+    modelo.put("errorSinSeleccion","sinSeleccion".equals(ctx.queryParam("error")));
+
     try{
       List<DonacionDto> todas = donaciones.listarDonaciones(token);
 
@@ -127,6 +138,37 @@ public class AdminController {
       System.err.println("Error asignando la donación " + segmentadaId + ": " + e.getMessage());
     }
     ctx.redirect("/admin/donaciones?seleccionada=" + segmentadaId + "&error=asignacion");
+  }
+
+  public void marcarVencidas(Context ctx) {
+    List<String> ids = ctx.formParams("donaciones");
+
+    if(ids.isEmpty()){
+      ctx.redirect("/admin/donaciones?error=sinSeleccion");
+      return;
+    }
+
+    String token = ctx.cookie("session");
+    int vencidas = 0;
+    int noVencidas = 0;
+
+    for (String id : ids) {
+      try{
+        HttpResponse<String> respuesta = donaciones.vencer(Long.parseLong(id),token);
+        if(respuesta.statusCode() / 100==2){
+          vencidas++;
+        }else{
+          noVencidas++;
+        }
+      }catch (Exception e){
+        System.err.println("Error venciendo la donación " + id + ": " + e.getMessage());
+        noVencidas++;
+      }
+    }
+
+    ctx.redirect("/admin/donaciones?vencidas=" + vencidas + "&noVencidas=" + noVencidas);
+
+
   }
 
 
@@ -203,8 +245,11 @@ public class AdminController {
         : nombresEntidades.getOrDefault(s.getEntidadAsignadaId(), "—"));
     f.put("estado", s.getEstado());
     f.put("badge", Formato.badge(s.getEstado()));
+    f.put("vencible", "En depósito".equals(s.getEstado()));
     return f;
   }
+
+
 
 }
 

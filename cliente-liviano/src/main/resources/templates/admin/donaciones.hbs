@@ -26,6 +26,18 @@
             <p class= "aviso aviso-error" role="alert"> No se pudo realizar la asignación. Probá de nuevo.</p>
         {{/if}}
 
+        {{#if vencidas}}
+            <p class="aviso aviso-ok" role="status">Se marcaron {{vencidas}} donaciones como vencidas.</p>
+        {{/if}}
+        {{#if noVencidas}}
+            <p class="aviso aviso-error" role="alert">
+                No se pudieron marcar {{noVencidas}} donaciones como vencidas (solo se pueden vencer las que están en depósito).
+            </p>
+        {{/if}}
+        {{#if errorSinSeleccion}}
+            <p class="aviso aviso-error" role="alert">Seleccioná al menos una donación para marcarla como vencida.</p>
+        {{/if}}
+
         <!-- Barra de búsqueda y acción principal -->
         <div class="admin-barra">
             <form action="/admin/donaciones" method="GET" class="busqueda" role="search">
@@ -209,6 +221,7 @@
         </div>
 
         <!-- ===== ACCIONES SOBRE LAS DONACIONES ===== -->
+        <form id="form-vencer" method="post" action="/admin/donaciones/vencidas"></form>
         <div class="acciones-tabla">
             <label class="check-recordame check-tabla">
                 <input type="checkbox" id="seleccionarTodas">
@@ -219,7 +232,9 @@
             <div class="acciones-tabla-der">
                 <button type="button" class="enlace-accion">Mostrar Detalles</button>
                 <button type="button" class="enlace-accion">Reactivar</button>
-                <button type="button" class="enlace-accion">Marcar como Vencida</button>
+
+                <button type="submit" class="enlace-accion" form="form-vencer">Marcar como Vencida</button>
+
                 <button type="button" class="enlace-accion">Eliminar</button>
 
                 <div class="campo campo-compacto">
@@ -259,7 +274,18 @@
                     <tbody>
                     {{#each donaciones}}
                     <tr>
-                        <td><label class="check-recordame check-tabla"><input type="checkbox" name="donaciones" value="{{id}}"><span class="check-caja"></span><span class="sr-only">Seleccionar donación {{id}}</span></label></td>
+                        <td>
+                            <label class="check-recordame check-tabla">
+
+                                <input type="checkbox" name="donaciones" value="{{id}}" form="form-vencer" {{#unless vencible}}disabled{{/unless}}>
+
+                                <span class="check-caja"></span>
+
+                                <span class="sr-only">Seleccionar donación {{id}}</span>
+
+                            </label>
+                        </td>
+
                         <td>{{descripcion}}</td>
                         <td>{{bien}} ({{cantidad}})</td>
                         <td>{{entidad}}</td>

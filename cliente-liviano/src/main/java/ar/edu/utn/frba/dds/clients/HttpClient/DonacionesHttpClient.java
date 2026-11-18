@@ -174,4 +174,23 @@ public class DonacionesHttpClient {
     }
   }
 
+  public HttpResponse<String> vencer(Long segmentadaId, String token){
+
+    try{
+      String body = objectMapper.writeValueAsString(Map.of("nuevoEstado","VENCIDA"));
+
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create(baseUrl + "/donacionesSegmentada/" + segmentadaId))
+          .timeout(Duration.ofSeconds(5))
+          .header("Content-Type", "application/json")
+          .header("Authorization", "Bearer " + token)
+          .method("PATCH",HttpRequest.BodyPublishers.ofString(body))
+          .build();
+
+      return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }catch(Exception e){
+      throw new RuntimeException("Error al marcar como vencida en Donaciones",e);
+    }
+  }
+
 }
