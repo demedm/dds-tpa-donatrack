@@ -153,21 +153,24 @@ public class AdminController {
     modelo.put("resultados", conPosicion(ranking.getPropuestas()));
     modelo.put("huboCoincidencias", ranking.isHuboCoincidencias());
 
-    List<Map<String,Object>> algoritmos = new ArrayList<>();
 
-    int i = 0;
 
-    for(Map.Entry<String,List<EntidadDTO>> entrada: ranking.getPorAlgoritmo().entrySet()){
-      Map<String,Object> algoritmo = new HashMap<>();
-      algoritmo.put("nombre",entrada.getKey());
-      algoritmo.put("panel", "panel-alg-" + i);
-      algoritmo.put("entidades", conPosicion(entrada.getValue()));
-      algoritmos.add(algoritmo);
-      i++;
+    if(!ranking.isHuboCoincidencias()){
+      List<Map<String,Object>> algoritmos = new ArrayList<>();
+      int i = 0;
+
+      for(Map.Entry<String,List<EntidadDTO>> entrada: ranking.getPorAlgoritmo().entrySet()){
+        Map<String,Object> algoritmo = new HashMap<>();
+        algoritmo.put("nombre",entrada.getKey());
+        algoritmo.put("panel", "panel-alg-" + i);
+        algoritmo.put("entidades", conPosicion(entrada.getValue()));
+        algoritmos.add(algoritmo);
+        i++;
+      }
+
+      modelo.put("algoritmos", algoritmos);
+
     }
-
-    modelo.put("algoritmos", algoritmos);
-
 
   }
 
