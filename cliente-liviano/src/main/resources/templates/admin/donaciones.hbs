@@ -14,6 +14,18 @@
             <a href="/admin/logistica">Logística</a>
         </nav>
 
+        {{#if error}}
+            <p class="aviso aviso-error" role="alert">{{error}}</p>
+
+        {{/if}}
+        {{#if asignada}}
+            <p class="aviso aviso-ok" role="status"> La donación #{{asignada}} se asigno correctamente.</p>
+
+        {{/if}}
+        {{#if errorAsignacion}}
+            <p class= "aviso aviso-error" role="alert"> No se pudo realizar la asignación. Probá de nuevo.</p>
+        {{/if}}
+
         <!-- Barra de búsqueda y acción principal -->
         <div class="admin-barra">
             <form action="/admin/donaciones" method="GET" class="busqueda" role="search">
@@ -47,6 +59,7 @@
         <!-- ===== ASIGNACIÓN ===== -->
         <div class="asignacion">
 
+
             <!-- Lista de donaciones a asignar -->
             <section class="tarjeta asignacion-lista">
                 <div class="tabla-scroll">
@@ -60,37 +73,24 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {{!-- Reemplazar por {{#each donacionesPendientes}} --}}
+
+                        {{#each donacionesPendientes}}
                         <tr>
-                            <td>Ropa de abrigo</td>
-                            <td>30/12/2026</td>
+                            <td>{{descripcion}}</td>
+                            <td>{{vencimiento}}</td>
                             <td><a href="#" class="boton-deposito">Depósito</a></td>
                             <td>
-                                <button type="button" class="boton-icono boton-flecha" aria-label="Asignar donación">
+                                <a href="/admin/donaciones?seleccionada={{id}}" class="boton-icono boton-flecha" aria-label="Ver asignacion de {{descripcion}}">
+
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.4 1.4L16.2 11H4v2h12.2l-5.6 5.6L12 20l8-8z"/></svg>
-                                </button>
+                                </a>
                             </td>
                         </tr>
+                        {{else}}
                         <tr>
-                            <td>Alimentos enlatados</td>
-                            <td>15/11/2026</td>
-                            <td><a href="#" class="boton-deposito">Depósito</a></td>
-                            <td>
-                                <button type="button" class="boton-icono boton-flecha" aria-label="Asignar donación">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.4 1.4L16.2 11H4v2h12.2l-5.6 5.6L12 20l8-8z"/></svg>
-                                </button>
-                            </td>
+                            <td colspan="4" class="vacio"> No hay donaciones en deposito</td>
                         </tr>
-                        <tr>
-                            <td>Útiles escolares</td>
-                            <td>—</td>
-                            <td><a href="#" class="boton-deposito">Depósito</a></td>
-                            <td>
-                                <button type="button" class="boton-icono boton-flecha" aria-label="Asignar donación">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.4 1.4L16.2 11H4v2h12.2l-5.6 5.6L12 20l8-8z"/></svg>
-                                </button>
-                            </td>
-                        </tr>
+                        {{/each}}
                         </tbody>
                     </table>
                 </div>
@@ -143,6 +143,36 @@
                 </div>
 
                 <!-- Algoritmo de compatibilidad -->
+                <div class="panel-resultado" role="tabpanel" id="{{panel}}" aria-labelledby="tab-alg-{{@index}}" hidden>
+                    <div class="tabla-scroll">
+                        <table class="tabla">
+                            <thead>
+
+                            <tr>
+                                <th class="col-check">#</th>
+                                <th>Entidad</th>
+                                <th>Tipo</th>
+                                <th>Dirección</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#each entidades}}
+                                <tr>
+                                    <td>{{posicion}}.</td>
+                                    <td>{{razonSocial}}</td>
+                                    <td>{{tipo}}</td>
+                                    <td>{{direccion}}</td>
+                                </tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{else}}
+                        <p class="vacio"> Este algoritmo no encontró entidades.</p>
+                    {{/if}}}
+                </div>
+                {{/each}}
+
                 <div class="panel-resultado" role="tabpanel" id="panel-compat" aria-labelledby="tab-compat" hidden>
                     <div class="caja-resultados">
                         <p class="vacio">Sin resultados todavía.</p>

@@ -5,6 +5,7 @@ import ar.edu.utn.frba.dds.model.Bienes.Subcategoria;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 public class DonacionSegmentadaSalidaDTO {
@@ -18,7 +19,9 @@ public class DonacionSegmentadaSalidaDTO {
   private Long entidadAsignadaId;
   private LocalDate fechaDeEntrega;
   private List<BienSalidaDTO> bienes;
+  private LocalDate vencimiento;
 
+  private String estadoUso;
 
   public static DonacionSegmentadaSalidaDTO desde(DonacionSegmentada segmentada) {
     DonacionSegmentadaSalidaDTO dto = new DonacionSegmentadaSalidaDTO();
@@ -36,7 +39,19 @@ public class DonacionSegmentadaSalidaDTO {
     dto.bienes = segmentada.getBienes().stream()
         .map(BienSalidaDTO::desde)
         .toList();
-    return dto;
+
+    dto.vencimiento = dto.bienes.stream()
+            .map(BienSalidaDTO::getFechaVencimiento)
+            .filter(fecha -> fecha!=null)
+            .min(Comparator.naturalOrder())
+            .orElse(null);
+    dto.estadoUso = dto.bienes.stream()
+            .map(BienSalidaDTO::getEstadoUso)
+            .filter(uso -> uso !=null)
+            .findFirst()
+            .orElse(null);
+
+   return dto;
   }
 
   public Long getId() { return id; }
@@ -48,6 +63,8 @@ public class DonacionSegmentadaSalidaDTO {
   public Long getEntidadAsignadaId() { return entidadAsignadaId; }
   public LocalDate getFechaDeEntrega() { return fechaDeEntrega; }
   public List<BienSalidaDTO> getBienes() { return bienes; }
+  public LocalDate getVencimiento() { return vencimiento; }
+  public String getEstadoUso() { return estadoUso; }
 
 
 }
