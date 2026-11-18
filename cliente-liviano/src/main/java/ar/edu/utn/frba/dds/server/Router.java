@@ -30,6 +30,7 @@ public class Router {
     app.before("/login", this::noAutenticados);
     app.get("/login", session::login);
     app.post("/login", session::create);
+    app.get("/login?registro=exitoso", session::login);
 
     app.before("/registro", this::noAutenticados);
     app.get("/registro", session::mostrarRegistro);

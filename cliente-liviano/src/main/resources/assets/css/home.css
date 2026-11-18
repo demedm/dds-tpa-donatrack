@@ -13,7 +13,7 @@ body:has(.hero) .header {
 
 /* Cuando se baja un poco, el nav se vuelve azul */
 body:has(.hero) .header.header-scrolled {
-    background-color: var(--color-primary-azul);
+    background-color: var(--color-primary);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
@@ -121,7 +121,7 @@ body:has(.hero) .header.header-scrolled {
 }
 
 .bloque-azul .bloque-texto {
-    background-color: var(--color-primary-azul);
+    background-color: var(--color-primary);
 }
 
 .bloque-verde .bloque-texto {
@@ -228,7 +228,7 @@ body:has(.hero) .header.header-scrolled {
     padding: 3rem 4rem;
     text-align: center;
     color: var(--color-light);
-    background-color: var(--color-primary-rojo);
+    background-color: var(--color-secondary);
 }
 
 .banner-texto h2 {

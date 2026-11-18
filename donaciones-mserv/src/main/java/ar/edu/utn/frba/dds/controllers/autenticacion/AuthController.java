@@ -56,7 +56,8 @@ public class AuthController {
     try {
       RegistroRequest request = ctx.bodyAsClass(RegistroRequest.class);
 
-      Usuario usuario = AutenticacionRepositorio.Instance.validarDatos(request);
+      Usuario usuario = AutenticacionRepositorio.Instance.validarDatosRegistro(request.getEmail(),
+          request.getPassword(), request.getRol());
 
       if (request.getRol().equals(Rol.DONANTE.name())) {
         Persona donante = nuevaPersona(request);

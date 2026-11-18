@@ -186,7 +186,7 @@ body:has(.admin) .footer {
     height: 92px;
     margin: 0 auto;
     border-radius: 50%;
-    background: conic-gradient(var(--color-primary-verde) calc(var(--valor) * 1%), #e3e3e3 0);
+    background: conic-gradient(var(--color-complementary) calc(var(--valor) * 1%), #e3e3e3 0);
 }
 
 .anillo::before {
@@ -202,7 +202,7 @@ body:has(.admin) .footer {
     font-family: var(--font-main);
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--color-primary-verde);
+    color: var(--color-complementary);
 }
 
 .ficha-datos {

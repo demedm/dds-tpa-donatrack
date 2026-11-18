@@ -28,7 +28,7 @@ public class Usuario {
   public Usuario(Rol rol, String email, String password) {
     this.rol = rol;
     this.email = email;
-    this.hashPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+    this.hashPassword = password;
   }
 
   public Usuario() {}

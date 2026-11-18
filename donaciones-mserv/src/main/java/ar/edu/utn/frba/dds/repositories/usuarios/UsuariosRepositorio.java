@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.exceptions.ErrorLogisticaException;
 import ar.edu.utn.frba.dds.exceptions.UsuarioNotFoundException;
 import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.entidad.EntidadBeneficiaria;
+import ar.edu.utn.frba.dds.model.usuarios.Rol;
 import ar.edu.utn.frba.dds.model.usuarios.Usuario;
 import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
@@ -145,6 +146,42 @@ public class UsuariosRepositorio implements WithSimplePersistenceUnit {
       }
       throw new RuntimeException(
           "No se pudo registrar el administrador.", e
+      );
+    }
+  }
+
+  public void registrarUsuario(Usuario usuario) {
+    EntityManager em = entityManager();
+
+    try {
+      em.getTransaction().begin();
+      em.persist(usuario);
+      em.flush();
+
+      if (!usuario.getRol().name().equals(Rol.DONANTE.name())) {
+        boolean enviado = new GrpcClientLogisticaImplementation()
+            .enviarUsuario(usuario);
+
+        if (!enviado) {
+          throw new ErrorLogisticaException(
+              "Logística no pudo registrar el usuario."
+          );
+        }
+      }
+      em.getTransaction().commit();
+      return;
+    } catch (ErrorLogisticaException e) {
+      if (em.getTransaction().isActive()) {
+        em.getTransaction().rollback();
+      }
+      throw e;
+
+    } catch (Exception e) {
+      if (em.getTransaction().isActive()) {
+        em.getTransaction().rollback();
+      }
+      throw new RuntimeException(
+          "No se pudo registrar al usuario.", e
       );
     }
   }

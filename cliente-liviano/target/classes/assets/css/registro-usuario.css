@@ -25,7 +25,7 @@
     font-family: var(--font-tittles);
     font-size: 1.8rem;
     font-weight: 400;
-    color: var(--color-primary-azul);
+    color: var(--color-primary);
     margin-bottom: 1.5rem;
 }
 
@@ -67,7 +67,7 @@
 
 .campo input:focus {
     outline: none;
-    border-color: var(--color-primary-verde);
+    border-color: var(--color-complementary);
     box-shadow: 0 0 0 3px rgba(172, 205, 68, 0.3);
     background-color: var(--color-light);
 }
@@ -79,7 +79,7 @@
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-light);
-    background-color: var(--color-primary-verde);
+    background-color: var(--color-complementary);
     border: none;
     border-radius: 6px;
     cursor: pointer;

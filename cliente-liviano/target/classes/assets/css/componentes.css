@@ -14,7 +14,7 @@
     font-size: 1.1rem;
     color: var(--color-light);
     text-decoration: none;
-    background-color: var(--color-primary-verde);
+    background-color: var(--color-complementary);
     border: none;
     border-radius: 6px;
     box-shadow: var(--shadow);
@@ -113,7 +113,7 @@
 .campo select:focus,
 .campo textarea:focus {
     outline: none;
-    border-color: var(--color-primary-verde);
+    border-color: var(--color-complementary);
     box-shadow: 0 0 0 3px rgba(172, 205, 68, 0.3);
     background-color: var(--color-light);
 }
@@ -278,7 +278,7 @@
     font-weight: 700;
     color: var(--color-light);
     text-decoration: none;
-    background-color: var(--color-primary-rojo);
+    background-color: var(--color-secondary);
     border: none;
     border-radius: 4px;
     cursor: pointer;
