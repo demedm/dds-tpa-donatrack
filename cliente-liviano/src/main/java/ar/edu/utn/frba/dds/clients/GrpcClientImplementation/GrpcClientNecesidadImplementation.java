@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.clients;
+package ar.edu.utn.frba.dds.clients.GrpcClientImplementation;
 
 import ar.edu.utn.frba.dds.dto.NecesidadDto;
 import ar.edu.utn.frba.dds.dto.PeticionDto;

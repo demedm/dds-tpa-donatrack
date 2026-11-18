@@ -1,12 +1,16 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.clients.DonacionesHttpClient;
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientAuthImplementation;
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientRegistroImplementation;
+import ar.edu.utn.frba.dds.clients.HttpClient.DonacionesHttpClient;
 import ar.edu.utn.frba.dds.dto.RegistroRequest;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
 import ar.edu.utn.frba.dds.session.Rol;
+import com.authServicegrpc.grpc.LoginResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.registroServicegrpc.grpc.RegistroResponse;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,36 +67,26 @@ public class SessionController {
     String password = ctx.formParam("password");
     try {
       // segun lo que responda el modulo de donaciones se rechaza el inicio de sesion
-      HttpResponse<String> response = new DonacionesHttpClient()
-          .autenticarUsuario(mail, password);
+      LoginResponse response = new GrpcClientAuthImplementation().autenticarUsuario(mail, password);
 
-      if (response.statusCode() == 200) {
-        // para poder leer el token del json de respuesta
-        JsonNode json = new ObjectMapper().readTree(response.body());
-
-        // el token contiene: sub (identificador), rol, fecha emision y expiracion del token
-        String token = json.get("token").asText();
-
+      if (response.getExito()) {
         // setteo del token jwt para la sesion
-        ctx.header("Set-Cookie", "session=" + token + "; Path=/; HttpOnly; SameSite=Lax");
+        ctx.header("Set-Cookie", "session=" + response.getToken() +
+            "; Path=/; HttpOnly; SameSite=Lax");
 
-        UsuarioLogueado usuario = JwtRepositorio.Instance.obtenerUsuario(token);
+        UsuarioLogueado usuario = JwtRepositorio.Instance.obtenerUsuario(response.getToken());
         ctx.attribute("usuarioLogueado", usuario);
         ctx.status(200);
-
-      } else if (response.statusCode() == 401) {
-        // CAMBIAR ctx.render POR:
-        ctx.redirect("/login?error=true");
-        return;
       } else {
         // CAMBIAR ctx.render POR:
+        System.err.println(response.getMensaje());
         ctx.redirect("/login?error=true");
         return;
       }
       ctx.redirect("/");
     } catch (Exception e) {
-      System.err.println("--- ERROR EN LOGIN ---");
-      e.printStackTrace(); // Esto te mostrará en la consola de IntelliJ el error exacto
+      System.err.println("--- ERROR EN LOGIN --- : ");
+      e.printStackTrace();
       ctx.redirect("/login?error=true");
     }
   }
@@ -112,16 +106,17 @@ public class SessionController {
   public void registrarUsuario(Context ctx) {
     String mail = ctx.formParam("email");
     String password = ctx.formParam("password");
-    String rol = ctx.formParam("rol");
-    String nombre = ctx.formParam("nombre");
 
     Map<String, Object> modelo = new HashMap<>();
     String token = ctx.cookie("session");
-    UsuarioLogueado usuario = new JwtRepositorio().obtenerUsuario(token);
-    if (usuario.getRol().equals(Rol.ADMIN)) {
-      modelo.put("esAdmin", true);
+    if (token != null && !token.isBlank()) {
+      UsuarioLogueado usuario = new JwtRepositorio().obtenerUsuario(token);
+      if (usuario.getRol().equals(Rol.ADMIN)) {
+        modelo.put("esAdmin", true);
+      }
     }
 
+    /*
     RegistroRequest request = new RegistroRequest(nombre, mail, password, rol);
 
     // Datos adicionales según el rol
@@ -140,25 +135,21 @@ public class SessionController {
       request.setMailContacto(ctx.formParam("mailContacto"));
       request.setTelefonoBeneficiario(ctx.formParam("telefonoBeneficiario"));
     }
-
+    */
     try {
-      HttpResponse<String> response = new DonacionesHttpClient()
-          .registrarUsuario(request);
+      //HttpResponse<String> response = new DonacionesHttpClient()
+      //    .registrarUsuario(request);
 
-      if (response.statusCode() == 201) {
+      RegistroResponse response = new GrpcClientRegistroImplementation().registrarUsuario(
+          mail, password, "DONANTE"
+      );
 
-        // Si lo creó un administrador, vuelve al panel
-        if ("ADMIN".equals(rol)) {
-          ctx.redirect("/admin/panel?registro=exitoso");
-        } else {
-          ctx.redirect("/login?registro=exitoso");
-        }
+      if (response.getExito()) {
+        ctx.redirect("/login?registro=exitoso");
         return;
-
-      } else if (response.statusCode() == 409) {
-        modelo.put("error", "Ya existe un usuario registrado con ese email.");
       } else {
         modelo.put("error", "No se pudo completar el registro.");
+        System.err.println("Error de registro: " + response.getMensaje());
       }
 
     } catch (Exception e) {
@@ -166,7 +157,7 @@ public class SessionController {
       modelo.put("error", "No fue posible comunicarse con el servidor.");
     }
 
-    ctx.render("public/registro-donacion-persona.hbs", modelo);
+    // ctx.render("public/registro-donacion-persona.hbs", modelo);
   }
 
   public void validarAutenticacion(@NotNull Context ctx) {

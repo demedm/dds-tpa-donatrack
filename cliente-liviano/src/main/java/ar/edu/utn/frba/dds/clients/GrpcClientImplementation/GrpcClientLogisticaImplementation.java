@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.clients;
+package ar.edu.utn.frba.dds.clients.GrpcClientImplementation;
 
 import ar.edu.utn.frba.dds.grpc.EntregasEnCursoRequest;
 import ar.edu.utn.frba.dds.grpc.EntregasEnCursoResponse;

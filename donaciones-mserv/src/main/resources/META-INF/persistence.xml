@@ -34,7 +34,7 @@
             <property name="hibernate.connection.url"
                       value="jdbc:mariadb://localhost:3306/donaciones_db"/>
             <property name="hibernate.connection.username" value="root" />
-            <property name="hibernate.connection.password" value="root" />
+            <property name="hibernate.connection.password" value="NicoPASS127" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
 
             <!--

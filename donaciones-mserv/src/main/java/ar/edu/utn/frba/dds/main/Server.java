@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.main;
 
+import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceAuthImplementation;
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceDonacionImplementation;
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceNecesidadImplementation;
+import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceRegistroImplementation;
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceUsuarioImplementation;
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
 import ar.edu.utn.frba.dds.main.templates.JavalinRenderer;
@@ -42,6 +44,8 @@ public class Server {
             .addService(new GrpcServiceDonacionImplementation())
             .addService(new GrpcServiceUsuarioImplementation())
             .addService(new GrpcServiceNecesidadImplementation())
+            .addService(new GrpcServiceAuthImplementation())
+            .addService(new GrpcServiceRegistroImplementation())
             .build()
             .start();
 

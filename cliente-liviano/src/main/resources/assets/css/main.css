@@ -9,7 +9,7 @@
     justify-content: space-between;
     gap: 2rem;
     padding: 1rem 8%;
-    background-color: var(--color-primary-azul);
+    background-color: var(--color-primary);
     color: var(--color-light);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
@@ -64,7 +64,7 @@
 
 .links-nav-div a:hover,
 .link-sesion:hover {
-    color: var(--color-primary-verde);
+    color: var(--color-complementary);
 }
 
 /* Acciones (sesión + donar) */
@@ -83,7 +83,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem 1.75rem;
-    background-color: var(--color-primary-verde);
+    background-color: var(--color-complementary);
     color: var(--color-light);
     font-family: var(--font-main);
     font-size: 1.15rem;
@@ -136,7 +136,7 @@
 
 /* ===== FOOTER ===== */
 .footer {
-    background-color: var(--color-primary-azul);
+    background-color: var(--color-primary);
     color: var(--color-light);
     padding: 4rem 8% 0;
 }
@@ -161,7 +161,7 @@
     font-weight: 400;
     text-transform: uppercase;
     line-height: 1.1;
-    color: var(--color-primary-verde);
+    color: var(--color-complementary);
     margin-bottom: 0.75rem;
 }
 
@@ -207,7 +207,7 @@
 
 .footer-lista a:hover,
 .footer-contacto a:hover {
-    color: var(--color-primary-verde);
+    color: var(--color-complementary);
 }
 
 .footer-lista a:hover::before {
@@ -228,12 +228,12 @@
     height: 42px;
     border-radius: 50%;
     background-color: #b0b3b8;
-    color: var(--color-primary-azul);
+    color: var(--color-primary);
     transition: var(--transition);
 }
 
 .red-social:hover {
-    background-color: var(--color-primary-verde);
+    background-color: var(--color-complementary);
     transform: translateY(-3px);
 }
 

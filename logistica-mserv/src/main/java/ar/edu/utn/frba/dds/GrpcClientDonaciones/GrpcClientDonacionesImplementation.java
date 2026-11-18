@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.GrpcClientDonaciones;
 
-import com.donacionesServicegrpc.grpc.ActualizacionEstadoRequest;
+import  com.donacionesServicegrpc.grpc.ActualizacionEstadoRequest;
 import com.donacionesServicegrpc.grpc.ActualizacionEstadoResponse;
 import com.donacionesServicegrpc.grpc.donacionesServiceGrpc;
 import io.grpc.ManagedChannel;

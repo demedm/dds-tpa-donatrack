@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.clients.GrpcClientNecesidadImplementation;
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientNecesidadImplementation;
 import ar.edu.utn.frba.dds.dto.NecesidadDto;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import io.javalin.http.Context;

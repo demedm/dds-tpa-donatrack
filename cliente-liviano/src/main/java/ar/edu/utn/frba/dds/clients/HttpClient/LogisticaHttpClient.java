@@ -1,8 +1,7 @@
-package ar.edu.utn.frba.dds.clients;
+package ar.edu.utn.frba.dds.clients.HttpClient;
 
 import ar.edu.utn.frba.dds.dto.CamionDto;
 import ar.edu.utn.frba.dds.dto.CamionRequest;
-import ar.edu.utn.frba.dds.dto.DonacionDto;
 import ar.edu.utn.frba.dds.dto.EntregaEnCursoDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

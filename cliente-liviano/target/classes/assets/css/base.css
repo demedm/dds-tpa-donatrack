@@ -9,9 +9,9 @@
 
 :root {
 
-    --color-primary-rojo: #c62323;
-    --color-primary-azul: #303956;
-    --color-primary-verde: #accd44;
+    --color-secondary: #c62323;
+    --color-primary: #303956;
+    --color-complementary: #accd44;
     --color-secondary-verde: #a2ae46;
     --color-accent: #23a6f0;
     --color-text: #252b42;

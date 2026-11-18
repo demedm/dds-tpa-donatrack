@@ -82,7 +82,7 @@
 
 .boton-mas:hover {
     color: var(--color-light);
-    background-color: var(--color-primary-verde);
+    background-color: var(--color-complementary);
 }
 
 /* Emails agregados */
@@ -107,7 +107,7 @@
 .lista-emails button {
     font-size: 1.4rem;
     line-height: 1;
-    color: var(--color-primary-rojo);
+    color: var(--color-secondary);
     background: none;
     border: none;
     cursor: pointer;

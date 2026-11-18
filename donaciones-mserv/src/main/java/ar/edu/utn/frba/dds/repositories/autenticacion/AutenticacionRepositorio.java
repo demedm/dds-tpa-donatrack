@@ -1,8 +1,5 @@
 package ar.edu.utn.frba.dds.repositories.autenticacion;
 
-import static ar.edu.utn.frba.dds.controllers.autenticacion.Rol.strTo;
-
-import ar.edu.utn.frba.dds.dto.autenticacion.RegistroRequest;
 import ar.edu.utn.frba.dds.exceptions.CredencialesInvalidasException;
 import ar.edu.utn.frba.dds.exceptions.MailAlreadyRegisteredException;
 import ar.edu.utn.frba.dds.exceptions.UsuarioNotFoundException;
@@ -26,14 +23,14 @@ public class AutenticacionRepositorio {
     return JwtRepositorio.Instance.generarToken(usuario);
   }
 
-  public Usuario validarDatos(RegistroRequest request) {
+  public Usuario validarDatosRegistro(String mail, String password, String rol) {
     try {
-      UsuariosRepositorio.Instance.buscarXmail(request.getEmail());
+      UsuariosRepositorio.Instance.buscarXmail(mail);
       // el email ya existe
-      throw new MailAlreadyRegisteredException(request.getEmail());
+      throw new MailAlreadyRegisteredException(mail);
 
     } catch (UsuarioNotFoundException e) {
-      return new Usuario(Rol.strTo(request.getRol()), request.getEmail(), request.getPassword());
+      return new Usuario(Rol.strTo(rol), mail, password);
     }
   }
 }

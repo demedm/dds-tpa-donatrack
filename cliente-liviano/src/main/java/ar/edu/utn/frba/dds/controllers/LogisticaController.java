@@ -1,19 +1,14 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.clients.GrpcClientLogisticaImplementation;
-import ar.edu.utn.frba.dds.clients.LogisticaHttpClient;
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientLogisticaImplementation;
+import ar.edu.utn.frba.dds.clients.HttpClient.LogisticaHttpClient;
 import ar.edu.utn.frba.dds.dto.CamionDto;
 import ar.edu.utn.frba.dds.dto.CamionRequest;
-import ar.edu.utn.frba.dds.dto.EntregaEnCursoDto;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
