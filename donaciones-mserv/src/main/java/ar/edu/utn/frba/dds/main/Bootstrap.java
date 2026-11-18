@@ -24,6 +24,7 @@ import ar.edu.utn.frba.dds.repositories.DonacionesRepository;
 import ar.edu.utn.frba.dds.repositories.DonanteRepository;
 import ar.edu.utn.frba.dds.repositories.usuarios.UsuariosRepositorio;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -62,11 +63,11 @@ public class Bootstrap {
 
 	private static List<Usuario> usuarios(){
 		Usuario usuario1 = new Usuario(Rol.ADMIN,
-				"neme@email.com", "nemesito");
+				"neme@email.com", BCrypt.hashpw("nemesito",BCrypt.gensalt()));
 		Usuario usuario2 = new Usuario(Rol.DONANTE,
-				"mariaa@gmail.com", "gatos123");
+				"mariaa@gmail.com", BCrypt.hashpw("gatos123",BCrypt.gensalt()));
 		Usuario usuario3 = new Usuario(Rol.BENEFICIARIO,
-				"comedor@email.com", "comedor123");
+				"comedor@email.com", BCrypt.hashpw("comedor123",BCrypt.gensalt()));
 
 		return List.of(usuario1, usuario2,usuario3);
 	}
