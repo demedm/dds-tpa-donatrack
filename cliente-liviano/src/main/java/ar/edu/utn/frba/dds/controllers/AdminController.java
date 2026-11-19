@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.clients.HttpClient.DonacionesHttpClient;
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientGestionDonacionesImplementation;
+
 import ar.edu.utn.frba.dds.dto.DonacionDto;
 import ar.edu.utn.frba.dds.dto.EntidadDTO;
 import ar.edu.utn.frba.dds.dto.RankingDTO;
@@ -24,6 +26,7 @@ public class AdminController {
 
   private final DonacionesHttpClient donaciones = new DonacionesHttpClient();
   private final ObjectMapper objectMapper = new ObjectMapper();
+  private final GrpcClientGestionDonacionesImplementation gestionDonaciones = new GrpcClientGestionDonacionesImplementation();
 
   public void administracion(@NotNull Context ctx) {
     Map<String, Object> modelo = new HashMap<>();
@@ -148,14 +151,12 @@ public class AdminController {
       return;
     }
 
-    String token = ctx.cookie("session");
     int vencidas = 0;
     int noVencidas = 0;
 
     for (String id : ids) {
       try{
-        HttpResponse<String> respuesta = donaciones.vencer(Long.parseLong(id),token);
-        if(respuesta.statusCode() / 100==2){
+        if(gestionDonaciones.marcarVencida(Long.parseLong(id))){
           vencidas++;
         }else{
           noVencidas++;

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package donaciones;
+
+option java_multiple_files = true;
+option java_package = "ar.edu.utn.frba.dds.grpc";
+
+// Contrato cliente liviano donaciones-mserver
+service GestionDonacionesService  {
+  rpc MarcarVencida (SegmentadaIdRequest) returns (ResultadoOperacion);
+}
+
+message SegmentadaIdRequest{
+  int64 segmentada_id = 1;
+}
+
+message ResultadoOperacion {
+  bool exito = 1;
+  string mensaje = 2;
+}
