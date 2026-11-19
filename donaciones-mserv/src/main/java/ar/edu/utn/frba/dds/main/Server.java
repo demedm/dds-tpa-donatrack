@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceAuthImplementation;
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceDonacionImplementation;
+import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceGestionDonacionesImplementation;
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceNecesidadImplementation;
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceRegistroImplementation;
 import ar.edu.utn.frba.dds.GrpcServiceImplementation.GrpcServiceUsuarioImplementation;
@@ -46,6 +47,7 @@ public class Server {
             .addService(new GrpcServiceNecesidadImplementation())
             .addService(new GrpcServiceAuthImplementation())
             .addService(new GrpcServiceRegistroImplementation())
+            .addService(new GrpcServiceGestionDonacionesImplementation())
             .build()
             .start();
 

@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package donaciones;
+
+option java_multiple_files = true;
+option java_package = "ar.edu.utn.frba.dds.grpc";
+
+// Contrato cliente liviano donaciones-mserver
+service GestionDonacionesService {
+  rpc MarcarVencida (SegmentadaIdRequest) returns (ResultadoOperacion);
+  rpc AsignarDonacion (AsignacionRequest) returns (ResultadoOperacion);
+  rpc ListarEntidades (ListarEntidadesRequest) returns (ListaEntidadesResponse);
+  rpc ObtenerRanking (SegmentadaIdRequest) returns (RankingResponse);
+}
+
+//pantalla 15
+message AsignacionRequest {
+  int64 segmentada_id = 1;
+  int64 entidad_id = 2;
+}
+
+//nombre de las entidades
+message ListarEntidadesRequest{}
+
+message EntidadProto {
+  int64 id = 1;
+  string razon_social = 2;
+  string tipo = 3;
+  string direccion = 4;
+  repeated string mails = 5;
+  string telefono = 6;
+}
+
+message ListaEntidades {
+  repeated EntidadProto entidades = 1;
+}
+
+message ListaEntidadesResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  repeated EntidadProto entidades =3;
+}
+//ranking
+message RankingResponse {
+  bool exito = 1;
+  bool donacion_encontrada = 2;
+  string mensaje = 3;
+  bool hubo_coincidencias = 4;
+  repeated EntidadProto propuestas = 5;
+  map<string,ListaEntidades> por_algoritmo = 6;
+}
+
+message SegmentadaIdRequest{
+  int64 segmentada_id = 1;
+}
+
+message ResultadoOperacion {
+  bool exito = 1;
+  string mensaje = 2;
+}

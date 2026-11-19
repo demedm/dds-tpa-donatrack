@@ -6,7 +6,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntidadDTO {
 
-
     private Long id;
     private String razonSocial;
     private String tipo;
@@ -30,11 +29,18 @@ public class EntidadDTO {
         return direccion;
     }
 
-    public List<String> getMails() {
+    public List<String> getMailsList() {
         return mails;
     }
 
     public String getTelefono() {
         return telefono;
     }
+
+    public void setId(Long id) { this.id = id; }
+    public void setRazonSocial(String razonSocial) { this.razonSocial = razonSocial; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public void setMails(List<String> mails) { this.mails = mails; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 }

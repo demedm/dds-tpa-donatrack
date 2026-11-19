@@ -28,4 +28,20 @@ public class RankingDTO {
     public Map<String, List<EntidadDTO>> getPorAlgoritmo() {
         return porAlgoritmo;
     }
+
+    public void setDonacionSegmentadaId(Long donacionSegmentadaId) {
+        this.donacionSegmentadaId = donacionSegmentadaId;
+    }
+
+    public void setHuboCoincidencias(boolean huboCoincidencias) {
+        this.huboCoincidencias = huboCoincidencias;
+    }
+
+    public void setPropuestas(List<EntidadDTO> propuestas) {
+        this.propuestas = propuestas;
+    }
+
+    public void setPorAlgoritmo(Map<String, List<EntidadDTO>> porAlgoritmo) {
+        this.porAlgoritmo = porAlgoritmo;
+    }
 }

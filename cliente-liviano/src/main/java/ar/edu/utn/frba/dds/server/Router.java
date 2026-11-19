@@ -66,6 +66,7 @@ public class Router {
     // app.get("/admin/donaciones", donacionController::mostrarUbicacionDonaciones);
     app.get("/admin/donaciones", adminController::mostrarDonaciones);
     app.post("/admin/donaciones/{id}/asignacion", adminController::asignarDonacion);
+    app.post("/admin/donaciones/vencidas",adminController::marcarVencidas);
 
     app.post("/admin/camiones", logisticaController::registrarCamion);
     app.post("/admin/donaciones", donacionController::registrarDonacion);
