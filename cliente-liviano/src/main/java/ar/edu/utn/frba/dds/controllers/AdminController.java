@@ -78,19 +78,14 @@ public class AdminController {
     try{
       List<DonacionDto> todas = donaciones.listarDonaciones(token);
 
-      HttpResponse<String> resposeEntidades = donaciones.listarEntidades(token);
       Map<Long,String> nombresEntidades = new HashMap<>();
 
-      if(resposeEntidades.statusCode() == 200){
-        List<EntidadDTO> entidades = objectMapper.readValue(resposeEntidades.body(),
-            new TypeReference<List<EntidadDTO>>() {});
-
-        for(EntidadDTO entidad : entidades){
+      try{
+        for (EntidadDTO entidad : gestionDonaciones.listarEntidades()) {
           nombresEntidades.put(entidad.getId(),entidad.getRazonSocial());
         }
-
-      }else {
-        modelo.put("error", "No se pudieron cargar las entidades (codigo " + resposeEntidades.statusCode() + ")");
+      }catch(Exception e){
+        modelo.put("error","No se pudieron cargar las entidades: " + e.getMessage());
       }
 
       List<Map<String,Object>> filas = new ArrayList<>();
@@ -116,7 +111,7 @@ public class AdminController {
       String seleccionada = ctx.queryParam("seleccionada");
 
       if(seleccionada != null){
-        cargarRanking(modelo, Long.parseLong(seleccionada),pendientes,token);
+        cargarRanking(modelo, Long.parseLong(seleccionada),pendientes);
       }
 
     }catch(Exception e){
@@ -132,11 +127,12 @@ public class AdminController {
 
     try {
       Long entidadId = Long.parseLong(ctx.formParam("entidadId"));
-      HttpResponse<String> respuesta = donaciones.asignar(segmentadaId, entidadId, ctx.cookie("session"));
-      if (respuesta.statusCode() / 100 == 2) {
+
+      if(gestionDonaciones.asignar(segmentadaId, entidadId)){
         ctx.redirect("/admin/donaciones?asignada=" + segmentadaId);
         return;
       }
+
     } catch (Exception e) {
       System.err.println("Error asignando la donación " + segmentadaId + ": " + e.getMessage());
     }
@@ -174,24 +170,26 @@ public class AdminController {
 
 
   private void cargarRanking(Map<String, Object> modelo, Long segmentadaId,
-                             List<Map<String, Object>> pendientes, String token) throws Exception {
+                             List<Map<String, Object>> pendientes) throws Exception {
 
     pendientes.stream()
         .filter(f -> segmentadaId.equals(f.get("id")))
         .findFirst()
         .ifPresent(f -> modelo.put("seleccion", f));
 
-    HttpResponse<String> responseRanking = donaciones.obtenerRanking(segmentadaId,token);
 
-    if(responseRanking.statusCode() == 404){
+    RankingDTO ranking;
+
+    try{
+      ranking = gestionDonaciones.obtenerRanking(segmentadaId);
+    }catch(Exception e){
+      modelo.put("error","No se pudo obtener ranking: " + e.getMessage());
       return;
     }
-    if(responseRanking.statusCode() != 200){
-      modelo.put("error", "No se pudo obtener el ranking (codigo " + responseRanking.statusCode() + ").");
+
+    if(ranking == null){
       return;
     }
-
-    RankingDTO ranking = objectMapper.readValue(responseRanking.body(), RankingDTO.class);
 
     modelo.put("resultados", conPosicion(ranking.getPropuestas()));
     modelo.put("huboCoincidencias", ranking.isHuboCoincidencias());
