@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.server;
 
 import ar.edu.utn.frba.dds.controllers.AdminController;
+import ar.edu.utn.frba.dds.controllers.BeneficiarioController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.LogisticaController;
 import ar.edu.utn.frba.dds.controllers.DonacionController;
@@ -23,6 +24,7 @@ public class Router {
     var logisticaController = new LogisticaController();
     var adminController = new AdminController();
     var donanteController = new DonanteController();
+    var beneficiarioController = new BeneficiarioController();
 
     app.before(this::cargarSesion);
 
@@ -52,8 +54,9 @@ public class Router {
     app.get("/entregas-satisfactorias", ctx -> ctx.render("public/entregasSatisfactorias.hbs"));
 
 
-    // app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
-    // app.before("/necesidades/*", this::autenticados);
+    // las dos formas: "/necesidades/*" puede no incluir "/necesidades" sola
+    app.before("/necesidades", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     app.get("/necesidades", necesidadController::showNecesidades);
     app.post("/necesidades", necesidadController::crear);
     app.get("/necesidades/{id}", necesidadController::showNecesidad);
@@ -93,6 +96,11 @@ public class Router {
 
     app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
     app.get("/donante/donaciones",donanteController::misDonaciones);
+
+    app.before("/donaciones-asignadas", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    app.get("/donaciones-asignadas",beneficiarioController::donacionesAsignadas);
+
+
   }
 
   private void cargarSesion(Context ctx) {

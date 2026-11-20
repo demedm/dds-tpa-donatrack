@@ -1,0 +1,38 @@
+/* Pantalla 9*/
+
+.tabla-datos .badge-pendientes{
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.tabla-datos .badge-asignada{
+    background: #1fb355;
+    color: #fff;
+}
+
+.tabla-datos .badge-vencida{
+    background: #8b0a1e;
+    color: #fff;
+}
+
+.filtros-acciones{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.vacio {
+    text-align: center;
+    color: var(--color-text);
+    padding: 1.5rem;
+}
+
+.aviso-error{
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    margin: 1rem;
+
+}

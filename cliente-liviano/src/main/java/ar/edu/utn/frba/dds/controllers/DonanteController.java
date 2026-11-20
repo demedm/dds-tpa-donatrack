@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientGestionDonacionesImplementation;
 import ar.edu.utn.frba.dds.dto.SegmentadaPanelDTO;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
-import ar.edu.utn.frba.dds.session.Rol;
+import ar.edu.utn.frba.dds.vistas.Filtros;
 import ar.edu.utn.frba.dds.vistas.Formato;
 import io.javalin.http.Context;
 
@@ -11,8 +11,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-
 
 public class DonanteController {
   private final GrpcClientGestionDonacionesImplementation gestionDonaciones = new GrpcClientGestionDonacionesImplementation();
@@ -21,21 +19,15 @@ public class DonanteController {
   public void misDonaciones(Context ctx){
     UsuarioLogueado usuario = ctx.attribute("usuarioLogueado");
 
-    //borrar estos if cuando se active el app.before
-
+    //el rol lo valida el RolMiddleware; este if queda porque su redirect no corta el handler
     if (usuario == null){
       ctx.redirect("/login");
       return;
     }
 
-    if(usuario.getRol() != Rol.DONANTE){
-      ctx.status(403).result("Esta página es solo para personas donantes.");
-      return;
-    }
-
-    String estado = filtro(ctx, "estado");
-    String categoria = filtro(ctx, "categoria");
-    String subcategoria = filtro(ctx, "subcategoria");
+    String estado = Filtros.valor(ctx, "estado");
+    String categoria = Filtros.valor(ctx, "categoria");
+    String subcategoria = Filtros.valor(ctx, "subcategoria");
 
     Map<String, Object> modelo = new HashMap<>();
     modelo.put("logueado", true);
@@ -54,9 +46,9 @@ public class DonanteController {
 
       modelo.put("filas", filas);
       modelo.put("hayDonaciones", !todas.isEmpty());
-      modelo.put("estados", opciones(todas, SegmentadaPanelDTO::getEstado, estado));
-      modelo.put("categorias", opciones(todas, SegmentadaPanelDTO::getCategoria, categoria));
-      modelo.put("subcategorias", opciones(todas, SegmentadaPanelDTO::getSubcategoria, subcategoria));
+      modelo.put("estados", Filtros.opciones(todas, SegmentadaPanelDTO::getEstado, estado));
+      modelo.put("categorias", Filtros.opciones(todas, SegmentadaPanelDTO::getCategoria, categoria));
+      modelo.put("subcategorias", Filtros.opciones(todas, SegmentadaPanelDTO::getSubcategoria, subcategoria));
 
     } catch (Exception e){
       System.err.println("Error listando las donaciones del donante " + usuario.getId() + ": " + e.getMessage());
@@ -67,10 +59,6 @@ public class DonanteController {
 
   }
 
-  private String filtro(Context ctx, String nombre){
-    String valor = ctx.queryParam(nombre);
-    return valor == null || valor.isBlank() ? null : valor;
-  }
 
   private Map<String,Object> fila(SegmentadaPanelDTO s){
     Map<String,Object> f = new HashMap<>();
@@ -93,18 +81,5 @@ public class DonanteController {
     return "Vencida".equals(s.getEstado()) ? "No se asignó (venció)" : "Todavía sin asignar";
   }
 
-  private List<Map<String, Object>> opciones(List<SegmentadaPanelDTO> todas, Function<SegmentadaPanelDTO,String> campo, String elegido){
-
-    return todas.stream()
-        .map(campo)
-        .distinct()
-        .sorted()
-        .map(valor -> Map.<String,Object>of(
-            "valor",valor,
-            "texto", Formato.texto(valor),
-            "elegida",valor.equals(elegido)))
-        .toList();
-
-  }
 
 }

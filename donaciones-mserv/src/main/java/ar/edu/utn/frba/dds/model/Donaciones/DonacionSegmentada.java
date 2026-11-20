@@ -112,6 +112,10 @@ public class DonacionSegmentada {
     return id;
   }
 
+  public Donacion getDonacion() {
+    return donacion;
+  }
+
   public List<Bien> getBienes() {
     return Collections.unmodifiableList(bienes);
   }

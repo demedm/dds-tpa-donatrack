@@ -14,6 +14,10 @@ service GestionDonacionesService {
   rpc ListarDonantes (ListarDonantesRequest) returns (ListaDonantesResponse);
   rpc CrearDonacion (CrearDonacionRequest) returns (DonacionCreadaResponse);
   rpc ListarDonacionesDeDonante(DonanteIdRequest) returns (ListaSegmentadasResponse);
+
+  //pantalla 9
+  rpc ListarDonacionesAsignadas(EntidadAsignadaRequest) returns (ListaSegmentadasResponse);
+
 }
 
 //pantalla 15
@@ -124,3 +128,8 @@ message ListaSegmentadasResponse {
   repeated SegmentadaProto segmentadas = 3;
 }
 
+//pantalla 9
+
+message EntidadAsignadaRequest {
+  int64 entidad_id = 1;
+}
