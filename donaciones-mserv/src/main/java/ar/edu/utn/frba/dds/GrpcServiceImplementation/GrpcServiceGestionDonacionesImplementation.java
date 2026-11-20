@@ -7,6 +7,7 @@ import ar.edu.utn.frba.dds.grpc.CrearDonacionRequest;
 import ar.edu.utn.frba.dds.grpc.DonacionCreadaResponse;
 import ar.edu.utn.frba.dds.grpc.DonanteIdRequest;
 import ar.edu.utn.frba.dds.grpc.DonanteProto;
+import ar.edu.utn.frba.dds.grpc.EntidadAsignadaRequest;
 import ar.edu.utn.frba.dds.grpc.ListaDonantesResponse;
 import ar.edu.utn.frba.dds.grpc.ListaEntidades;
 import ar.edu.utn.frba.dds.grpc.ListaSegmentadasResponse;
@@ -345,6 +346,41 @@ public class GrpcServiceGestionDonacionesImplementation
         }
 
     }
+
+
+    //pantalla 9
+
+    @Override
+    public void listarDonacionesAsignadas(EntidadAsignadaRequest request, StreamObserver<ListaSegmentadasResponse> responseObserver){
+
+        try{
+            ListaSegmentadasResponse.Builder respuesta = ListaSegmentadasResponse.newBuilder().setExito(true);
+
+            Map<Long,String> nombresEntidades = new HashMap<>();
+
+            //efecto de lado
+            for (DonacionSegmentada segmentada : donacionesRepo.findAsignadaA(request.getEntidadId())){
+                respuesta.addSegmentadas(aSegmentadaProto(segmentada.getDonacion(),segmentada,nombresEntidades));
+            }
+
+            responseObserver.onNext(respuesta.build());
+            responseObserver.onCompleted();
+        }catch (Exception e){
+            e.printStackTrace();
+
+            responseObserver.onNext(ListaSegmentadasResponse.newBuilder()
+                .setExito(false)
+                .setMensaje("No se pudieron listar tus donaciones: " + e.getMessage())
+                .build());
+
+            responseObserver.onCompleted();
+        } finally {
+            WithSimplePersistenceUnit.dispose();
+        }
+
+    }
+
+
 
     private SegmentadaProto aSegmentadaProto(Donacion donacion, DonacionSegmentada segmentada, Map<Long, String> nombresEntidades){
 

@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.server;
 
 import ar.edu.utn.frba.dds.controllers.AdminController;
+import ar.edu.utn.frba.dds.controllers.BeneficiarioController;
 import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.LogisticaController;
 import ar.edu.utn.frba.dds.controllers.DonacionController;
@@ -23,6 +24,7 @@ public class Router {
     var logisticaController = new LogisticaController();
     var adminController = new AdminController();
     var donanteController = new DonanteController();
+    var beneficiarioController = new BeneficiarioController();
 
     app.before(this::cargarSesion);
 
@@ -83,6 +85,11 @@ public class Router {
     //cuando se arregle el RolMiddleware
     //app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
     app.get("/donante/donaciones",donanteController::misDonaciones);
+    /*app.before("/beneficiario/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);*/
+
+    app.get("/donaciones-asignadas",beneficiarioController::donacionesAsignadas);
+
+
   }
 
   private void cargarSesion(Context ctx) {

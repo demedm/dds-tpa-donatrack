@@ -72,6 +72,14 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
             .getResultList();
     }
 
+    //pantala 9
+
+    public List<DonacionSegmentada> findAsignadaA(Long entidadId){
+        return entityManager()
+            .createQuery("from DonacionSegmentada  s where s.entidadAsignadaId = :entidadId " + "order by s.donacion.fechaRecepcion desc, s.id desc", DonacionSegmentada.class)
+            .setParameter("entidadId",entidadId)
+            .getResultList();
+    }
 
 
 }
