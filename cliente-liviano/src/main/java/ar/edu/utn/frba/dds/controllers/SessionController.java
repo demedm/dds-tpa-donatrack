@@ -58,7 +58,7 @@ public class SessionController {
   }
 
   public void logout(Context ctx) {
-    ctx.header("Set-Cookie", "session=; Path=/; HttpOnly; SameSite=Lax; Secure");
+    ctx.header("Set-Cookie", "session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
     ctx.redirect("/");
   }
 

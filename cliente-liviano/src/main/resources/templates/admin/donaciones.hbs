@@ -18,6 +18,9 @@
             <p class="aviso aviso-error" role="alert">{{error}}</p>
 
         {{/if}}
+        {{#if registrada}}
+            <p class="aviso aviso-ok" role="status">Se registró la donación #{{registrada}}.</p>
+        {{/if}}
         {{#if asignada}}
             <p class="aviso aviso-ok" role="status"> La donación #{{asignada}} se asigno correctamente.</p>
 

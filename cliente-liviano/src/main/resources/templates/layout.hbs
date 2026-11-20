@@ -28,7 +28,9 @@
             <div class="links-nav-div">
                 <a href="/">Home</a>
                 {{#if logueado}}
-                    <a href="#">Donaciones</a>
+                    {{#if esDonante}}
+                        <a href="/donante/donaciones">Mis donaciones</a>
+                    {{/if}}
                     {{#if esBeneficiario}}
                         <a href="/necesidades">Mis Necesidades</a>
                     {{/if}}
@@ -40,7 +42,7 @@
 
             <div class="acciones-nav">
                 {{#if logueado}}
-                    <a href="#" class="link-sesion">Cerrar sesión</a>
+                    <a href="/logout" class="link-sesion">Cerrar sesión</a>
                 {{else}}
                     <a href="/login" class="link-sesion">Iniciar sesión</a>
                 {{/if}}

@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.clients.GrpcClientImplementation;
 
+import ar.edu.utn.frba.dds.dto.DonanteDTO;
 import ar.edu.utn.frba.dds.dto.EntidadDTO;
 import ar.edu.utn.frba.dds.dto.RankingDTO;
+import ar.edu.utn.frba.dds.dto.SegmentadaPanelDTO;
 import ar.edu.utn.frba.dds.grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -111,6 +113,118 @@ public class GrpcClientGestionDonacionesImplementation  {
         rankingDTO.setPorAlgoritmo(porAlgoritmo);
     return rankingDTO;
 
+  }
+
+  //pantalla 13
+  public List<DonanteDTO> listarDonantes(){
+    ListaDonantesResponse respuesta;
+
+    try{
+      respuesta = stub.listarDonantes(ListarDonantesRequest.newBuilder()
+          .build());
+    }catch (Exception e){
+      throw new RuntimeException("sin conexion gRPC con Donaciones (9090)",e);
+    }
+
+    if(!respuesta.getExito()){
+      throw new RuntimeException(respuesta.getMensaje());
+    }
+
+    List<DonanteDTO> donantes = new ArrayList<>();
+
+    for(DonanteProto d : respuesta.getDonantesList()){
+
+      DonanteDTO dto = new DonanteDTO();
+      dto.setId(d.getId());
+      dto.setNombreIdentificador(d.getNombreIdentificador());
+      donantes.add(dto);
+
+    }
+
+    return donantes;
+
+  }
+
+  public Long crearDonacion(Long donanteId, String descripcionGeneral,
+                            List<Map<String,String>> articulos){
+    CrearDonacionRequest.Builder pedido = CrearDonacionRequest.newBuilder()
+        .setDonanteId(donanteId)
+        .setDescripcionGeneral(texto(descripcionGeneral));
+
+    for (Map<String,String> articulo : articulos) {
+      pedido.addBienes(BienProto.newBuilder()
+          .setCategoria(texto(articulo.get("categoria")))
+          .setSubcategoria(texto(articulo.get("subcategoria")).toUpperCase())
+          .setUnidad(texto(articulo.get("unidad")))
+          .setCantidad(texto(articulo.get("cantidad")))
+          .setDescripcion(texto(articulo.get("descripcion")))
+          .setFoto("")
+          .setFechaVencimiento(texto(articulo.get("fechaVencimiento")))
+          .setEstadoUso(texto(articulo.get("estadoUso")))
+          .build());
+
+    }
+
+    DonacionCreadaResponse respuesta;
+    try{
+      respuesta = stub.crearDonacion(pedido.build());
+    }catch (Exception e){
+      throw new RuntimeException("sin conexion gRPC con Donaciones (9090)",e);
+    }
+
+    if (!respuesta.getExito()){
+      throw new RuntimeException(respuesta.getMensaje());
+    }
+    return respuesta.getDonacionId();
+
+  }
+
+  //pantalla 5
+
+  public List<SegmentadaPanelDTO> listarDonacionesDeDonante(Long donanteId){
+
+    ListaSegmentadasResponse respuesta;
+
+    try{
+
+      respuesta = stub.listarDonacionesDeDonante(DonanteIdRequest.newBuilder()
+          .setDonanteId(donanteId)
+          .build());
+
+    }catch (Exception e){
+      throw new RuntimeException("sin conexion gRPC con Donaciones (9090)",e);
+    }
+
+    if(!respuesta.getExito()){
+      throw new RuntimeException(respuesta.getMensaje());
+    }
+
+    return respuesta.getSegmentadasList().stream()
+        .map(this::aPanelDTO)
+        .toList();
+
+  }
+
+  private SegmentadaPanelDTO aPanelDTO(SegmentadaProto proto){
+    SegmentadaPanelDTO dto = new SegmentadaPanelDTO();
+
+    dto.setId(proto.getId());
+    dto.setDonacionId(proto.getDonacionId());
+    dto.setFechaRecepcion(proto.getFechaRecepcion());
+    dto.setEstado(proto.getEstado());
+    dto.setCategoria(proto.getCategoria());
+    dto.setSubcategoria(proto.getSubcategoria());
+    dto.setCantidad(proto.getCantidad());
+    dto.setUnidad(proto.getUnidad());
+    dto.setEntidadAsignada(proto.getEntidadAsignada());
+    return dto;
+
+  }
+
+
+
+  private String texto(String valor){
+    return valor == null ? "" : valor.trim();
   }
 
 

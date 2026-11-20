@@ -1,0 +1,218 @@
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    <link rel="stylesheet" href="/assets/css/donacion.css">
+    <link rel="stylesheet" href="/assets/css/donacion-detalle.css">
+{{/partial}}
+
+
+{{#partial "contenido"}}
+
+    <div class="detalle-donacion">
+        <section class="detalle-panel">
+
+            <h1 class="detalle-titulo"> Registrar donación del deposito</h1>
+
+            {{#if error}}
+                <p class="aviso aviso-error" role="alert">{{error}}</p>
+            {{/if}}
+
+            <form action="/admin/donaciones" method="POST" class="form-detalle" id="formDetalle">
+
+
+                <!--- Datos de la donacion -->
+                <div class="campo">
+                    <label for="donanteId">Donante *</label>
+                    <select name="donanteId" id="donanteId" required>
+                        <option value="" disabled selected>Elige el donante</option>
+                        {{#each donantes}}
+                            <option value="{{id}}">{{nombreIdentificador}}</option>
+                        {{else}}
+                            <option value="" disabled>No hay donantes cargados</option>
+                        {{/each}}
+                    </select>
+                </div>
+
+                <div class="campo">
+
+                    <label for="descripcionGeneral">Descripcion general</label>
+                    <input type="text" name="descripcionGeneral" id="descripcionGeneral" placeholder="Por ejemplo: caja que trajo el donante el martes">
+
+                </div>
+
+                <div id="listaArticulos">
+                    <!-- Articulo inicial-->
+
+                    <fieldset class="articulo" data-indice="0">
+
+                        <h2 class="articulo-titulo">Articulo</h2>
+
+                        <div class="campo">
+                            <label class="sr-only" for="categoria-0">Categoria</label>
+                            <select name="articulos[0][categoria]" id="categoria-0" class="select-categoria" required>
+                                <option value="" disabled selected>Categoria</option>
+                                <option value="VESTIMENTA">Vestimenta</option>
+                                <option value="ALIMENTOS">Alimentos</option>
+                                <option value="MOBILIARIO">Mobiliario</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+
+                            <label class="sr-only" for="sub-categoria-0">Subcateogria</label>
+                            <input type="text" id="sub-categoria-0" name="articulos[0][subcategoria]" placeholder="Subcategoria * (por ejemplo ARROZ)" required>
+                        </div>
+
+
+                        <div class="campo">
+                            <label class="sr-only" for="unidad-0">Unidad</label>
+                            <select id="unidad-0" name="articulos[0][unidad]" class="select-unidad" required>
+                                <option value="" disabled selected>Unidad</option>
+                                <option value="UNIDADES">Unidades</option>
+                                <option value="KILOGRAMOS">Kilogramos</option>
+                                <option value="LITROS">Litros</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label class="sr-only" for="cantidad-0">Cantidad</label>
+                            <input type="number" id="cantidad-0" name="articulos[0][cantidad]" placeholder="Cantidad *" min="0.01" step="0.01" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="fechaVencimiento-0">Vencimiento (si es perecedero)</label>
+                            <input type="date" id="fechaVencimiento-0" name="articulos[0][fechaVencimiento]">
+                        </div>
+
+                        <div class="campo">
+                            <label for="estadoUso-0">Estado de uso (si no vence)</label>
+                            <select id="estadoUso-0" name="articulos[0][estadoUso]">
+                                <option value="">Sin estado</option>
+                                <option value="NUEVO">Nuevo</option>
+                                <option value="USADO">Usado</option>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label for="descripcion-0">Descripcion *</label><textarea id="descripcion-0" name="articulos[0][descripcion]" placeholder="Breve descripcion ..." rows="6" required></textarea>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <button type="button" class="boton-agregar" id="agregarArticulo">Agregar Articulo
+
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+
+                <button type="submit" class="boton-auth boton-donar-final" >Registrar donación</button>
+
+            </form>
+
+        </section>
+    </div>
+
+    <!-- Plantilla para clonar articulos -->
+    <template id="plantillaArticulo">
+
+        <fieldset class="articulo" data-indice="__I__">
+
+            <div class="articulo-cabecera">
+                <h2 class="articulo-titulo">Articulo</h2>
+                <button type="button" class="boton-quitar" aria-label="Quitar articulo">x</button>
+            </div>
+
+            <div class="campo">
+                <label class="sr-only" for="categoria-__I__">Categoria</label>
+                <select id="categoria-__I__" name="articulos[__I__][categoria]" class="select-categoria" required>
+
+                    <option value="" disabled selected>Categoria</option>
+                    <option value="VESTIMENTA">Vestimenta</option>
+                    <option value="ALIMENTOS">Alimentos</option>
+                    <option value="MOBILIARIO">Mobiliario</option>
+
+                </select>
+            </div>
+
+            <div class="campo">
+                <label class="sr-only" for="sub-categoria-__I__">Subcateogria</label>
+                <input type="text" id="sub-categoria-__I__" name="articulos[__I__][subcategoria]" placeholder="Subcategoria * (por ejemplo ARROZ)" required>
+            </div>
+
+            <div class="campo">
+                <label class="sr-only" for="unidad-__I__">Unidad</label>
+                <select id="unidad-__I__" name="articulos[__I__][unidad]" required>
+
+                    <option value="" disabled selected>Unidad</option>
+                    <option value="UNIDADES">Unidades</option>
+                    <option value="KILOGRAMOS">Kilogramos</option>
+                    <option value="LITROS">Litros</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label class="sr-only" for="cantidad-__I__">Cantidad</label>
+                <input type="number" id="cantidad-__I__" name="articulos[__I__][cantidad]" placeholder="Cantidad *" min="0.01" step="0.01" required>
+            </div>
+
+            <div class="campo">
+                <label for="fechaVencimiento-__I__">Vencimiento (si es perecedero)</label>
+                <input type="date" id="fechaVencimiento-__I__" name="articulos[__I__][fechaVencimiento]">
+            </div>
+
+            <div class="campo">
+                <label for="estadoUso-__I__">Estado de uso (si no vence)</label>
+
+                <select id="estadoUso-__I__" name="articulos[__I__][estadoUso]" >
+
+                    <option value="">Sin estado</option>
+                    <option value="NUEVO">Nuevo</option>
+                    <option value="USADO">Usado</option>
+
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="descripcion-__I__">Descripcion *</label>
+
+                <textarea id="descripcion-__I__" name="articulos[__I__][descripcion]" placeholder="Breve descripcion ..." rows="6" required></textarea>
+
+            </div>
+        </fieldset>
+    </template>
+
+<script>
+    const lista = document.getElementById('listaArticulos');
+    const plantilla = document.getElementById('plantillaArticulo');
+
+    let contador = 1;
+
+    //boton x de un articulo agregado lo saca del formulario
+
+    function activarArticulo(articulo) {
+        const quitar = articulo.querySelector('.boton-quitar');
+
+        if (quitar) {
+            quitar.addEventListener('click', () => articulo.remove());
+        }
+    }
+
+    document.getElementById('agregarArticulo').addEventListener('click',() => {
+        const html = plantilla.innerHTML.replaceAll('__I__',contador++);
+
+        lista.insertAdjacentHTML('beforeend', html);
+        const nuevo = lista.lastElementChild;
+
+        activarArticulo(nuevo);
+
+        nuevo.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+
+    });
+
+
+</script>
+
+
+{{/partial}}
+
+{{>templates/layout}}

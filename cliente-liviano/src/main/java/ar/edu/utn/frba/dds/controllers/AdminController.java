@@ -1,28 +1,28 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientPlaniImplementation;
-import ar.edu.utn.frba.dds.clients.HttpClient.DonacionesHttpClient;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientGestionDonacionesImplementation;
-
+import ar.edu.utn.frba.dds.clients.HttpClient.DonacionesHttpClient;
 import ar.edu.utn.frba.dds.dto.DonacionDto;
 import ar.edu.utn.frba.dds.dto.EntidadDTO;
 import ar.edu.utn.frba.dds.dto.RankingDTO;
 import ar.edu.utn.frba.dds.dto.SegmentadaDTO;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.vistas.Formato;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.planificacionServiceGrpc.grpc.DonacionAPlanificar;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URLEncoder;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class AdminController {
 
@@ -64,8 +64,9 @@ public class AdminController {
   public void mostrarDonaciones(Context ctx) {
     String token = ctx.cookie("session");
     Map<String, Object> modelo = new HashMap<>();
+    modelo.put("registrada", ctx.queryParam("registrada"));
     modelo.put("asignada", ctx.queryParam("asignada"));
-    modelo.put("errorAsignacion","asignacion".equals(ctx.queryParam("error")));
+    modelo.put("errorAsignacion", "asignacion".equals(ctx.queryParam("error")));
 
     String vencidas = ctx.queryParam("vencidas");
     if (vencidas != null && !vencidas.equals("0")) {
@@ -73,35 +74,35 @@ public class AdminController {
     }
 
     String noVencidas = ctx.queryParam("noVencidas");
-    if(noVencidas != null && !noVencidas.equals("0")) {
+    if (noVencidas != null && !noVencidas.equals("0")) {
       modelo.put("noVencidas", noVencidas);
     }
-    modelo.put("errorSinSeleccion","sinSeleccion".equals(ctx.queryParam("error")));
+    modelo.put("errorSinSeleccion", "sinSeleccion".equals(ctx.queryParam("error")));
 
-    try{
+    try {
       List<DonacionDto> todas = donaciones.listarDonaciones(token);
 
-      Map<Long,String> nombresEntidades = new HashMap<>();
+      Map<Long, String> nombresEntidades = new HashMap<>();
 
-      try{
+      try {
         for (EntidadDTO entidad : gestionDonaciones.listarEntidades()) {
-          nombresEntidades.put(entidad.getId(),entidad.getRazonSocial());
+          nombresEntidades.put(entidad.getId(), entidad.getRazonSocial());
         }
-      }catch(Exception e){
-        modelo.put("error","No se pudieron cargar las entidades: " + e.getMessage());
+      } catch (Exception e) {
+        modelo.put("error", "No se pudieron cargar las entidades: " + e.getMessage());
       }
 
-      List<Map<String,Object>> filas = new ArrayList<>();
-      List<Map<String,Object>> pendientes = new ArrayList<>();
+      List<Map<String, Object>> filas = new ArrayList<>();
+      List<Map<String, Object>> pendientes = new ArrayList<>();
 
-      for(DonacionDto donacion : todas){
-        for (SegmentadaDTO segmentada : donacion.getSegmentadas()){
+      for (DonacionDto donacion : todas) {
+        for (SegmentadaDTO segmentada : donacion.getSegmentadas()) {
 
-          Map<String,Object> fila = fila(donacion,segmentada,nombresEntidades);
+          Map<String, Object> fila = fila(donacion, segmentada, nombresEntidades);
 
           filas.add(fila);
 
-          if("En depósito".equals(segmentada.getEstado())){
+          if ("En depósito".equals(segmentada.getEstado())) {
             pendientes.add(fila);
           }
 
@@ -113,13 +114,13 @@ public class AdminController {
 
       String seleccionada = ctx.queryParam("seleccionada");
 
-      if(seleccionada != null){
-        cargarRanking(modelo, Long.parseLong(seleccionada),pendientes);
+      if (seleccionada != null) {
+        cargarRanking(modelo, Long.parseLong(seleccionada), pendientes);
       }
 
-    }catch(Exception e){
+    } catch (Exception e) {
 
-      modelo.put("error","No se pudo conectar con el servicio de Donaciones.");
+      modelo.put("error", "No se pudo conectar con el servicio de Donaciones.");
     }
 
     ctx.render("admin/donaciones.hbs", modelo);
@@ -132,7 +133,7 @@ public class AdminController {
     try {
       Long entidadId = Long.parseLong(ctx.formParam("entidadId"));
 
-      if(gestionDonaciones.asignar(segmentadaId, entidadId)){
+      if (gestionDonaciones.asignar(segmentadaId, entidadId)) {
         boolean enviada = enviarALogistica(token, segmentadaId, entidadId);
         ctx.redirect("/admin/donaciones?asignada=" + segmentadaId +
             (enviada ? "" : "&logistica=error"));
@@ -183,7 +184,7 @@ public class AdminController {
   public void marcarVencidas(Context ctx) {
     List<String> ids = ctx.formParams("donaciones");
 
-    if(ids.isEmpty()){
+    if (ids.isEmpty()) {
       ctx.redirect("/admin/donaciones?error=sinSeleccion");
       return;
     }
@@ -192,13 +193,13 @@ public class AdminController {
     int noVencidas = 0;
 
     for (String id : ids) {
-      try{
-        if(gestionDonaciones.marcarVencida(Long.parseLong(id))){
+      try {
+        if (gestionDonaciones.marcarVencida(Long.parseLong(id))) {
           vencidas++;
-        }else{
+        } else {
           noVencidas++;
         }
-      }catch (Exception e){
+      } catch (Exception e) {
         System.err.println("Error venciendo la donación " + id + ": " + e.getMessage());
         noVencidas++;
       }
@@ -208,6 +209,89 @@ public class AdminController {
 
 
   }
+
+  public void mostrarNuevaDonacion(Context ctx) {
+    Map<String, Object> modelo = new HashMap<>();
+    modelo.put("error", ctx.queryParam("error"));
+
+    try {
+      modelo.put("donantes", gestionDonaciones.listarDonantes());
+    } catch (Exception e) {
+      modelo.put("error", "No se pudieron cargar los donantes: " + e.getMessage());
+    }
+
+    ctx.render("admin/nueva-donacion.hbs", modelo);
+
+  }
+
+  public void registrarDonacion(Context ctx) {
+    Long donanteId;
+
+    try {
+      donanteId = Long.parseLong(ctx.formParam("donanteId"));
+    } catch (Exception e) {
+      volverAlFormulario(ctx, "Elegir el donante de la donacion");
+      return;
+    }
+
+    Map<Integer, Map<String, String>> articulos = new TreeMap<>();
+
+    for (Map.Entry<String, List<String>> campo : ctx.formParamMap().entrySet()) {
+
+      String nombre = campo.getKey();
+
+      if (!nombre.startsWith("articulos[") || !nombre.endsWith("]") || campo.getValue().isEmpty()) {
+        continue;
+      }
+
+      String resto = nombre.substring("articulos[".length(), nombre.length() - 1);
+
+      int separador = resto.indexOf("][");
+      if (separador == -1) {
+        continue;
+      }
+
+      int indice;
+
+      try {
+        indice = Integer.parseInt(resto.substring(0, separador));
+      } catch (NumberFormatException e) {
+        continue;
+      }
+
+      String nombreCampo = resto.substring(separador + 2);
+
+      articulos.computeIfAbsent(indice, i -> new HashMap<>())
+          .put(nombreCampo, campo.getValue().get(0));
+
+      }
+
+      if (articulos.isEmpty()) {
+        volverAlFormulario(ctx, "Carga al menos un articulo");
+        return;
+      }
+
+      Long donacionId;
+      try {
+        donacionId = gestionDonaciones.crearDonacion(
+            donanteId, ctx.formParam("descripcionGeneral"), new ArrayList<>(articulos.values()));
+
+      } catch (Exception e) {
+        System.err.println("Error registrando la donacion: " + e.getMessage());
+        volverAlFormulario(ctx, e.getMessage());
+        return;
+      }
+
+
+      ctx.redirect("/admin/donaciones?registrada=" + donacionId);
+
+
+  }
+
+  private void volverAlFormulario(Context ctx, String mensaje) {
+    ctx.redirect("/admin/donaciones/nueva?error=" + URLEncoder.encode(mensaje, StandardCharsets.UTF_8));
+  }
+
 
 
   private void cargarRanking(Map<String, Object> modelo, Long segmentadaId,
@@ -288,6 +372,8 @@ public class AdminController {
     f.put("vencible", "En depósito".equals(s.getEstado()));
     return f;
   }
+
+
 
 
 

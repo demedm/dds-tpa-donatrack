@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.server;
 
 import ar.edu.utn.frba.dds.controllers.AdminController;
+import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.LogisticaController;
 import ar.edu.utn.frba.dds.controllers.DonacionController;
 import ar.edu.utn.frba.dds.controllers.HomeController;
@@ -21,6 +22,7 @@ public class Router {
     var donacionController = new DonacionController();
     var logisticaController = new LogisticaController();
     var adminController = new AdminController();
+    var donanteController = new DonanteController();
 
     app.before(this::cargarSesion);
 
@@ -65,16 +67,22 @@ public class Router {
     app.get("/admin/panel", adminController::administracion);
     app.get("/admin/logistica", logisticaController::mostrarCamiones);
     app.get("/admin/logistica/camion/{id}/panel", logisticaController::mostrarPanelCamion);
+    app.get("/admin/donaciones/nueva", adminController::mostrarNuevaDonacion);
     app.get("/admin/donaciones", adminController::mostrarDonaciones);
+
     app.post("/admin/donaciones/{id}/asignacion", adminController::asignarDonacion);
     app.post("/admin/donaciones/vencidas",adminController::marcarVencidas);
 
     app.post("/admin/camiones", logisticaController::registrarCamion);
-    app.post("/admin/donaciones", donacionController::registrarDonacion);
+    app.post("/admin/donaciones", adminController::registrarDonacion);
     app.get("/admin/registro", session::mostrarRegistroAdmin);
     app.post("/admin/registro", session::registrarUsuario);
     app.post("/admin/donantes/importar", adminController::importarDonantesDesdeCsv);
 
+
+    //cuando se arregle el RolMiddleware
+    //app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
+    app.get("/donante/donaciones",donanteController::misDonaciones);
   }
 
   private void cargarSesion(Context ctx) {
@@ -88,7 +96,7 @@ public class Router {
     } catch (Exception e) {
       // vencido, firma inválida o rol desconocido: se borra la cookie y se sigue como visitante
       System.err.println("Sesión descartada: " + e.getMessage());
-      ctx.header("Set-Cookie", "session=; Path=/; HttpOnly; SameSite=Lax; Secure");
+      ctx.header("Set-Cookie", "session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
       ctx.redirect("/login");
       throw new RedirectResponse();
     }

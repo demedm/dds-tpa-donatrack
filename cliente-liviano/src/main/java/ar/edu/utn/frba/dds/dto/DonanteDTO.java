@@ -15,5 +15,13 @@ public class DonanteDTO {
   public String getNombreIdentificador() {
     return nombreIdentificador;
   }
-  
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public void setNombreIdentificador(String nombreIdentificador) {
+    this.nombreIdentificador = nombreIdentificador;
+  }
+
 }

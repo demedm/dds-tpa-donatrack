@@ -15,6 +15,7 @@ public class HomeController {
     System.out.println("Usuario autenticado: " + usuario);
     modelo.put("logueado", usuario != null);
     modelo.put("esBeneficiario", usuario != null && Rol.BENEFICIARIO.equals(usuario.getRol()));
+    modelo.put("esDonante", usuario != null && Rol.DONANTE.equals(usuario.getRol()));
 
     try {
       if (usuario.getRol().equals(Rol.ADMIN)) {
