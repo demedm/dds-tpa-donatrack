@@ -3,7 +3,10 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientNecesidadImplementation;
 import ar.edu.utn.frba.dds.dto.NecesidadDto;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
+import io.grpc.StatusRuntimeException;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
+import io.javalin.http.NotFoundResponse;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +26,10 @@ public class NecesidadController {
 
   public void showNecesidades(Context ctx) {
     UsuarioLogueado usuarioLogueado = ctx.attribute("usuarioLogueado");
-
+    if (usuarioLogueado == null) {
+      ctx.redirect("/login");
+      return;
+    }
     Long idUsuario = null;
     if (usuarioLogueado != null) {
       idUsuario = usuarioLogueado.getId();
@@ -91,18 +97,60 @@ public class NecesidadController {
 
   public void showNecesidad(Context ctx) {
     UsuarioLogueado usuarioLogueado = ctx.attribute("usuarioLogueado");
+    if (usuarioLogueado == null) {
+      ctx.redirect("/login");
+      return;
+    }
     Long id = Long.parseLong(ctx.pathParam("id"));
-    NecesidadDto necesidad = grpcNecesidadClient.obtenerDetalle(id);
+    NecesidadDto necesidad;
+    try {
+      necesidad = grpcNecesidadClient.obtenerDetalle(id);
+    } catch (StatusRuntimeException e) {
+    if (e.getStatus().getCode() == io.grpc.Status.Code.NOT_FOUND) {
+      throw new NotFoundResponse("La necesidad solicitada no existe."); // 404
+    }
+    throw e;
+  }
 
+    if (necesidad == null) {
+    throw new io.javalin.http.NotFoundResponse("La necesidad solicitada no existe.");
+  }
+
+    if (!usuarioLogueado.getId().equals(necesidad.getEntidadId())) {
+    throw new io.javalin.http.ForbiddenResponse("No tenés permiso para ver esta necesidad."); // 403
+  }
     Map<String, Object> model = crearModeloBase(usuarioLogueado);
     model.put("id", id);
     model.put("necesidad", necesidad);
+    model.put("cloudinaryCloudName", System.getenv("CLOUDINARY_CLOUD_NAME"));
+    model.put("cloudinaryPreset", System.getenv("CLOUDINARY_UPLOAD_PRESET"));
 
     ctx.render("beneficiarios/necesidades/necesidadDetalle.hbs", model);
   }
 
   public void subirAdjunto(Context ctx) {
+    UsuarioLogueado usuarioLogueado = ctx.attribute("usuarioLogueado");
+    if (usuarioLogueado == null) {
+      ctx.redirect("/login");
+      return;
+    }
+
     Long id = Long.parseLong(ctx.pathParam("id"));
+    NecesidadDto necesidad = grpcNecesidadClient.obtenerDetalle(id);
+    if (necesidad == null) {
+      throw new NotFoundResponse("La necesidad solicitada no existe.");
+    }
+    if (!usuarioLogueado.getId().equals(necesidad.getEntidadId())) {
+      ctx.redirect("/necesidades");
+      return;
+    }
+
+    String url = ctx.formParam("url");
+    if (url != null && !url.isBlank()) {
+      System.out.println("URL recibida: " + url);
+      grpcNecesidadClient.agregarAdjunto(id, url.trim());
+    }
+
     ctx.redirect("/necesidades/" + id);
   }
 }

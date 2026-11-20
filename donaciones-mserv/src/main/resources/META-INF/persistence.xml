@@ -34,7 +34,7 @@
             <property name="hibernate.connection.url"
                       value="jdbc:mariadb://localhost:3306/donaciones_db"/>
             <property name="hibernate.connection.username" value="root" />
-            <property name="hibernate.connection.password" value="" />
+            <property name="hibernate.connection.password" value="root" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
 
             <!--
@@ -66,7 +66,7 @@
             <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:donaciones_test_db" />
             <property name="javax.persistence.jdbc.user" value="sa" />
-            <property name="javax.persistence.jdbc.password" value="" />
+            <property name="javax.persistence.jdbc.password" value="root" />
 
             <!-- Dialecto y configuración de Hibernate -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />

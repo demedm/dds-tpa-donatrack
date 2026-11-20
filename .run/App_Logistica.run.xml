@@ -1,5 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="App_Logistica" type="Application" factoryName="Application">
+    <envs>
+      <env name="DB_PASSWORD" value="root" />
+    </envs>
     <option name="MAIN_CLASS_NAME" value="ar.edu.utn.frba.dds.main.App_Logistica" />
     <module name="logistica-mserv" />
     <extension name="coverage">
