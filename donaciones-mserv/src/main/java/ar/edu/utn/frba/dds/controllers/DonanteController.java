@@ -103,6 +103,7 @@ public class DonanteController implements WithSimplePersistenceUnit {
       ctx.status(200);
 
     } catch (Exception e) {
+      e.printStackTrace();
       ctx.status(400);
     }
   }

@@ -29,7 +29,7 @@ public class RegistroDonante implements WithSimplePersistenceUnit {
         entityManager().persist(nuevoDonante); // Insertamos en BD
         System.out.println("Nuevo donante registrado");
         // envia la notificación
-        notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
+        //notificador.enviarNotificacionA(nuevoDonante, "Bienvenido a DonaTrack!");
       }
     });
   }
@@ -41,7 +41,7 @@ public class RegistroDonante implements WithSimplePersistenceUnit {
   public Optional<Persona> buscarPorEmail(String direccionMail) {
     // Consulta HQL buscando por la columna embebida
     return entityManager()
-        .createQuery("SELECT p FROM Persona p WHERE p.mail.direccion = :email", Persona.class)
+        .createQuery("SELECT p FROM Persona p WHERE p.mail.direccionMail = :email", Persona.class)
         .setParameter("email", direccionMail)
         .getResultList()
         .stream()

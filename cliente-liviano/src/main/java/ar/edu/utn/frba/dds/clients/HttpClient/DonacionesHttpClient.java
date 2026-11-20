@@ -87,7 +87,7 @@ public class DonacionesHttpClient {
     }
   }
 
-  public HttpResponse<String> importarDonantes(UploadedFile archivo) {
+  public HttpResponse<String> importarDonantes(UploadedFile archivo,String token) {
     try {
       byte[] contenido = archivo.content().readAllBytes();
       String nombreArchivo = archivo.filename();
@@ -114,6 +114,7 @@ public class DonacionesHttpClient {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(baseUrl + "/donantes/importar"))
           .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+              .header("Authorization", "Bearer " + token)
           .timeout(Duration.ofSeconds(30))
           .POST(HttpRequest.BodyPublishers.ofByteArray(output.toByteArray()))
           .build();
