@@ -8,7 +8,7 @@
 
     <section class="panel-donaciones">
         <h1 class="panel-titulo">Mis donaciones</h1>
-        <p class="panel-subtitulo">Segui en que estado esta cada parte de lo que donaste </p>
+        <p class="panel-subtitulo">Seguí en qué estado está cada parte de lo que donaste.</p>
 
         {{#if error}}
             <p class="aviso aviso-error" role="alert">{{error}}</p>
@@ -34,9 +34,9 @@
                </div>
                <div class="campo">
 
-                   <label for="categoria">Categoria</label>
+                   <label for="categoria">Categoría</label>
                    <select name="categoria" id="categoria">
-                       <option value="">Todos</option>
+                       <option value="">Todas</option>
                        {{#each categorias}}
                            <option value="{{valor}}" {{#if elegida}}selected{{/if}}>{{texto}}</option>
                     {{/each}}
@@ -44,9 +44,9 @@
                </div>
 
                <div class="campo">
-                   <label for="subcategoria">Subcategoria</label>
+                   <label for="subcategoria">Subcategoría</label>
                    <select name="subcategoria" id="subcategoria">
-                       <option value="">Todos</option>
+                       <option value="">Todas</option>
                        {{#each subcategorias}}
                            <option value="{{valor}}" {{#if elegida}}selected{{/if}}>{{texto}}</option>
                        {{/each}}
@@ -67,10 +67,10 @@
                 <table class="tabla">
                     <thead>
                     <tr>
-                        <th>Donacion</th>
+                        <th>Donación</th>
                         <th>Recibida</th>
                         <th>Categoría</th>
-                        <th>Subcategoria</th>
+                        <th>Subcategoría</th>
                         <th>Cantidad</th>
                         <th>Estado</th>
                         <th>Entidad</th>
@@ -92,7 +92,7 @@
                         </tr>
                     {{else}}
                         <tr>
-                            <td colspan="7" class="vacio">Ninguna donacion coincide con esos filtros.
+                            <td colspan="7" class="vacio">Ninguna donación coincide con esos filtros.
                             </td>
                         </tr>
                     {{/each}}
@@ -105,8 +105,8 @@
             {{#unless error}}
 
                 <div class="vacio-panel">
-                    <p>Todavia no tenes donaciones registradas.</p>
-                    <a href="/donaciones" class="boton-verde">Hacer una donacion</a>
+                    <p>Todavía no tenés donaciones registradas.</p>
+                    <a href="/donaciones" class="boton-verde">Hacer una donación</a>
                 </div>
             {{/unless}}
 

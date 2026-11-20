@@ -29,7 +29,7 @@ public class DonanteController {
     }
 
     if(usuario.getRol() != Rol.DONANTE){
-      ctx.status(403).result("Esta pagina es solo para personas donantes.");
+      ctx.status(403).result("Esta página es solo para personas donantes.");
       return;
     }
 
@@ -60,7 +60,7 @@ public class DonanteController {
 
     } catch (Exception e){
       System.err.println("Error listando las donaciones del donante " + usuario.getId() + ": " + e.getMessage());
-      modelo.put("error", "No pudimos cargar tus donaciones. Proba de nuevo en unos minutos");
+      modelo.put("error", "No pudimos cargar tus donaciones. Probá de nuevo en unos minutos.");
     }
 
     ctx.render("donantes/donaciones.hbs",modelo);
@@ -90,7 +90,7 @@ public class DonanteController {
     if (!s.getEntidadAsignada().isEmpty()){
       return s.getEntidadAsignada();
     }
-    return "Vencida".equals(s.getEstado()) ? "No se asigno(venció)" : "Todavia sin asignar";
+    return "Vencida".equals(s.getEstado()) ? "No se asignó (venció)" : "Todavía sin asignar";
   }
 
   private List<Map<String, Object>> opciones(List<SegmentadaPanelDTO> todas, Function<SegmentadaPanelDTO,String> campo, String elegido){

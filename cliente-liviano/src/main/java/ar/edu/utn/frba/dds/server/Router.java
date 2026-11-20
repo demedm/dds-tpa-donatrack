@@ -80,7 +80,7 @@ public class Router {
     app.post("/admin/donantes/importar", adminController::importarDonantesDesdeCsv);
 
 
-    //cuando se arregl el RolMiddleware
+    //cuando se arregle el RolMiddleware
     //app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
     app.get("/donante/donaciones",donanteController::misDonaciones);
   }
@@ -96,7 +96,7 @@ public class Router {
     } catch (Exception e) {
       // vencido, firma inválida o rol desconocido: se borra la cookie y se sigue como visitante
       System.err.println("Sesión descartada: " + e.getMessage());
-      ctx.header("Set-Cookie", "session=; Path=/; HttpOnly; SameSite=Lax; Secure");
+      ctx.header("Set-Cookie", "session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
       ctx.redirect("/login");
       throw new RedirectResponse();
     }
