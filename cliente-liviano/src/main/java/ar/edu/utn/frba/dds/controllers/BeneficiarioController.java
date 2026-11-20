@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientGestionDonacionesImplementation;
 import ar.edu.utn.frba.dds.dto.SegmentadaPanelDTO;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
-import ar.edu.utn.frba.dds.session.Rol;
 import ar.edu.utn.frba.dds.vistas.Filtros;
 import ar.edu.utn.frba.dds.vistas.Formato;
 import io.javalin.http.Context;
@@ -21,14 +20,9 @@ public class BeneficiarioController {
   public void donacionesAsignadas(Context ctx){
     UsuarioLogueado usuario = ctx.attribute("usuarioLogueado");
 
-    //borrar estos if cuando se arregle el rolmiddleware
+    //el rol lo valida el RolMiddleware; este if queda porque su redirect no corta el handler
     if(usuario == null){
       ctx.redirect("/login");
-      return;
-    }
-
-    if(usuario.getRol() != Rol.BENEFICIARIO){
-      ctx.status(403).result("Esta pagina es solo para entidades beneficiarias.");
       return;
     }
 

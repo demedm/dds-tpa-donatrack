@@ -54,8 +54,9 @@ public class Router {
     app.get("/entregas-satisfactorias", ctx -> ctx.render("public/entregasSatisfactorias.hbs"));
 
 
-    // app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
-    // app.before("/necesidades/*", this::autenticados);
+    // las dos formas: "/necesidades/*" puede no incluir "/necesidades" sola
+    app.before("/necesidades", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     app.get("/necesidades", necesidadController::showNecesidades);
     app.post("/necesidades", necesidadController::crear);
     app.get("/necesidades/{id}", necesidadController::showNecesidad);
@@ -95,8 +96,8 @@ public class Router {
 
     app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
     app.get("/donante/donaciones",donanteController::misDonaciones);
-    /*app.before("/beneficiario/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);*/
 
+    app.before("/donaciones-asignadas", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     app.get("/donaciones-asignadas",beneficiarioController::donacionesAsignadas);
 
 

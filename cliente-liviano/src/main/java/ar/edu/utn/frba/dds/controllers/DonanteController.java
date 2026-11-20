@@ -3,7 +3,6 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientGestionDonacionesImplementation;
 import ar.edu.utn.frba.dds.dto.SegmentadaPanelDTO;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
-import ar.edu.utn.frba.dds.session.Rol;
 import ar.edu.utn.frba.dds.vistas.Filtros;
 import ar.edu.utn.frba.dds.vistas.Formato;
 import io.javalin.http.Context;
@@ -12,10 +11,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-
-import static ar.edu.utn.frba.dds.vistas.Filtros.opciones;
-
 
 public class DonanteController {
   private final GrpcClientGestionDonacionesImplementation gestionDonaciones = new GrpcClientGestionDonacionesImplementation();
@@ -24,15 +19,9 @@ public class DonanteController {
   public void misDonaciones(Context ctx){
     UsuarioLogueado usuario = ctx.attribute("usuarioLogueado");
 
-    //borrar estos if cuando se active el app.before
-
+    //el rol lo valida el RolMiddleware; este if queda porque su redirect no corta el handler
     if (usuario == null){
       ctx.redirect("/login");
-      return;
-    }
-
-    if(usuario.getRol() != Rol.DONANTE){
-      ctx.status(403).result("Esta página es solo para personas donantes.");
       return;
     }
 
