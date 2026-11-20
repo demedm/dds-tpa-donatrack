@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.clients.GrpcClientImplementation;
 
+import ar.edu.utn.frba.dds.dto.DonanteDTO;
 import ar.edu.utn.frba.dds.dto.EntidadDTO;
 import ar.edu.utn.frba.dds.dto.RankingDTO;
 import ar.edu.utn.frba.dds.grpc.*;
@@ -111,6 +112,74 @@ public class GrpcClientGestionDonacionesImplementation  {
         rankingDTO.setPorAlgoritmo(porAlgoritmo);
     return rankingDTO;
 
+  }
+
+  //pantalla 13
+  public List<DonanteDTO> listarDonantes(){
+    ListaDonantesResponse respuesta;
+
+    try{
+      respuesta = stub.listarDonantes(ListarDonantesRequest.newBuilder()
+          .build());
+    }catch (Exception e){
+      throw new RuntimeException("sin conexion gRPC con Donaciones (9090)",e);
+    }
+
+    if(!respuesta.getExito()){
+      throw new RuntimeException(respuesta.getMensaje());
+    }
+
+    List<DonanteDTO> donantes = new ArrayList<>();
+
+    for(DonanteProto d : respuesta.getDonantesList()){
+
+      DonanteDTO dto = new DonanteDTO();
+      dto.setId(d.getId());
+      dto.setNombreIdentificador(d.getNombreIdentificador());
+      donantes.add(dto);
+
+    }
+
+    return donantes;
+
+  }
+
+  public Long crearDonacion(Long donanteId, String descripcionGeneral,
+                            List<Map<String,String>> articulos){
+    CrearDonacionRequest.Builder pedido = CrearDonacionRequest.newBuilder()
+        .setDonanteId(donanteId)
+        .setDescripcionGeneral(texto(descripcionGeneral));
+
+    for (Map<String,String> articulo : articulos) {
+      pedido.addBienes(BienProto.newBuilder()
+          .setCategoria(texto(articulo.get("categoria")))
+          .setSubcategoria(texto(articulo.get("subcategoria")).toUpperCase())
+          .setUnidad(texto(articulo.get("unidad")))
+          .setCantidad(texto(articulo.get("cantidad")))
+          .setDescripcion(texto(articulo.get("descripcion")))
+          .setFoto("")
+          .setFechaVencimiento(texto(articulo.get("fechaVencimiento")))
+          .setEstadoUso(texto(articulo.get("estadoUso")))
+          .build());
+
+    }
+
+    DonacionCreadaResponse respuesta;
+    try{
+      respuesta = stub.crearDonacion(pedido.build());
+    }catch (Exception e){
+      throw new RuntimeException("sin conexion gRPC con Donaciones (9090)",e);
+    }
+
+    if (!respuesta.getExito()){
+      throw new RuntimeException(respuesta.getMensaje());
+    }
+    return respuesta.getDonacionId();
+
+  }
+
+  private String texto(String valor){
+    return valor == null ? "" : valor.trim();
   }
 
 

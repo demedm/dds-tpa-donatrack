@@ -11,6 +11,9 @@ service GestionDonacionesService {
   rpc AsignarDonacion (AsignacionRequest) returns (ResultadoOperacion);
   rpc ListarEntidades (ListarEntidadesRequest) returns (ListaEntidadesResponse);
   rpc ObtenerRanking (SegmentadaIdRequest) returns (RankingResponse);
+  rpc ListarDonantes (ListarDonantesRequest) returns (ListaDonantesResponse);
+  rpc CrearDonacion (CrearDonacionRequest) returns (DonacionCreadaResponse);
+
 }
 
 //pantalla 15
@@ -58,3 +61,42 @@ message ResultadoOperacion {
   bool exito = 1;
   string mensaje = 2;
 }
+
+//pantalla 13
+message ListarDonantesRequest{}
+
+message DonanteProto{
+  int64 id = 1;
+  string nombre_identificador = 2;
+}
+
+message ListaDonantesResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  repeated DonanteProto donantes = 3;
+}
+
+message BienProto {
+  string categoria = 1;
+  string subcategoria = 2;
+  string unidad = 3;
+  string cantidad = 4;
+  string descripcion = 5;
+  string foto = 6;
+  string fecha_vencimiento = 7;
+  string estado_uso = 8;
+}
+
+message CrearDonacionRequest {
+  int64 donante_id = 1;
+  string descripcion_general = 2;
+  repeated BienProto bienes = 3;
+}
+
+message DonacionCreadaResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  int64 donacion_id = 3;
+}
+
+

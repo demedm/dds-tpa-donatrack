@@ -64,12 +64,14 @@ public class Router {
     app.get("/admin/panel", adminController::administracion);
     app.get("/admin/logistica", logisticaController::mostrarCamiones);
     // app.get("/admin/donaciones", donacionController::mostrarUbicacionDonaciones);
+    app.get("/admin/donaciones/nueva", adminController::mostrarNuevaDonacion);
     app.get("/admin/donaciones", adminController::mostrarDonaciones);
+
     app.post("/admin/donaciones/{id}/asignacion", adminController::asignarDonacion);
     app.post("/admin/donaciones/vencidas",adminController::marcarVencidas);
 
     app.post("/admin/camiones", logisticaController::registrarCamion);
-    app.post("/admin/donaciones", donacionController::registrarDonacion);
+    app.post("/admin/donaciones", adminController::registrarDonacion);
     app.get("/admin/registro", session::mostrarRegistroAdmin);
     app.post("/admin/registro", session::registrarUsuario);
     app.post("/admin/donantes/importar", adminController::importarDonantesDesdeCsv);
