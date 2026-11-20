@@ -50,24 +50,29 @@ public class AdminController {
 
   public void importarDonantesDesdeCsv(@NotNull Context ctx) {
     Map<String, Object> modelo = new HashMap<>();
+
     try {
       UploadedFile archivo = ctx.uploadedFile("archivo");
 
       if (archivo == null) {
         ctx.status(400);
         modelo.put("error", "No se recibió ningún archivo");
+        ctx.render("admin/administracion.hbs", modelo);
         return;
       }
-
-      HttpResponse<String> response = new DonacionesHttpClient().importarDonantes(archivo);
+      String token = ctx.cookie("session");
+      HttpResponse<String> response = donaciones.importarDonantes(archivo, token);
       ctx.status(response.statusCode());
-      modelo.put("exito", "Donantes cargados con éxito!");
-      // ctx.result(response.body());
+      if (response.statusCode() >= 200 && response.statusCode() < 300) {
+        modelo.put("exito", "Donantes cargados con éxito!");
+      } else {
+        modelo.put("error", "Error al importar: " + response.body());
+      }
     } catch (Exception e) {
       ctx.status(500);
-      modelo.put("error", "Error al importar donantes");
+      modelo.put("error", "Error al importar donantes: " + e.getMessage());
     }
-    ctx.render("/admin/panel", modelo);
+    ctx.render("admin/administracion.hbs", modelo);
   }
 
   public void mostrarDonaciones(Context ctx) {

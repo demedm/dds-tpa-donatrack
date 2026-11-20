@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.model.importerdonantes;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
 import java.io.FileReader;
 import java.io.InputStream;
@@ -22,8 +23,10 @@ public class ImporterScanner {
   }
 
   public List<String[]> scanCSVFile(InputStream inputStream) {
-    try (CSVReader reader = new CSVReader(
-        new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+    try (CSVReader reader = new CSVReaderBuilder(
+        new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+            .withSkipLines(1)
+            .build()) {
 
       return reader.readAll();
 
