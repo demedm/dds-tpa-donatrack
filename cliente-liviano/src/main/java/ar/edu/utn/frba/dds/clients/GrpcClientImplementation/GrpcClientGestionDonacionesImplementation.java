@@ -3,6 +3,7 @@ package ar.edu.utn.frba.dds.clients.GrpcClientImplementation;
 import ar.edu.utn.frba.dds.dto.DonanteDTO;
 import ar.edu.utn.frba.dds.dto.EntidadDTO;
 import ar.edu.utn.frba.dds.dto.RankingDTO;
+import ar.edu.utn.frba.dds.dto.SegmentadaPanelDTO;
 import ar.edu.utn.frba.dds.grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -177,6 +178,50 @@ public class GrpcClientGestionDonacionesImplementation  {
     return respuesta.getDonacionId();
 
   }
+
+  //pantalla 5
+
+  public List<SegmentadaPanelDTO> listarDonacionesDeDonante(Long donanteId){
+
+    ListaSegmentadasResponse respuesta;
+
+    try{
+
+      respuesta = stub.listarDonacionesDeDonante(DonanteIdRequest.newBuilder()
+          .setDonanteId(donanteId)
+          .build());
+
+    }catch (Exception e){
+      throw new RuntimeException("sin conexion gRPC con Donaciones (9090)",e);
+    }
+
+    if(!respuesta.getExito()){
+      throw new RuntimeException(respuesta.getMensaje());
+    }
+
+    return respuesta.getSegmentadasList().stream()
+        .map(this::aPanelDTO)
+        .toList();
+
+  }
+
+  private SegmentadaPanelDTO aPanelDTO(SegmentadaProto proto){
+    SegmentadaPanelDTO dto = new SegmentadaPanelDTO();
+
+    dto.setId(proto.getId());
+    dto.setDonacionId(proto.getDonacionId());
+    dto.setFechaRecepcion(proto.getFechaRecepcion());
+    dto.setEstado(proto.getEstado());
+    dto.setCategoria(proto.getCategoria());
+    dto.setSubcategoria(proto.getSubcategoria());
+    dto.setCantidad(proto.getCantidad());
+    dto.setUnidad(proto.getUnidad());
+    dto.setEntidadAsignada(proto.getEntidadAsignada());
+    return dto;
+
+  }
+
+
 
   private String texto(String valor){
     return valor == null ? "" : valor.trim();

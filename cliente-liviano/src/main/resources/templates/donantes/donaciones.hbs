@@ -1,9 +1,121 @@
+{{#partial "estilos"}}
+
+    <link rel="stylesheet" href="/assets/css/donante.css">
+
+{{/partial}}
+
 {{#partial "contenido"}}
-    <h>
-        La persona donante debe poder filtrar sus donaciones realizadas por estado y categoría o subcategoría/s de bienes entregados.
-    </h>
+
+    <section class="panel-donaciones">
+        <h1 class="panel-titulo">Mis donaciones</h1>
+        <p class="panel-subtitulo">Segui en que estado esta cada parte de lo que donaste </p>
+
+        {{#if error}}
+            <p class="aviso aviso-error" role="alert">{{error}}</p>
+
+        {{/if}}
+
+        {{#if hayDonaciones}}
+            <!-- Filtros: un form GET -->
+
+           <form method="GET" action="/donante/donaciones" class="filtros">
+
+               <div class="campo">
+
+                   <label for="estado">Estado</label>
+                   <select name="estado" id="estado">
+
+                       <option value="">Todos</option>
+                       {{#each estados}}
+                           <option value="{{valor}}" {{#if elegida}}selected{{/if}}>{{texto}}</option>
+                       {{/each}}
+                   </select>
+
+               </div>
+               <div class="campo">
+
+                   <label for="categoria">Categoria</label>
+                   <select name="categoria" id="categoria">
+                       <option value="">Todos</option>
+                       {{#each categorias}}
+                           <option value="{{valor}}" {{#if elegida}}selected{{/if}}>{{texto}}</option>
+                    {{/each}}
+                    </select>
+               </div>
+
+               <div class="campo">
+                   <label for="subcategoria">Subcategoria</label>
+                   <select name="subcategoria" id="subcategoria">
+                       <option value="">Todos</option>
+                       {{#each subcategorias}}
+                           <option value="{{valor}}" {{#if elegida}}selected{{/if}}>{{texto}}</option>
+                       {{/each}}
+                   </select>
+               </div>
+
+
+               <div class="filtros-acciones">
+                   <button type="submit" class="boton-verde">Filtrar</button>
+                   {{#if hayFiltros}}
+                       <a href="/donante/donaciones" class="link-limpiar">Quitar filtros</a>
+                   {{/if}}
+               </div>
+
+           </form>
+
+            <div class="tabla-scroll">
+                <table class="tabla">
+                    <thead>
+                    <tr>
+                        <th>Donacion</th>
+                        <th>Recibida</th>
+                        <th>Categoría</th>
+                        <th>Subcategoria</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Entidad</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each filas}}
+
+                        <tr>
+                            <td>#{{donacionId}}</td>
+                            <td>{{fecha}}</td>
+                            <td>{{categoria}}</td>
+                            <td>{{subcategoria}}</td>
+                            <td>{{cantidad}}</td>
+                            <td>
+                                <span class="badge {{badge}}">{{estado}}</span>
+                            </td>
+                            <td>{{entidad}}</td>
+                        </tr>
+                    {{else}}
+                        <tr>
+                            <td colspan="7" class="vacio">Ninguna donacion coincide con esos filtros.
+                            </td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+
+        {{else}}
+
+            {{#unless error}}
+
+                <div class="vacio-panel">
+                    <p>Todavia no tenes donaciones registradas.</p>
+                    <a href="/donaciones" class="boton-verde">Hacer una donacion</a>
+                </div>
+            {{/unless}}
+
+        {{/if}}
+
+    </section>
 
 
 {{/partial}}
+
 
 {{>templates/layout}}

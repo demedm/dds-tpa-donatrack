@@ -1,0 +1,73 @@
+
+/* Panel de donacinoes del donante pantalla 5*/
+
+.panel-donaciones{
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-sizing: border-box;
+}
+
+.panel-titulo{
+    font-family: var(--font-tittles), serif;
+    font-size: 2rem;
+    color: var(--color-primary);
+}
+
+.panel-subtitulo {
+    font-family: var(--font-secondary), serif;
+    color: var(--color-text-secondary);
+}
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filtros .campo{
+    flex: 1 1 200px;
+}
+
+.filtros-acciones{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.link-limpiar {
+    font-family: var(--font-secondary), serif;
+    color: var(--color-text-secondary);
+}
+
+.tabla .vacio,
+.vacio-panel {
+    padding: 2rem 1rem;
+    text-align: center;
+    font-family: var(--font-secondary), serif;
+    color: var(--color-text-secondary);
+}
+
+.vacio-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.aviso{
+    padding: 0.9rem 1.2rem;
+    border-radius: 6px;
+    font-family: var(--font-secondary), serif;
+}
+
+.aviso-error {
+    color: #8b0a1e;
+    background-color: #fde8e8;
+    border: 1px solid #8b0a1e;
+}

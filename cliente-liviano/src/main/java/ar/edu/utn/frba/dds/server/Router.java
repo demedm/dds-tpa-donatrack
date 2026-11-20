@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.server;
 
 import ar.edu.utn.frba.dds.controllers.AdminController;
+import ar.edu.utn.frba.dds.controllers.DonanteController;
 import ar.edu.utn.frba.dds.controllers.LogisticaController;
 import ar.edu.utn.frba.dds.controllers.DonacionController;
 import ar.edu.utn.frba.dds.controllers.HomeController;
@@ -20,6 +21,7 @@ public class Router {
     var donacionController = new DonacionController();
     var logisticaController = new LogisticaController();
     var adminController = new AdminController();
+    var donanteController = new DonanteController();
 
     app.before(this::cargarSesion);
 
@@ -76,6 +78,10 @@ public class Router {
     app.post("/admin/registro", session::registrarUsuario);
     app.post("/admin/donantes/importar", adminController::importarDonantesDesdeCsv);
 
+
+    //cuando se arregl el RolMiddleware
+    //app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
+    app.get("/donante/donaciones",donanteController::misDonaciones);
   }
 
   private void cargarSesion(Context ctx) {

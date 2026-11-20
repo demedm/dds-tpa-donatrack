@@ -65,4 +65,13 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
          */
     }
 
+    public List<Donacion> findDeDonante(Long donanteId){
+        return entityManager()
+            .createQuery("from Donacion d where d.donante.id = :donanteId order by d.fechaRecepcion desc, d.id desc", Donacion.class)
+            .setParameter("donanteId",donanteId)
+            .getResultList();
+    }
+
+
+
 }

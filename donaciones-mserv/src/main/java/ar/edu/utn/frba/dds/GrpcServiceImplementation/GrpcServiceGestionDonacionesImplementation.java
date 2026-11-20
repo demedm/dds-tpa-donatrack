@@ -5,14 +5,17 @@ import ar.edu.utn.frba.dds.dto.salida.PropuestasSalidaDTO;
 import ar.edu.utn.frba.dds.grpc.BienProto;
 import ar.edu.utn.frba.dds.grpc.CrearDonacionRequest;
 import ar.edu.utn.frba.dds.grpc.DonacionCreadaResponse;
+import ar.edu.utn.frba.dds.grpc.DonanteIdRequest;
 import ar.edu.utn.frba.dds.grpc.DonanteProto;
 import ar.edu.utn.frba.dds.grpc.ListaDonantesResponse;
 import ar.edu.utn.frba.dds.grpc.ListaEntidades;
+import ar.edu.utn.frba.dds.grpc.ListaSegmentadasResponse;
 import ar.edu.utn.frba.dds.grpc.ListarDonantesRequest;
 import ar.edu.utn.frba.dds.grpc.RankingResponse;
 import ar.edu.utn.frba.dds.grpc.ResultadoOperacion;
 import ar.edu.utn.frba.dds.grpc.GestionDonacionesServiceGrpc;
 import ar.edu.utn.frba.dds.grpc.SegmentadaIdRequest;
+import ar.edu.utn.frba.dds.grpc.SegmentadaProto;
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
 import ar.edu.utn.frba.dds.model.Bienes.EstadoUso;
@@ -40,6 +43,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -312,7 +316,66 @@ public class GrpcServiceGestionDonacionesImplementation
 
     }
 
+    @Override
+    public void listarDonacionesDeDonante(DonanteIdRequest request, StreamObserver<ListaSegmentadasResponse> responseObserver){
+        try {
+            ListaSegmentadasResponse.Builder respuesta = ListaSegmentadasResponse.newBuilder().setExito(true);
 
+            Map<Long,String> nombresEntidades = new HashMap<>();
+
+            //efecto de lado
+            for (Donacion donacion: donacionesRepo.findDeDonante(request.getDonanteId())){
+                for(DonacionSegmentada segmentada : donacion.getSegmentadas()){
+                    respuesta.addSegmentadas(aSegmentadaProto(donacion,segmentada,nombresEntidades));
+                }
+            }
+            responseObserver.onNext(respuesta.build());
+            responseObserver.onCompleted();
+        }catch (Exception e){
+            e.printStackTrace();
+
+            responseObserver.onNext(ListaSegmentadasResponse.newBuilder()
+                .setExito(false)
+                .setMensaje("No se pudieron listar tus donaciones: " + e.getMessage())
+                .build());
+
+            responseObserver.onCompleted();
+        } finally {
+            WithSimplePersistenceUnit.dispose();
+        }
+
+    }
+
+    private SegmentadaProto aSegmentadaProto(Donacion donacion, DonacionSegmentada segmentada, Map<Long, String> nombresEntidades){
+
+        Subcategoria sub = segmentada.getSubcategoria();
+
+        SegmentadaProto.Builder proto = SegmentadaProto.newBuilder()
+            .setId(segmentada.getId())
+            .setDonacionId(donacion.getId())
+            .setFechaRecepcion(donacion.getFechaRecepcion() == null ? "" : donacion.getFechaRecepcion().toString())
+            .setEstado(texto(segmentada.getEstadoActual().getNombre()))
+            .setCategoria(sub.getCategoria().name())
+            .setSubcategoria(texto(sub.getDescripcion()))
+            .setCantidad(segmentada.getCantidad().toPlainString())
+            .setUnidad(sub.getUnidad().name());
+
+        //sin entidad asignada queda "", el texto lo arma el cliente
+        Long entidadId = segmentada.getEntidadAsignadaId();
+
+        if(entidadId != null) {
+            proto.setEntidadAsignada(nombresEntidades.computeIfAbsent(entidadId, this::nombreEntidad));
+        }
+
+        return proto.build();
+
+    }
+
+    private String nombreEntidad(Long entidadId){
+        EntidadBeneficiaria entidad = entidadRepo.obtenerPorId(entidadId);
+
+        return entidad == null ? "" : texto(entidad.nombreParaMostrar());
+    }
 
     private BienDTO aBienDTO(BienProto bien){
         if(bien.getSubcategoria().isBlank()){

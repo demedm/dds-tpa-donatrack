@@ -13,7 +13,7 @@ service GestionDonacionesService {
   rpc ObtenerRanking (SegmentadaIdRequest) returns (RankingResponse);
   rpc ListarDonantes (ListarDonantesRequest) returns (ListaDonantesResponse);
   rpc CrearDonacion (CrearDonacionRequest) returns (DonacionCreadaResponse);
-
+  rpc ListarDonacionesDeDonante(DonanteIdRequest) returns (ListaSegmentadasResponse);
 }
 
 //pantalla 15
@@ -99,4 +99,28 @@ message DonacionCreadaResponse {
   int64 donacion_id = 3;
 }
 
+//pantala 5
+
+message DonanteIdRequest{
+  int64 donante_id = 1;
+}
+
+message SegmentadaProto {
+  int64 id = 1;
+  int64 donacion_id = 2;
+  string fecha_recepcion = 3;
+  string estado = 4;
+  string categoria = 5;
+  string subcategoria = 6;
+  string cantidad = 7;
+  string unidad = 8;
+  string entidad_asignada = 9;
+
+}
+
+message ListaSegmentadasResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  repeated SegmentadaProto segmentadas = 3;
+}
 
