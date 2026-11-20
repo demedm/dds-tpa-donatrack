@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.accionesentregas;
 
-import ar.edu.utn.frba.dds.main.ClientDonaciones;
+import ar.edu.utn.frba.dds.main.HttpClient.ClientDonaciones;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
 

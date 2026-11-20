@@ -1,10 +1,17 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientCamionImplementation;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientLogisticaImplementation;
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientRutaImplementation;
 import ar.edu.utn.frba.dds.clients.HttpClient.LogisticaHttpClient;
 import ar.edu.utn.frba.dds.dto.CamionDto;
 import ar.edu.utn.frba.dds.dto.CamionRequest;
+import ar.edu.utn.frba.dds.dto.EntregaDto;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
+import com.camionesServiceGrpc.grpc.CamionResponse;
+import com.camionesServiceGrpc.grpc.CamionesResponse;
+import com.rutasServiceGrpc.grpc.RutasResponse;
+import io.grpc.StatusRuntimeException;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,26 +21,134 @@ import java.util.List;
 import java.util.Map;
 
 public class LogisticaController {
+  private final GrpcClientCamionImplementation clientCamiones;
+  private final GrpcClientRutaImplementation clientRutas;
+
+  public LogisticaController() {
+    this.clientCamiones = new GrpcClientCamionImplementation();
+    this.clientRutas = new GrpcClientRutaImplementation();
+  }
+
   public void mostrarCamiones(Context ctx) {
+    String token = ctx.cookie("session");
+    if (token == null || token.isBlank()) {
+      ctx.redirect("/login");
+      return;
+    }
+
     Map<String, Object> modelo = new HashMap<>();
-    System.out.println(">>> Entró a mostrarCamiones");
+    modelo.put("logueado", true);
 
     try {
-      String token = ctx.cookie("session");
+      CamionesResponse response = clientCamiones.mostrarCamiones(token);
 
-      List<CamionDto> camiones =
-          new LogisticaHttpClient().listarCamiones(token);
+      if (!response.getExito()) {
+        modelo.put("camiones", List.of());
+        modelo.put("error", response.getMensaje());
+      } else {
+        List<CamionDto> camiones = response.getCamiones().getCamionesList().stream()
+            .map(CamionDto::fromProto)
+            .toList();
 
-      System.out.println(">>> Camiones obtenidos: " + camiones.size());
+        String pedido = ctx.queryParam("camion");
+        CamionDto seleccionado = camiones.stream()
+            .filter(c -> c.getId().toString().equals(pedido))
+            .findFirst()
+            .orElse(camiones.isEmpty() ? null : camiones.get(0));
 
-      modelo.put("camiones", camiones);
-      modelo.put("logueado", true);
+        if (seleccionado != null) {
+          seleccionado.setSeleccionado(true);
+          modelo.put("entregas", cargarEntregas(token, seleccionado, modelo));
+        }
+
+        modelo.put("camiones", camiones);
+        modelo.put("camionSeleccionado", seleccionado);
+      }
       ctx.render("admin/logistica.hbs", modelo);
 
+    } catch (StatusRuntimeException e) {
+      switch (e.getStatus().getCode()) {
+        case UNAUTHENTICATED, PERMISSION_DENIED -> ctx.redirect("/login");
+        case UNAVAILABLE, DEADLINE_EXCEEDED -> {
+          modelo.put("camiones", List.of());
+          modelo.put("error", "No se pudo conectar con el servicio de logística");
+          ctx.render("admin/logistica.hbs", modelo);
+        }
+        default -> {
+          e.printStackTrace();
+          ctx.redirect("/");
+        }
+      }
+    }
+  }
+
+  public void mostrarPanelCamion(Context ctx) {
+    System.out.println(">>> panel camion id=" + ctx.pathParam("id"));
+    String token = ctx.cookie("session");
+    if (token == null || token.isBlank()) {
+      ctx.status(401);
+      System.err.println(">>> panel: sin cookie de sesión");
+      return;
+    }
+    long id = Long.parseLong(ctx.pathParam("id"));
+    try {
+      CamionResponse response = clientCamiones.mostrarCamionXid(id);
+
+      CamionDto camion = new CamionDto(response.getCamion());
+
+      Map<String, Object> modelo = new HashMap<>();
+      modelo.put("camionSeleccionado", camion);
+      modelo.put("entregas", cargarEntregas(token, camion, modelo));
+
+      ctx.render("admin/logistica-panel.hbs", modelo); // solo el fragmento, sin layout
+
+    } catch (StatusRuntimeException e) {
+      switch (e.getStatus().getCode()) {
+        case UNAUTHENTICATED, PERMISSION_DENIED -> ctx.status(401);
+        case UNAVAILABLE, DEADLINE_EXCEEDED -> ctx.status(503);
+        case INTERNAL -> ctx.status(500);
+        default -> {
+          e.printStackTrace();
+          ctx.status(500);
+        }
+      }
+      System.err.println("Error en comunicacion: " + e.getMessage());
     } catch (Exception e) {
-      System.err.println("Error en mostrarCamiones:");
       e.printStackTrace();
-      ctx.redirect("/");
+      System.err.println(e.getMessage());
+      ctx.status(500);
+    }
+  }
+
+  private List<EntregaDto> cargarEntregas(String token, CamionDto camion, Map<String, Object> modelo) {
+    try {
+      RutasResponse rr = clientRutas.mostrarRutasXcamion(token, camion.getPatente());
+      if (!rr.getExito()) {
+        modelo.put("errorRutas", rr.getMensaje());
+        return List.of();
+      }
+
+      List<EntregaDto> entregas = rr.getRuta().getRutasList().stream()
+          .filter(r -> r.getCamionId() == camion.getId())
+          .flatMap(r -> r.getEntregas().getEntregaList().stream())
+          .map(EntregaDto::fromProto)
+          .toList();
+      entregas.forEach(e -> System.out.println(
+          "DONACION id:" + e.getDonacionId() +
+          " BENEFICIARIO id: " + e.getBeneficiarioId()));
+      return entregas;
+      /*
+      return rr.getRuta().getRutasList().stream()
+          .filter(r -> r.getCamionId() == camion.getId())
+          .flatMap(r -> r.getEntregas().getEntregaList().stream())
+          .map(EntregaDto::fromProto)
+          .toList();
+
+       */
+    } catch (StatusRuntimeException e) {
+      System.err.println(">>> mostrarRutas falló: " + e.getStatus());
+      modelo.put("errorRutas", "No se pudieron cargar las paradas");
+      return List.of();
     }
   }
 

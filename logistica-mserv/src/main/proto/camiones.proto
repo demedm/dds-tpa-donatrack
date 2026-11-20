@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.camionesServiceGrpc.grpc";
+
+service CamionesService {
+  rpc MostrarCamiones (CamionesRequest) returns (CamionesResponse);
+  rpc MostrarCamion (CamionRequest) returns (CamionResponse);
+}
+
+message CamionesRequest {
+  string token = 1;
+  string estado = 2;
+  string patente = 3;
+  int64 id = 4;
+}
+
+message Camion {
+  int64 id = 1;
+  string patente = 2;
+  double capacVolumen = 3;
+  double capacCarga = 4;
+  double altura = 5;
+  string estado = 6;
+  string nombreChofer = 7;
+}
+
+message ListCamion {
+  repeated Camion camiones = 1;
+}
+
+message CamionesResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  ListCamion camiones = 3;
+}
+
+message CamionRequest {
+  string patente = 1;
+  int64 id = 2;
+}
+
+message CamionResponse {
+  Camion camion = 1;
+}

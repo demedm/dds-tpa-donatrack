@@ -12,19 +12,17 @@ import ar.edu.utn.frba.dds.model.accionesrutas.LoggearRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.NotificarSobreRuta;
 import ar.edu.utn.frba.dds.model.accionesrutas.ReplanificarRuta;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
-import ar.edu.utn.frba.dds.scripts.dto.ResponsePlanificacionDto;
+import ar.edu.utn.frba.dds.scripts.dto.planificacion.ResponsePlanificacionDto;
 import ar.edu.utn.frba.dds.scripts.dto.RutaDto;
-import ar.edu.utn.frba.dds.scripts.dto.RutaPlanificadaDto;
+import ar.edu.utn.frba.dds.scripts.dto.planificacion.RutaPlanificadaDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class RutaRepositorio implements WithSimplePersistenceUnit {
   public static final RutaRepositorio Instance = new RutaRepositorio();
-  private PlanificacionRutas planificadorRutas;
   List<AccionesSobreRutas> observers = new ArrayList<>();
 
   public RutaRepositorio() {
@@ -165,10 +163,10 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
    */
 
   // RutaPlanificadaDto --> Ruta
-
+/*
   private Ruta crearRuta(RutaPlanificadaDto rutaDto) {
     var entregas = rutaDto.getDestinos().stream().map(destinoDto ->
-            new Entrega(destinoDto.getDireccion(), destinoDto.getDonacionId())).toList();
+            new Entrega(destinoDto.getDireccion(), destinoDto.getDonacionIds())).toList();
 
     entregas.forEach(EntregaRepositorio.Instance::registrar);
     Camion camion = CamionRepositorio.Instance.buscarPorPatente(rutaDto.getCamion().getPatente());
@@ -187,7 +185,7 @@ public class RutaRepositorio implements WithSimplePersistenceUnit {
     List<Ruta> rutas = rutasPlanificadas.stream().map(this::crearRuta).toList();
     rutas.forEach(this::registrar);
   }
-
+*/
   public Ruta actualizarRuta(Ruta ruta, RutaDto dto) {
     return withTransaction(() -> {
       if (dto.getChoferId() != null) {

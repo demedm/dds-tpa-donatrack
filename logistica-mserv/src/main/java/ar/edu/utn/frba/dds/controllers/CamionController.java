@@ -1,10 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
-import ar.edu.utn.frba.dds.main.ClientDonaciones;
 import ar.edu.utn.frba.dds.model.Camion;
-import ar.edu.utn.frba.dds.model.Entrega;
-import ar.edu.utn.frba.dds.model.EstadoCamion;
-import ar.edu.utn.frba.dds.model.EstadoEntrega;
 import ar.edu.utn.frba.dds.model.Ruta;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.vista_camiones.CamionRequest;
