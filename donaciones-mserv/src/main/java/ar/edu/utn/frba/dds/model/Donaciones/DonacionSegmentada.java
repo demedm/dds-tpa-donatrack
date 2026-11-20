@@ -217,16 +217,29 @@ public class DonacionSegmentada {
 
   public void asignarA(Long entidadId, Peticion peticion) {
     if (!getIdsEntidadesPropuestas().contains(entidadId)) {
-      throw new IllegalArgumentException("La entidad " + entidadId
-          + " no está entre las propuestas de la donación " + id);
+      throw new IllegalArgumentException(
+          "La entidad " + entidadId
+              + " no está entre las propuestas de la donación " + id
+      );
     }
 
+    realizarAsignacion(entidadId, peticion);
+  }
+
+  // Asignación manual: no depende de las propuestas de los algoritmos.
+  public void asignarManualmenteA(Long entidadId, Peticion peticion) {
+    realizarAsignacion(entidadId, peticion);
+  }
+
+  // Lógica compartida por ambos tipos de asignación.
+  private void realizarAsignacion(Long entidadId, Peticion peticion) {
     asignar();
+
     this.entidadAsignadaId = entidadId;
     this.peticionCubierta = peticion;
 
     if (peticion != null) {
-      peticion.comprometer(getCantidad());      // todavía no llegó: queda "en camino"
+      peticion.comprometer(getCantidad());
     }
   }
 

@@ -1,0 +1,166 @@
+
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/admin/admin.css">
+    <link rel="stylesheet" href="/assets/css/admin/admin-donaciones.css">
+    <link rel="stylesheet" href="/assets/css/admin/asignar-entidad.css">
+    <link rel="stylesheet" href="/assets/css/beneficiarios.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+
+    <section class="panel-header">
+        <div class="panel-header-inner">
+            <div>
+                <span class="panel-etiqueta">Panel de Administración</span>
+                <h1 class="panel-titulo">Asignar donación</h1>
+                <p>Seleccioná una entidad para recibir los bienes.</p>
+            </div>
+
+            <a href="/admin/donaciones" class="btn-secundario">
+                ← Volver a donaciones
+            </a>
+        </div>
+    </section>
+
+    <section class="panel-cuerpo">
+        <div class="panel-contenedor">
+
+            {{#if donacion}}
+                <div class="panel-card donacion-seleccionada">
+                    <h2>Donación seleccionada</h2>
+
+                    <div class="donacion-datos">
+                        <div>
+                            <label>Identificador</label>
+                            <span>#{{donacion.id}}</span>
+                        </div>
+
+                        <div>
+                            <label>Categoría</label>
+                            <span>{{donacion.categoria}}</span>
+                        </div>
+
+                        <div>
+                            <label>Bien</label>
+                            <span>{{donacion.bien}}</span>
+                        </div>
+
+                        <div>
+                            <label>Cantidad</label>
+                            <span>{{donacion.cantidad}}</span>
+                        </div>
+
+                        <div>
+                            <label>Vencimiento</label>
+                            <span>{{donacion.vencimiento}}</span>
+                        </div>
+                    </div>
+                </div>
+            {{/if}}
+
+            <div class="panel-card">
+                <h2>Entidades disponibles</h2>
+
+                <div class="entidades-listado">
+
+                    {{#each entidades}}
+                        <article class="entidad-card">
+
+                            <div class="entidad-cabecera">
+                                <div>
+                                    <h3>{{razonSocial}}</h3>
+                                    <span class="tag">{{tipo}}</span>
+                                </div>
+                            </div>
+
+                            <div class="entidad-datos">
+                                <p>
+                                    <strong>Dirección:</strong>
+                                    {{direccion}}
+                                </p>
+
+                                {{#if telefono}}
+                                    <p>
+                                        <strong>Teléfono:</strong>
+                                        {{telefono}}
+                                    </p>
+                                {{/if}}
+                            </div>
+
+                            <div class="entidad-necesidades">
+                                <h4>Necesidades registradas</h4>
+
+                                {{#if necesidades}}
+                                    {{#each necesidades}}
+
+                                        <div class="necesidad-item">
+
+                                            <div class="necesidad-cabecera">
+                                                <strong>{{descripcion}}</strong>
+                                                <span class="tag">{{estado}}</span>
+                                            </div>
+
+                                            {{#if peticiones}}
+                                                <div class="tabla-wrapper">
+                                                    <table class="tabla-datos">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Bien solicitado</th>
+                                                            <th>Cantidad requerida</th>
+                                                            <th>Cantidad recibida</th>
+                                                            <th>Cantidad comprometida</th>
+                                                        </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                        {{#each peticiones}}
+                                                            <tr>
+                                                                <td>{{subclase}}</td>
+                                                                <td>{{cantidadRequerida}}</td>
+                                                                <td>{{cantidadRecibida}}</td>
+                                                                <td>{{cantidadComprometida}}</td>
+                                                            </tr>
+                                                        {{/each}}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            {{else}}
+                                                <p class="vacio">
+                                                    Esta necesidad todavía no tiene peticiones.
+                                                </p>
+                                            {{/if}}
+
+                                        </div>
+
+                                    {{/each}}
+                                {{else}}
+                                    <p class="vacio">
+                                        Esta entidad no tiene necesidades registradas.
+                                    </p>
+                                {{/if}}
+                            </div>
+
+                            <form method="post"
+                                  action="/admin/donaciones/{{../donacion.id}}/asignar/{{id}}">
+
+                                <button type="submit" class="btn-primario">
+                                    Asignar donación
+                                </button>
+                            </form>
+
+                        </article>
+                    {{else}}
+                        <p class="vacio">
+                            No hay entidades disponibles.
+                        </p>
+                    {{/each}}
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{{/partial}}
+
+{{>templates/layout}}

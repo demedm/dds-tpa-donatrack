@@ -2,6 +2,7 @@ package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceCamionImplementation;
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceLogisticaImplementation;
+import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServicePlanificacionImplementation;
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceRutasImplementation;
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceUsuarioImplementation;
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
@@ -40,6 +41,7 @@ Server {
             .addService(new GrpcServiceUsuarioImplementation())
             .addService(new GrpcServiceRutasImplementation())
             .addService(new GrpcServiceCamionImplementation())
+            .addService(new GrpcServicePlanificacionImplementation())
             .build()
             .start();
 

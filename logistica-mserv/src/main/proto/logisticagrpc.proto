@@ -9,6 +9,7 @@ service PlanificacionService {
   rpc ObtenerDeposito(ObtenerDepositoRequest) returns (DepositoResponse);
   rpc GuardarDeposito(GuardarDepositoRequest) returns (DepositoResponse);
   rpc ListarDepositos(ListarDepositosRequest) returns (ListarDepositosResponse);
+  rpc ActualizarUbicacion(ActualizarUbicacionRequest) returns (ActualizarUbicacionResponse);
 }
 
 message EntregasEnCursoRequest {
@@ -84,4 +85,15 @@ repeated DepositoDto depositos = 1;
 
 message ListarDepositosRequest {
 
+}
+
+message ActualizarUbicacionRequest {
+  string token = 1;
+  string patente = 2;
+  double latitud = 3;
+  double longitud = 4;
+}
+
+message ActualizarUbicacionResponse {
+  bool ok = 1;
 }

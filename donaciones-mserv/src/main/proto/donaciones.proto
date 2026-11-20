@@ -9,6 +9,7 @@ option java_package = "ar.edu.utn.frba.dds.grpc";
 service GestionDonacionesService {
   rpc MarcarVencida (SegmentadaIdRequest) returns (ResultadoOperacion);
   rpc AsignarDonacion (AsignacionRequest) returns (ResultadoOperacion);
+  rpc AsignarDonacionManualmente (AsignacionRequest) returns (ResultadoOperacion);
   rpc ListarEntidades (ListarEntidadesRequest) returns (ListaEntidadesResponse);
   rpc ObtenerRanking (SegmentadaIdRequest) returns (RankingResponse);
   rpc ListarDonantes (ListarDonantesRequest) returns (ListaDonantesResponse);

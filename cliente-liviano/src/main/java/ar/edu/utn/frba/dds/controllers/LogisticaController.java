@@ -10,6 +10,7 @@ import ar.edu.utn.frba.dds.dto.DepositoRequest;
 import ar.edu.utn.frba.dds.dto.EntregaDto;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
+import ar.edu.utn.frba.dds.repositorios.UbicacionesRepositorio;
 import com.camionesServiceGrpc.grpc.CamionResponse;
 import com.camionesServiceGrpc.grpc.CamionesResponse;
 import com.rutasServiceGrpc.grpc.RutasResponse;
@@ -291,5 +292,9 @@ public class LogisticaController {
       return;
     }
     ctx.json(depositos);
+  }
+
+  public void ubicacionesAdmin(Context ctx) {
+    ctx.json(UbicacionesRepositorio.Instance.todas());
   }
 }

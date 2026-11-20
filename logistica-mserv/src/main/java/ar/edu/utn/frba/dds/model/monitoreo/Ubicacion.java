@@ -51,14 +51,12 @@ public class Ubicacion {
     return camion;
   }
 
-  // El timestap se actualiza a LocalDateTime.now()
-  public void actualizarUbicacion(Double latitud, Double longitud) {
-    // Solo permitimos actualizar si el camión está en ruta
-    if (camion.getEstado() == EstadoCamion.REALIZANDO_ENTREGAS) {
-      this.latitud = latitud;
-      this.longitud = longitud;
-      this.timestamp = LocalDateTime.now();
-    }
+  public boolean actualizarUbicacion(Double latitud, Double longitud) {
+    if (camion.getEstado() != EstadoCamion.REALIZANDO_ENTREGAS) return false;
+    this.latitud = latitud;
+    this.longitud = longitud;
+    this.timestamp = LocalDateTime.now();
+    return true;
   }
 
 }

@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.clients.GrpcClientImplementation;
 
 import ar.edu.utn.frba.dds.dto.DepositoRequest;
+import ar.edu.utn.frba.dds.grpc.ActualizarUbicacionRequest;
 import ar.edu.utn.frba.dds.grpc.DepositoResponse;
 import ar.edu.utn.frba.dds.grpc.EntregaEnCursoDto;
 import ar.edu.utn.frba.dds.grpc.EntregasEnCursoRequest;
@@ -12,6 +13,8 @@ import ar.edu.utn.frba.dds.grpc.ObtenerDepositoRequest;
 import ar.edu.utn.frba.dds.grpc.PlanificacionServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 public class GrpcClientLogisticaImplementation {
 
     private final PlanificacionServiceGrpc.PlanificacionServiceBlockingStub stub;
+    private static final String TOKEN_SERVICIO = System.getenv().getOrDefault("SERVICE_API_KEY", "");
 
     public GrpcClientLogisticaImplementation() {
         String host = System.getenv().getOrDefault("LOGISTICA_GRPC_HOST", "localhost");
@@ -145,6 +149,24 @@ public class GrpcClientLogisticaImplementation {
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return null;
+        }
+    }
+
+    public Status.Code actualizarUbicacion(String token, String patente, double lat, double lng) {
+        try {
+            stub.actualizarUbicacion(ActualizarUbicacionRequest.newBuilder()
+                .setToken(TOKEN_SERVICIO)
+                .setPatente(patente)
+                .setLatitud(lat)
+                .setLongitud(lng)
+                .build());
+            return Status.Code.OK;
+        } catch (StatusRuntimeException e) {
+            System.err.println(e.getStatus());
+            return e.getStatus().getCode();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return Status.Code.UNAVAILABLE;
         }
     }
 }

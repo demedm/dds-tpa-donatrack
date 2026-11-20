@@ -24,6 +24,10 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
     });
   }
 
+  public void guardarUbicacion(Ubicacion ubicacion) {
+    withTransaction(() -> entityManager().persist(ubicacion));
+  }
+
   public void registrar(Camion camion) {
     withTransaction(()->entityManager().persist(camion));
   }

@@ -1,10 +1,13 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientNecesidadImplementation;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientPlaniImplementation;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientGestionDonacionesImplementation;
 import ar.edu.utn.frba.dds.clients.HttpClient.DonacionesHttpClient;
 import ar.edu.utn.frba.dds.dto.DonacionDto;
 import ar.edu.utn.frba.dds.dto.EntidadDTO;
+import ar.edu.utn.frba.dds.dto.NecesidadDto;
+import ar.edu.utn.frba.dds.dto.PeticionDto;
 import ar.edu.utn.frba.dds.dto.RankingDTO;
 import ar.edu.utn.frba.dds.dto.SegmentadaDTO;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
@@ -30,6 +33,8 @@ public class AdminController {
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final GrpcClientGestionDonacionesImplementation gestionDonaciones = new GrpcClientGestionDonacionesImplementation();
   private final GrpcClientPlaniImplementation clientPlanificacion = new GrpcClientPlaniImplementation();
+  private final GrpcClientNecesidadImplementation clientNecesidades =
+      new GrpcClientNecesidadImplementation();
 
   public void administracion(@NotNull Context ctx) {
     Map<String, Object> modelo = new HashMap<>();
@@ -131,7 +136,7 @@ public class AdminController {
     String token = ctx.cookie("session");
 
     try {
-      Long entidadId = Long.parseLong(ctx.formParam("entidadId"));
+      Long entidadId = Long.parseLong(ctx.pathParam("entidadId"));
 
       if (gestionDonaciones.asignar(segmentadaId, entidadId)) {
         boolean enviada = enviarALogistica(token, segmentadaId, entidadId);
@@ -374,9 +379,131 @@ public class AdminController {
   }
 
 
+  public void mostrarEntidadesParaAsignacion(Context ctx) {
+    Long segmentadaId = Long.parseLong(ctx.pathParam("id"));
+    String token = ctx.cookie("session");
 
+    Map<String, Object> modelo = new HashMap<>();
 
+    try {
+      // 1. Buscamos la donación segmentada
+      List<DonacionDto> todas = donaciones.listarDonaciones(token);
 
+      Map<String, Object> donacionSeleccionada = null;
+
+      for (DonacionDto donacion : todas) {
+        for (SegmentadaDTO s : donacion.getSegmentadas()) {
+
+          if (segmentadaId.equals(s.getId())) {
+
+            donacionSeleccionada = new HashMap<>();
+
+            donacionSeleccionada.put("id", s.getId());
+            donacionSeleccionada.put("descripcion", donacion.getDescripcionGeneral());
+            donacionSeleccionada.put("bien", s.getSubcategoria());
+            donacionSeleccionada.put("categoria", Formato.texto(s.getCategoria()));
+            donacionSeleccionada.put("cantidad", Formato.cantidad(s.getCantidad(), s.getUnidad()));
+            donacionSeleccionada.put("vencimiento", Formato.fecha(s.getVencimiento()));
+
+            break;
+          }
+        }
+
+        if (donacionSeleccionada != null) {
+          break;
+        }
+      }
+
+      if (donacionSeleccionada == null) {
+        ctx.redirect("/admin/donaciones?error=donacionInexistente");
+        return;
+      }
+
+      modelo.put("donacion", donacionSeleccionada);
+
+      // 2. Obtenemos las entidades
+      List<EntidadDTO> entidadesDTO = gestionDonaciones.listarEntidades();
+
+      List<Map<String, Object>> entidades = new ArrayList<>();
+
+      for (EntidadDTO entidad : entidadesDTO) {
+        Map<String, Object> e = new HashMap<>();
+
+        e.put("id", entidad.getId());
+        e.put("razonSocial", entidad.getRazonSocial());
+        e.put("tipo", Formato.texto(entidad.getTipo()));
+        e.put("direccion", entidad.getDireccion());
+        e.put("telefono", entidad.getTelefono());
+
+        // 3. Consultamos las necesidades de esta entidad
+        List<NecesidadDto> necesidadesDTO =
+            clientNecesidades.listarPorEntidad(entidad.getId());
+
+        List<Map<String, Object>> necesidades = new ArrayList<>();
+
+        for (NecesidadDto necesidad : necesidadesDTO) {
+          Map<String, Object> n = new HashMap<>();
+
+          n.put("id", necesidad.getId());
+          n.put("descripcion", necesidad.getDescripcion());
+          n.put("tipo", necesidad.getTipo());
+          n.put("estado", necesidad.getEstado());
+          n.put("proximoVencimiento", necesidad.getProximoVencimiento());
+          n.put("vencida", necesidad.isVencida());
+
+          // Peticiones asociadas a la necesidad
+          List<Map<String, Object>> peticiones = new ArrayList<>();
+
+          for (PeticionDto peticion : necesidad.getPeticiones()) {
+            Map<String, Object> p = new HashMap<>();
+
+            p.put("subclase", peticion.getSubclase());
+            p.put("cantidadRequerida", peticion.getCantidadRequerida());
+            p.put("cantidadRecibida", peticion.getCantidadRecibida());
+            p.put("cantidadComprometida", peticion.getCantidadComprometida());
+
+            peticiones.add(p);
+          }
+
+          n.put("peticiones", peticiones);
+          necesidades.add(n);
+        }
+
+        e.put("necesidades", necesidades);
+
+        entidades.add(e);
+      }
+
+      modelo.put("entidades", entidades);
+
+      // 3. Renderizamos la vista
+      ctx.render("admin/asignar-entidad.hbs", modelo);
+
+    } catch (Exception e) {
+      System.err.println("Error cargando entidades para asignación: " + e.getMessage());
+      ctx.redirect("/admin/donaciones?error=entidades");
+    }
+  }
+
+  public void asignarDonacionManualmente(@NotNull Context ctx) {
+    Long segmentadaId = Long.parseLong(ctx.pathParam("id"));
+    String token = ctx.cookie("session");
+
+    try {
+      Long entidadId = Long.parseLong(ctx.pathParam("entidadId"));
+
+      if (gestionDonaciones.asignarDonacionManualmente(segmentadaId, entidadId)) {
+        boolean enviada = enviarALogistica(token, segmentadaId, entidadId);
+        ctx.redirect("/admin/donaciones?asignada=" + segmentadaId +
+            (enviada ? "" : "&logistica=error"));
+        return;
+      }
+
+    } catch (Exception e) {
+      System.err.println("Error asignando la donación " + segmentadaId + ": " + e.getMessage());
+    }
+    ctx.redirect("/admin/donaciones?seleccionada=" + segmentadaId + "&error=asignacion");
+  }
 }
 
 

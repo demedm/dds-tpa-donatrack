@@ -20,7 +20,7 @@ public class Router {
     // DASHBOARD DE MONITOREO
     app.get("/dashboard", ctx -> ctx.render("dashboard.hbs"));
     app.get("/dashboard/camiones", dashboardController::listarCamiones);
-    app.post("/camiones/{patente}/telemetria", monitoreoController::recepcionarTelemetria);
+    // app.post("/camiones/{patente}/telemetria", monitoreoController::recepcionarTelemetria);
 
     // CRUD CALLBACK
     app.post("/callback/planificaciones", callbackController::recibirPlanificacion);
@@ -57,7 +57,7 @@ public class Router {
 
     // RECEPCION DE DONACIONES
     // app.post("/donaciones/{id}", callbackController::recibirDonacion);
-// RECEPCION MASIVA DE DONACIONES PARA PLANIFICAR
+    // RECEPCION MASIVA DE DONACIONES PARA PLANIFICAR
     // app.post("/planificaciones/lotes", callbackController::recibirLotePlanificacion);
 
     app.patch("/entregas/{idEntrega}/recepcionar", rutaController::recepcionarEntrega);

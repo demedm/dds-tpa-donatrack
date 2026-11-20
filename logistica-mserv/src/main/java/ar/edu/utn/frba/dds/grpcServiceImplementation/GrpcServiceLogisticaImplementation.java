@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
 import ar.edu.utn.frba.dds.model.monitoreo.Deposito;
 import ar.edu.utn.frba.dds.model.monitoreo.Ubicacion;
+import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
 import ar.edu.utn.frba.dds.repositories.autenticacion.JwtRepositorio;
 import ar.edu.utn.frba.dds.repositories.autenticacion.Rol;
@@ -15,9 +16,14 @@ import ar.edu.utn.frba.dds.repositories.monitoreo.MonitoreoRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.autenticacion.UsuarioLogueado;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 
 public class GrpcServiceLogisticaImplementation extends PlanificacionServiceGrpc.PlanificacionServiceImplBase {
+
+    private static final String TOKEN_SERVICIO = System.getenv().getOrDefault("SERVICE_API_KEY", "");
 
     @Override
     public void solicitarPlanificacion(
@@ -254,6 +260,54 @@ public class GrpcServiceLogisticaImplementation extends PlanificacionServiceGrpc
             .setLongitud(deposito.getLongitud() != null ? deposito.getLongitud() : 0.0)
             .setPrincipal(deposito.isPrincipal())
             .build();
+    }
+
+  @Override
+  public void actualizarUbicacion(ActualizarUbicacionRequest request,
+                                  StreamObserver<ActualizarUbicacionResponse> responseObserver) {
+    try {
+        System.out.println("token recibido=[" + request.getToken() + "] esperado=[" + System.getenv("SERVICE_API_KEY") + "]");
+      if (esServicio(request.getToken())) {   // credencial de servicio del orquestador
+        responseObserver.onError(Status.PERMISSION_DENIED
+            .withDescription("Credencial inválida")
+            .asRuntimeException());
+        return;
+      }
+
+      Camion camion = CamionRepositorio.Instance.buscarPorPatente(request.getPatente());
+      if (camion == null) {
+        responseObserver.onError(Status.NOT_FOUND
+            .withDescription("Camión no encontrado").asRuntimeException());
+        return;
+      }
+
+      var ubicacion = CamionRepositorio.Instance.verUbicacionDeCamion(camion);
+      if (ubicacion == null) {
+          ubicacion = new Ubicacion(camion);
+      }
+      if (!ubicacion.actualizarUbicacion(request.getLatitud(), request.getLongitud())) {
+          responseObserver.onError(Status.FAILED_PRECONDITION
+              .withDescription("El camión no está realizando entregas").asRuntimeException());
+          return;
+      }
+        CamionRepositorio.Instance.guardarUbicacion(ubicacion);
+      CamionRepositorio.Instance.guardarUbicacion(ubicacion);
+
+      responseObserver.onNext(ActualizarUbicacionResponse.newBuilder().setOk(true).build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      responseObserver.onError(Status.INTERNAL
+          .withDescription(e.getMessage()).asRuntimeException());
+    }
+  }
+
+    private boolean esServicio(String token) {
+        String esperada = TOKEN_SERVICIO;
+        if (esperada == null || esperada.isBlank() || token == null) return false;
+
+        return MessageDigest.isEqual(
+            esperada.getBytes(StandardCharsets.UTF_8),
+            token.getBytes(StandardCharsets.UTF_8));
     }
 
 }
