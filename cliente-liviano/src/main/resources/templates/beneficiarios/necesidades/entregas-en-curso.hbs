@@ -1,0 +1,76 @@
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/assets/css/beneficiarios.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+
+    <section class="panel-header">
+        <div class="panel-header-inner">
+            <div>
+                <a class="link-volver" href="/necesidades">← Volver a mis necesidades</a>
+                <h1 class="panel-titulo">Mis Envíos en Curso</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel-cuerpo">
+        <div class="panel-contenedor">
+
+            <div class="panel-card">
+                <h2>Envíos asignados en traslado</h2>
+                <div class="tabla-wrapper">
+                    <table class="tabla-datos">
+                        <thead>
+                        <tr>
+                            <th>ID Entrega</th>
+                            <th>ID Donación</th>
+                            <th>Dirección Destino</th>
+                            <th>Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each enCurso}}
+                            <tr>
+                                <td>#{{this.id}}</td>
+                                <td>#{{this.donacionId}}</td>
+                                <td>{{this.direccion}}</td>
+                                <td><span class="badge badge-done">{{this.estado}}</span></td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>Mapa de Ruta en Tiempo Real</h2>
+                <div id="mapa"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const mapa = L.map('mapa').setView([-34.6037, -58.3816], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa);
+
+        fetch('/usuarios/{{idUsuario}}/entregas-en-curso', {
+            headers: { 'Accept': 'application/json' },
+            cache: 'no-store'
+        })
+                .then(res => res.json())
+                .then(entregas => {
+                    entregas.forEach(entrega => {
+                        if (entrega.latitudCamion && entrega.longitudCamion) {
+                            L.marker([entrega.latitudCamion, entrega.longitudCamion])
+                                    .addTo(mapa)
+                                    .bindPopup(` <b>Camión en camino</b><br>Entrega #${entrega.id}<br>Donación #${entrega.donacionId}<br>Destino: ${entrega.direccion}`);
+                        }
+                    });
+                });
+    </script>
+{{/partial}}
+
+{{>templates/layout}}

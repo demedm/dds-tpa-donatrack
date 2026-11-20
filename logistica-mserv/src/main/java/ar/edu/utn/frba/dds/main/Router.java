@@ -56,9 +56,9 @@ public class Router {
     app.get("/usuarios/{idUsuario}/entregas-en-curso", usuarioController::entregasEnCurso);
 
     // RECEPCION DE DONACIONES
-    app.post("/donaciones/{id}", callbackController::recibirDonacion);
+    // app.post("/donaciones/{id}", callbackController::recibirDonacion);
 // RECEPCION MASIVA DE DONACIONES PARA PLANIFICAR
-    app.post("/planificaciones/lotes", callbackController::recibirLotePlanificacion);
+    // app.post("/planificaciones/lotes", callbackController::recibirLotePlanificacion);
 
     app.patch("/entregas/{idEntrega}/recepcionar", rutaController::recepcionarEntrega);
     app.patch("/entregas/{idEntrega}/rechazar", rutaController::rechazarEntrega);

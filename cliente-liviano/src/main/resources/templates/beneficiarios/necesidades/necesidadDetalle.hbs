@@ -1,67 +1,121 @@
-{{#partial "header"}}{{/partial}}
-
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/beneficiarios.css">
+{{/partial}}
 {{#partial "contenido"}}
-    <div class="container">
-        <a class="link-volver" href="/necesidades">&larr; Volver a mis necesidades</a>
 
-        <h1>{{necesidad.descripcion}}</h1>
-
-        <div class="detalle-necesidad">
-            <span class="tag">{{necesidad.tipo}}</span>
-            <span class="badge">{{necesidad.estado}}</span>
-            {{#if necesidad.esRecurrente}}
-                <span class="badge badge-info">Próximo vencimiento el {{necesidad.proximoVencimiento}}</span>
-                {{#if necesidad.estaVencida}}
-                    <span class="badge badge-pending">Vencida</span>
-                {{else}}
-                    <span class="badge badge-done">Activa</span>
-                {{/if}}
-            {{/if}}
+    <section class="panel-header">
+        <div class="panel-header-inner">
+            <div>
+                <a class="link-volver" href="/necesidades">← Volver a mis necesidades</a>
+                <h1 class="panel-titulo">{{necesidad.descripcion}}</h1>
+                <div class="detalle-badges">
+                    <span class="tag">{{necesidad.tipo}}</span>
+                    <span class="badge">{{necesidad.estado}}</span>
+                    {{#if necesidad.esRecurrente}}
+                        <span class="badge badge-info">Próximo vencimiento el {{necesidad.proximoVencimiento}}</span>
+                        {{#if necesidad.estaVencida}}
+                            <span class="badge badge-pending">Vencida</span>
+                        {{else}}
+                            <span class="badge badge-done">Activa</span>
+                        {{/if}}
+                    {{/if}}
+                </div>
+            </div>
         </div>
+    </section>
 
-        <h2>Agregar Petición</h2>
-        <form action="/necesidades/{{necesidad.id}}/peticiones" method="POST">
-            <label>Subclase / Ítem:</label>
-            <input type="text" name="subclase" placeholder="Ej: ARROZ, FIDEOS" required>
+    <section class="panel-cuerpo">
+        <div class="panel-contenedor">
 
-            <label>Cantidad Requerida:</label>
-            <input type="number" name="cantidadRequerida" min="1" step="0.01" required>
+            <div class="panel-card">
+                <h2>Agregar Petición</h2>
+                <form action="/necesidades/{{necesidad.id}}/peticiones" method="POST" class="form-grid">
+                    <div class="campo-grupo">
+                        <label>Subclase / Ítem:</label>
+                        <input type="text" name="subclase" placeholder="Ej: ARROZ, FIDEOS" required>
+                    </div>
 
-            <button type="submit">Agregar Petición</button>
-        </form>
+                    <div class="campo-grupo">
+                        <label>Cantidad Requerida:</label>
+                        <input type="number" name="cantidadRequerida" min="1" step="0.01" required>
+                    </div>
 
-        <section class="detalle-seccion">
-            <h2>Peticiones de la necesidad</h2>
-            <table class="peticiones-table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Pedido</th>
-                    <th>Cantidad solicitada</th>
-                    <th>Cantidad recibida</th>
-                    <th>Cubierta</th>
-                </tr>
-                </thead>
-                <tbody>
-                {{#each necesidad.peticiones}}
-                    <tr>
-                        <td>{{this.id}}</td>
-                        <td>{{this.subclase}}</td>
-                        <td>{{this.cantidadRequerida}}</td>
-                        <td>{{this.cantidadRecibida}}</td>
-                        <td>
-                            {{#if this.estaCubierta}}
-                                <span class="badge badge-done">Sí</span>
-                            {{else}}
-                                <span class="badge badge-pending">No</span>
-                            {{/if}}
-                        </td>
-                    </tr>
-                {{/each}}
-                </tbody>
-            </table>
-        </section>
-    </div>
+                    <button type="submit" class="btn-primario">Agregar Petición</button>
+                </form>
+            </div>
+
+            <div class="panel-card">
+                <h2>Peticiones de la necesidad</h2>
+                <div class="tabla-wrapper">
+                    <table class="tabla-datos">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Pedido</th>
+                            <th>Cantidad solicitada</th>
+                            <th>Cantidad recibida</th>
+                            <th>Cubierta</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each necesidad.peticiones}}
+                            <tr>
+                                <td>#{{this.id}}</td>
+                                <td><strong>{{this.subclase}}</strong></td>
+                                <td>{{this.cantidadRequerida}}</td>
+                                <td>{{this.cantidadRecibida}}</td>
+                                <td>
+                                    {{#if this.estaCubierta}}
+                                        <span class="badge badge-done">Sí</span>
+                                    {{else}}
+                                        <span class="badge badge-pending">No</span>
+                                    {{/if}}
+                                </td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>Adjuntos</h2>
+                {{#if necesidad.adjuntos}}
+                    <div class="adjuntos-lista">
+                        {{#each necesidad.adjuntos}}
+                            <a class="adjunto" href="{{this}}" target="_blank" rel="noopener">
+                                <img src="{{this}}" alt="Adjunto de la necesidad">
+                            </a>
+                        {{/each}}
+                    </div>
+                {{else}}
+                    <p class="sin-adjuntos">No hay adjuntos todavía.</p>
+                {{/if}}
+
+                <form id="form-foto" method="POST" action="/necesidades/{{necesidad.id}}/adjuntos" class="form-upload">
+                    <input type="file" id="foto" required>
+                    <input type="hidden" name="url" id="url">
+                    <button type="submit" class="btn-primario">Subir imagen</button>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('form-foto').onsubmit = async (e) => {
+            e.preventDefault();
+            const datos = new FormData();
+            datos.append('file', document.getElementById('foto').files[0]);
+            datos.append('upload_preset', 'necesidades_unsigned');
+            const r = await fetch('https://api.cloudinary.com/v1_1/hiozujaz/image/upload',
+                    { method: 'POST', body: datos });
+            const json = await r.json();
+            document.getElementById('url').value = json.secure_url;
+            e.target.submit();
+        };
+    </script>
+
 {{/partial}}
 
 {{>templates/layout}}

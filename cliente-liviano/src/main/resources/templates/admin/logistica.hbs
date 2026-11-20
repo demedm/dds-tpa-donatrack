@@ -48,99 +48,13 @@
                 </a>
             </div>
         </div>
-
+        {{#if error}}<p class="aviso-error" role="alert">{{error}}</p>{{/if}}
         <div class="admin-grilla">
 
             <!-- ===== COLUMNA IZQUIERDA ===== -->
-            <div class="admin-col">
-
-                <!-- Ficha del camión seleccionado -->
-                <section class="tarjeta ficha" id="fichaCamion">
-                    <header class="ficha-cabecera">
-                        <h2>Seleccionado</h2>
-                        <span class="ficha-codigo">CAM-001</span>
-                    </header>
-
-                    <div class="ficha-cuerpo">
-                        <div class="ficha-avance">
-                            <h3>Avance del recorrido</h3>
-                            <div class="anillo" style="--valor: 75" role="img" aria-label="Avance del recorrido: 75%">
-                                <span>75%</span>
-                            </div>
-                        </div>
-
-                        <dl class="ficha-datos">
-                            <dt>Patente</dt><dd>AB 123 CD</dd>
-                            <dt>Capac. Carga</dt><dd>3 t</dd>
-                            <dt>Capac. Volumen</dt><dd>12 m³</dd>
-                            <dt>Altura</dt><dd>2,8 m</dd>
-                        </dl>
-                    </div>
-
-                    <div class="ficha-pie">
-                        <p><strong>Estado:</strong> <span class="badge badge-ruta">En ruta</span></p>
-                        <p><strong>Último mantenimiento:</strong> 12/09/2026</p>
-                        <p><strong>Ubicación:</strong> Av. Corrientes 1234</p>
-                    </div>
-                </section>
-
-                <!-- Paradas -->
-                <section class="tarjeta">
-                    <h2 class="tarjeta-titulo">Paradas</h2>
-                    <div class="tabla-scroll">
-                        <table class="tabla">
-                            <thead>
-                            <tr>
-                                <th class="col-check"><span class="sr-only">Seleccionar</span></th>
-                                <th>Dirección</th>
-                                <th>Chofer</th>
-                                <th>Salida</th>
-                                <th>Llegada</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {{!-- Reemplazar por {{#each paradas}} --}}
-                            <tr>
-                                <td><label class="check-recordame check-tabla"><input type="radio" name="parada" value="1" checked><span class="check-caja"></span><span class="sr-only">Seleccionar parada 1</span></label></td>
-                                <td>Av. Rivadavia 100</td><td>Juan Pérez</td><td>08:00</td><td>08:45</td>
-                            </tr>
-                            <tr>
-                                <td><label class="check-recordame check-tabla"><input type="radio" name="parada" value="2"><span class="check-caja"></span><span class="sr-only">Seleccionar parada 2</span></label></td>
-                                <td>Calle Falsa 123</td><td>Juan Pérez</td><td>09:00</td><td>09:30</td>
-                            </tr>
-                            <tr>
-                                <td><label class="check-recordame check-tabla"><input type="radio" name="parada" value="3"><span class="check-caja"></span><span class="sr-only">Seleccionar parada 3</span></label></td>
-                                <td>San Martín 456</td><td>Juan Pérez</td><td>10:00</td><td>10:40</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Donaciones -->
-                <section class="tarjeta">
-                    <h2 class="tarjeta-titulo">Donaciones</h2>
-                    <div class="tabla-scroll">
-                        <table class="tabla tabla-marco">
-                            <thead>
-                            <tr>
-                                <th>Descripción</th>
-                                <th>Estado</th>
-                                <th>Bienes</th>
-                                <th>Vcto.</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {{!-- Reemplazar por {{#each donaciones}} --}}
-                            <tr><td>Ropa de abrigo</td><td>Asignada</td><td>Ropa</td><td>—</td></tr>
-                            <tr><td>Alimentos enlatados</td><td>Pendiente</td><td>Alimentos</td><td>30/12/2026</td></tr>
-                            <tr><td>Útiles escolares</td><td>Asignada</td><td>Útiles</td><td>—</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
+            <div class="admin-col" id="colIzquierda">
+                {{> templates/admin/logistica-panel}}
             </div>
-
             <!-- ===== COLUMNA DERECHA ===== -->
             <div class="admin-col">
 
@@ -195,32 +109,27 @@
                                 <th>Patente</th>
                                 <th>Chofer</th>
                                 <th>Características</th>
-                                <th>Entidad</th>
                                 <th>Estado</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {{!-- Reemplazar por {{#each camiones}} --}}
-                            <tr>
-                                <td><label class="check-recordame check-tabla"><input type="radio" name="camion" value="CAM-001" checked><span class="check-caja"></span><span class="sr-only">Seleccionar CAM-001</span></label></td>
-                                <td>AB 123 CD</td><td>Juan Pérez</td><td>3 t · 12 m³</td><td>Entidad 1</td>
-                                <td><span class="badge badge-ruta">En ruta</span></td>
-                            </tr>
-                            <tr>
-                                <td><label class="check-recordame check-tabla"><input type="radio" name="camion" value="CAM-002"><span class="check-caja"></span><span class="sr-only">Seleccionar CAM-002</span></label></td>
-                                <td>AC 456 EF</td><td>María Gómez</td><td>5 t · 20 m³</td><td>Entidad 2</td>
-                                <td><span class="badge badge-mantenimiento">Mantenimiento</span></td>
-                            </tr>
-                            <tr>
-                                <td><label class="check-recordame check-tabla"><input type="radio" name="camion" value="CAM-003"><span class="check-caja"></span><span class="sr-only">Seleccionar CAM-003</span></label></td>
-                                <td>AD 789 GH</td><td>Carlos Díaz</td><td>2 t · 8 m³</td><td>Entidad 1</td>
-                                <td><span class="badge badge-disponible">Disponible</span></td>
-                            </tr>
-                            <tr>
-                                <td><label class="check-recordame check-tabla"><input type="radio" name="camion" value="CAM-004"><span class="check-caja"></span><span class="sr-only">Seleccionar CAM-004</span></label></td>
-                                <td>AE 321 IJ</td><td>Lucía Ramos</td><td>3 t · 12 m³</td><td>Entidad 3</td>
-                                <td><span class="badge badge-ruta">En ruta</span></td>
-                            </tr>
+                                {{#each camiones}}
+                                    <tr>
+                                        <td><label class="check-recordame check-tabla">
+                                            <input type="radio" name="camion" value="{{id}}"
+                                                   {{#if seleccionado}}checked{{/if}}>
+                                            <span class="check-caja"></span>
+                                            <span class="sr-only">Seleccionar camión {{patente}}</span>
+                                        </label>
+                                        </td>
+                                        <td>{{patente}}</td>
+                                        <td>{{chofer}}</td>
+                                        <td>{{caracteristicas}}</td>
+                                        <td><span class="badge {{claseEstado}}">{{estadoTxt}}</span></td>
+                                    </tr>
+                                {{else}}
+                                    <tr><td colspan="5">No hay camiones registrados.</td></tr>
+                                {{/each}}
                             </tbody>
                         </table>
                     </div>
@@ -229,6 +138,49 @@
 
         </div>
     </div>
+
+    <script>
+        (function () {
+            var controlador = null;
+
+            async function seleccionarCamion(id) {
+                var col = document.getElementById('colIzquierda');
+
+                // si se hace clic rápido en varios camiones se cancela el pedido anterior
+                if (controlador) controlador.abort();
+                controlador = new AbortController();
+
+                col.setAttribute('aria-busy', 'true');
+                col.style.opacity = '0.5';
+
+                try {
+                    var resp = await fetch(
+                            '/admin/logistica/camion/' + encodeURIComponent(id) + '/panel',
+                            { signal: controlador.signal }
+                    );
+
+                    if (resp.status === 401) { window.location.href = '/login'; return; }
+                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+                    col.innerHTML = await resp.text();
+                    // la URL sigue siendo compartible y sobrevive a un F5
+                    history.replaceState(null, '', '/admin/logistica?camion=' + encodeURIComponent(id));
+                } catch (e) {
+                    if (e.name === 'AbortError') return;
+                    col.innerHTML = '<p class="aviso-error" role="alert">No se pudo cargar el camión seleccionado.</p>';
+                } finally {
+                    col.removeAttribute('aria-busy');
+                    col.style.opacity = '';
+                }
+            }
+
+            document.addEventListener('change', function (ev) {
+                if (ev.target.matches('input[name="camion"]')) {
+                    seleccionarCamion(ev.target.value);
+                }
+            });
+        })();
+    </script>
 {{/partial}}
 
 {{>templates/layout}}

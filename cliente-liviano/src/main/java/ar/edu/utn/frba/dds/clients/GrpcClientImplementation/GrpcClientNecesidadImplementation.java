@@ -90,6 +90,22 @@ public class GrpcClientNecesidadImplementation {
         }
         return null;
     }
+    public boolean agregarAdjunto(Long necesidadId, String url) {
+        try {
+            AgregarAdjuntoRequest request = AgregarAdjuntoRequest.newBuilder()
+                    .setNecesidadId(necesidadId)
+                    .setUrl(url)
+                    .build();
+            OperacionNecesidadResponse response = stub.agregarAdjunto(request);
+            if (!response.getExito()) {
+                System.err.println("Error gRPC agregarAdjunto: " + response.getMensaje());
+            }
+            return response.getExito();
+        } catch (Exception e) {
+            System.err.println("Fallo conexión gRPC agregarAdjunto: " + e.getMessage());
+            return false;
+        }
+    }
 
     private NecesidadDto toDto(NecesidadProto proto) {
         NecesidadDto dto = new NecesidadDto();
@@ -113,6 +129,7 @@ public class GrpcClientNecesidadImplementation {
         }).collect(Collectors.toList());
 
         dto.setPeticiones(peticiones);
+        dto.setAdjuntos(new java.util.ArrayList<>(proto.getAdjuntosList()));
         return dto;
     }
 }

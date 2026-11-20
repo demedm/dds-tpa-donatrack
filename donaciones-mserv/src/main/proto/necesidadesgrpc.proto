@@ -8,6 +8,7 @@ service NecesidadService {
   rpc AgregarPeticion (AgregarPeticionRequest) returns (OperacionNecesidadResponse);
   rpc ListarNecesidadesPorEntidad (EntidadIdRequest) returns (ListaNecesidadesResponse);
   rpc ObtenerNecesidadDetalle (NecesidadIdRequest) returns (NecesidadDetailResponse);
+  rpc AgregarAdjunto (AgregarAdjuntoRequest) returns (OperacionNecesidadResponse);
 }
 
 message CrearNecesidadRequest {
@@ -60,6 +61,7 @@ message NecesidadProto {
   repeated PeticionProto peticiones = 7;
   string proximo_vencimiento = 8;
   bool esta_vencida = 9;
+  repeated string adjuntos = 10;
 }
 
 message ListaNecesidadesResponse {
@@ -69,4 +71,9 @@ message ListaNecesidadesResponse {
 message NecesidadDetailResponse {
   bool encontrada = 1;
   NecesidadProto necesidad = 2;
+}
+
+message AgregarAdjuntoRequest {
+  int64 necesidad_id = 1;
+  string url = 2;
 }

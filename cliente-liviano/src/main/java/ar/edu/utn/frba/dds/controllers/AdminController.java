@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientPlaniImplementation;
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientGestionDonacionesImplementation;
 import ar.edu.utn.frba.dds.clients.HttpClient.DonacionesHttpClient;
 import ar.edu.utn.frba.dds.dto.DonacionDto;
@@ -9,6 +10,7 @@ import ar.edu.utn.frba.dds.dto.SegmentadaDTO;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.vistas.Formato;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.planificacionServiceGrpc.grpc.DonacionAPlanificar;
 import io.javalin.http.Context;
 import io.javalin.http.UploadedFile;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +29,7 @@ public class AdminController {
   private final DonacionesHttpClient donaciones = new DonacionesHttpClient();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final GrpcClientGestionDonacionesImplementation gestionDonaciones = new GrpcClientGestionDonacionesImplementation();
+  private final GrpcClientPlaniImplementation clientPlanificacion = new GrpcClientPlaniImplementation();
 
   public void administracion(@NotNull Context ctx) {
     Map<String, Object> modelo = new HashMap<>();
@@ -125,12 +128,15 @@ public class AdminController {
 
   public void asignarDonacion(Context ctx) {
     Long segmentadaId = Long.parseLong(ctx.pathParam("id"));
+    String token = ctx.cookie("session");
 
     try {
       Long entidadId = Long.parseLong(ctx.formParam("entidadId"));
 
       if (gestionDonaciones.asignar(segmentadaId, entidadId)) {
-        ctx.redirect("/admin/donaciones?asignada=" + segmentadaId);
+        boolean enviada = enviarALogistica(token, segmentadaId, entidadId);
+        ctx.redirect("/admin/donaciones?asignada=" + segmentadaId +
+            (enviada ? "" : "&logistica=error"));
         return;
       }
 
@@ -138,6 +144,41 @@ public class AdminController {
       System.err.println("Error asignando la donación " + segmentadaId + ": " + e.getMessage());
     }
     ctx.redirect("/admin/donaciones?seleccionada=" + segmentadaId + "&error=asignacion");
+  }
+
+  private boolean enviarALogistica(String token, Long segmentadaId, Long entidadId) {
+    try {
+      return clientPlanificacion.enviarDonacion(armarDonacion(token, segmentadaId, entidadId));
+    } catch (Exception e) {
+      System.err.println("Donación " + segmentadaId + " asignada pero no enviada a logística: "
+          + e.getMessage());
+      return false;
+    }
+  }
+
+  private DonacionAPlanificar armarDonacion(String token, Long segmentadaId, Long entidadId) {
+    for (DonacionDto donacion : donaciones.listarDonaciones(token)) {
+      for (SegmentadaDTO s : donacion.getSegmentadas()) {
+        if (!segmentadaId.equals(s.getId())) continue;                 // ASUMO getId()
+
+        EntidadDTO entidad = gestionDonaciones.listarEntidades().stream()
+            .filter(e -> entidadId.equals(e.getId()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Entidad inexistente: " + entidadId));
+
+        return DonacionAPlanificar.newBuilder()
+            .setDonacionId(segmentadaId)
+            .setBeneficiarioId(entidadId)
+            .setDireccion(entidad.getDireccion())
+            .setFechaVencimiento(s.getVencimiento() == null
+                ? "" : s.getVencimiento().toString())
+            .setCantidad(s.getCantidad().doubleValue())
+            .setUnidadMedida(String.valueOf(s.getUnidad()))
+            .setUso(String.valueOf(s.getEstadoUso()))
+            .build();
+      }
+    }
+    throw new IllegalStateException("Segmentada inexistente: " + segmentadaId);
   }
 
   public void marcarVencidas(Context ctx) {

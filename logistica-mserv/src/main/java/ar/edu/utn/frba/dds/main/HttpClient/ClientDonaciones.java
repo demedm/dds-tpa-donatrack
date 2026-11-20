@@ -1,4 +1,4 @@
-package ar.edu.utn.frba.dds.main;
+package ar.edu.utn.frba.dds.main.HttpClient;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,6 +13,7 @@ public class ClientDonaciones {
   public ClientDonaciones() {
     this.client = HttpClient.newHttpClient();
   }
+
   public boolean notificarCambioEstado(Long idDonacion, String nuevoEstado) {
     try {
       String jsonPayload = "{\"nuevoEstado\":\"" + nuevoEstado + "\"}";

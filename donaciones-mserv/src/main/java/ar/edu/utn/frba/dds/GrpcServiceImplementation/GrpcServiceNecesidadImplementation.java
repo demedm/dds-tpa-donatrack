@@ -157,6 +157,42 @@ public class GrpcServiceNecesidadImplementation extends NecesidadServiceGrpc.Nec
                         .build());
             }
         }
+        if (n.getAdjuntos() != null) {
+            proto.addAllAdjuntos(n.getAdjuntos());
+        }
         return proto.build();
+    }
+
+    @Override
+    public void agregarAdjunto(AgregarAdjuntoRequest request,
+                               StreamObserver<OperacionNecesidadResponse> responseObserver) {
+        OperacionNecesidadResponse response;
+        try {
+            if (!request.getUrl().startsWith("https://")) {
+                throw new IllegalArgumentException("La URL del adjunto debe ser https");
+            }
+            Necesidad necesidad = necesidadRepo.findById(request.getNecesidadId());
+            if (necesidad == null) {
+                throw new IllegalArgumentException("Necesidad no encontrada");
+            }
+
+            necesidadRepo.withTransaction(() -> {
+                necesidad.agregarAdjunto(request.getUrl());
+                necesidadRepo.actualizar(necesidad);
+            });
+
+            response = OperacionNecesidadResponse.newBuilder()
+                    .setExito(true)
+                    .setMensaje("Adjunto agregado")
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = OperacionNecesidadResponse.newBuilder()
+                    .setExito(false)
+                    .setMensaje("Error al agregar adjunto: " + e.getMessage())
+                    .build();
+        }
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 }

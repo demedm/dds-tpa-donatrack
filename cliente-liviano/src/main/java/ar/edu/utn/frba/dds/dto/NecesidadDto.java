@@ -11,6 +11,10 @@ public class NecesidadDto {
     private String descripcion;
     private Integer diasRecurrencia;
     private List<PeticionDto> peticiones = new ArrayList<>();
+    private List<String> adjuntos = new ArrayList<>();
+
+    public List<String> getAdjuntos() { return adjuntos; }
+    public void setAdjuntos(List<String> adjuntos) { this.adjuntos = adjuntos; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

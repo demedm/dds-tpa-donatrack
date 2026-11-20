@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: DonaTrack API
+  version: 1.0.0
+paths:
+  /api/donaciones:
+    get:
+      summary: Listar donaciones
+      responses:
+        '200':
+          description: Lista de donaciones
+  /necesidades:
+    get:
+      summary: Obtener las necesidades de la entidad autenticada
+      tags:
+        - Necesidades
+      responses:
+        '200':
+          description: Lista de necesidades de la sesión actual
+        '302':
+          description: Usuario no autenticado
+    post:
+      summary: Publicar una nueva necesidad para la entidad autenticada
+      tags:
+        - Necesidades
+      responses:
+        '201':
+          description: Necesidad creada
+        '302':
+          description: Usuario no autenticado,inicie sesion
+  /necesidades/{id}:
+    get:
+      summary: Mostrar detalles de la necesidad
+      tags:
+        - Necesidad
+      responses:
+        '200':
+          description: Necesidad encontrada, se muestran detalles
+        '302':
+          description: Usuario no autenticado, inicie sesion
+        '404':
+          description: La necesidad buscada no existe
+  /necesidades/{id}/peticiones:
+    post:
+      summary: Crear peticiones para la necesidad
+      tags:
+        - Peticiones
+      responses:
+        '200':
+          description: Peticion creada con exito
+        '302':
+          description: Usuario no autenticado, inicie sesion
+  /usuarios/entregas-en-curso:
+    get:
+      summary: Obtiene la ubicación actual de las entregas en curso para esa entidad autenticada
+      tags:
+        - Entregas
+      responses:
+        '201':
+          description: Entregas obtenidas
+        '302':
+          description: Usuario no autenticado, inicie sesion

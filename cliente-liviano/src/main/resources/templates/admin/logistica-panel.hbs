@@ -1,0 +1,78 @@
+
+
+
+    <section class="tarjeta ficha" id="fichaCamion">
+        {{#if camionSeleccionado}}
+            {{#with camionSeleccionado}}
+                <header class="ficha-cabecera">
+                    <h2>Seleccionado</h2>
+                    <span class="ficha-codigo">{{patente}}</span>
+                </header>
+
+                <div class="ficha-cuerpo">
+                    <dl class="ficha-datos">
+                        <dt>Patente</dt><dd>{{patente}}</dd>
+                        <dt>Capac. Carga</dt><dd>{{capacCargaTxt}}</dd>
+                        <dt>Capac. Volumen</dt><dd>{{capacVolumenTxt}}</dd>
+                        <dt>Altura</dt><dd>{{alturaTxt}}</dd>
+                    </dl>
+                </div>
+
+                <div class="ficha-pie">
+                    <p><strong>Estado:</strong> <span class="badge {{claseEstado}}">{{estadoTxt}}</span></p>
+                </div>
+            {{/with}}
+        {{else}}
+            <p>No hay camión seleccionado.</p>
+        {{/if}}
+    </section>
+
+    {{#if errorRutas}}<p class="aviso-error" role="alert">{{errorRutas}}</p>{{/if}}
+
+    <!-- Paradas -->
+    <section class="tarjeta">
+        <h2 class="tarjeta-titulo">Paradas</h2>
+        <div class="tabla-scroll">
+            <table class="tabla">
+                <thead>
+                <tr><th>Dirección</th><th>Estado</th><th>Vcto.</th></tr>
+                </thead>
+                <tbody>
+                {{#each entregas}}
+                    <tr>
+                        <td>{{direccion}}</td>
+                        <td>{{estadoTxt}}</td>
+                        <td>{{vencimientoTxt}}</td>
+                    </tr>
+                {{else}}
+                    <tr><td colspan="3">Este camión no tiene paradas asignadas.</td></tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Entregas -->
+    <section class="tarjeta">
+        <h2 class="tarjeta-titulo">Entregas</h2>
+        <div class="tabla-scroll">
+            <table class="tabla tabla-marco">
+                <thead>
+                <tr><th>N°</th><th>Donación</th><th>Beneficiario</th><th>Estado</th><th>Vcto.</th></tr>
+                </thead>
+                <tbody>
+                {{#each entregas}}
+                    <tr>
+                        <td>{{id}}</td>
+                        <td>#{{donacionId}}</td>
+                        <td>#{{beneficiarioId}}</td>
+                        <td>{{estadoTxt}}</td>
+                        <td>{{vencimientoTxt}}</td>
+                    </tr>
+                {{else}}
+                    <tr><td colspan="5">Sin entregas.</td></tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </section>

@@ -12,6 +12,7 @@ import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
 import ar.edu.utn.frba.dds.session.Rol;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.http.RedirectResponse;
 
 public class Router {
   public void configure(Javalin app) {
@@ -57,15 +58,15 @@ public class Router {
     app.post("/necesidades/{id}/adjuntos", necesidadController::subirAdjunto);
 
     // las rutas comentadas son para poder ver las vistas sin loggear
-    // app.before("/usuarios/*", this::autenticados);
-    // app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    app.before("/usuarios/*", this::autenticados);
+    app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     app.get("/usuarios/{idUsuario}/entregas-en-curso", logisticaController::entregasEnCurso);
 
-    // app.before("/admin/*", session::validarAutenticacion);
-    // app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
+    app.before("/admin/*", session::validarAutenticacion);
+    app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
     app.get("/admin/panel", adminController::administracion);
     app.get("/admin/logistica", logisticaController::mostrarCamiones);
-    // app.get("/admin/donaciones", donacionController::mostrarUbicacionDonaciones);
+    app.get("/admin/logistica/camion/{id}/panel", logisticaController::mostrarPanelCamion);
     app.get("/admin/donaciones/nueva", adminController::mostrarNuevaDonacion);
     app.get("/admin/donaciones", adminController::mostrarDonaciones);
 
@@ -87,7 +88,8 @@ public class Router {
   private void cargarSesion(Context ctx) {
     String token = ctx.cookie("session");
     if (token == null || token.isBlank()) {
-      return;
+      ctx.redirect("/login");
+      throw new RedirectResponse();
     }
     try {
       ctx.attribute("usuarioLogueado", JwtRepositorio.Instance.obtenerUsuario(token));
@@ -95,6 +97,8 @@ public class Router {
       // vencido, firma inválida o rol desconocido: se borra la cookie y se sigue como visitante
       System.err.println("Sesión descartada: " + e.getMessage());
       ctx.header("Set-Cookie", "session=; Path=/; HttpOnly; SameSite=Lax; Secure");
+      ctx.redirect("/login");
+      throw new RedirectResponse();
     }
   }
 

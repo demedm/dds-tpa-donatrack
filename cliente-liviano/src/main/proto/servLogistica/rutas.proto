@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.rutasServiceGrpc.grpc";
+
+service RutaService {
+  rpc MostrarRutas (RutasRequest) returns (RutasResponse);
+}
+
+message RutasRequest {
+  string token = 1;
+  string estado = 2;
+  string patente = 3;
+}
+
+message Entrega {
+  string direccion = 1;
+  string fechaVencimiento = 2;
+  int64 donacionId = 3;
+  int64 beneficiarioId = 4;
+  string estado = 5;
+  int64 id = 6;
+}
+
+message ListEntrega {
+  repeated Entrega entrega = 1;
+}
+
+message Ruta {
+  int64 id = 1;
+  ListEntrega entregas = 2; //paradas
+  int64 camionId = 3;
+  string estado = 4;
+}
+
+message ListRuta {
+  repeated Ruta rutas = 1;
+}
+
+message RutasResponse {
+  bool exito = 1;
+  string mensaje = 2;
+  ListRuta ruta = 3;
+}
