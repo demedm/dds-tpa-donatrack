@@ -1,0 +1,67 @@
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/entregas-satisfactorias.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <section class="panel-header">
+        <div class="panel-header-inner">
+            <div>
+                <h1 class="panel-titulo">Entregas satisfactorias</h1>
+                <p class="panel-subtitulo">Tu ayuda hace la diferencia, conocé algunas de nuestras ayudas.
+                    Mira más en nuestras redes!</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel-cuerpo">
+        <div class="panel-contenedor">
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h2>Últimas entregas realizadas con éxito</h2>
+                </div>
+
+                <p id="mensaje" class="estado-texto">Cargando...</p>
+                <div id="galeria" class="galeria-entregas"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const CLOUD = 'hiozujaz';
+        const TAG = 'entrega';
+        const CANTIDAD = 12;
+
+        fetch('https://res.cloudinary.com/' + CLOUD + '/image/list/' + TAG + '.json')
+                .then(r => {
+                    if (!r.ok) throw new Error('Sin resultados');
+                    return r.json();
+                })
+                .then(data => {
+                    const fotos = (data.resources || [])
+                            .sort((a, b) => b.version - a.version)
+                            .slice(0, CANTIDAD);
+                    document.getElementById('mensaje').textContent =
+                            fotos.length ? '' : 'Todavía no hay fotos de entregas.';
+                    fotos.forEach(f => {
+                        const url = 'https://res.cloudinary.com/' + CLOUD + '/image/upload/w_500,q_auto/'
+                                + f.public_id + '.' + f.format;
+
+                        const link = document.createElement('a');
+                        link.className = 'entrega-card';
+                        link.href = url;
+                        link.target = '_blank';
+                        link.rel = 'noopener';
+                        link.innerHTML =
+                                '<img src="' + url + '" alt="Entrega satisfactoria">' +
+                                '<div class="entrega-card-pie">' +
+                                '</div>';
+                        document.getElementById('galeria').appendChild(link);
+                    });
+                })
+                .catch(() => {
+                    document.getElementById('mensaje').textContent = 'Todavía no hay fotos de entregas disponibles.';
+                });
+    </script>
+{{/partial}}
+
+{{>templates/layout}}

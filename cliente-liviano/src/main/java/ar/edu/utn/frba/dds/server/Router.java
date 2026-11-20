@@ -51,6 +51,9 @@ public class Router {
       ctx.render("public/registro-donacion.hbs");
     });
 
+    app.get("/entregas-satisfactorias", ctx -> ctx.render("public/entregasSatisfactorias.hbs"));
+
+
     // app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     // app.before("/necesidades/*", this::autenticados);
     app.get("/necesidades", necesidadController::showNecesidades);

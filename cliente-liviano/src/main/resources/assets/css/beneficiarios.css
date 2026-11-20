@@ -32,6 +32,14 @@
     font-weight: 400;
     line-height: 1.2;
 }
+.panel-subtitulo {
+    font-family: var(--font-main);
+    font-size: 1.15rem;
+    color: var(--color-primary);
+    opacity: 0.9;
+    margin-top: 0.5rem;
+    max-width: 650px;
+}
 
 .link-volver {
     display: inline-flex;
