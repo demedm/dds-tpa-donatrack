@@ -95,8 +95,6 @@ public class Router {
   private void cargarSesion(Context ctx) {
     String token = ctx.cookie("session");
     if (token == null || token.isBlank()) {
-      // ctx.redirect("/login");
-      // throw new RedirectResponse();
       return;
     }
     try {
@@ -105,8 +103,7 @@ public class Router {
       // vencido, firma inválida o rol desconocido: se borra la cookie y se sigue como visitante
       System.err.println("Sesión descartada: " + e.getMessage());
       ctx.header("Set-Cookie", "session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
-      // ctx.redirect("/login");
-      // throw new RedirectResponse();
+      return;
     }
   }
 

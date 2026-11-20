@@ -8,7 +8,7 @@ body:has(.hero) .header {
     z-index: 100;
     background-color: transparent;
     box-shadow: none;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
 }
 
 /* Cuando se baja un poco, el nav se vuelve azul */
