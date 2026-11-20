@@ -35,15 +35,23 @@ public class Client {
     return objectMapper.readValue(response.body(), claseDeRespuesta);
   }
 
-  public void post(String path, Object body) throws IOException, InterruptedException {
+  public void post(String path, Object body)
+      throws IOException, InterruptedException {
+
     HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(baseUrl + path))
         .timeout(Duration.ofSeconds(10))
         .header("Content-Type", "application/json")
-        .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
+        .POST(HttpRequest.BodyPublishers.ofString(
+            objectMapper.writeValueAsString(body)
+        ))
         .build();
 
-    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    HttpResponse<String> response = client.send(
+        request,
+        HttpResponse.BodyHandlers.ofString()
+    );
+
     validarRespuesta(response);
   }
 

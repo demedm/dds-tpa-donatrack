@@ -32,9 +32,13 @@ public class AdminController {
   private final DonacionesHttpClient donaciones = new DonacionesHttpClient();
   private final ObjectMapper objectMapper = new ObjectMapper();
   private final GrpcClientGestionDonacionesImplementation gestionDonaciones = new GrpcClientGestionDonacionesImplementation();
-  private final GrpcClientPlaniImplementation clientPlanificacion = new GrpcClientPlaniImplementation();
+  private static final GrpcClientPlaniImplementation clientPlanificacion = new GrpcClientPlaniImplementation();
   private final GrpcClientNecesidadImplementation clientNecesidades =
       new GrpcClientNecesidadImplementation();
+
+  public static GrpcClientPlaniImplementation getClientPlanificacion() {
+    return clientPlanificacion;
+  }
 
   public void administracion(@NotNull Context ctx) {
     Map<String, Object> modelo = new HashMap<>();

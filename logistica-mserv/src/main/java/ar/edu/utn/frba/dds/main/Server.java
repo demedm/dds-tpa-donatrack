@@ -5,6 +5,8 @@ import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceLogisticaImpleme
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServicePlanificacionImplementation;
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceRutasImplementation;
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceUsuarioImplementation;
+import ar.edu.utn.frba.dds.main.HttpClient.Client;
+import ar.edu.utn.frba.dds.main.HttpClient.ClientPlanificacion;
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
 import ar.edu.utn.frba.dds.main.templates.JavalinRenderer;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -15,6 +17,7 @@ import io.javalin.config.JavalinConfig;
 import io.javalin.json.JavalinJackson;
 
 import java.io.IOException;
+import java.net.http.HttpClient;
 
 public class
 
@@ -34,6 +37,21 @@ Server {
       initializeStaticFiles(config);
     });
 
+    HttpClient httpClient = HttpClient.newHttpClient();
+    Client client = new Client(httpClient, System.getenv().getOrDefault(
+        "PLANNER_URL",
+        "http://localhost:9100"
+    ));
+    ClientPlanificacion clientPlanificacion = new ClientPlanificacion(client);
+
+    GrpcServicePlanificacionImplementation servicioPlanificacion =
+        new GrpcServicePlanificacionImplementation(clientPlanificacion,
+            System.getenv().getOrDefault("CALLBACK_URL",
+                "http://localhost:9002/callback/planificaciones"
+            ),
+            100
+        );
+
     int grpcPort = 9091;
     io.grpc.Server grpcServer = io.grpc.ServerBuilder
             .forPort(grpcPort)
@@ -41,7 +59,7 @@ Server {
             .addService(new GrpcServiceUsuarioImplementation())
             .addService(new GrpcServiceRutasImplementation())
             .addService(new GrpcServiceCamionImplementation())
-            .addService(new GrpcServicePlanificacionImplementation())
+            .addService(servicioPlanificacion)
             .build()
             .start();
 

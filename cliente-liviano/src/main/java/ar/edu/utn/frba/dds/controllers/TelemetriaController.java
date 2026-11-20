@@ -1,10 +1,12 @@
 package ar.edu.utn.frba.dds.controllers;
 
 import ar.edu.utn.frba.dds.clients.GrpcClientImplementation.GrpcClientLogisticaImplementation;
+import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.repositorios.UbicacionesRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.TelemetriaDto;
 import io.grpc.Status;
 import io.javalin.http.Context;
+import org.jetbrains.annotations.NotNull;
 
 public class TelemetriaController {
   private static final GrpcClientLogisticaImplementation clientLogistica =
@@ -42,4 +44,29 @@ public class TelemetriaController {
     UbicacionesRepositorio.Instance.guardar(patente, t.getLatitud(), t.getLongitud());
     ctx.status(200).result("Ubicación actualizada correctamente.");
   }
+
+  public void iniciarRuta(@NotNull Context ctx) {
+    String patente = ctx.pathParam("patente");
+    String token = ctx.cookie("session");
+
+    if (patente == null || patente.isBlank()) {
+      ctx.status(400).result("La patente es obligatoria.");
+      return;
+    }
+
+    Status.Code resultado = clientLogistica.iniciarRuta(patente);
+
+    if (resultado == Status.Code.NOT_FOUND) {
+      ctx.status(404).result("Camión no encontrado.");
+      return;
+    }
+
+    if (resultado != Status.Code.OK) {
+      ctx.status(502).result("No se pudo registrar el inicio de ruta.");
+      return;
+    }
+
+    ctx.status(200).result("Inicio de ruta registrado correctamente.");
+  }
+
 }

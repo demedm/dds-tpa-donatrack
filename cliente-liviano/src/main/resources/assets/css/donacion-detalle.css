@@ -103,3 +103,68 @@
     }
 
 }
+
+/* formulario de camion */
+
+/* Formulario de registro de camiones */
+
+.detalle-descripcion {
+    color: #666;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.form-detalle .articulo {
+    margin-bottom: 20px;
+}
+
+.form-detalle .campo {
+    margin-bottom: 18px;
+}
+
+.form-detalle .campo input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.acciones-formulario {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.boton-cancelar {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 22px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #444;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.boton-cancelar:hover {
+    background: #f2f2f2;
+}
+
+.acciones-formulario .boton-donar-final {
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .acciones-formulario {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .acciones-formulario a,
+    .acciones-formulario button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

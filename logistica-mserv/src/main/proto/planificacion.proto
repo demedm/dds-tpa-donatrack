@@ -5,6 +5,7 @@ option java_package = "com.planificacionServiceGrpc.grpc";
 
 service PlaniService {
   rpc EnviarDonaciones (EnviarDonacionesRequest) returns (EnviarDonacionesResponse);
+  rpc IniciarPlanificacionManual (PlanificacionRequest) returns (PlanificacionResponse);
 }
 
 message DonacionAPlanificar {
@@ -35,4 +36,13 @@ message DonacionRechazada {
 message EnviarDonacionesResponse {
   int32 aceptadas = 1;
   repeated DonacionRechazada rechazadas = 2;
+}
+
+message PlanificacionRequest {
+  repeated int64 camionesId = 1;
+}
+
+message PlanificacionResponse {
+  bool exito = 1;
+  string mensaje = 2;
 }

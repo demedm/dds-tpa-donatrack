@@ -7,6 +7,8 @@ import ar.edu.utn.frba.dds.grpc.EntregaEnCursoDto;
 import ar.edu.utn.frba.dds.grpc.EntregasEnCursoRequest;
 import ar.edu.utn.frba.dds.grpc.EntregasEnCursoResponse;
 import ar.edu.utn.frba.dds.grpc.GuardarDepositoRequest;
+import ar.edu.utn.frba.dds.grpc.IniciarRutaRequest;
+import ar.edu.utn.frba.dds.grpc.IniciarRutaResponse;
 import ar.edu.utn.frba.dds.grpc.ListarDepositosRequest;
 import ar.edu.utn.frba.dds.grpc.ListarDepositosResponse;
 import ar.edu.utn.frba.dds.grpc.ObtenerDepositoRequest;
@@ -167,6 +169,30 @@ public class GrpcClientLogisticaImplementation {
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return Status.Code.UNAVAILABLE;
+        }
+    }
+
+    public Status.Code iniciarRuta(String patente) {
+        try {
+            IniciarRutaRequest request = IniciarRutaRequest.newBuilder()
+                .setPatente(patente)
+                .build();
+
+            IniciarRutaResponse response = stub.iniciarRuta(request);
+
+            if (response.getExito()) {
+                return Status.Code.OK;
+            }
+
+            System.out.println("No se pudo iniciar la ruta: " + response.getMensaje());
+            return Status.Code.FAILED_PRECONDITION;
+
+        } catch (StatusRuntimeException e) {
+            System.err.println("Error gRPC al iniciar ruta: " + e.getStatus());
+            return e.getStatus().getCode();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Status.Code.INTERNAL;
         }
     }
 }

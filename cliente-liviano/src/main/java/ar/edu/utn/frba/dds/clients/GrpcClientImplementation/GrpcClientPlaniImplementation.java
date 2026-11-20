@@ -7,8 +7,11 @@ import com.planificacionServiceGrpc.grpc.EnviarDonacionesRequest;
 import com.planificacionServiceGrpc.grpc.EnviarDonacionesResponse;
 import com.planificacionServiceGrpc.grpc.MotivoRechazo;
 import com.planificacionServiceGrpc.grpc.PlaniServiceGrpc;
+import com.planificacionServiceGrpc.grpc.PlanificacionRequest;
+import com.planificacionServiceGrpc.grpc.PlanificacionResponse;
 import io.grpc.StatusRuntimeException;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class GrpcClientPlaniImplementation extends LogisticaClient {
@@ -38,6 +41,31 @@ public class GrpcClientPlaniImplementation extends LogisticaClient {
 
     } catch (StatusRuntimeException e) {
       System.err.println("Fallo gRPC con logística: " + e.getStatus());
+      return false;
+    }
+  }
+
+  public boolean iniciarPlanificacion(List<Long> camionesIds) {
+    try {
+      PlanificacionRequest request = PlanificacionRequest.newBuilder()
+          .addAllCamionesId(camionesIds)
+          .build();
+
+      PlanificacionResponse response =
+          stub.iniciarPlanificacionManual(request);
+
+      if (!response.getExito()) {
+        System.err.println(
+            "Error al iniciar planificación: " + response.getMensaje()
+        );
+      }
+
+      return response.getExito();
+
+    } catch (Exception e) {
+      System.err.println(
+          "Error en solicitud gRPC: " + e.getMessage()
+      );
       return false;
     }
   }

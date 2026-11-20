@@ -10,6 +10,16 @@ service PlanificacionService {
   rpc GuardarDeposito(GuardarDepositoRequest) returns (DepositoResponse);
   rpc ListarDepositos(ListarDepositosRequest) returns (ListarDepositosResponse);
   rpc ActualizarUbicacion(ActualizarUbicacionRequest) returns (ActualizarUbicacionResponse);
+  rpc IniciarRuta(IniciarRutaRequest) returns (IniciarRutaResponse);
+}
+
+message IniciarRutaRequest {
+  string patente = 1;
+}
+
+message IniciarRutaResponse {
+  bool exito = 1;
+  string mensaje = 2;
 }
 
 message EntregasEnCursoRequest {

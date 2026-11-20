@@ -1,82 +1,102 @@
-{{#partial "contenido-header"}}{{/partial}}
+
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    <link rel="stylesheet" href="/assets/css/donacion.css">
+    <link rel="stylesheet" href="/assets/css/donacion-detalle.css">
+{{/partial}}
 
 {{#partial "contenido"}}
+    <div class="detalle-donacion">
+        <section class="detalle-panel">
 
-    <h1>Registrar un nuevo camión</h1>
+            <h1 class="detalle-titulo">Registrar un nuevo camión</h1>
 
-    {{#if error}}
-        <div class="mensaje error">
-            {{error}}
-        </div>
-    {{/if}}
+            <p class="detalle-descripcion">
+                Completá los datos del vehículo para incorporarlo a la flota logística.
+            </p>
 
-    {{#if exito}}
-        <div class="mensaje exito">
-            {{exito}}
-        </div>
-    {{/if}}
+            {{#if error}}
+                <div class="mensaje error" role="alert">
+                    {{error}}
+                </div>
+            {{/if}}
 
-    <form action="/admin/camiones" method="POST">
+            {{#if exito}}
+                <div class="mensaje exito" role="status">
+                    {{exito}}
+                </div>
+            {{/if}}
 
-        <h3>Datos del camión</h3>
+            <form action="/admin/camiones/nuevo" method="POST" class="form-detalle">
 
-        <label for="patente">Patente</label>
-        <input
-                type="text"
-                id="patente"
-                name="patente"
-                placeholder="Ej: AB123CD"
-                maxlength="10"
-                required
-        >
+                <fieldset class="articulo">
+                    <h2 class="articulo-titulo">Datos del camión</h2>
 
-        <label for="capacidadCarga">Capacidad de carga (kg)</label>
-        <input
-                type="number"
-                id="capacidadCarga"
-                name="capacidadCarga"
-                min="0.01"
-                step="0.01"
-                placeholder="Ej: 5000"
-                required
-        >
+                    <div class="campo">
+                        <label for="patente">Patente *</label>
+                        <input
+                                type="text"
+                                id="patente"
+                                name="patente"
+                                placeholder="Ej: AB123CD"
+                                maxlength="10"
+                                required
+                        >
+                    </div>
 
-        <label for="capacidadVolumen">Capacidad de volumen (m³)</label>
-        <input
-                type="number"
-                id="capacidadVolumen"
-                name="capacidadVolumen"
-                min="0.01"
-                step="0.01"
-                placeholder="Ej: 25.5"
-                required
-        >
+                    <div class="campo">
+                        <label for="capacidadCarga">Capacidad de carga (kg) *</label>
+                        <input
+                                type="number"
+                                id="capacidadCarga"
+                                name="capacidadCarga"
+                                min="0.01"
+                                step="0.01"
+                                placeholder="Ej: 5000"
+                                required
+                        >
+                    </div>
 
-        <label for="altura">Altura (m)</label>
-        <input
-                type="number"
-                id="altura"
-                name="altura"
-                min="0.01"
-                step="0.01"
-                placeholder="Ej: 3.5"
-                required
-        >
+                    <div class="campo">
+                        <label for="capacidadVolumen">Capacidad de volumen (m³) *</label>
+                        <input
+                                type="number"
+                                id="capacidadVolumen"
+                                name="capacidadVolumen"
+                                min="0.01"
+                                step="0.01"
+                                placeholder="Ej: 25.5"
+                                required
+                        >
+                    </div>
 
-        <label for="estado">Estado del camión</label>
-        <select id="estado" name="estado" required>
-            <option value="" disabled selected>— Elegir estado —</option>
-            <option value="DISPONIBLE">Disponible</option>
-            <option value="EN_MANTENIMIENTO">En mantenimiento</option>
-            <option value="FUERA_DE_SERVICIO">Fuera de servicio</option>
-        </select>
+                    <div class="campo">
+                        <label for="altura">Altura (m) *</label>
+                        <input
+                                type="number"
+                                id="altura"
+                                name="altura"
+                                min="0.01"
+                                step="0.01"
+                                placeholder="Ej: 3.5"
+                                required
+                        >
+                    </div>
+                </fieldset>
 
-        <button type="submit">Registrar camión</button>
+                <div class="acciones-formulario">
+                    <a href="/admin/camiones" class="boton-cancelar">
+                        Cancelar
+                    </a>
 
-        <a href="/admin/camiones">Cancelar</a>
+                    <button type="submit" class="boton-auth boton-donar-final">
+                        Registrar camión
+                    </button>
+                </div>
 
-    </form>
-
+            </form>
+        </section>
+    </div>
 {{/partial}}
 
 {{>templates/layout}}

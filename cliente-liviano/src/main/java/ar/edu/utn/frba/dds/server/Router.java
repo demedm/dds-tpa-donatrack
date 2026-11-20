@@ -82,7 +82,10 @@ public class Router {
     app.post("/admin/logistica/deposito", logisticaController::guardarDeposito);
     app.get("/admin/logistica/depositos", logisticaController::listarDepositos);
     app.post("/camiones/{patente}/telemetria", telemetriaController::recepcionarTelemetria);
+    app.post("camiones/{patente}/iniciar", telemetriaController::iniciarRuta);
     app.get("/admin/logistica/ubicaciones", logisticaController::ubicacionesAdmin);
+
+    app.post("/admin/logistica/planificar", logisticaController::iniciarPlanificacion);
 
     app.get("/admin/donaciones/nueva", adminController::mostrarNuevaDonacion);
     app.get("/admin/donaciones", adminController::mostrarDonaciones);

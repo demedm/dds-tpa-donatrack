@@ -310,4 +310,30 @@ public class GrpcServiceLogisticaImplementation extends PlanificacionServiceGrpc
             token.getBytes(StandardCharsets.UTF_8));
     }
 
+  @Override
+  public void iniciarRuta(IniciarRutaRequest request,
+                          StreamObserver<IniciarRutaResponse> responseObserver) {
+    try {
+        Camion camion = CamionRepositorio.Instance.buscarPorPatente(request.getPatente());
+        if (camion == null) {
+            responseObserver.onError(Status.NOT_FOUND
+                .withDescription("Camion no encontrado")
+                .asRuntimeException());
+            return;
+        }
+
+        camion.iniciarRuta();
+        CamionRepositorio.Instance.actualizar(camion);
+        IniciarRutaResponse response = IniciarRutaResponse.newBuilder()
+            .setExito(true)
+            .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    } catch (Exception e) {
+        responseObserver.onError(Status.INTERNAL
+            .withDescription(e.getMessage())
+            .asRuntimeException());
+        throw new RuntimeException(e);
+    }
+  }
 }

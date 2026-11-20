@@ -8,6 +8,7 @@ import ar.edu.utn.frba.dds.dto.CamionDto;
 import ar.edu.utn.frba.dds.dto.CamionRequest;
 import ar.edu.utn.frba.dds.dto.DepositoRequest;
 import ar.edu.utn.frba.dds.dto.EntregaDto;
+import ar.edu.utn.frba.dds.dto.PlanificacionManualRequest;
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
 import ar.edu.utn.frba.dds.repositorios.UbicacionesRepositorio;
@@ -181,7 +182,7 @@ public class LogisticaController {
           .registrarCamion(request);
 
       if (response.statusCode() == 201) {
-        ctx.redirect("/admin/camiones?registro=exitoso");
+        ctx.redirect("/admin/logistica?registro-camion=exitoso");
         return;
 
       } else if (response.statusCode() == 409) {
@@ -297,4 +298,47 @@ public class LogisticaController {
   public void ubicacionesAdmin(Context ctx) {
     ctx.json(UbicacionesRepositorio.Instance.todas());
   }
+
+  public void iniciarPlanificacion(Context ctx) {
+    try {
+      PlanificacionManualRequest request =
+          ctx.bodyAsClass(PlanificacionManualRequest.class);
+
+      if (request.getCamionesIds() == null ||
+          request.getCamionesIds().isEmpty()) {
+
+        ctx.status(400).json(Map.of(
+            "exito", false,
+            "mensaje", "Debe seleccionar al menos un camión."
+        ));
+        return;
+      }
+
+      boolean exito = AdminController.getClientPlanificacion()
+          .iniciarPlanificacion(request.getCamionesIds());
+
+      if (!exito) {
+        ctx.status(500).json(Map.of(
+            "exito", false,
+            "mensaje", "No se pudo iniciar la planificación."
+        ));
+        return;
+      }
+
+      ctx.json(Map.of(
+          "exito", true,
+          "mensaje", "Planificación iniciada correctamente."
+      ));
+
+    } catch (Exception e) {
+      e.printStackTrace();
+
+      ctx.status(500).json(Map.of(
+          "exito", false,
+          "mensaje", "Error al iniciar la planificación."
+      ));
+    }
+  }
+
+
 }
