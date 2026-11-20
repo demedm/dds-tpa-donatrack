@@ -18,6 +18,12 @@ import java.util.List;
 
 public class Bootstrap {
   public static void init() {
+    if(!CamionRepositorio.Instance.mostrarTodos().isEmpty()){
+
+      System.out.println("Boostrap de logistica ya cargado, se omite");
+      return;
+    }
+
     List<Camion> camiones = Arrays.asList(
             new Camion("aaaaAAAA", 1000.0, 5000.0, 7.0),
             new Camion("bbbbBBBB", 300.0, 6000.0, 5.0)

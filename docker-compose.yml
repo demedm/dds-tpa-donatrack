@@ -53,5 +53,18 @@ services:
       - logistica
     restart: on-failure
 
+  cron:
+    build:
+      context: .
+      dockerfile: cron/Dockerfile
+    network_mode: host
+    environment:
+      DB_USER: ${DB_USER:-root}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   datos:

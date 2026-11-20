@@ -39,17 +39,20 @@ public class Router {
         ctx.json(necesidadController.showNecesidadesRecurrentes()));
       app.get("/necesidades", necesidadController::showNecesidades);
       app.get("/necesidades/{id}",necesidadController :: showNecesidad);
+
+    /*
       app.get("/test-cron", ctx -> {
     NecesidadController controller = new NecesidadController();
     controller.actualizarVencidas();
     ctx.result("Cron ejecutado manualmente");
-});
+
+    });
 
     app.post("/tareas/notificar-inactivos", ctx -> {
       int dias = ctx.queryParam("dias") != null ? Integer.parseInt(ctx.queryParam("dias")) : 20;
       ctx.json(NotificarInactivos.ejecutar(dias));
     });
+     */
+
   }
-
-
 }

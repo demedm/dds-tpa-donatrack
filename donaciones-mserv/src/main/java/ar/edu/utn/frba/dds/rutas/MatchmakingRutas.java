@@ -17,7 +17,7 @@ public class MatchmakingRutas {
       post("asignaciones",ctx ->
           ctx.status(200).json(matchmakingController.asignarDonacion(ctx)));
       post("ejecuciones",ctx ->
-          ctx.status(202).json(matchmakingController.procesarPendientes(ctx)));
+          ctx.status(200).json(matchmakingController.procesarPendientes(ctx)));
     });
   }
 }

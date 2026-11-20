@@ -12,6 +12,13 @@ import java.util.List;
 
 public class NotificarInactivos {
 
+  public static void main(String[] args) {
+    int dias = args.length > 0 ? Integer.parseInt(args[0]) : 20;
+
+    Tarea.correr("Inactivos", () -> "donantes notificados: " + ejecutar(dias));
+
+  }
+
   public static int ejecutar(int dias) {
     LocalDate hoy = LocalDate.now();
     LocalDate limite = hoy.minusDays(dias);
@@ -21,6 +28,7 @@ public class NotificarInactivos {
 
     int notificados = 0;
 
+    //efecto de lado
     for (Persona donante : inactivos) {
       if (yaLeAvisamos(donante, limite)) {
         continue;

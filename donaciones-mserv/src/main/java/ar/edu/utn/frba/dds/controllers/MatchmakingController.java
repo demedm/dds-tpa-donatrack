@@ -11,11 +11,9 @@ import ar.edu.utn.frba.dds.model.donantes.Persona;
 import ar.edu.utn.frba.dds.model.notificaciones.EventoNotificacionService;
 import ar.edu.utn.frba.dds.repositories.*;
 
-import java.util.List;
 import java.util.Map;
 
 import ar.edu.utn.frba.dds.tareas.ProcesarDonaciones;
-import ar.edu.utn.frba.dds.utils.AsignacionCronScheduler;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
@@ -78,8 +76,10 @@ public class MatchmakingController implements WithSimplePersistenceUnit {
   }
 
   public Map<String, Object> procesarPendientes(Context ctx) {
+
     validarTokenDeJob(ctx);
-    AsignacionCronScheduler.ejecutarAhora();
+    ProcesarDonaciones.ejecutar();
+
     return Map.of("resultado", "matchmaking iniciado");
   }
 

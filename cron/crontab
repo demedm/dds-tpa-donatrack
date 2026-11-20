@@ -1,0 +1,14 @@
+# minuto hora dia mes dia-semana usuario comando
+# planificación de rutas del dia siguiente (baja carga), antes del matcmaking
+0 2 * * *   root  tarea logistica  ar.edu.utn.frba.dds.planificacion.tareas.PlanificarDonaciones > /proc/1/fd/1 2>&1
+
+# matchmaking de las donaciones en depósito (baja carga)
+0 3 * * *   root  tarea donaciones ar.edu.utn.frba.dds.tareas.ProcesarDonaciones > /proc/1/fd/1 2>&1
+
+#necesidades recurrentes vencidas
+0 0 * * * root tarea donaciones ar.edu.utn.frba.dds.tareas.MarcarNecesidadesVencidas > /proc/1/fd/1 2>&1
+
+#aviso a donantes sin actividad hace mas de 20 dias (de dia, cuando la gente lo lee)
+0 10 * * * root tarea donaciones ar.edu.utn.frba.dds.tareas.NotificarInactivos 20 > /proc/1/fd/1 2>&1
+
+# /proc/1/fd/1 2>&1 manda lo que imprime al log del contenedor

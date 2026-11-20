@@ -1,6 +1,5 @@
 package ar.edu.utn.frba.dds.tareas;
 
-import ar.edu.utn.frba.dds.main.Bootstrap;
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoAsignacion;
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoDeCompatibilidad;
 import ar.edu.utn.frba.dds.model.Asignacion.AlgoritmoSubatendidos;
@@ -19,8 +18,11 @@ public class ProcesarDonaciones implements WithSimplePersistenceUnit {
     List.of(new AlgoritmoDeCompatibilidad(), new AlgoritmoSubatendidos());
 
   public static void main(String[] args) {
-    Bootstrap.init();
-    ejecutar();
+    Tarea.correr("Matchmaking", () -> {
+      ejecutar();
+      return "donaciones procesadas";
+    });
+
   }
 
   //
