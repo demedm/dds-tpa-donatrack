@@ -1,4 +1,7 @@
-package ar.edu.utn.frba.dds.model;
+package ar.edu.utn.frba.dds.model.monitoreo;
+
+import ar.edu.utn.frba.dds.model.Camion;
+import ar.edu.utn.frba.dds.model.EstadoCamion;
 
 import java.time.LocalDateTime;
 import javax.persistence.Entity;

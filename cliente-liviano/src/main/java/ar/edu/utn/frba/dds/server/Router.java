@@ -60,36 +60,44 @@ public class Router {
     // las rutas comentadas son para poder ver las vistas sin loggear
     app.before("/usuarios/*", this::autenticados);
     app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
-    app.get("/usuarios/{idUsuario}/entregas-en-curso", logisticaController::entregasEnCurso);
+    app.get("/usuarios/entregas-en-curso", logisticaController::entregasEnCurso);
 
     app.before("/admin/*", session::validarAutenticacion);
     app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
+
     app.get("/admin/panel", adminController::administracion);
+
     app.get("/admin/logistica", logisticaController::mostrarCamiones);
     app.get("/admin/logistica/camion/{id}/panel", logisticaController::mostrarPanelCamion);
+    app.get("/admin/logistica/entregas-en-curso", logisticaController::entregasEnCursoAdmin);
+    app.get("/admin/logistica/deposito", logisticaController::obtenerDeposito);   // ?id= opcional sin id devuelve el deposito ppal
+    app.post("/admin/logistica/deposito", logisticaController::guardarDeposito);
+    app.get("/admin/logistica/depositos", logisticaController::listarDepositos);
+
     app.get("/admin/donaciones/nueva", adminController::mostrarNuevaDonacion);
     app.get("/admin/donaciones", adminController::mostrarDonaciones);
 
     app.post("/admin/donaciones/{id}/asignacion", adminController::asignarDonacion);
     app.post("/admin/donaciones/vencidas",adminController::marcarVencidas);
 
-    app.post("/admin/camiones", logisticaController::registrarCamion);
+    app.get("/admin/camiones/nuevo", logisticaController::mostrarFormCamion);
+    app.post("/admin/camiones/nuevo", logisticaController::registrarCamion);
+
     app.post("/admin/donaciones", adminController::registrarDonacion);
     app.get("/admin/registro", session::mostrarRegistroAdmin);
     app.post("/admin/registro", session::registrarUsuario);
     app.post("/admin/donantes/importar", adminController::importarDonantesDesdeCsv);
 
-
-    //cuando se arregle el RolMiddleware
-    //app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
+    app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
     app.get("/donante/donaciones",donanteController::misDonaciones);
   }
 
   private void cargarSesion(Context ctx) {
     String token = ctx.cookie("session");
     if (token == null || token.isBlank()) {
-      ctx.redirect("/login");
-      throw new RedirectResponse();
+      // ctx.redirect("/login");
+      // throw new RedirectResponse();
+      return;
     }
     try {
       ctx.attribute("usuarioLogueado", JwtRepositorio.Instance.obtenerUsuario(token));
@@ -97,8 +105,8 @@ public class Router {
       // vencido, firma inválida o rol desconocido: se borra la cookie y se sigue como visitante
       System.err.println("Sesión descartada: " + e.getMessage());
       ctx.header("Set-Cookie", "session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
-      ctx.redirect("/login");
-      throw new RedirectResponse();
+      // ctx.redirect("/login");
+      // throw new RedirectResponse();
     }
   }
 

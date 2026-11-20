@@ -1,0 +1,26 @@
+
+<details class="tarjeta" id="depositoBox">
+    <summary>Depósito principal</summary>
+    <div class="deposito-form">
+        <div class="campo">
+            <label for="depNombre">Nombre</label>
+            <input type="text" id="depNombre" value="Depósito principal">
+        </div>
+        <div class="campo">
+            <label for="depDireccion">Dirección</label>
+            <input type="text" id="depDireccion">
+        </div>
+        <div class="campo">
+            <label for="depLat">Latitud</label>
+            <input type="number" step="any" id="depLat">
+        </div>
+        <div class="campo">
+            <label for="depLng">Longitud</label>
+            <input type="number" step="any" id="depLng">
+        </div>
+        <p>Podés hacer clic en el mapa para completar latitud y longitud.</p>
+        <button type="button" class="boton-rojo" id="depBuscar">Buscar dirección</button>
+        <button type="button" class="boton-rojo" id="depGuardar">Guardar depósito</button>
+        <p id="depMsg" role="status"></p>
+    </div>
+</details>

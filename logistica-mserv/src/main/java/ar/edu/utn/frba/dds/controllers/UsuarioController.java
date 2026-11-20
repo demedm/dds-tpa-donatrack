@@ -3,7 +3,7 @@ package ar.edu.utn.frba.dds.controllers;
 import ar.edu.utn.frba.dds.GrpcClientDonaciones.GrpcClientDonacionesImplementation;
 import ar.edu.utn.frba.dds.model.*;
 import ar.edu.utn.frba.dds.model.fallaentrega.MotivoFallo;
-import ar.edu.utn.frba.dds.model.usuarios.Usuario;
+import ar.edu.utn.frba.dds.model.monitoreo.Ubicacion;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;

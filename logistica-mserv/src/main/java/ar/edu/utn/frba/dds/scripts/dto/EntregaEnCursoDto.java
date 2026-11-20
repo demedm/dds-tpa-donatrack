@@ -2,7 +2,7 @@ package ar.edu.utn.frba.dds.scripts.dto;
 
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.EstadoEntrega;
-import ar.edu.utn.frba.dds.model.Ubicacion;
+import ar.edu.utn.frba.dds.model.monitoreo.Ubicacion;
 
 public class EntregaEnCursoDto {
     private Long id;
