@@ -29,12 +29,9 @@
             {{/if}}
 
             <form action="/admin/donantes/importar" method="POST" enctype="multipart/form-data">
-
+                <input type="file" name="archivo" accept=".csv" required>
                 <label for="archivo">Seleccionar archivo CSV:</label>
-                <input type="file" id="archivo" name="archivo" accept=".csv" required>
-
                 <button type="submit">Importar donantes</button>
-
             </form>
         </div>
     </div>
