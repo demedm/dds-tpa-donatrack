@@ -7,9 +7,9 @@ import ar.edu.utn.frba.dds.model.EstadoEntrega;
 import ar.edu.utn.frba.dds.model.accionesentregas.AccionesSobreEntregas;
 import ar.edu.utn.frba.dds.model.accionesentregas.Notificar;
 import ar.edu.utn.frba.dds.model.accionesentregas.NotificarAdmins;
-import ar.edu.utn.frba.dds.scripts.dto.DestinoDto;
+import ar.edu.utn.frba.dds.scripts.dto.planificacion.DestinoDto;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
-import javax.persistence.EntityManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +29,6 @@ public class EntregaRepositorio implements WithSimplePersistenceUnit {
 
   public void notificarFalloDeEntrega(Entrega entrega) {
     observers.forEach(o -> o.notificarFalloEntrega(entrega));
-  }
-
-  public Entrega crearEntrega(DestinoDto dto) {
-    return new Entrega(dto.getDireccion(), dto.getDonacionId());
   }
 
   public void registrar(Entrega entrega) {

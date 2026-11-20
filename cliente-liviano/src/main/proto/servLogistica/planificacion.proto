@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.planificacionServiceGrpc.grpc";
+
+service PlaniService {
+  rpc EnviarDonaciones (EnviarDonacionesRequest) returns (EnviarDonacionesResponse);
+}
+
+message DonacionAPlanificar {
+  int64 donacionId = 1;
+  int64 beneficiarioId = 2;
+  string direccion = 3;
+  string fechaVencimiento = 4;   //vacío si no vence
+  double cantidad = 5;
+  string unidadMedida = 6;
+  string uso = 7;
+}
+
+message EnviarDonacionesRequest {
+  repeated DonacionAPlanificar donaciones = 1;
+}
+
+enum MotivoRechazo {
+  MOTIVO_NO_ESPECIFICADO = 0;
+  DUPLICADA = 1;
+  DATOS_INVALIDOS = 2;
+}
+
+message DonacionRechazada {
+  int64 donacionId = 1;
+  MotivoRechazo motivo = 2;
+}
+
+message EnviarDonacionesResponse {
+  int32 aceptadas = 1;
+  repeated DonacionRechazada rechazadas = 2;
+}

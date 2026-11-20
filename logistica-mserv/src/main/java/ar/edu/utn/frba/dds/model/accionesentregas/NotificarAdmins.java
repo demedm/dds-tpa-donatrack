@@ -1,6 +1,6 @@
 package ar.edu.utn.frba.dds.model.accionesentregas;
 
-import ar.edu.utn.frba.dds.main.Client;
+import ar.edu.utn.frba.dds.main.HttpClient.Client;
 import ar.edu.utn.frba.dds.model.Entrega;
 import java.net.http.HttpClient;
 

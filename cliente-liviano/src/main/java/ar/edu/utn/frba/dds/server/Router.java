@@ -47,8 +47,8 @@ public class Router {
       ctx.render("public/registro-donacion.hbs");
     });
 
-    // app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
-    // app.before("/necesidades/*", this::autenticados);
+    app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    app.before("/necesidades/*", this::autenticados);
     app.get("/necesidades", necesidadController::showNecesidades);
     app.post("/necesidades", necesidadController::crear);
     app.get("/necesidades/{id}", necesidadController::showNecesidad);
@@ -56,15 +56,15 @@ public class Router {
     app.post("/necesidades/{id}/adjuntos", necesidadController::subirAdjunto);
 
     // las rutas comentadas son para poder ver las vistas sin loggear
-    // app.before("/usuarios/*", this::autenticados);
-    // app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    app.before("/usuarios/*", this::autenticados);
+    app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     app.get("/usuarios/entregas-en-curso", logisticaController::entregasEnCurso);
 
-    // app.before("/admin/*", session::validarAutenticacion);
-    // app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
+    app.before("/admin/*", session::validarAutenticacion);
+    app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
     app.get("/admin/panel", adminController::administracion);
     app.get("/admin/logistica", logisticaController::mostrarCamiones);
-    // app.get("/admin/donaciones", donacionController::mostrarUbicacionDonaciones);
+    app.get("/admin/logistica/camion/{id}/panel", logisticaController::mostrarPanelCamion);
     app.get("/admin/donaciones", adminController::mostrarDonaciones);
     app.post("/admin/donaciones/{id}/asignacion", adminController::asignarDonacion);
     app.post("/admin/donaciones/vencidas",adminController::marcarVencidas);

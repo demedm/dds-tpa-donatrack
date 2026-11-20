@@ -1,6 +1,8 @@
 package ar.edu.utn.frba.dds.main;
 
+import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceCamionImplementation;
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceLogisticaImplementation;
+import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceRutasImplementation;
 import ar.edu.utn.frba.dds.grpcServiceImplementation.GrpcServiceUsuarioImplementation;
 import ar.edu.utn.frba.dds.main.templates.JavalinHandlebars;
 import ar.edu.utn.frba.dds.main.templates.JavalinRenderer;
@@ -36,6 +38,8 @@ Server {
             .forPort(grpcPort)
             .addService(new GrpcServiceLogisticaImplementation())
             .addService(new GrpcServiceUsuarioImplementation())
+            .addService(new GrpcServiceRutasImplementation())
+            .addService(new GrpcServiceCamionImplementation())
             .build()
             .start();
 

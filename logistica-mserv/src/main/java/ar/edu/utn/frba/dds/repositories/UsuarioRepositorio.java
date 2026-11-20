@@ -53,7 +53,11 @@ public class UsuarioRepositorio implements WithSimplePersistenceUnit {
   }
 
   public Usuario buscarPorId(Long id) {
-    return entityManager().find(Usuario.class, id);
+    Usuario u = entityManager().find(Usuario.class, id);
+    if (u == null) {
+      throw new UsuarioNotFoundException(id);
+    }
+    return u;
   }
 
   public Chofer buscarChoferPorId(Long id) {

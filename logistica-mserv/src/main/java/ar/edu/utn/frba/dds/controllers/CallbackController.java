@@ -1,42 +1,76 @@
 package ar.edu.utn.frba.dds.controllers;
 
+import ar.edu.utn.frba.dds.grpc.RequestPlanificacionDto;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
+import ar.edu.utn.frba.dds.planificacion.ResultadoPlanificacion;
+import ar.edu.utn.frba.dds.planificacion.tareas.PlanificarDonaciones;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
+import ar.edu.utn.frba.dds.repositories.planificacion.PlanificacionRepositorio;
 import ar.edu.utn.frba.dds.scripts.dto.DonacionDto;
-import ar.edu.utn.frba.dds.scripts.dto.RequestPlanificacionDto;
-import ar.edu.utn.frba.dds.scripts.dto.ResponsePlanificacionDto;
+import ar.edu.utn.frba.dds.scripts.dto.planificacion.ResponsePlanificacionDto;
+import ar.edu.utn.frba.dds.scripts.dto.planificacion.SolicitudPlanificacionDto;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import  ar.edu.utn.frba.dds.scripts.dto.DonacionSegmentadaDTO;
-import ar.edu.utn.frba.dds.model.Entrega;
-import ar.edu.utn.frba.dds.model.Ruta;
-import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
-import ar.edu.utn.frba.dds.scripts.dto.ResponsePlanificacionDto;
-import ar.edu.utn.frba.dds.scripts.dto.RutaPlanificadaDto;
-import ar.edu.utn.frba.dds.scripts.dto.DestinoDto;
-import ar.edu.utn.frba.dds.scripts.dto.RequestPlanificacionDto;
-import io.javalin.http.Context;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ar.edu.utn.frba.dds.main.ClientDonaciones;
+import ar.edu.utn.frba.dds.scripts.dto.planificacion.RutaPlanificadaDto;
+import ar.edu.utn.frba.dds.scripts.dto.planificacion.DestinoDto;
+import ar.edu.utn.frba.dds.main.HttpClient.ClientDonaciones;
+import io.javalin.http.NotFoundResponse;
 
 public class CallbackController {
   List<RequestPlanificacionDto> donacionesAplanificar = new ArrayList<>();
+  private ClientDonaciones clientDonaciones = new ClientDonaciones();
 
+  public void recibirPlanificacion(Context ctx) {
+    ResponsePlanificacionDto resp;
+    try {
+      resp = ctx.bodyAsClass(ResponsePlanificacionDto.class);
+    } catch (Exception e) {
+      throw new BadRequestResponse("JSON inválido");
+    }
+
+    ResultadoPlanificacion r;
+    try {
+      r = PlanificacionRepositorio.Instance.procesarRespuesta(resp);
+    } catch (NoSuchElementException e) {
+      throw new NotFoundResponse(e.getMessage());
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestResponse(e.getMessage());
+    }
+
+    if (!r.yaProcesado) {
+      // El resultado ya está commiteado. Si algo de lo que sigue falla, no se pierde nada.
+      try {
+        notificarResultado(r);
+        PlanificarDonaciones.ejecutar();
+      } catch (Exception e) {
+        System.err.println("Error posterior al commit del lote {}" + resp.getLoteId()
+            + e.getMessage());
+      }
+    }
+
+    ctx.status(200);
+  }
+
+  private void notificarResultado(ResultadoPlanificacion r) {
+    r.asignadas.forEach(id -> clientDonaciones.notificarCambioEstado(id, "LISTA_PARA_ENTREGAR"));
+    r.noPlanificables.forEach(id ->
+        clientDonaciones.notificarFallaDeEntrega(id, "Sin camión disponible", false));
+  }
+
+  /*
   public void recibirDonacion(Context ctx) {
     System.out.println("¡Llegó la donación ID: " + ctx.pathParam("id") + " desde el otro microservicio!");
 
     Long idDonacion = Long.parseLong(ctx.pathParam("id"));
     DonacionDto donacion = ctx.bodyAsClass(DonacionDto.class);
 
-    RequestPlanificacionDto replanificar = new RequestPlanificacionDto();
+    RequestPlanificacionDto replanificar = new SolicitudPlanificacionDto();
     replanificar.setIdDonacion(idDonacion);
     replanificar.setDireccion(donacion.getDireccionEntidad());
     replanificar.setIdEntidad(donacion.getIdEntidadAsignada());
@@ -104,4 +138,5 @@ public class CallbackController {
     System.out.println("¡Llegó un lote para planificar con " + loteRecibido.length + " donaciones!");
     ctx.status(200).result("Lote recibido");
   }
+   */
 }

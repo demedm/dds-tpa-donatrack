@@ -1,21 +1,28 @@
-package ar.edu.utn.frba.dds.main;
+package ar.edu.utn.frba.dds.main.HttpClient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Map;
 
 public class Client {
   private final String baseUrl;
   private final HttpClient client;
   private final ObjectMapper objectMapper;
 
-  public Client(HttpClient client, String url) {
-    this.baseUrl = url;
+  public Client(HttpClient client, String baseUrl) {
+    this.baseUrl = baseUrl;
     this.client = client;
-    this.objectMapper = new ObjectMapper();
+    this.objectMapper = new ObjectMapper()
+        .registerModule(new JavaTimeModule())
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   }
 
   public <T> T get(String path, Class<T> claseDeRespuesta)
@@ -26,6 +33,18 @@ public class Client {
     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
     validarRespuesta(response);
     return objectMapper.readValue(response.body(), claseDeRespuesta);
+  }
+
+  public void post(String path, Object body) throws IOException, InterruptedException {
+    HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(baseUrl + path))
+        .timeout(Duration.ofSeconds(10))
+        .header("Content-Type", "application/json")
+        .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
+        .build();
+
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    validarRespuesta(response);
   }
 
   public <T> T post(String path, Object body, Class<T> claseDeRespuesta)

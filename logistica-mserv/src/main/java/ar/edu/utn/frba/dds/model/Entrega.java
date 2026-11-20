@@ -24,7 +24,7 @@ public class Entrega {
   private EntidadBeneficiaria entidadBeneficiaria;
 
   @ManyToOne
-  @JoinColumn(name = "ruta_id", insertable = false, updatable = false)
+  @JoinColumn(name = "ruta_id", updatable = false)
   @JsonIgnore
   private Ruta ruta;
 
@@ -35,6 +35,7 @@ public class Entrega {
   private String direccion;
   private Long donacionId;
   private LocalDate fechaVencimiento;
+  private int ordenParada;
 
   @Enumerated(EnumType.STRING)
   private MotivoFallo motivoFallo;
@@ -163,5 +164,13 @@ public class Entrega {
 
   public void setDonacionId(Long donacionId) {
     this.donacionId = donacionId;
+  }
+
+  public int getOrdenParada() {
+    return ordenParada;
+  }
+
+  public void setOrdenParada(int ordenParada) {
+    this.ordenParada = ordenParada;
   }
 }

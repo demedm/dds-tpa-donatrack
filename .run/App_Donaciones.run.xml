@@ -1,8 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="App_Donaciones" type="Application" factoryName="Application" nameIsGenerated="true">
     <envs>
-      <env name="DB_PASSWORD" value="root" />
-      <env name="JWT_SECRET" value="ppimT0K+pNT0ee5pfEiSgDspyPHtGXOwPg4Aok4/YhA=" />
+      <env name="DB_USER" value="root" />
+      <env name="DB_PASSWORD" value="NicoPASS127" />
+      <env name="JWT_SECRET" value="k7Gh2mXq9LpR4vNwT8bYc3Zf6Jd1AsE0uHiOg5WnBjK=" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="ar.edu.utn.frba.dds.main.App_Donaciones" />
     <module name="donaciones-mserv" />

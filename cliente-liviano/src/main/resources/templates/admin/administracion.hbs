@@ -1,14 +1,18 @@
-{{#partial "contenido-header"}}{{/partial}}
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/admin/admin.css">
+{{/partial}}
 
 {{#partial "contenido"}}
     <h1>
         Panel Administración
     </h1>
     <div>
-        <a href="/admin/camiones">Logistica</a>
-        <a href="/admin/donaciones">Donaciones</a>
-        <a href="/admin/registro">Registrar</a>
-        <a href="/admin/camiones">Flota</a>
+        <!-- Pestañas -->
+        <nav class="admin-tabs" aria-label="Secciones de administración">
+            <a href="/admin/donaciones">Donaciones</a>
+            <a href="/admin/usuarios">Usuarios</a>
+            <a href="/admin/logistica">Logística</a>
+        </nav>
 
         <h3>Importar Donantes</h3>
         <div>
