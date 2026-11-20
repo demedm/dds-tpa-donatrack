@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.server.templates;
 
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
+import ar.edu.utn.frba.dds.session.Rol;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
 import io.javalin.http.Context;
@@ -18,14 +19,23 @@ public class JavalinHandlebars implements FileRenderer {
     @NotNull
     @Override
     public String render(@NotNull String path, @NotNull Map<String, ?> model, @NotNull Context context) {
+
         Map<String, Object> modelo = new HashMap<>(model);
         UsuarioLogueado usuario = context.attribute("usuarioLogueado");
+
+        Rol rol = usuario == null ? null : usuario.getRol();
+
         modelo.put("logueado", usuario != null);
+        modelo.put("esDonante", rol == Rol.DONANTE);
+        modelo.put("esBeneficiario", rol == Rol.BENEFICIARIO);
+        modelo.put("esAdmin", rol == Rol.ADMIN);
+        modelo.put("puedeDonar", usuario == null || rol == Rol.DONANTE);
+
 
         Template template = null;
         try {
             template = handlebars.compile("templates/" + path.replace(".hbs",""));
-            return template.apply(model);
+            return template.apply(modelo);
         } catch (IOException e) {
             e.printStackTrace();
             context.status(HttpStatus.NOT_FOUND);

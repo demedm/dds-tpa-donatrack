@@ -28,12 +28,16 @@
             <div class="links-nav-div">
                 <a href="/">Home</a>
                 {{#if logueado}}
+                    {{#if esAdmin}}
+                        <a href="/admin/panel">Panel</a>
+                    {{/if}}
                     {{#if esDonante}}
                         <a href="/donante/donaciones">Mis donaciones</a>
                     {{/if}}
                     {{#if esBeneficiario}}
                         <a href="/necesidades">Mis Necesidades</a>
                     {{/if}}
+
                 {{else}}
                     <a href="/mapa">Mapa Solidario</a>
                     <a href="/registro">Registro</a>
@@ -46,13 +50,18 @@
                 {{else}}
                     <a href="/login" class="link-sesion">Iniciar sesión</a>
                 {{/if}}
-                <button class="boton-donar">
-                    <a class="link-donar" href="/donaciones">DONAR</a>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                </button>
+
+
+                {{#if puedeDonar}}
+                    <a class="boton-donar link-donar" href="/donaciones">
+                        DONAR
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                {{/if}}
+
             </div>
         </nav>
     </header>
@@ -125,5 +134,23 @@
 
         <p class="footer-copyright">Copyright 2026. Todos los derechos reservados.</p>
     </footer>
+
+    <script>
+        //ocultar header al bajar y lo muestra al subir
+        (() => {
+            let ultimoScroll = window.scrollY;
+            const header = document.querySelector('.header');
+            window.addEventListener('scroll', () => {
+                const actual = window.scrollY;
+                header.classList.toggle('header-oculto', actual > ultimoScroll && actual > 80);
+                ultimoScroll = actual;
+            }, { passive: true});
+
+        })();
+
+    </script>
 </body>
+
+
+
 </html>

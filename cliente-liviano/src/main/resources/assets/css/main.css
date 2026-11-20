@@ -4,6 +4,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    transition: transform 0.25s ease;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -12,6 +13,10 @@
     background-color: var(--color-primary);
     color: var(--color-light);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.header.header-oculto {
+    transform: translateY(-100%);
 }
 
 /* Logo */
@@ -90,14 +95,15 @@
     font-weight: 700;
     letter-spacing: 0.03em;
     border: none;
+    text-decoration: none;
     border-radius: 8px;
     cursor: pointer;
     transition: var(--transition);
-
+    /*
     .link-donar {
         text-decoration: none;
         color: var(--color-light);
-    }
+    }*/
 }
 
 .boton-donar:hover {
