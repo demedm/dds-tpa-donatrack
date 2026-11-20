@@ -47,8 +47,8 @@ public class Router {
       ctx.render("public/registro-donacion.hbs");
     });
 
-    app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
-    app.before("/necesidades/*", this::autenticados);
+    // app.before("/necesidades/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
+    // app.before("/necesidades/*", this::autenticados);
     app.get("/necesidades", necesidadController::showNecesidades);
     app.post("/necesidades", necesidadController::crear);
     app.get("/necesidades/{id}", necesidadController::showNecesidad);
@@ -58,7 +58,7 @@ public class Router {
     // las rutas comentadas son para poder ver las vistas sin loggear
     app.before("/usuarios/*", this::autenticados);
     app.before("/usuarios/*", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
-    app.get("/usuarios/entregas-en-curso", logisticaController::entregasEnCurso);
+    app.get("/usuarios/{idUsuario}/entregas-en-curso", logisticaController::entregasEnCurso);
 
     app.before("/admin/*", session::validarAutenticacion);
     app.before("/admin/*", new RolMiddleware(Rol.ADMIN)::validarPermisos);
