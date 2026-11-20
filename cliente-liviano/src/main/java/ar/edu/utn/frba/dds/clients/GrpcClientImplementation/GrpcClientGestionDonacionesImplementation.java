@@ -229,7 +229,6 @@ public class GrpcClientGestionDonacionesImplementation  {
 
   }
 
-
   private SegmentadaPanelDTO aPanelDTO(SegmentadaProto proto){
     SegmentadaPanelDTO dto = new SegmentadaPanelDTO();
 
@@ -269,7 +268,25 @@ public class GrpcClientGestionDonacionesImplementation  {
     return dtos;
   }
 
+  public boolean asignarDonacionManualmente(Long segmentadaId, Long entidadId) {
+    try {
+      AsignacionRequest request = AsignacionRequest.newBuilder()
+          .setSegmentadaId(segmentadaId)
+          .setEntidadId(entidadId)
+          .build();
 
+      ResultadoOperacion response = stub.asignarDonacionManualmente(request);
 
+      if (!response.getExito()) {
+        System.err.println("Error en asignación manual: " + response.getMensaje());
+      }
+
+      return response.getExito();
+
+    } catch (Exception e) {
+      System.err.println("Error al realizar asignación manual: " + e.getMessage());
+      return false;
+    }
+  }
 
 }

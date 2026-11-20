@@ -106,6 +106,7 @@ public class PlanificacionRepositorio implements WithSimplePersistenceUnit {
         camiones.stream().map(CamionDisponibleDto::de).toList());
   }
 
+  /*
   public void revertirLote(Long loteId) {
     LotePlanificacion lote = entityManager().find(LotePlanificacion.class, loteId);
     lote.setEstado(EstadoLote.FALLIDO);
@@ -116,6 +117,34 @@ public class PlanificacionRepositorio implements WithSimplePersistenceUnit {
           i.setLote(null);
           i.setEstado(EstadoItem.PENDIENTE);   // sin sumar intentos: no fue culpa de la donación
         });
+  }
+  */
+
+  public void revertirLote(Long loteId) {
+    withTransaction(() -> {
+      LotePlanificacion lote =
+          entityManager().find(LotePlanificacion.class, loteId);
+
+      if (lote == null) {
+        throw new IllegalArgumentException(
+            "No existe el lote " + loteId
+        );
+      }
+
+      lote.setEstado(EstadoLote.FALLIDO);
+
+      entityManager()
+          .createQuery(
+              "from ItemPlanificacion i where i.lote.id = :id",
+              ItemPlanificacion.class
+          )
+          .setParameter("id", loteId)
+          .getResultList()
+          .forEach(i -> {
+            i.setLote(null);
+            i.setEstado(EstadoItem.PENDIENTE);
+          });
+    });
   }
 
   public List<Camion> camionesDisponibles() {
@@ -226,6 +255,117 @@ public class PlanificacionRepositorio implements WithSimplePersistenceUnit {
       lote.setEstado(EstadoLote.RECIBIDO);
       lote.setRecibidoEn(LocalDateTime.now());
       return res;
+    });
+  }
+
+  public SolicitudPlanificacionDto prepararSolicitudManual(
+      List<Long> camionesIds,
+      int tamanioLote,
+      String callbackUrl) {
+
+    return withTransaction(() -> {
+
+      if (camionesIds == null || camionesIds.isEmpty()) {
+        throw new IllegalArgumentException(
+            "Debe seleccionar al menos un camión."
+        );
+      }
+
+      if (new HashSet<>(camionesIds).size() != camionesIds.size()) {
+        throw new IllegalArgumentException(
+            "No se permiten camiones repetidos."
+        );
+      }
+
+      // Comprobar que no haya otro lote esperando respuesta.
+      Long enviados = entityManager()
+          .createQuery(
+              "select count(l) from LotePlanificacion l where l.estado = :e",
+              Long.class
+          )
+          .setParameter("e", EstadoLote.ENVIADO)
+          .getSingleResult();
+
+      if (enviados > 0) {
+        throw new IllegalStateException(
+            "Ya existe una planificación esperando respuesta."
+        );
+      }
+
+      // Buscar exclusivamente los camiones seleccionados.
+      List<Camion> camiones = entityManager()
+          .createQuery(
+              "from Camion c where c.id in :ids",
+              Camion.class
+          )
+          .setParameter("ids", camionesIds)
+          .getResultList();
+
+      if (camiones.size() != camionesIds.size()) {
+        throw new IllegalArgumentException(
+            "Uno o más camiones seleccionados no existen."
+        );
+      }
+
+      // Verificar disponibilidad.
+      List<Long> noDisponibles = camiones.stream()
+          .filter(c -> c.getEstado() != EstadoCamion.DISPONIBLE)
+          .map(Camion::getId)
+          .toList();
+
+      if (!noDisponibles.isEmpty()) {
+        throw new IllegalStateException(
+            "Los siguientes camiones no están disponibles: "
+                + noDisponibles
+        );
+      }
+
+      // Obtener donaciones pendientes.
+      List<ItemPlanificacion> items = entityManager()
+          .createQuery(
+              "from ItemPlanificacion i " +
+                  "where i.estado = :e " +
+                  "order by i.fechaVencimiento",
+              ItemPlanificacion.class
+          )
+          .setParameter("e", EstadoItem.PENDIENTE)
+          .setMaxResults(tamanioLote)
+          .getResultList();
+
+      if (items.isEmpty()) {
+        throw new IllegalStateException(
+            "No hay donaciones pendientes de planificación."
+        );
+      }
+
+      // Crear lote con los camiones seleccionados.
+      LotePlanificacion lote = new LotePlanificacion();
+      lote.setEstado(EstadoLote.ENVIADO);
+      lote.setIdsCamiones(
+          camiones.stream().map(Camion::getId).toList()
+      );
+
+      entityManager().persist(lote);
+      entityManager().flush();
+
+      // Marcar donaciones como enviadas.
+      LocalDateTime ahora = LocalDateTime.now();
+
+      for (ItemPlanificacion item : items) {
+        item.enviarAPlanificar(lote);
+        item.setEnviadoEn(ahora);
+      }
+
+      return new SolicitudPlanificacionDto(
+          lote.getId(),
+          callbackUrl,
+          items.stream()
+              .map(DonacionAPlanificarDto::de)
+              .toList(),
+          camiones.stream()
+              .map(CamionDisponibleDto::de)
+              .toList()
+      );
     });
   }
 

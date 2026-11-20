@@ -8,6 +8,7 @@
     }).addTo(mapa);
 
     var capa = L.layerGroup().addTo(mapa);
+    var marcadores = {};
     var primeraCarga = true;
     var hayEntregas = false;
 
@@ -36,6 +37,7 @@
 
             var entregas = await resp.json();
             capa.clearLayers();
+            marcadores = {};
             var puntos = [];
 
             entregas.forEach(function (e) {
@@ -55,6 +57,7 @@
                 mapa.fitBounds(puntos, { padding: [30, 30], maxZoom: 14 });
             }
             primeraCarga = false;
+            await actualizarUbicaciones();
         } catch (err) {
             console.error('No se pudieron cargar las entregas en curso', err);
         }
@@ -168,4 +171,23 @@
     });
 
     cargarDeposito();
+
+    async function actualizarUbicaciones() {
+        try {
+            var r = await fetch('/admin/logistica/ubicaciones', {
+                headers: { 'Accept': 'application/json' },
+                cache: 'no-store'
+            });
+            if (r.status === 401) { window.location.href = '/login'; return; }
+            if (!r.ok) return;
+            (await r.json()).forEach(function (u) {
+                (marcadores[u.patente] || []).forEach(function (m) {
+                    m.setLatLng([u.latitud, u.longitud]);
+                });
+            });
+        } catch (e) {
+            console.error('No se pudieron actualizar las ubicaciones', e);
+        }
+    }
+    setInterval(actualizarUbicaciones, 5000);
 })();

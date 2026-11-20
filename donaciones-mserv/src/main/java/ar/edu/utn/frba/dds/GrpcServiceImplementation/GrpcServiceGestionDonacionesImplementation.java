@@ -514,4 +514,70 @@ public class GrpcServiceGestionDonacionesImplementation
                 .build());
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void asignarDonacionManualmente(AsignacionRequest request,
+                                           StreamObserver<ResultadoOperacion> responseObserver) {
+        try {
+            // 1. Buscar la donación segmentada
+            DonacionSegmentada segmentada =
+                donacionesRepo.findSegmentadaById(request.getSegmentadaId());
+
+            if (segmentada == null) {
+                responder(responseObserver, false,
+                    "No se encontró la donación segmentada " + request.getSegmentadaId());
+                return;
+            }
+
+            // 2. Verificar que esté disponible en depósito
+            if (!segmentada.estaAlmacen()) {
+                responder(responseObserver, false,
+                    "Solo se pueden asignar donaciones EN_DEPOSITO (donación "
+                        + request.getSegmentadaId() + ")");
+                return;
+            }
+
+            // 3. Buscar la entidad seleccionada manualmente
+            EntidadBeneficiaria entidad =
+                entidadRepo.obtenerPorId(request.getEntidadId());
+
+            if (entidad == null) {
+                responder(responseObserver, false,
+                    "No se encontró la entidad " + request.getEntidadId());
+                return;
+            }
+
+            // 4. Buscar una petición que pueda cubrir la donación
+            Peticion peticion = entidad.getNecesidades().stream()
+                .flatMap(necesidad -> necesidad.getPeticiones().stream())
+                .filter(segmentada::puedeCubrir)
+                .findFirst()
+                .orElse(null);
+
+            if (peticion == null) {
+                responder(responseObserver, false,
+                    "La entidad " + entidad.getId()
+                        + " no tiene peticiones compatibles con esta donación");
+                return;
+            }
+
+            // 5. Asignar la donación
+            donacionesRepo.withTransaction(() ->
+                segmentada.asignarManualmenteA(entidad.getId(), peticion));
+
+            // 6. Avisar sobre la asignación
+            avisarAsignacion(segmentada, entidad);
+
+            responder(responseObserver, true,
+                "Donación asignada manualmente a " + entidad.nombreParaMostrar());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responder(responseObserver, false,
+                "No se pudo asignar manualmente la donación: " + e.getMessage());
+        } finally {
+            WithSimplePersistenceUnit.dispose();
+        }
+    }
+
 }

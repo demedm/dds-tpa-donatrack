@@ -27,14 +27,16 @@ public class CallbackController {
   private ClientDonaciones clientDonaciones = new ClientDonaciones();
 
   public void recibirPlanificacion(Context ctx) {
+
     ResponsePlanificacionDto resp;
+
     try {
       resp = ctx.bodyAsClass(ResponsePlanificacionDto.class);
     } catch (Exception e) {
       throw new BadRequestResponse("JSON inválido");
     }
-
     ResultadoPlanificacion r;
+
     try {
       r = PlanificacionRepositorio.Instance.procesarRespuesta(resp);
     } catch (NoSuchElementException e) {
@@ -44,16 +46,18 @@ public class CallbackController {
     }
 
     if (!r.yaProcesado) {
-      // El resultado ya está commiteado. Si algo de lo que sigue falla, no se pierde nada.
+      // 1. Notificar a Donaciones el resultado confirmado.
       try {
         notificarResultado(r);
+      } catch (Exception e) {
+        System.err.println("Error notificando el resultado a Donaciones: " + e.getMessage());
+      }
+      try {
         PlanificarDonaciones.ejecutar();
       } catch (Exception e) {
-        System.err.println("Error posterior al commit del lote {}" + resp.getLoteId()
-            + e.getMessage());
+        System.err.println("Error iniciando la siguiente planificación: " + e.getMessage());
       }
     }
-
     ctx.status(200);
   }
 

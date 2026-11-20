@@ -9,6 +9,7 @@ import ar.edu.utn.frba.dds.controllers.HomeController;
 import ar.edu.utn.frba.dds.controllers.NecesidadController;
 import ar.edu.utn.frba.dds.controllers.RolMiddleware;
 import ar.edu.utn.frba.dds.controllers.SessionController;
+import ar.edu.utn.frba.dds.controllers.TelemetriaController;
 import ar.edu.utn.frba.dds.repositorios.JwtRepositorio;
 import ar.edu.utn.frba.dds.session.Rol;
 import io.javalin.Javalin;
@@ -24,6 +25,7 @@ public class Router {
     var logisticaController = new LogisticaController();
     var adminController = new AdminController();
     var donanteController = new DonanteController();
+    var telemetriaController = new TelemetriaController();
     var beneficiarioController = new BeneficiarioController();
 
     app.before(this::cargarSesion);
@@ -79,11 +81,17 @@ public class Router {
     app.get("/admin/logistica/deposito", logisticaController::obtenerDeposito);   // ?id= opcional sin id devuelve el deposito ppal
     app.post("/admin/logistica/deposito", logisticaController::guardarDeposito);
     app.get("/admin/logistica/depositos", logisticaController::listarDepositos);
+    app.post("/camiones/{patente}/telemetria", telemetriaController::recepcionarTelemetria);
+    app.post("camiones/{patente}/iniciar", telemetriaController::iniciarRuta);
+    app.get("/admin/logistica/ubicaciones", logisticaController::ubicacionesAdmin);
+
+    app.post("/admin/logistica/planificar", logisticaController::iniciarPlanificacion);
 
     app.get("/admin/donaciones/nueva", adminController::mostrarNuevaDonacion);
     app.get("/admin/donaciones", adminController::mostrarDonaciones);
 
-    app.post("/admin/donaciones/{id}/asignacion", adminController::asignarDonacion);
+    app.post("/admin/donaciones/{id}/asignar/{entidadId}", adminController::asignarDonacionManualmente);
+    app.get("/admin/donaciones/{id}/entidades", adminController::mostrarEntidadesParaAsignacion);
     app.post("/admin/donaciones/vencidas",adminController::marcarVencidas);
 
     app.get("/admin/camiones/nuevo", logisticaController::mostrarFormCamion);

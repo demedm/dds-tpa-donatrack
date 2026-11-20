@@ -1,7 +1,5 @@
 package ar.edu.utn.frba.dds.scripts.dto.planificacion;
 
-import ar.edu.utn.frba.dds.scripts.dto.CamionDto;
-
 import java.util.List;
 
 public class SolicitudPlanificacionDto {
@@ -35,5 +33,21 @@ public class SolicitudPlanificacionDto {
 
   public void setCallbackUrl(String callbackUrl) {
     this.callbackUrl = callbackUrl;
+  }
+
+  public List<DonacionAPlanificarDto> getDonaciones() {
+    return donaciones;
+  }
+
+  public void setDonaciones(List<DonacionAPlanificarDto> donaciones) {
+    this.donaciones = donaciones;
+  }
+
+  public List<CamionDisponibleDto> getCamiones() {
+    return camiones;
+  }
+
+  public void setCamiones(List<CamionDisponibleDto> camiones) {
+    this.camiones = camiones;
   }
 }

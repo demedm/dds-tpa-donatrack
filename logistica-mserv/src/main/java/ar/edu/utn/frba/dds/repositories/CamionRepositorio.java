@@ -24,6 +24,10 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
     });
   }
 
+  public void guardarUbicacion(Ubicacion ubicacion) {
+    withTransaction(() -> entityManager().persist(ubicacion));
+  }
+
   public void registrar(Camion camion) {
     withTransaction(()->entityManager().persist(camion));
   }
@@ -52,14 +56,11 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
   }
 
   public Camion buscarPorPatente(String patente) {
-    List <Camion> resultados = entityManager()
+     return entityManager()
             .createQuery("from Camion c where c.patente = :patente",Camion.class)
             .setParameter("patente",patente)
-            .getResultList();
-    if (resultados.isEmpty()){
-      throw new CamionNotFoundException(patente);
-    }
-    return resultados.get(0);
+            .getResultList()
+        .stream().findFirst().orElse(null);
   }
 
   @SuppressWarnings("unchecked")
@@ -86,10 +87,9 @@ public class CamionRepositorio implements WithSimplePersistenceUnit {
             .getSingleResult();
   }
 
-  public EstadoCamion buscarPatentePorId(Long id) {
+  public String buscarPatentePorId(Long id) {
     return entityManager()
         .createQuery("select c.patente from Camion c where c.id = :id", EstadoCamion.class)
-        .setParameter("id", id)
-        .getSingleResult();
+        .setParameter("id", id).toString();
   }
 }

@@ -39,10 +39,10 @@
             </form>
 
             <div class="admin-agregar">
-                <a href="/admin/logistica/rutas/nueva" class="boton-rojo">
+
+                <button type="button" id="agregarRuta" class="enlace-accion" disabled>
                     Agregar Ruta
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-                </a>
+                </button>
                 <a href="/admin/camiones/nuevo" class="boton-rojo">
                     Agregar Camión
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
@@ -54,7 +54,10 @@
 
             <!-- ===== COLUMNA IZQUIERDA ===== -->
             <div class="admin-col" id="colIzquierda">
-                {{> templates/admin/logistica/logistica-panel}}
+                <section class="tarjeta" id="panelVacio">
+                    <h2>Panel de logística</h2>
+                    <p>Seleccioná un camión y presioná "Mostrar Detalles" para consultar su información.</p>
+                </section>
             </div>
             <!-- ===== COLUMNA DERECHA ===== -->
             <div class="admin-col">
@@ -74,7 +77,13 @@
                     </label>
 
                     <div class="acciones-tabla-der">
-                        <button type="button" class="enlace-accion">Mostrar Detalles</button>
+                        <button
+                                type="button"
+                                id="mostrarDetalles"
+                                class="enlace-accion"
+                                disabled>
+                            Mostrar Detalles
+                        </button>
                         <button type="button" class="enlace-accion">Reactivar</button>
                         <button type="button" class="enlace-accion">Eliminar</button>
 
@@ -113,12 +122,17 @@
                             <tbody>
                                 {{#each camiones}}
                                     <tr>
-                                        <td><label class="check-recordame check-tabla">
-                                            <input type="radio" name="camion" value="{{id}}"
-                                                   {{#if seleccionado}}checked{{/if}}>
-                                            <span class="check-caja"></span>
-                                            <span class="sr-only">Seleccionar camión {{patente}}</span>
-                                        </label>
+                                        <td>
+                                            <label class="check-recordame check-tabla">
+                                                <input
+                                                        type="checkbox"
+                                                        name="camionesSeleccionados"
+                                                        value="{{id}}"
+                                                        class="checkbox-camion"
+                                                >
+                                                <span class="check-caja"></span>
+                                                <span class="sr-only">Seleccionar camión {{patente}}</span>
+                                            </label>
                                         </td>
                                         <td>{{patente}}</td>
                                         <td>{{chofer}}</td>
@@ -139,44 +153,129 @@
 
     <script>
         (function () {
-            var controlador = null;
+            const checkboxes = document.querySelectorAll('.checkbox-camion');
 
-            async function seleccionarCamion(id) {
-                var col = document.getElementById('colIzquierda');
+            const seleccionarTodos = document.getElementById('seleccionarTodos');
+            const botonDetalles = document.getElementById('mostrarDetalles');
+            const botonAgregarRuta = document.getElementById('agregarRuta');
+            const col = document.getElementById('colIzquierda');
 
-                // si se hace clic rápido en varios camiones se cancela el pedido anterior
-                if (controlador) controlador.abort();
-                controlador = new AbortController();
-
-                col.setAttribute('aria-busy', 'true');
-                col.style.opacity = '0.5';
-
-                try {
-                    var resp = await fetch(
-                            '/admin/logistica/camion/' + encodeURIComponent(id) + '/panel',
-                            { signal: controlador.signal }
-                    );
-
-                    if (resp.status === 401) { window.location.href = '/login'; return; }
-                    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-
-                    col.innerHTML = await resp.text();
-                    // la URL sigue siendo compartible y sobrevive a un F5
-                    history.replaceState(null, '', '/admin/logistica?camion=' + encodeURIComponent(id));
-                } catch (e) {
-                    if (e.name === 'AbortError') return;
-                    col.innerHTML = '<p class="aviso-error" role="alert">No se pudo cargar el camión seleccionado.</p>';
-                } finally {
-                    col.removeAttribute('aria-busy');
-                    col.style.opacity = '';
-                }
+            // Obtener los IDs de todos los camiones seleccionados.
+            function obtenerCamionesSeleccionados() {
+                return Array.from(checkboxes)
+                        .filter(checkbox => checkbox.checked)
+                        .map(checkbox => Number(checkbox.value));
             }
 
-            document.addEventListener('change', function (ev) {
-                if (ev.target.matches('input[name="camion"]')) {
-                    seleccionarCamion(ev.target.value);
+            // Actualizar el estado de los botones y del checkbox general.
+            function actualizarBotones() {
+                const seleccionados = obtenerCamionesSeleccionados();
+                const cantidad = seleccionados.length;
+
+                // Mostrar detalles solamente permite un camión.
+                botonDetalles.disabled = cantidad !== 1;
+
+                // Agregar ruta permite uno o varios camiones.
+                botonAgregarRuta.disabled = cantidad === 0;
+
+                // Actualizar selección general.
+                seleccionarTodos.checked =
+                        checkboxes.length > 0 && cantidad === checkboxes.length;
+
+                seleccionarTodos.indeterminate =
+                        cantidad > 0 && cantidad < checkboxes.length;
+            }
+
+            // Escuchar cambios individuales.
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', actualizarBotones);
+            });
+
+            // Seleccionar o deseleccionar todos los camiones.
+            seleccionarTodos.addEventListener('change', function () {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = seleccionarTodos.checked;
+                });
+
+                actualizarBotones();
+            });
+
+            // Mostrar detalles de un único camión.
+            botonDetalles.addEventListener('click', async function () {
+                const seleccionados = obtenerCamionesSeleccionados();
+
+                if (seleccionados.length !== 1) return;
+
+                const camionId = seleccionados[0];
+
+                try {
+                    const response = await fetch(
+                            '/admin/logistica/camion/' +
+                            encodeURIComponent(camionId) +
+                            '/panel'
+                    );
+
+                    if (!response.ok) {
+                        throw new Error('No se pudo cargar el camión');
+                    }
+
+                    col.innerHTML = await response.text();
+
+                } catch (error) {
+                    console.error(error);
+                    alert('No se pudieron cargar los detalles del camión.');
                 }
             });
+
+            // Iniciar planificación manual con los camiones seleccionados.
+            botonAgregarRuta.addEventListener('click', async function () {
+                const camiones = obtenerCamionesSeleccionados();
+
+                if (camiones.length === 0) return;
+
+                botonAgregarRuta.disabled = true;
+
+                try {
+                    const response = await fetch(
+                            '/admin/logistica/planificar',
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    camionesIds: camiones
+                                })
+                            }
+                    );
+
+                    const resultado = await response.json();
+
+                    if (!response.ok || resultado.exito === false) {
+                        throw new Error(
+                                resultado.mensaje ||
+                                'No se pudo iniciar la planificación'
+                        );
+                    }
+
+                    alert(
+                            resultado.mensaje ||
+                            'La planificación se inició correctamente.'
+                    );
+
+                } catch (error) {
+                    console.error(error);
+                    alert(error.message || 'Error al iniciar la planificación.');
+
+                } finally {
+                    actualizarBotones();
+                }
+            });
+
+            // Estado inicial.
+            actualizarBotones();
+
         })();
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

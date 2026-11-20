@@ -34,7 +34,6 @@ public class BeneficiarioController {
     modelo.put("hayFiltros",estado != null || categoria != null);
 
     try {
-
       List<SegmentadaPanelDTO> todas = gestionDonaciones.listarDonacionesAsignadas(usuario.getId());
 
       List<Map<String, Object>> filas = todas.stream()

@@ -53,6 +53,22 @@
     border-radius: 10px;
 }
 
+.boton-asignar {
+    display: inline-block;
+    padding: 0.45rem 1.1rem;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-light);
+    background-color: var(--color-accent);
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.boton-asignar:hover {
+    background-color: #1a8fd0;
+}
+
 /* ===== RESULTADOS DE ASIGNACIÓN (derecha) ===== */
 .resultados {
     padding: 1.25rem 1.5rem 1.5rem;

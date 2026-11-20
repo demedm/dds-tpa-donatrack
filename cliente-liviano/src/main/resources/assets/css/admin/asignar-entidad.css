@@ -1,0 +1,264 @@
+
+/* =====================================================
+   ASIGNACIÓN DE DONACIÓN A ENTIDAD
+   ===================================================== */
+
+/* ===== DONACIÓN SELECCIONADA ===== */
+
+.donacion-seleccionada {
+    border-left: 5px solid var(--color-complementary);
+}
+
+.donacion-datos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.25rem;
+}
+
+.donacion-datos > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.9rem 1rem;
+    background-color: #f8f8f8;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+}
+
+.donacion-datos label {
+    font-family: var(--font-secondary);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.donacion-datos span {
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+/* ===== LISTADO DE ENTIDADES ===== */
+
+.entidades-listado {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.entidad-card {
+    padding: 1.5rem;
+    background-color: var(--color-light);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.entidad-card:hover {
+    border-color: var(--color-complementary);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+}
+
+/* ===== CABECERA DE ENTIDAD ===== */
+
+.entidad-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.entidad-cabecera h3 {
+    margin-bottom: 0.6rem;
+    font-family: var(--font-main);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.entidad-cabecera .tag {
+    background-color: rgba(172, 205, 68, 0.2);
+    color: var(--color-primary);
+    border: 1px solid rgba(172, 205, 68, 0.5);
+}
+
+.entidad-id {
+    padding: 0.4rem 0.8rem;
+    font-family: var(--font-secondary);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    background-color: var(--color-light-secondary);
+    border-radius: 5px;
+}
+
+/* ===== DATOS DE ENTIDAD ===== */
+
+.entidad-datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.entidad-datos p {
+    font-family: var(--font-secondary);
+    font-size: 0.98rem;
+    color: var(--color-text-secondary);
+}
+
+.entidad-datos strong {
+    color: var(--color-text);
+}
+
+/* ===== NECESIDADES ===== */
+
+.entidad-necesidades {
+    margin-top: 1rem;
+    padding: 1.25rem;
+    background-color: #f8f9fa;
+    border: 1px solid var(--color-border);
+    border-radius: 7px;
+}
+
+.entidad-necesidades h4 {
+    margin-bottom: 1rem;
+    font-family: var(--font-main);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+/* ===== CADA NECESIDAD ===== */
+
+.necesidad-item {
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.necesidad-item:first-child {
+    padding-top: 0;
+}
+
+.necesidad-item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.necesidad-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+}
+
+.necesidad-cabecera strong {
+    font-family: var(--font-main);
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+/* Estado de necesidad */
+.necesidad-cabecera .tag {
+    background-color: #eef2f6;
+    color: var(--color-primary);
+    border: 1px solid var(--color-border);
+}
+
+/* ===== TABLA DE PETICIONES ===== */
+
+.necesidad-item .tabla-wrapper {
+    overflow-x: auto;
+    background-color: var(--color-light);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+}
+
+.necesidad-item .tabla-datos {
+    min-width: 600px;
+    font-size: 0.9rem;
+}
+
+.necesidad-item .tabla-datos thead {
+    background-color: var(--color-primary);
+}
+
+.necesidad-item .tabla-datos th {
+    padding: 0.75rem 0.9rem;
+    font-size: 0.85rem;
+}
+
+.necesidad-item .tabla-datos td {
+    padding: 0.75rem 0.9rem;
+}
+
+/* ===== MENSAJES VACÍOS ===== */
+
+.vacio {
+    padding: 1rem;
+    font-family: var(--font-secondary);
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    background-color: var(--color-light-secondary);
+    border-radius: 6px;
+}
+
+/* ===== FORMULARIO Y BOTÓN ===== */
+
+.entidad-card form {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.entidad-card .btn-primario {
+    min-width: 190px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 700px) {
+
+    .donacion-datos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .entidad-card {
+        padding: 1rem;
+    }
+
+    .entidad-necesidades {
+        padding: 0.85rem;
+    }
+
+    .entidad-card form {
+        justify-content: stretch;
+    }
+
+    .entidad-card .btn-primario {
+        width: 100%;
+    }
+}
+
+@media (max-width: 450px) {
+    .donacion-datos {
+        grid-template-columns: 1fr;
+    }
+
+    .entidad-cabecera {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
