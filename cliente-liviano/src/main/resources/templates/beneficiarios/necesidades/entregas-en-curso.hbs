@@ -56,7 +56,7 @@
         const mapa = L.map('mapa').setView([-34.6037, -58.3816], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa);
 
-        fetch('/usuarios/{{idUsuario}}/entregas-en-curso', {
+        fetch('/usuarios/entregas-en-curso', {
             headers: { 'Accept': 'application/json' },
             cache: 'no-store'
         })

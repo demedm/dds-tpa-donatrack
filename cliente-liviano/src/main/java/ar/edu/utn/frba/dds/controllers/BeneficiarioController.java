@@ -38,7 +38,6 @@ public class BeneficiarioController {
     Map<String, Object> modelo = new HashMap<>();
 
     modelo.put("hayFiltros",estado != null || categoria != null);
-    modelo.put("idUsuario", usuario.getId());
 
     try {
 
