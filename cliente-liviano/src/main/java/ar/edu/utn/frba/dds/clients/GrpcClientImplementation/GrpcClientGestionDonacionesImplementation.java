@@ -205,6 +205,30 @@ public class GrpcClientGestionDonacionesImplementation  {
 
   }
 
+  //pantalla 9
+  public List<SegmentadaPanelDTO> listarDonacionesAsignadas(Long entidadId){
+
+    ListaSegmentadasResponse respuesta;
+
+    try{
+      respuesta = stub.listarDonacionesAsignadas(EntidadAsignadaRequest.newBuilder()
+          .setEntidadId(entidadId)
+          .build());
+
+    } catch (Exception e){
+      throw new RuntimeException("sin conexion gRPC con Donaciones (9090)",e);
+    }
+
+    if(!respuesta.getExito()){
+      throw new RuntimeException(respuesta.getMensaje());
+    }
+
+    return respuesta.getSegmentadasList().stream()
+        .map(this::aPanelDTO)
+        .toList();
+
+  }
+
   private SegmentadaPanelDTO aPanelDTO(SegmentadaProto proto){
     SegmentadaPanelDTO dto = new SegmentadaPanelDTO();
 

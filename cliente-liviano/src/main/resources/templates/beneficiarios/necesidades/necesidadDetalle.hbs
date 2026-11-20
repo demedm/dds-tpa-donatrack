@@ -80,6 +80,7 @@
 
             <div class="panel-card">
                 <h2>Adjuntos</h2>
+                <p class="panel-subtitulo">Subinos una foto de la recepción de tu entrega! Nos sirve para verificar que te llegó bien y que más gente vea el trabajo que hacemos!</p>
                 {{#if necesidad.adjuntos}}
                     <div class="adjuntos-lista">
                         {{#each necesidad.adjuntos}}
@@ -108,6 +109,7 @@
             const datos = new FormData();
             datos.append('file', document.getElementById('foto').files[0]);
             datos.append('upload_preset', 'necesidades_unsigned');
+            datos.append('tags', 'entrega');
             const r = await fetch('https://api.cloudinary.com/v1_1/hiozujaz/image/upload',
                     { method: 'POST', body: datos });
             const json = await r.json();

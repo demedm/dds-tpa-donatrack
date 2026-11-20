@@ -224,7 +224,7 @@ public class LogisticaController {
     model.put("idUsuario", idUsuario);
     model.put("enCurso", enCurso);
 
-    ctx.render("entregas-en-curso.hbs", model);
+    ctx.render("beneficiarios/necesidades/entregas-en-curso.hbs", model);
   }
 
   public void entregasEnCursoAdmin(@NotNull Context ctx) {
