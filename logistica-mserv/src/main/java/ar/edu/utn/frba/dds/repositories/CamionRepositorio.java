@@ -4,10 +4,9 @@ import ar.edu.utn.frba.dds.exceptions.CamionNotFoundException;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.EstadoCamion;
 import ar.edu.utn.frba.dds.model.Ruta;
-import ar.edu.utn.frba.dds.model.Ubicacion;
+import ar.edu.utn.frba.dds.model.monitoreo.Ubicacion;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 public class CamionRepositorio implements WithSimplePersistenceUnit {

@@ -6,10 +6,14 @@ option java_package = "ar.edu.utn.frba.dds.grpc";
 service PlanificacionService {
   rpc SolicitarPlanificacion (SolicitudPlanificacionRequest) returns (ConfirmationPlanificacionResponse);
   rpc ObtenerEntregasEnCurso (EntregasEnCursoRequest) returns (EntregasEnCursoResponse);
+  rpc ObtenerDeposito(ObtenerDepositoRequest) returns (DepositoResponse);
+  rpc GuardarDeposito(GuardarDepositoRequest) returns (DepositoResponse);
+  rpc ListarDepositos(ListarDepositosRequest) returns (ListarDepositosResponse);
 }
 
 message EntregasEnCursoRequest {
   int64 entidad_id = 1;
+  string token = 2; // admin quiere todas las entregas
 }
 
 message EntregaEnCursoDto {
@@ -49,4 +53,35 @@ message SolicitudPlanificacionRequest {
 message ConfirmationPlanificacionResponse {
   string response_id = 1;
   string estado = 2;
+}
+
+message DepositoDto {
+  int64 id = 1;
+  string nombre = 2;
+  string direccion = 3;
+  double latitud = 4;
+  double longitud = 5;
+  bool principal = 6;
+}
+
+message DepositoResponse {
+  bool configurado = 1;
+  DepositoDto deposito = 2;
+}
+
+message ObtenerDepositoRequest {
+  int64 id = 1;
+}
+
+message GuardarDepositoRequest {
+  string token = 1;
+  DepositoDto deposito = 2;
+}
+
+message ListarDepositosResponse {
+  repeated DepositoDto depositos = 1;
+}
+
+message ListarDepositosRequest {
+
 }

@@ -3,12 +3,15 @@ package ar.edu.utn.frba.dds.main;
 import ar.edu.utn.frba.dds.model.Camion;
 import ar.edu.utn.frba.dds.model.Entrega;
 import ar.edu.utn.frba.dds.model.Ruta;
+import ar.edu.utn.frba.dds.model.monitoreo.Deposito;
 import ar.edu.utn.frba.dds.model.usuarios.Chofer;
 import ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria;
 import ar.edu.utn.frba.dds.repositories.CamionRepositorio;
 import ar.edu.utn.frba.dds.repositories.EntregaRepositorio;
 import ar.edu.utn.frba.dds.repositories.RutaRepositorio;
 import ar.edu.utn.frba.dds.repositories.UsuarioRepositorio;
+import ar.edu.utn.frba.dds.repositories.monitoreo.MonitoreoRepositorio;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +51,18 @@ public class Bootstrap {
 
     RutaRepositorio.Instance.registrar(ruta1);
     RutaRepositorio.Instance.registrar(ruta2);
+
+    MonitoreoRepositorio.Instance.registrar(deposito());
+  }
+
+  private static Deposito deposito() {
+    Deposito deposito = new Deposito();
+    deposito.setDireccion("Av. Medrano 951, C1179AAQ Cdad. Autónoma de Buenos Aires");
+    deposito.setEsPrincipal(true);
+    deposito.setLatitud(-34.59849920123701);
+    deposito.setLongitud(-58.420127732386376);
+    deposito.setNombre("Depósito Principal Medrano");
+    return deposito;
   }
 
   private static List<Entrega> entregas() {

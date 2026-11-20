@@ -1,12 +1,9 @@
 package ar.edu.utn.frba.dds.main;
 
 import ar.edu.utn.frba.dds.model.Camion;
-import ar.edu.utn.frba.dds.model.EstadoCamion;
-import ar.edu.utn.frba.dds.model.Ubicacion;
+import ar.edu.utn.frba.dds.model.monitoreo.Ubicacion;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDateTime;
 
 public class CamionTest {
 

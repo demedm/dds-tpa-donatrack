@@ -1,4 +1,5 @@
 {{#partial "estilos"}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="/assets/css/admin/admin.css">
 {{/partial}}
 
@@ -42,7 +43,7 @@
                     Agregar Ruta
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                 </a>
-                <a href="/admin/logistica/camiones/nuevo" class="boton-rojo">
+                <a href="/admin/camiones/nuevo" class="boton-rojo">
                     Agregar Camión
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                 </a>
@@ -53,18 +54,15 @@
 
             <!-- ===== COLUMNA IZQUIERDA ===== -->
             <div class="admin-col" id="colIzquierda">
-                {{> templates/admin/logistica-panel}}
+                {{> templates/admin/logistica/logistica-panel}}
             </div>
             <!-- ===== COLUMNA DERECHA ===== -->
             <div class="admin-col">
 
-                <!-- Mapa (placeholder hasta tener la lógica) -->
-                <div class="mapa" id="mapa" role="img" aria-label="Mapa de rutas (próximamente)">
-                    <div class="mapa-etiqueta">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
-                        Logística
-                    </div>
-                    <p class="mapa-aviso">Mapa próximamente</p>
+                <!-- Mapa  -->
+                <div class="mapa" id="mapa" role="region" aria-label="Mapa de entregas en curso"
+                     data-url="/admin/logistica/entregas-en-curso">
+                    <!-- xd -->
                 </div>
 
                 <!-- Acciones sobre el camión seleccionado -->
@@ -181,6 +179,8 @@
             });
         })();
     </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/assets/js/logistica-mapa.js"></script>
 {{/partial}}
 
 {{>templates/layout}}

@@ -6,7 +6,7 @@ import io.javalin.http.Context;
 import io.javalin.http.ForbiddenResponse;
 
 public class RolMiddleware {
-  public static Rol rolPermitido;
+  public Rol rolPermitido;
 
   public RolMiddleware(Rol rolPermitido) {
     this.rolPermitido = rolPermitido;

@@ -37,6 +37,9 @@ public class GrpcServicePlanificacionImplementation extends PlaniServiceGrpc.Pla
 
         PlanificacionRepositorio.Instance.registrar(aItem(d));
         aceptadas++;
+        System.out.println("PLANIFICACION: Donacion " + d.getDonacionId() +
+            " Direccion: " + d.getDireccion() +
+            " Beneficiario: " + d.getBeneficiarioId());
       }
 
       responseObserver.onNext(resp.setAceptadas(aceptadas).build());

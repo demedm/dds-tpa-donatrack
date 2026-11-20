@@ -15,7 +15,7 @@
         <class>ar.edu.utn.frba.dds.model.Camion</class>
         <class>ar.edu.utn.frba.dds.model.Ruta</class>
         <class>ar.edu.utn.frba.dds.model.Entrega</class>
-        <class>ar.edu.utn.frba.dds.model.Ubicacion</class>
+        <class>ar.edu.utn.frba.dds.model.monitoreo.Ubicacion</class>
         <class>ar.edu.utn.frba.dds.model.usuarios.Usuario</class>
         <class>ar.edu.utn.frba.dds.model.usuarios.Chofer</class>
         <class>ar.edu.utn.frba.dds.model.usuarios.EntidadBeneficiaria</class>
