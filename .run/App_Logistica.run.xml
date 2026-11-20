@@ -2,8 +2,8 @@
   <configuration default="false" name="App_Logistica" type="Application" factoryName="Application">
     <envs>
       <env name="DB_USER" value="root" />
-      <env name="DB_PASSWORD" value="NicoPASS127" />
-      <env name="JWT_SECRET" value="k7Gh2mXq9LpR4vNwT8bYc3Zf6Jd1AsE0uHiOg5WnBjK=" />
+      <env name="DB_PASSWORD" value="root" />
+      <env name="JWT_SECRET" value="SovV9lngLPiiUMJlQuPhZLE6PiGXc3xx48mSwd+Cv28=" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="ar.edu.utn.frba.dds.main.App_Logistica" />
     <module name="logistica-mserv" />
