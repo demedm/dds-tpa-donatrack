@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.server.templates;
 
 import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
+import ar.edu.utn.frba.dds.server.ConfiguracionCloudinary;
 import ar.edu.utn.frba.dds.session.Rol;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
@@ -30,6 +31,8 @@ public class JavalinHandlebars implements FileRenderer {
         modelo.put("esBeneficiario", rol == Rol.BENEFICIARIO);
         modelo.put("esAdmin", rol == Rol.ADMIN);
         modelo.put("puedeDonar", usuario == null || rol == Rol.DONANTE);
+        modelo.put("cloudinaryCloudName", ConfiguracionCloudinary.cloudName());
+        modelo.put("cloudinaryPreset", ConfiguracionCloudinary.uploadPreset());
 
 
         Template template = null;

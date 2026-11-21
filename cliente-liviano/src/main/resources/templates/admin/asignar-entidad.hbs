@@ -140,9 +140,8 @@
                                 {{/if}}
                             </div>
 
-                            <form method="post"
-                                  action="/admin/donaciones/{{../donacion.id}}/asignar/{{id}}">
-
+                            <form method="post" action="/admin/donaciones/{{../donacion.id}}/asignacion">
+                                <input type="hidden" name="entidadId" value="{{id}}">
                                 <button type="submit" class="btn-primario">
                                     Asignar donación
                                 </button>

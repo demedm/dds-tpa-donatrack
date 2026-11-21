@@ -64,6 +64,7 @@ public class Donacion {
 
     this.descripcionGeneral = descripcionGeneral;
     this.donante = donante;
+    donante.registrarActividad();
     this.donacionesSegmentadas = this.segmentar(bienes);
     this.fechaRecepcion = LocalDate.now();
   }

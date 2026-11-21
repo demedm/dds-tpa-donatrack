@@ -49,20 +49,11 @@ public class DonacionesRepository implements WithSimplePersistenceUnit {
     //Para los algoritmos
 
     public List<DonacionSegmentada> findSegmentadasEnDeposito(){
-
         return entityManager()
-            .createQuery("from DonacionSegmentada ", DonacionSegmentada.class)
-            .getResultList().stream()
-            .filter(DonacionSegmentada::estaAlmacen)
-            .toList();
-
-        /*
-        return entityManager()
-            .createQuery("from DonacionSegmentada ds where ds.estadoActual = :estado", DonacionSegmentada.class)
+            .createQuery("from DonacionSegmentada ds where ds.estadoActual = :estado or ds.estadoActual is null",
+                DonacionSegmentada.class)
             .setParameter("estado", new EnDeposito())
             .getResultList();
-
-         */
     }
 
     public List<Donacion> findDeDonante(Long donanteId){

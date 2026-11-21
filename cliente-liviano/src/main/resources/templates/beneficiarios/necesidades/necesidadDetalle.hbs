@@ -108,9 +108,9 @@
             e.preventDefault();
             const datos = new FormData();
             datos.append('file', document.getElementById('foto').files[0]);
-            datos.append('upload_preset', 'necesidades_unsigned');
+            datos.append('upload_preset', '{{cloudinaryPreset}}');
             datos.append('tags', 'entrega');
-            const r = await fetch('https://api.cloudinary.com/v1_1/hiozujaz/image/upload',
+            const r = await fetch('https://api.cloudinary.com/v1_1/{{cloudinaryCloudName}}/image/upload',
                     { method: 'POST', body: datos });
             const json = await r.json();
             document.getElementById('url').value = json.secure_url;

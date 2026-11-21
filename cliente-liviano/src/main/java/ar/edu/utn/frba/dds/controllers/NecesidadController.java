@@ -122,8 +122,6 @@ public class NecesidadController {
     Map<String, Object> model = crearModeloBase(usuarioLogueado);
     model.put("id", id);
     model.put("necesidad", necesidad);
-    model.put("cloudinaryCloudName", System.getenv("CLOUDINARY_CLOUD_NAME"));
-    model.put("cloudinaryPreset", System.getenv("CLOUDINARY_UPLOAD_PRESET"));
 
     ctx.render("beneficiarios/necesidades/necesidadDetalle.hbs", model);
   }
