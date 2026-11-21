@@ -1,0 +1,38 @@
+
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="/assets/css/donante.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <section class="panel-donaciones">
+        <div class="panel-encabezado">
+            <div>
+                <h1 class="panel-titulo">Tu Mapa</h1>
+                <p class="panel-subtitulo">
+                    Consultá las ubicaciones y el recorrido de tus donaciones.
+                </p>
+            </div>
+
+            <a href="/donante/donaciones" class="boton-volver">
+                Volver a mis donaciones
+            </a>
+        </div>
+
+        {{#if error}}
+            <p class="aviso aviso-error">{{error}}</p>
+        {{/if}}
+
+        <div class="mapa-donante"
+             id="mapa"
+             role="region"
+             aria-label="Mapa de depósitos"
+             data-url="/donante/depositos">
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/assets/js/donante-mapa.js"></script>
+{{/partial}}
+
+{{>templates/layout}}

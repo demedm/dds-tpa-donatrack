@@ -6,6 +6,7 @@ import ar.edu.utn.frba.dds.dto.UsuarioLogueado;
 import ar.edu.utn.frba.dds.vistas.Filtros;
 import ar.edu.utn.frba.dds.vistas.Formato;
 import io.javalin.http.Context;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -82,4 +83,7 @@ public class DonanteController {
   }
 
 
+  public void mostrarMapa(@NotNull Context ctx) {
+    ctx.render("donantes/mapa.hbs");
+  }
 }

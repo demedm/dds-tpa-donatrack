@@ -1,6 +1,7 @@
 package ar.edu.utn.frba.dds.dto;
 
 import ar.edu.utn.frba.dds.model.EstadoCamion;
+import ar.edu.utn.frba.dds.vistas.Formato;
 import com.camionesServiceGrpc.grpc.Camion;
 
 import java.text.DecimalFormat;
@@ -74,18 +75,11 @@ public class CamionDto {
   }
 
   public String getEstadoTxt() {
-    if (estado == null || estado.isBlank()) return "";
-    String texto = estado.replace('_', ' ').toLowerCase(new Locale("es", "AR"));
-    return Character.toUpperCase(texto.charAt(0)) + texto.substring(1);
+    return Formato.estadoLogistica(estado);
   }
 
   public String getClaseEstado() {
-    String e = estado == null ? "" : estado.toUpperCase();
-    if (e.contains(EstadoCamion.RUTA_ASIGNADA.name())) return "badge-ruta";
-    if (e.contains(EstadoCamion.DISPONIBLE.name())) return "badge-disponible";
-    if (e.contains(EstadoCamion.EN_MANTENIMIENTO.name())) return "badge-mantenimiento";
-    if (e.contains(EstadoCamion.REALIZANDO_ENTREGAS.name())) return "badge-entregas";
-    return "badge-disponible";
+    return Formato.badgeLogistica(estado);
   }
 
   public boolean isSeleccionado() {

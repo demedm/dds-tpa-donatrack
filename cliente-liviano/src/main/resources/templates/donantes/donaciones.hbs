@@ -7,8 +7,26 @@
 {{#partial "contenido"}}
 
     <section class="panel-donaciones">
-        <h1 class="panel-titulo">Mis donaciones</h1>
-        <p class="panel-subtitulo">Seguí en qué estado está cada parte de lo que donaste.</p>
+        <div class="panel-encabezado">
+            <div>
+                <h1 class="panel-titulo">Mis donaciones</h1>
+                <p class="panel-subtitulo">
+                    Seguí en qué estado está cada parte de lo que donaste.
+                </p>
+            </div>
+
+            <a href="/donante/mapa" class="boton-mapa">
+                <svg width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/>
+                    <path d="M9 3v15"/>
+                    <path d="M15 6v15"/>
+                </svg>
+                Tu Mapa
+            </a>
+        </div>
 
         {{#if error}}
             <p class="aviso aviso-error" role="alert">{{error}}</p>

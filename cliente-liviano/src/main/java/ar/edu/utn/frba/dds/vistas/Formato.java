@@ -27,8 +27,32 @@ public class Formato {
         if(estado == null) return "badge-pendiente";
         return switch(estado) {
             case "En depósito" -> "badge-pendiente";
-            case "Vencida", "Entrega fallida" -> "badge-vencida";
+            case "Vencida" -> "badge-vencida";
             default -> "badge-asignada";
+        };
+    }
+
+    public static String estadoLogistica(String estado) {
+        if (estado == null || estado.isBlank()) return "Sin estado";
+
+        return switch (estado) {
+            case "DISPONIBLE" -> "Disponible";
+            case "RUTA_ASIGNADA" -> "Ruta asignada";
+            case "EN_MANTENIMIENTO" -> "En mantenimiento";
+            case "REALIZANDO_ENTREGAS" -> "Realizando entregas";
+            default -> texto(estado);
+        };
+    }
+
+    public static String badgeLogistica(String estado) {
+        if (estado == null || estado.isBlank()) return "badge-sin-estado";
+
+        return switch (estado) {
+            case "DISPONIBLE" -> "badge-disponible";
+            case "RUTA_ASIGNADA" -> "badge-ruta";
+            case "EN_MANTENIMIENTO" -> "badge-mantenimiento";
+            case "REALIZANDO_ENTREGAS" -> "badge-entregas";
+            default -> "badge-sin-estado";
         };
     }
 }
