@@ -14,6 +14,44 @@ body:has(.admin) .footer {
     min-height: 100%;
 }
 
+/* ===== ESTADOS DE CAMIONES ===== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-disponible {
+    background-color: #e5f7ed;
+    color: #23834d;
+}
+
+.badge-ruta {
+    background-color: #e4f1fc;
+    color: #2475ae;
+}
+
+.badge-mantenimiento {
+    background-color: #fff3d9;
+    color: #9b6a0b;
+}
+
+.badge-entregas {
+    background-color: #eee8fc;
+    color: #7042a5;
+}
+
+.badge-sin-estado {
+    background-color: #eeeeee;
+    color: #666666;
+}
+
 /* ===== PESTAÑAS ===== */
 .admin-tabs {
     display: flex;
@@ -333,5 +371,349 @@ body:has(.admin) .footer {
 
     .mapa {
         min-height: 300px;
+    }
+}
+
+
+/* =====================================================
+   COMPLEMENTOS DEL PANEL DE LOGÍSTICA
+   ===================================================== */
+
+/* ===== PANEL GENERAL ===== */
+
+.admin {
+    padding-top: 1rem;
+    color: var(--color-text);
+}
+
+.admin > h1:not(.sr-only) {
+    margin-bottom: 1.5rem;
+    font-family: var(--font-main);
+    font-size: 1.8rem;
+    color: var(--color-text-secondary);
+}
+
+/* ===== PESTAÑAS ===== */
+
+.admin-tabs {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.admin-tabs a {
+    padding-bottom: 0.25rem;
+}
+
+/* ===== BARRA DE BÚSQUEDA ===== */
+
+.busqueda {
+    flex: 1;
+    min-width: 260px;
+}
+
+.busqueda .campo {
+    margin: 0;
+}
+
+.campo-compacto input,
+.campo-compacto select {
+    min-height: 44px;
+    border: 1px solid #d9dfe5;
+    border-radius: 6px;
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo-compacto input:focus,
+.campo-compacto select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(26, 143, 208, 0.12);
+}
+
+.boton-icono {
+    flex-shrink: 0;
+    border-radius: 6px;
+}
+
+.boton-icono:focus-visible,
+.enlace-accion:focus-visible,
+.boton-rojo:focus-visible {
+    outline: 3px solid rgba(26, 143, 208, 0.3);
+    outline-offset: 3px;
+}
+
+/* ===== BOTÓN AGREGAR CAMIÓN ===== */
+
+.admin-agregar {
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.boton-rojo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    background-color: var(--color-accent);
+    color: white;
+    font-family: var(--font-main);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.boton-rojo:hover {
+    background-color: #1a8fd0;
+    transform: translateY(-1px);
+}
+
+/* ===== MENSAJES ===== */
+
+.aviso-error {
+    margin-bottom: 1.25rem;
+    padding: 0.9rem 1.2rem;
+    border: 1px solid #f1b8b8;
+    border-left: 4px solid #d9534f;
+    border-radius: 6px;
+    background-color: #fff0f0;
+    color: #a52b2b;
+    font-weight: 600;
+}
+
+/* ===== TARJETAS ===== */
+
+.tarjeta {
+    border: 1px solid #e9edf0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tarjeta h2 {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-main);
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+}
+
+.tarjeta p {
+    line-height: 1.6;
+    color: #6b7280;
+}
+
+/* Panel vacío */
+
+#panelVacio {
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+#panelVacio h2 {
+    margin-bottom: 0.25rem;
+}
+
+#panelVacio p {
+    margin: 0;
+}
+
+/* ===== MAPA ===== */
+
+.mapa {
+    border: 1px solid #e1e6eb;
+    border-radius: 10px;
+    background-color: #e9eef2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    z-index: 0;
+}
+
+/* ===== ACCIONES DE LA TABLA ===== */
+
+.acciones-tabla {
+    border: 1px solid #e9edf0;
+    border-radius: 8px;
+}
+
+.enlace-accion {
+    font-weight: 600;
+}
+
+.enlace-accion:disabled {
+    color: #aab2ba;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+.enlace-accion:disabled:hover {
+    color: #aab2ba;
+}
+
+#agregarRuta {
+    color: var(--color-accent);
+}
+
+#agregarRuta:disabled {
+    color: #aab2ba;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+/* ===== CHECKBOXES ===== */
+
+.check-recordame {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    cursor: pointer;
+}
+
+.check-recordame input {
+    cursor: pointer;
+}
+
+.check-caja {
+    flex-shrink: 0;
+}
+
+/* ===== TABLA DE CAMIONES ===== */
+
+.tabla-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 10px;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+}
+
+.tabla thead {
+    background-color: #f3f6f8;
+}
+
+.tabla th {
+    padding: 1rem;
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid #e3e8ed;
+}
+
+.tabla td {
+    padding: 1rem;
+    color: var(--color-text);
+    border-bottom: 1px solid #edf0f2;
+    vertical-align: middle;
+}
+
+.tabla tbody tr {
+    transition: background-color 0.2s;
+}
+
+.tabla tbody tr:hover {
+    background-color: #f8fafb;
+}
+
+.tabla tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla .col-check {
+    width: 45px;
+    text-align: center;
+}
+
+.tabla td:first-child {
+    text-align: center;
+}
+
+.tabla td[colspan] {
+    padding: 2rem;
+    text-align: center;
+    color: #7b8791;
+}
+
+/* ===== ESTADOS ===== */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.tabla tbody tr:has(.checkbox-camion:checked) {
+    background-color: #eaf5fc;
+}
+
+/* ===== FICHA DEL CAMIÓN ===== */
+
+.ficha-cabecera {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.ficha-datos dt,
+.ficha-datos dd {
+    margin: 0;
+}
+
+.ficha-datos dd {
+    overflow-wrap: anywhere;
+}
+
+.ficha-pie {
+    padding-top: 1rem;
+    border-top: 1px solid #edf0f2;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 700px) {
+    .admin {
+        padding-left: 3%;
+        padding-right: 3%;
+    }
+
+    .admin-tabs {
+        overflow-x: auto;
+        gap: 1.25rem;
+    }
+
+    .admin-agregar {
+        gap: 0.75rem;
+    }
+
+    .admin-agregar > * {
+        flex: 1 1 auto;
+    }
+
+    .acciones-tabla {
+        align-items: flex-start;
+    }
+
+    .acciones-tabla-der {
+        width: 100%;
+        gap: 1rem;
+    }
+
+    .tabla {
+        min-width: 650px;
+    }
+
+    .mapa {
+        height: 320px;
     }
 }

@@ -340,5 +340,26 @@ public class LogisticaController {
     }
   }
 
+  public void obtenerDepositos(Context ctx) {
+    try {
+      List<Map<String, Object>> depositos =
+          grpcLogisticaClient.listarDepositos();
+
+      if (depositos == null) {
+        ctx.status(502).json(Map.of(
+            "error", "No se pudieron obtener los depósitos"
+        ));
+        return;
+      }
+
+      ctx.json(depositos);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      ctx.status(500).json(Map.of(
+          "error", "Error al consultar los depósitos"
+      ));
+    }
+  }
 
 }

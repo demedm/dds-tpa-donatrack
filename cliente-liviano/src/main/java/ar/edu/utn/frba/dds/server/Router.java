@@ -82,7 +82,7 @@ public class Router {
     app.post("/admin/logistica/deposito", logisticaController::guardarDeposito);
     app.get("/admin/logistica/depositos", logisticaController::listarDepositos);
     app.post("/camiones/{patente}/telemetria", telemetriaController::recepcionarTelemetria);
-    app.post("camiones/{patente}/iniciar", telemetriaController::iniciarRuta);
+    app.post("/camiones/{patente}/iniciar", telemetriaController::iniciarRuta);
     app.get("/admin/logistica/ubicaciones", logisticaController::ubicacionesAdmin);
 
     app.post("/admin/logistica/planificar", logisticaController::iniciarPlanificacion);
@@ -104,6 +104,8 @@ public class Router {
 
     app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
     app.get("/donante/donaciones",donanteController::misDonaciones);
+    app.get("/donante/mapa", donanteController::mostrarMapa);
+    app.get("/donante/depositos", logisticaController::obtenerDepositos);
 
     app.before("/donaciones-asignadas", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     app.get("/donaciones-asignadas",beneficiarioController::donacionesAsignadas);
