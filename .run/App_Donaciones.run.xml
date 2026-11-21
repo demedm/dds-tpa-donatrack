@@ -3,7 +3,7 @@
     <envs>
       <env name="DB_USER" value="root" />
       <env name="DB_PASSWORD" value="root" />
-      <env name="JWT_SECRET" value="SovV9lngLPiiUMJlQuPhZLE6PiGXc3xx48mSwd+Cv28=" />
+      <env name="JWT_SECRET" value="qavnNw2DNf9FubPW2abM1sBQw/ATmCWoFRPcncKYUm4=" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="ar.edu.utn.frba.dds.main.App_Donaciones" />
     <module name="donaciones-mserv" />

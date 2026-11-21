@@ -42,6 +42,11 @@ public class Router {
     app.before("/registro", this::noAutenticados);
     app.get("/registro", session::mostrarRegistro);
     app.post("/registro", session::registrarUsuario);
+    app.before("/registro/*", this::noAutenticados);
+    app.get("/registro/persona", session::mostrarRegistroPersona);
+    app.post("/registro/persona", session::registrarPersona);
+    app.get("/registro/entidad", session::mostrarRegistroEntidad);
+    app.post("/registro/entidad", session::registrarEntidad);
 
     app.get("/logout", session::logout);
 

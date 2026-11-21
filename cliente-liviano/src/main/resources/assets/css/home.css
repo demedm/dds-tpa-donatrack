@@ -16,6 +16,7 @@ body:has(.hero) .header.header-scrolled {
     background-color: var(--color-primary);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
+.hero-botones { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
 
 /* ===== HERO ===== */
 .hero {

@@ -182,6 +182,66 @@ public class SessionController {
 
   public void mostrarUsuarios(@NotNull Context ctx) {
   }
+  public void mostrarRegistroPersona(Context ctx) {
+    ctx.render("public/registro-persona.hbs");
+  }
+
+  public void mostrarRegistroEntidad(Context ctx) {
+    ctx.render("public/registro-entidad.hbs");
+  }
+
+  public void registrarPersona(Context ctx) {
+    String password = ctx.formParam("password");
+    if (password == null || !password.equals(ctx.formParam("confirmarPassword"))) {
+      ctx.render("public/registro-persona.hbs", Map.of("error", "Las contraseñas no coinciden."));
+      return;
+    }
+    try {
+      RegistroResponse response = new GrpcClientRegistroImplementation().registrarPersona(
+              ctx.formParam("tipoPersona"),
+              ctx.formParam("nombreIdentificador"),
+              ctx.formParam("email"),
+              ctx.formParam("telefono"),
+              ctx.formParam("medioPreferido"),
+              password);
+
+      if (response.getExito()) {
+        ctx.redirect("/login?registro=exitoso");
+        return;
+      }
+      ctx.render("public/registro-persona.hbs", Map.of("error", response.getMensaje()));
+    } catch (Exception e) {
+      e.printStackTrace();
+      ctx.render("public/registro-persona.hbs",
+              Map.of("error", "No fue posible comunicarse con el servidor."));
+    }
+  }
+
+  public void registrarEntidad(Context ctx) {
+    String password = ctx.formParam("password");
+    if (password == null || !password.equals(ctx.formParam("confirmarPassword"))) {
+      ctx.render("public/registro-entidad.hbs", Map.of("error", "Las contraseñas no coinciden."));
+      return;
+    }
+    try {
+      RegistroResponse response = new GrpcClientRegistroImplementation().registrarEntidad(
+              ctx.formParam("razonSocial"),
+              ctx.formParam("direccion"),
+              ctx.formParam("email"),
+              ctx.formParam("telefono"),
+              password);
+
+      if (response.getExito()) {
+        ctx.redirect("/login?registro=exitoso");
+        return;
+      }
+      ctx.render("public/registro-entidad.hbs", Map.of("error", response.getMensaje()));
+    } catch (Exception e) {
+      e.printStackTrace();
+      ctx.render("public/registro-entidad.hbs",
+              Map.of("error", "No fue posible comunicarse con el servidor."));
+    }
+  }
 
 }
 

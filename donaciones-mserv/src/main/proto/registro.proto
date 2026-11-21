@@ -28,6 +28,7 @@ message RegistroPersonaRequest {
   string mailDonante = 3;
   string telefonoDonante = 4;
   string medioPreferido = 5;
+  string password = 6;
 }
 
 message RegistroBeneficiariaRequest {
@@ -35,4 +36,5 @@ message RegistroBeneficiariaRequest {
   string direccion = 2;
   string mailContacto = 3;
   string telefonoBeneficiario = 4;
+  string password = 5;
 }

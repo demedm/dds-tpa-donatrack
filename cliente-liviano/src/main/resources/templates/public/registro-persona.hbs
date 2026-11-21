@@ -1,0 +1,58 @@
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/auth.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <div class="auth">
+        <section class="auth-formulario">
+            <h1 class="auth-titulo">Registrarme como persona</h1>
+
+            {{#if error}}<p style="color:#b00020">{{error}}</p>{{/if}}
+
+            <form action="/registro/persona" method="POST" class="form-auth">
+                <div class="campo">
+                    <label for="tipoPersona">Tipo de persona</label>
+                    <select id="tipoPersona" name="tipoPersona" required>
+                        <option value="FISICA">Física</option>
+                        <option value="JURIDICA">Jurídica</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="nombreIdentificador">Nombre o razón social</label>
+                    <input type="text" id="nombreIdentificador" name="nombreIdentificador" required>
+                </div>
+                <div class="campo">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" autocomplete="email" required>
+                </div>
+                <div class="campo">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono" required>
+                </div>
+                <div class="campo">
+                    <label for="medioPreferido">Medio de contacto preferido</label>
+                    <select id="medioPreferido" name="medioPreferido" required>
+                        <option value="MAIL">Mail</option>
+                        <option value="TELEFONO">Teléfono</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+                </div>
+                <div class="campo">
+                    <label for="confirmarPassword">Confirmar contraseña</label>
+                    <input type="password" id="confirmarPassword" name="confirmarPassword" autocomplete="new-password" minlength="8" required>
+                </div>
+
+                <button type="submit" class="boton-auth">Registrarme</button>
+            </form>
+        </section>
+
+        <div class="auth-imagen">
+            <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Persona entregando ropa donada">
+        </div>
+    </div>
+{{/partial}}
+
+{{>templates/layout}}
