@@ -1,5 +1,10 @@
 package ar.edu.utn.frba.dds.Matchmaking;
 
+// TODO cron: este test probaba Quartz (el horario de las 3 AM y que el Job corriera).
+// Quartz se saco: el horario ahora lo define el crontab y la tarea es tareas/ProcesarDonaciones.
+// Pendiente: pasar la parte "Ejecucion" a un ProcesarDonacionesTest que llame a ProcesarDonaciones.ejecutar().
+/*
+
 import ar.edu.utn.frba.dds.model.Bienes.Bien;
 import ar.edu.utn.frba.dds.model.Bienes.Categoria;
 import ar.edu.utn.frba.dds.model.Bienes.PorVencimiento;
@@ -133,7 +138,8 @@ public class AsignacionProgramadaTest implements WithSimplePersistenceUnit {
     void cargarDatos() {
       withTransaction(() -> {
         // el comedor necesita arroz, así el algoritmo de compatibilidad lo propone
-        comedor = new EntidadBeneficiaria("Av. Medrano 951", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
+        comedor =
+            new EntidadBeneficiaria("Av. Medrano 951", new ArrayList<>(), "Comedor de prueba", null, "COMEDOR");
         Necesidad necesidad = new Necesidad();
         necesidad.agregarPeticion(new Peticion("ARROZ", new BigDecimal("100")));
         comedor.agregarNecesidad(necesidad);
@@ -205,3 +211,4 @@ public class AsignacionProgramadaTest implements WithSimplePersistenceUnit {
     }
   }
 }
+*/

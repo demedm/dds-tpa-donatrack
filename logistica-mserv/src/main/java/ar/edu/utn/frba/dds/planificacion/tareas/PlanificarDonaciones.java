@@ -1,7 +1,7 @@
 package ar.edu.utn.frba.dds.planificacion.tareas;
 
 import ar.edu.utn.frba.dds.exceptions.PlanificadorException;
-import ar.edu.utn.frba.dds.main.Bootstrap;
+import ar.edu.utn.frba.dds.main.ConfiguracionBaseDeDatos;
 import ar.edu.utn.frba.dds.main.HttpClient.Client;
 import ar.edu.utn.frba.dds.main.HttpClient.ClientPlanificacion;
 import ar.edu.utn.frba.dds.model.Camion;
@@ -32,8 +32,23 @@ public class PlanificarDonaciones implements WithSimplePersistenceUnit {
           System.getenv().getOrDefault("PLANNER_URL", "http://localhost:9100")));
 
   public static void main(String[] args) {
-    Bootstrap.init();
-    ejecutar();
+
+    int codigo = 0;
+
+    try {
+      ConfiguracionBaseDeDatos.aplicar();
+      ejecutar();
+      System.out.println("[Planificación] lote enviado al planificador");
+    }catch(Exception e) {
+      System.err.println("[Planificación] falló: " + e.getMessage());
+      e.printStackTrace();
+      codigo = 1;
+    } finally {
+      WithSimplePersistenceUnit.dispose();
+    }
+
+    System.exit(codigo);
+
   }
 
   public static void ejecutar() {

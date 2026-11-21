@@ -73,6 +73,8 @@ public class PlanificacionRepositorio implements WithSimplePersistenceUnit {
   }
 
   public SolicitudPlanificacionDto prepararSolicitud(int TAMANIO_LOTE, String CALLBACK_URL) {
+    liberarLotesSinRespuesta();
+
     Long enviados = entityManager()
         .createQuery("select count(l) from LotePlanificacion l where l.estado = :e", Long.class)
         .setParameter("e", EstadoLote.ENVIADO).getSingleResult();
@@ -104,6 +106,32 @@ public class PlanificacionRepositorio implements WithSimplePersistenceUnit {
         lote.getId(), CALLBACK_URL,
         items.stream().map(DonacionAPlanificarDto::de).toList(),
         camiones.stream().map(CamionDisponibleDto::de).toList());
+  }
+
+
+  // Un lote ENVIADO que lleva más de 6 horas sin respuesta del planificador se da por perdido
+  private void liberarLotesSinRespuesta() {
+    LocalDateTime limite = LocalDateTime.now().minusHours(6);
+
+    List<Long> lotesPerdidos = entityManager()
+        .createQuery("select distinct i.lote.id from ItemPlanificacion i "
+            + "where i.lote.estado = :estado and i.enviadoEn < :limite", Long.class)
+        .setParameter("estado", EstadoLote.ENVIADO)
+        .setParameter("limite", limite)
+        .getResultList();
+
+    //hay efecto de lado: cada lote perdido pasa a FALLIDO y sus donaciones vuelven a PENDIENTE
+    for (Long loteId : lotesPerdidos) {
+      entityManager().find(LotePlanificacion.class, loteId).setEstado(EstadoLote.FALLIDO);
+      entityManager()
+          .createQuery("from ItemPlanificacion i where i.lote.id = :id", ItemPlanificacion.class)
+          .setParameter("id", loteId)
+          .getResultList()
+          .forEach(item -> {
+            item.setLote(null);
+            item.setEstado(EstadoItem.PENDIENTE);
+          });
+    }
   }
 
   /*

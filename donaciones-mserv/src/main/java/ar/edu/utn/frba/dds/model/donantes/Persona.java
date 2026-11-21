@@ -61,6 +61,10 @@ public abstract class Persona implements Destinatario{
     this.ultimaActividad = ultimaActividad;
   }
 
+  public void registrarActividad() {
+    this.ultimaActividad = LocalDate.now();
+  }
+
   public Long getId() {
     return id;
   }

@@ -140,14 +140,15 @@ public class AdminController {
     ctx.render("admin/donaciones.hbs", modelo);
   }
 
+  // la usan el botón "Asignar" del ranking y la pantalla de asignación manual: la entidad viene en el formulario
   public void asignarDonacion(Context ctx) {
     Long segmentadaId = Long.parseLong(ctx.pathParam("id"));
     String token = ctx.cookie("session");
 
     try {
-      Long entidadId = Long.parseLong(ctx.pathParam("entidadId"));
+      Long entidadId = Long.parseLong(ctx.formParam("entidadId"));
 
-      if (gestionDonaciones.asignar(segmentadaId, entidadId)) {
+      if (gestionDonaciones.asignarDonacionManualmente(segmentadaId, entidadId)) {
         boolean enviada = enviarALogistica(token, segmentadaId, entidadId);
         ctx.redirect("/admin/donaciones?asignada=" + segmentadaId +
             (enviada ? "" : "&logistica=error"));
