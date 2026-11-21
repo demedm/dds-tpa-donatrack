@@ -3,60 +3,418 @@ info:
   title: DonaTrack API
   version: 1.0.0
 paths:
-  /api/donaciones:
-    get:
-      summary: Listar donaciones
-      responses:
-        '200':
-          description: Lista de donaciones
-  /necesidades:
-    get:
-      summary: Obtener las necesidades de la entidad autenticada
-      tags:
-        - Necesidades
-      responses:
-        '200':
-          description: Lista de necesidades de la sesión actual
-        '302':
-          description: Usuario no autenticado
+  /login:
     post:
-      summary: Publicar una nueva necesidad para la entidad autenticada
+      summary: Iniciar sesión y obtener cookie JWT
       tags:
-        - Necesidades
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                  email:
+                    type: string
+                    format: email
+                  password:
+                    type: string
+                    format: password
       responses:
-        '201':
-          description: Necesidad creada
         '302':
-          description: Usuario no autenticado,inicie sesion
-  /necesidades/{id}:
-    get:
-      summary: Mostrar detalles de la necesidad
-      tags:
-        - Necesidad
-      responses:
-        '200':
-          description: Necesidad encontrada, se muestran detalles
-        '302':
-          description: Usuario no autenticado, inicie sesion
-        '404':
-          description: La necesidad buscada no existe
-  /necesidades/{id}/peticiones:
+          description: Redirección al inicio con cookie de sesión (o /login?error=true si falla)
+  /registro:
     post:
-      summary: Crear peticiones para la necesidad
+      summary: Registrar un nuevo usuario donante
       tags:
-        - Peticiones
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
       responses:
-        '200':
-          description: Peticion creada con exito
         '302':
-          description: Usuario no autenticado, inicie sesion
-  /usuarios/entregas-en-curso:
-    get:
-      summary: Obtiene la ubicación actual de las entregas en curso para esa entidad autenticada
-      tags:
-        - Entregas
-      responses:
-        '201':
-          description: Entregas obtenidas
-        '302':
-          description: Usuario no autenticado, inicie sesion
+          description: Redirección a /login?registro=exitoso
+
+    /admin/donantes/importar:
+      post:
+        summary: Importar donantes masivamente desde archivo CSV (Requiere rol ADMIN)
+        tags:
+          - Administración
+        security:
+          - cookieAuth: [ ]
+        requestBody:
+          required: true
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                required:
+                  - archivo
+                properties:
+                  archivo:
+                    type: string
+                    format: binary
+                    description: Archivo CSV UTF-8 con columnas TipoPersona,TipoDoc,Documento,Nombre/Razón Social,Email,Teléfono
+        responses:
+          '200':
+            description: Donantes cargados con éxito
+          '400':
+            description: Archivo no enviado o formato/datos inválidos en el CSV
+          '302':
+            description: Sin permisos (requiere rol ADMIN),redirijo a login
+
+    /admin/donaciones:
+      get:
+        summary: Listar donaciones y propuestas de asignación (Requiere rol ADMIN)
+        tags:
+          - Administración - Donaciones
+        security:
+          - cookieAuth: [ ]
+        parameters:
+          - name: seleccionada
+            in: query
+            required: false
+            schema:
+              type: integer
+            description: ID de donación segmentada para calcular ranking de entidades
+        responses:
+          '200':
+            description: Vista de donaciones renderizada
+          '302':
+            description: Sin permisos (requiere rol ADMIN), redirijo a login
+      post:
+        summary: Registrar una nueva donación manualmente (Requiere rol ADMIN)
+        tags:
+          - Administración - Donaciones
+        security:
+          - cookieAuth: [ ]
+        requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                required:
+                  - donanteId
+                properties:
+                  donanteId:
+                    type: integer
+                  descripcionGeneral:
+                    type: string
+        responses:
+          '302':
+            description: Redirección a /admin/donaciones?registrada={id}
+
+    /admin/donaciones/{id}/asignacion:
+      post:
+        summary: Asignar una donación segmentada a una entidad beneficiaria (Requiere rol ADMIN)
+        tags:
+          - Administración - Donaciones
+        security:
+          - cookieAuth: [ ]
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+            description: ID de la donación segmentada
+        requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                required:
+                  - entidadId
+                properties:
+                  entidadId:
+                    type: integer
+        responses:
+          '302':
+            description: Redirección a /admin/donaciones?asignada={id}
+
+    /admin/donaciones/vencidas:
+      post:
+        summary: Marcar donaciones seleccionadas como vencidas (Requiere rol ADMIN)
+        tags:
+          - Administración - Donaciones
+        security:
+          - cookieAuth: [ ]
+        requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  donaciones:
+                    type: array
+                    items:
+                      type: integer
+        responses:
+          '302':
+            description: Redirección con conteo de vencidas y no vencidas
+
+    /admin/camiones/nuevo:
+      post:
+        summary: Registrar un nuevo camión en logística (Requiere rol ADMIN)
+        tags:
+          - Administración - Logística
+        security:
+          - cookieAuth: [ ]
+        requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                required:
+                  - patente
+                  - capacidadVolumen
+                  - altura
+                  - capacidadCarga
+                  - estado
+                properties:
+                  patente:
+                    type: string
+                  capacidadVolumen:
+                    type: number
+                  altura:
+                    type: number
+                  capacidadCarga:
+                    type: number
+                  estado:
+                    type: string
+        responses:
+          '302':
+            description: Redirección a /admin/camiones?registro=exitoso
+          '409':
+            description: Ya existe un camión con esa patente
+
+    /admin/logistica/deposito:
+      get:
+        summary: Obtener información del depósito principal o por ID
+        tags:
+          - Administración - Logística
+        security:
+          - cookieAuth: [ ]
+        parameters:
+          - name: id
+            in: query
+            required: false
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: Datos del depósito en formato JSON
+      post:
+        summary: Crear o actualizar un depósito
+        tags:
+          - Administración - Logística
+        security:
+          - cookieAuth: [ ]
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - nombre
+                  - direccion
+                  - latitud
+                  - longitud
+                properties:
+                  nombre:
+                    type: string
+                  direccion:
+                    type: string
+                  latitud:
+                    type: number
+                  longitud:
+                    type: number
+        responses:
+          '200':
+            description: Depósito guardado
+          '400':
+            description: Coordenadas o datos inválidos
+
+    /admin/logistica/entregas-en-curso:
+      get:
+        summary: Obtener todas las entregas en curso (JSON)
+        tags:
+          - Administración - Logística
+        security:
+          - cookieAuth: [ ]
+        responses:
+          '200':
+            description: Listado JSON de entregas en curso
+
+    /donante/donaciones:
+      get:
+        summary: Listar donaciones realizadas por el donante autenticado
+        tags:
+          - Donantes
+        security:
+          - cookieAuth: [ ]
+        parameters:
+          - name: estado
+            in: query
+            schema:
+              type: string
+          - name: categoria
+            in: query
+            schema:
+              type: string
+          - name: subcategoria
+            in: query
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Historial de donaciones del donante
+          '302':
+            description: Requiere rol DONANTE, redirijo a login
+
+    /donaciones-asignadas:
+      get:
+        summary: Listar donaciones asignadas a la entidad beneficiaria autenticada
+        tags:
+          - Beneficiarios
+        security:
+          - cookieAuth: [ ]
+        parameters:
+          - name: estado
+            in: query
+            schema:
+              type: string
+          - name: categoria
+            in: query
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Listado de donaciones asignadas
+          '302':
+            description: Redirijo a login
+
+    /necesidades:
+      get:
+        summary: Obtener las necesidades de la entidad autenticada
+        tags:
+          - Necesidades
+        security:
+          - cookieAuth: [ ]
+        responses:
+          '200':
+            description: Lista de necesidades de la sesión actual
+          '302':
+            description: Usuario no autenticado
+      post:
+        summary: Publicar una nueva necesidad para la entidad autenticada
+        tags:
+          - Necesidades
+        security:
+          - cookieAuth: [ ]
+        requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                required:
+                  - descripcion
+                  - tipo
+                properties:
+                  descripcion:
+                    type: string
+                  tipo:
+                    type: string
+                  diasRecurrencia:
+                    type: integer
+        responses:
+          '302':
+            description: Redirección al detalle de la necesidad creada
+
+    /necesidades/{id}:
+      get:
+        summary: Mostrar detalles de la necesidad
+        tags:
+          - Necesidades
+        security:
+          - cookieAuth: [ ]
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: Necesidad encontrada, se muestran detalles
+          '403':
+            description: La necesidad pertenece a otra entidad
+          '404':
+            description: La necesidad buscada no existe
+
+    /necesidades/{id}/peticiones:
+      post:
+        summary: Crear peticiones para la necesidad
+        tags:
+          - Necesidades
+        security:
+          - cookieAuth: [ ]
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                required:
+                  - subclase
+                  - cantidadRequerida
+                properties:
+                  subclase:
+                    type: string
+                  cantidadRequerida:
+                    type: number
+        responses:
+          '302':
+            description: Petición agregada, redirige al detalle
+
+    /usuarios/entregas-en-curso:
+      get:
+        summary: Obtiene la ubicación actual de las entregas en curso para la entidad autenticada
+        tags:
+          - Entregas
+        security:
+          - cookieAuth: [ ]
+        responses:
+          '200':
+            description: Entregas obtenidas (HTML o JSON según header Accept)
+          '302':
+            description: Usuario no autenticado
