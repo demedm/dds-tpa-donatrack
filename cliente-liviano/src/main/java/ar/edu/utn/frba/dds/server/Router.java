@@ -42,6 +42,11 @@ public class Router {
     app.before("/registro", this::noAutenticados);
     app.get("/registro", session::mostrarRegistro);
     app.post("/registro", session::registrarUsuario);
+    app.before("/registro/*", this::noAutenticados);
+    app.get("/registro/persona", session::mostrarRegistroPersona);
+    app.post("/registro/persona", session::registrarPersona);
+    app.get("/registro/entidad", session::mostrarRegistroEntidad);
+    app.post("/registro/entidad", session::registrarEntidad);
 
     app.get("/logout", session::logout);
 
@@ -82,7 +87,7 @@ public class Router {
     app.post("/admin/logistica/deposito", logisticaController::guardarDeposito);
     app.get("/admin/logistica/depositos", logisticaController::listarDepositos);
     app.post("/camiones/{patente}/telemetria", telemetriaController::recepcionarTelemetria);
-    app.post("camiones/{patente}/iniciar", telemetriaController::iniciarRuta);
+    app.post("/camiones/{patente}/iniciar", telemetriaController::iniciarRuta);
     app.get("/admin/logistica/ubicaciones", logisticaController::ubicacionesAdmin);
 
     app.post("/admin/logistica/planificar", logisticaController::iniciarPlanificacion);
@@ -104,6 +109,8 @@ public class Router {
 
     app.before("/donante/*", new RolMiddleware(Rol.DONANTE)::validarPermisos);
     app.get("/donante/donaciones",donanteController::misDonaciones);
+    app.get("/donante/mapa", donanteController::mostrarMapa);
+    app.get("/donante/depositos", logisticaController::obtenerDepositos);
 
     app.before("/donaciones-asignadas", new RolMiddleware(Rol.BENEFICIARIO)::validarPermisos);
     app.get("/donaciones-asignadas",beneficiarioController::donacionesAsignadas);

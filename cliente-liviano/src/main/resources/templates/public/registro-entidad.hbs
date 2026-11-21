@@ -1,0 +1,48 @@
+{{#partial "estilos"}}
+    <link rel="stylesheet" href="/assets/css/auth.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <div class="auth">
+        <section class="auth-formulario">
+            <h1 class="auth-titulo">Registrarme como entidad</h1>
+
+            {{#if error}}<p style="color:#b00020">{{error}}</p>{{/if}}
+
+            <form action="/registro/entidad" method="POST" class="form-auth">
+                <div class="campo">
+                    <label for="razonSocial">Razón social</label>
+                    <input type="text" id="razonSocial" name="razonSocial" required>
+                </div>
+                <div class="campo">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" id="direccion" name="direccion" required>
+                </div>
+                <div class="campo">
+                    <label for="email">Email de contacto</label>
+                    <input type="email" id="email" name="email" autocomplete="email" required>
+                </div>
+                <div class="campo">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono" required>
+                </div>
+                <div class="campo">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+                </div>
+                <div class="campo">
+                    <label for="confirmarPassword">Confirmar contraseña</label>
+                    <input type="password" id="confirmarPassword" name="confirmarPassword" autocomplete="new-password" minlength="8" required>
+                </div>
+
+                <button type="submit" class="boton-auth">Registrarme</button>
+            </form>
+        </section>
+
+        <div class="auth-imagen">
+            <img src="/assets/images/istockphoto-1372606861-1024x1024.jpg" alt="Persona entregando ropa donada">
+        </div>
+    </div>
+{{/partial}}
+
+{{>templates/layout}}

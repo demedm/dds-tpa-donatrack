@@ -11,7 +11,12 @@
             <p class="hero-texto">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
             </p>
-            <a href="/donar" class="boton-verde">DONÁ AHORA</a>
+            {{#unless logueado}}
+                <div class="hero-botones">
+                    <a href="/registro/persona" class="boton-verde">REGISTRARME COMO PERSONA</a>
+                    <a href="/registro/entidad" class="boton-verde">REGISTRARME COMO ENTIDAD</a>
+                </div>
+            {{/unless}}
         </div>
 
         <svg class="hero-onda" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">

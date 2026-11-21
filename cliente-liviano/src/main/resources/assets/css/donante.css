@@ -71,3 +71,108 @@
     background-color: #fde8e8;
     border: 1px solid #8b0a1e;
 }
+
+/* Encabezado del panel de donaciones */
+.panel-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.panel-encabezado .panel-titulo {
+    margin-bottom: 0.35rem;
+}
+
+.panel-encabezado .panel-subtitulo {
+    margin-bottom: 0;
+}
+
+/* Acceso al mapa */
+.boton-mapa {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.75rem 1.2rem;
+    border-radius: 8px;
+    background-color: var(--color-accent);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.boton-mapa:hover {
+    background-color: #1a8fd0;
+    transform: translateY(-2px);
+}
+
+/* Adaptación para celulares */
+@media (max-width: 600px) {
+    .panel-encabezado {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+.panel-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.mapa-donante {
+    width: 100%;
+    height: 600px;
+    border-radius: 12px;
+    border: 1px solid #e1e6eb;
+    overflow: hidden;
+}
+
+.boton-volver {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.2rem;
+    border-radius: 8px;
+    background-color: var(--color-accent);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .panel-encabezado {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .mapa-donante {
+        height: 420px;
+    }
+}
+
+/* El menú debe quedar por encima del mapa */
+nav {
+    position: relative;
+    z-index: 1000;
+}
+
+/* El mapa debe quedar por debajo del menú */
+.mapa-donante,
+#mapa {
+    position: relative;
+    z-index: 1;
+}
+
+.marcador-deposito-donante {
+    background: transparent;
+    border: none;
+    font-size: 27px;
+    text-align: center;
+    line-height: 32px;
+}
